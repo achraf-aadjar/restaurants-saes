@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editeurs
+.idea/
+*.iml
+*.swp
+
+# Java / Maven
+target/
+
+# Node / Angular
+node_modules/
+dist/
+.angular/

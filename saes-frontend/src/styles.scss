@@ -1,0 +1,19 @@
+/* Styles globaux */
+:root {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  color: #1b1b1f;
+  background: #f6f6f8;
+}
