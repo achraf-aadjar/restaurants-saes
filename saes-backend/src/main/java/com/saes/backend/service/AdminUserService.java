@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.saes.backend.domain.Restaurant;
+import com.saes.backend.domain.Role;
 import com.saes.backend.domain.Utilisateur;
 import com.saes.backend.repository.RestaurantRepository;
 import com.saes.backend.repository.UtilisateurRepository;
@@ -26,6 +27,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AdminUserService {
+
+    private static final java.util.Set<Role> ROLES_PERSONNEL =
+            java.util.Set.of(Role.SERVEUR, Role.CUISINIER, Role.CAISSIER, Role.GERANT);
 
     private final UtilisateurRepository utilisateurRepository;
     private final RestaurantRepository restaurantRepository;
@@ -61,6 +65,11 @@ public class AdminUserService {
         Utilisateur utilisateur = trouver(utilisateurId);
         if (request.roles().isEmpty()) {
             throw ApiException.conflict("Le compte se retrouverait sans aucun role");
+        }
+        boolean demandeUnRolePersonnel = request.roles().stream().anyMatch(ROLES_PERSONNEL::contains);
+        if (demandeUnRolePersonnel && utilisateur.getRestaurant() == null) {
+            throw ApiException.conflict(
+                    "Ce compte n'est rattache a aucun restaurant : impossible de lui donner un role de personnel");
         }
         utilisateur.setRoles(new java.util.HashSet<>(request.roles()));
         return UtilisateurDto.from(utilisateur);
