@@ -1,0 +1,60 @@
+<header class="entete">
+  <div class="entete-ligne">
+    <a class="marque" routerLink="/menus">
+      <img src="assets/logo/logo_couleurs.svg" alt="Restaurants du SAES" class="logo" />
+    </a>
+
+    <nav class="nav-desktop">
+      <a routerLink="/menus" routerLinkActive="actif">Menus</a>
+      <a routerLink="/mes-commandes" routerLinkActive="actif">Mes commandes</a>
+      <a routerLink="/mes-reservations" routerLinkActive="actif">Mes réservations</a>
+      @if (estAdministrateur()) {
+        <span class="separateur">·</span>
+        <a routerLink="/admin/restaurants" routerLinkActive="actif">Restaurants</a>
+        <a routerLink="/admin/utilisateurs" routerLinkActive="actif">Comptes</a>
+      }
+    </nav>
+
+    <div class="compte">
+      @if (auth.estConnecte()) {
+        <button type="button" class="bouton-compte" (click)="basculerMenu()">
+          {{ auth.utilisateur()?.prenom }} {{ auth.utilisateur()?.nom }}
+          @if (rolePersonnel(); as role) {
+            <span class="role">({{ role }})</span>
+          }
+          <span class="chevron">▾</span>
+        </button>
+        @if (menuOuvert()) {
+          <div class="menu-deroulant">
+            <a routerLink="/mon-compte" (click)="menuOuvert.set(false)">Mon compte</a>
+            <button type="button" (click)="seDeconnecter()">Se déconnecter</button>
+          </div>
+        }
+      } @else {
+        <a routerLink="/connexion" class="btn btn-secondaire btn-petit">Connexion</a>
+        <a routerLink="/inscription" class="btn btn-primaire btn-petit">S'inscrire</a>
+      }
+    </div>
+
+    <button type="button" class="bouton-burger" (click)="basculerMenuMobile()" aria-label="Menu">☰</button>
+  </div>
+
+  @if (menuMobileOuvert()) {
+    <nav class="nav-mobile">
+      <a routerLink="/menus" (click)="basculerMenuMobile()">Menus</a>
+      <a routerLink="/mes-commandes" (click)="basculerMenuMobile()">Mes commandes</a>
+      <a routerLink="/mes-reservations" (click)="basculerMenuMobile()">Mes réservations</a>
+      @if (estAdministrateur()) {
+        <a routerLink="/admin/restaurants" (click)="basculerMenuMobile()">Restaurants</a>
+        <a routerLink="/admin/utilisateurs" (click)="basculerMenuMobile()">Comptes</a>
+      }
+      @if (auth.estConnecte()) {
+        <a routerLink="/mon-compte" (click)="basculerMenuMobile()">Mon compte</a>
+        <button type="button" (click)="seDeconnecter()">Se déconnecter</button>
+      } @else {
+        <a routerLink="/connexion" (click)="basculerMenuMobile()">Connexion</a>
+        <a routerLink="/inscription" (click)="basculerMenuMobile()">S'inscrire</a>
+      }
+    </nav>
+  }
+</header>

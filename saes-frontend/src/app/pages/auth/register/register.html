@@ -1,0 +1,48 @@
+<section class="carte formulaire-etroit">
+  <h1>Créer un compte</h1>
+
+  @if (erreur(); as e) {
+    <p class="message-refus">{{ e }}</p>
+  }
+
+  <form (ngSubmit)="valider()" #f="ngForm">
+    <div class="champ">
+      <label for="prenom">Prénom</label>
+      <input id="prenom" name="prenom" type="text" required [(ngModel)]="prenom" />
+    </div>
+
+    <div class="champ">
+      <label for="nom">Nom</label>
+      <input id="nom" name="nom" type="text" required [(ngModel)]="nom" />
+    </div>
+
+    <div class="champ">
+      <label for="email">Adresse e-mail</label>
+      <input id="email" name="email" type="email" required [(ngModel)]="email" autocomplete="email" />
+    </div>
+
+    <div class="champ">
+      <label for="telephone">Téléphone (facultatif)</label>
+      <input id="telephone" name="telephone" type="tel" [(ngModel)]="telephone" />
+    </div>
+
+    <div class="champ">
+      <label for="motDePasse">Mot de passe (8 caractères minimum)</label>
+      <input
+        id="motDePasse"
+        name="motDePasse"
+        type="password"
+        required
+        minlength="8"
+        [(ngModel)]="motDePasse"
+        autocomplete="new-password"
+      />
+    </div>
+
+    <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enCours()">
+      {{ enCours() ? 'Création…' : "Créer mon compte" }}
+    </button>
+  </form>
+
+  <p class="lien-bas">Déjà un compte ? <a routerLink="/connexion">Se connecter</a></p>
+</section>

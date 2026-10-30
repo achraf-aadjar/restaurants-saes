@@ -1,0 +1,54 @@
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+@if (restaurants().length > 1) {
+  <div class="selecteur-restaurant">
+    @for (r of restaurants(); track r.id) {
+      <button
+        type="button"
+        class="btn"
+        [class.btn-primaire]="restaurantSelectionne()?.id === r.id"
+        [class.btn-secondaire]="restaurantSelectionne()?.id !== r.id"
+        (click)="selectionner(r)"
+      >
+        {{ r.nom }}
+      </button>
+    }
+  </div>
+}
+
+@if (restaurantSelectionne(); as restaurant) {
+  <section class="bandeau-restaurant">
+    <h1>{{ restaurant.nom }}</h1>
+    <p>{{ restaurant.adresse }}</p>
+    @if (restaurant.telephone) {
+      <p>{{ restaurant.telephone }}</p>
+    }
+  </section>
+}
+
+@if (chargement()) {
+  <p>Chargement du menu…</p>
+} @else if (restaurants().length === 0) {
+  <p>Aucun restaurant n'est actif pour le moment.</p>
+} @else if (groupes().length === 0) {
+  <p>Aucun menu en vigueur pour ce restaurant.</p>
+} @else {
+  @for (groupe of groupes(); track groupe.categorie) {
+    <section class="groupe-categorie">
+      <h2>{{ groupe.libelle }}</h2>
+      <div class="grille-plats">
+        @for (plat of groupe.plats; track plat.id) {
+          <article class="carte plat">
+            <h3>{{ plat.nom }}</h3>
+            @if (plat.description) {
+              <p class="description">{{ plat.description }}</p>
+            }
+            <p class="prix">{{ plat.prix }} FCFA</p>
+          </article>
+        }
+      </div>
+    </section>
+  }
+}

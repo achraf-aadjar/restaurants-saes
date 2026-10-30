@@ -1,0 +1,114 @@
+<h1>Comptes utilisateurs</h1>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+<section class="carte">
+  <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert.set(!formulaireOuvert())">
+    {{ formulaireOuvert() ? 'Annuler' : 'Créer un compte pour le personnel' }}
+  </button>
+
+  @if (formulaireOuvert()) {
+    <form (ngSubmit)="creerPersonnel()" #f="ngForm" class="formulaire-creation">
+      @if (erreurFormulaire(); as e) {
+        <p class="message-refus">{{ e }}</p>
+      }
+
+      <div class="champ">
+        <label for="prenom">Prénom</label>
+        <input id="prenom" name="prenom" type="text" required [(ngModel)]="prenom" />
+      </div>
+      <div class="champ">
+        <label for="nom">Nom</label>
+        <input id="nom" name="nom" type="text" required [(ngModel)]="nom" />
+      </div>
+      <div class="champ">
+        <label for="email">Adresse e-mail</label>
+        <input id="email" name="email" type="email" required [(ngModel)]="email" />
+      </div>
+      <div class="champ">
+        <label for="telephone">Téléphone</label>
+        <input id="telephone" name="telephone" type="tel" [(ngModel)]="telephone" />
+      </div>
+      <div class="champ">
+        <label for="motDePasse">Mot de passe (8 caractères minimum)</label>
+        <input
+          id="motDePasse"
+          name="motDePasse"
+          type="password"
+          required
+          minlength="8"
+          [(ngModel)]="motDePasse"
+        />
+      </div>
+      <div class="champ">
+        <label for="restaurant">Restaurant</label>
+        <select id="restaurant" name="restaurant" required [(ngModel)]="restaurantId">
+          <option [ngValue]="null">— Choisir —</option>
+          @for (r of restaurants(); track r.id) {
+            <option [ngValue]="r.id">{{ r.nom }}</option>
+          }
+        </select>
+      </div>
+      <div class="champ">
+        <label>Rôles</label>
+        <div class="roles-cases">
+          @for (role of roles; track role) {
+            <label class="case-role">
+              <input
+                type="checkbox"
+                [checked]="rolesSelectionnes.has(role)"
+                (change)="basculerRole(role)"
+              />
+              {{ role }}
+            </label>
+          }
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || creationEnCours()">
+        {{ creationEnCours() ? 'Création…' : 'Créer le compte' }}
+      </button>
+    </form>
+  }
+</section>
+
+<section class="carte" style="margin-top: 1rem">
+  @if (chargement()) {
+    <p>Chargement…</p>
+  } @else {
+    <table class="table-simple">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>E-mail</th>
+          <th>Restaurant</th>
+          <th>Rôles</th>
+          <th>Statut</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (u of utilisateurs(); track u.id) {
+          <tr>
+            <td>{{ u.prenom }} {{ u.nom }}</td>
+            <td>{{ u.email }}</td>
+            <td>{{ u.restaurantNom ?? '—' }}</td>
+            <td>{{ u.roles.join(', ') }}</td>
+            <td>
+              <span class="badge" [class.badge-actif]="u.estActif" [class.badge-inactif]="!u.estActif">
+                {{ u.estActif ? 'Actif' : 'Désactivé' }}
+              </span>
+            </td>
+            <td>
+              <button type="button" class="btn btn-secondaire btn-petit" (click)="changerActivation(u)">
+                {{ u.estActif ? 'Désactiver' : 'Réactiver' }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

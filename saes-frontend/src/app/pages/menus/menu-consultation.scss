@@ -1,0 +1,49 @@
+.selecteur-restaurant {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.bandeau-restaurant {
+  background: var(--saes-jaune);
+  border-radius: var(--saes-rayon);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+
+  h1 {
+    margin: 0 0 0.2rem;
+  }
+
+  p {
+    margin: 0;
+    color: #4a3c00;
+    font-size: 0.9rem;
+  }
+}
+
+.groupe-categorie {
+  margin-bottom: 1.75rem;
+}
+
+.grille-plats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.plat h3 {
+  margin-bottom: 0.3rem;
+}
+
+.plat .description {
+  color: #6b6b5f;
+  font-size: 0.85rem;
+  margin: 0 0 0.6rem;
+}
+
+.plat .prix {
+  font-weight: 700;
+  color: var(--saes-rouge);
+  margin: 0;
+}

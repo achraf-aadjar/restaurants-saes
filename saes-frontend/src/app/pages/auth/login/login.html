@@ -1,0 +1,32 @@
+<section class="carte formulaire-etroit">
+  <h1>Connexion</h1>
+
+  @if (erreur(); as e) {
+    <p class="message-refus">{{ e }}</p>
+  }
+
+  <form (ngSubmit)="valider()" #f="ngForm">
+    <div class="champ">
+      <label for="email">Adresse e-mail</label>
+      <input id="email" name="email" type="email" required [(ngModel)]="email" autocomplete="email" />
+    </div>
+
+    <div class="champ">
+      <label for="motDePasse">Mot de passe</label>
+      <input
+        id="motDePasse"
+        name="motDePasse"
+        type="password"
+        required
+        [(ngModel)]="motDePasse"
+        autocomplete="current-password"
+      />
+    </div>
+
+    <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enCours()">
+      {{ enCours() ? 'Connexion…' : 'Se connecter' }}
+    </button>
+  </form>
+
+  <p class="lien-bas">Pas encore de compte ? <a routerLink="/inscription">S'inscrire</a></p>
+</section>

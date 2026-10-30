@@ -1,0 +1,143 @@
+<h1>Restaurants</h1>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+<section class="carte">
+  <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert() ? formulaireOuvert.set(false) : ouvrirCreation()">
+    {{ formulaireOuvert() ? 'Annuler' : 'Créer un restaurant' }}
+  </button>
+
+  @if (formulaireOuvert()) {
+    <form (ngSubmit)="enregistrer()" #f="ngForm" class="formulaire-creation formulaire-large">
+      <h2>{{ idEnEdition ? 'Modifier le restaurant' : 'Nouveau restaurant' }}</h2>
+
+      @if (erreurFormulaire(); as e) {
+        <p class="message-refus">{{ e }}</p>
+      }
+
+      <div class="champ">
+        <label for="nomR">Nom</label>
+        <input id="nomR" name="nomR" type="text" required [(ngModel)]="nom" />
+      </div>
+      <div class="champ">
+        <label for="adresseR">Adresse</label>
+        <input id="adresseR" name="adresseR" type="text" required [(ngModel)]="adresse" />
+      </div>
+      <div class="champ">
+        <label for="telephoneR">Téléphone</label>
+        <input id="telephoneR" name="telephoneR" type="tel" [(ngModel)]="telephone" />
+      </div>
+      <div class="champ">
+        <label for="dureeR">Durée de réservation (minutes)</label>
+        <input
+          id="dureeR"
+          name="dureeR"
+          type="number"
+          min="1"
+          required
+          [(ngModel)]="dureeReservationMinutes"
+        />
+      </div>
+
+      <h3>Tables</h3>
+      @for (table of tables; track $index) {
+        <div class="ligne-dynamique">
+          <div class="champ champ-inline">
+            <label>N°</label>
+            <input type="number" min="1" required [(ngModel)]="table.numero" [name]="'numero' + $index" />
+          </div>
+          <div class="champ champ-inline">
+            <label>Capacité</label>
+            <input
+              type="number"
+              min="1"
+              required
+              [(ngModel)]="table.capacite"
+              [name]="'capacite' + $index"
+            />
+          </div>
+          <button type="button" class="btn btn-secondaire btn-petit" (click)="retirerTable($index)">
+            Retirer
+          </button>
+        </div>
+      }
+      <button type="button" class="btn btn-secondaire btn-petit" (click)="ajouterTable()">+ Ajouter une table</button>
+
+      <h3>Horaires</h3>
+      @for (horaire of horaires; track $index) {
+        <div class="ligne-dynamique">
+          <div class="champ champ-inline">
+            <label>Jour</label>
+            <select [(ngModel)]="horaire.jour" [name]="'jour' + $index" required>
+              @for (j of jours; track j) {
+                <option [ngValue]="j">{{ j }}</option>
+              }
+            </select>
+          </div>
+          <div class="champ champ-inline">
+            <label>Ouverture</label>
+            <input type="time" required [(ngModel)]="horaire.heureOuverture" [name]="'ouverture' + $index" />
+          </div>
+          <div class="champ champ-inline">
+            <label>Fermeture</label>
+            <input type="time" required [(ngModel)]="horaire.heureFermeture" [name]="'fermeture' + $index" />
+          </div>
+          <button type="button" class="btn btn-secondaire btn-petit" (click)="retirerHoraire($index)">
+            Retirer
+          </button>
+        </div>
+      }
+      <button type="button" class="btn btn-secondaire btn-petit" (click)="ajouterHoraire()">
+        + Ajouter une plage
+      </button>
+
+      <div style="margin-top: 1.25rem">
+        <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enregistrementEnCours()">
+          {{ enregistrementEnCours() ? 'Enregistrement…' : 'Enregistrer' }}
+        </button>
+      </div>
+    </form>
+  }
+</section>
+
+<section class="carte" style="margin-top: 1rem">
+  @if (chargement()) {
+    <p>Chargement…</p>
+  } @else {
+    <table class="table-simple">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Adresse</th>
+          <th>Tables</th>
+          <th>Statut</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of restaurants(); track r.id) {
+          <tr>
+            <td>{{ r.nom }}</td>
+            <td>{{ r.adresse }}</td>
+            <td>{{ r.tables.length }}</td>
+            <td>
+              <span class="badge" [class.badge-actif]="r.estActif" [class.badge-inactif]="!r.estActif">
+                {{ r.estActif ? 'Actif' : 'Désactivé' }}
+              </span>
+            </td>
+            <td class="actions-colonne">
+              <button type="button" class="btn btn-secondaire btn-petit" (click)="ouvrirEdition(r)">
+                Modifier
+              </button>
+              <button type="button" class="btn btn-secondaire btn-petit" (click)="changerActivation(r)">
+                {{ r.estActif ? 'Désactiver' : 'Réactiver' }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

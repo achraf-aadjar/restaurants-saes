@@ -1,0 +1,152 @@
+.entete {
+  background: #fff;
+  border-bottom: 1px solid var(--saes-bordure);
+}
+
+.entete-ligne {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.marque {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 36px;
+}
+
+.nav-desktop {
+  display: none;
+  gap: 1.1rem;
+  align-items: center;
+  flex: 1;
+
+  a {
+    text-decoration: none;
+    color: var(--saes-vert);
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.3em 0;
+    border-bottom: 2px solid transparent;
+  }
+
+  a.actif {
+    border-bottom-color: var(--saes-rouge);
+  }
+
+  .separateur {
+    color: var(--saes-bordure);
+  }
+}
+
+.compte {
+  position: relative;
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bouton-compte {
+  background: none;
+  border: none;
+  color: var(--saes-vert);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+}
+
+.role {
+  color: #6b6b5f;
+  font-weight: 400;
+  font-size: 0.85em;
+}
+
+.menu-deroulant {
+  position: absolute;
+  top: 2.2rem;
+  right: 0;
+  background: #fff;
+  border: 1px solid var(--saes-bordure);
+  border-radius: var(--saes-rayon);
+  box-shadow: var(--saes-ombre);
+  display: flex;
+  flex-direction: column;
+  min-width: 170px;
+  overflow: hidden;
+  z-index: 20;
+
+  a,
+  button {
+    text-align: left;
+    padding: 0.6em 0.9em;
+    background: none;
+    border: none;
+    color: var(--saes-vert);
+    font-size: 0.9rem;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  a:hover,
+  button:hover {
+    background: var(--saes-creme);
+  }
+}
+
+.btn-petit {
+  padding: 0.4em 0.85em;
+  font-size: 0.85rem;
+}
+
+.bouton-burger {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: var(--saes-vert);
+}
+
+.nav-mobile {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 1rem 1rem;
+  border-top: 1px solid var(--saes-bordure);
+
+  a,
+  button {
+    text-align: left;
+    padding: 0.6em 0;
+    background: none;
+    border: none;
+    color: var(--saes-vert);
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+}
+
+@media (min-width: 860px) {
+  .nav-desktop,
+  .compte {
+    display: flex;
+  }
+
+  .bouton-burger {
+    display: none;
+  }
+
+  .nav-mobile {
+    display: none;
+  }
+}
