@@ -1,0 +1,87 @@
+<h1>Occupation des tables</h1>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+@if (chargement()) {
+  <p>Chargement…</p>
+} @else if (occupation(); as occ) {
+  <section class="carte" style="margin-bottom: 1.5rem">
+    <h2>Tables</h2>
+    <div class="grille-tables">
+      @for (t of occ.tables; track t.id) {
+        <div class="table-vignette" [class.table-occupee]="t.occupee">
+          <strong>n°{{ t.numero }}</strong>
+          <span>{{ t.capacite }} places</span>
+          <span>{{ t.occupee ? 'Occupée' : 'Libre' }}</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="carte" style="margin-bottom: 1.5rem">
+    <h2>Réservations confirmées du jour</h2>
+    @if (occ.reservationsDuJour.length === 0) {
+      <p>Aucune réservation aujourd'hui.</p>
+    } @else {
+      <table class="table-simple">
+        <thead>
+          <tr>
+            <th>Heure</th>
+            <th>Couverts</th>
+            <th>Tables</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of occ.reservationsDuJour; track r.id) {
+            <tr>
+              <td>{{ r.dateHeure }}</td>
+              <td>{{ r.nombreCouverts }}</td>
+              <td>
+                @for (t of r.tables; track t.numero) {
+                  n°{{ t.numero }}{{ !$last ? ', ' : '' }}
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+}
+
+<section class="carte">
+  <h2>Commandes en attente</h2>
+  @if (commandesEnAttente().length === 0) {
+    <p>Aucune commande en attente.</p>
+  } @else {
+    <div class="liste-commandes">
+      @for (c of commandesEnAttente(); track c.id) {
+        <article class="carte commande">
+          <div class="commande-entete">
+            <span class="badge" [class]="classeBadge(c.statut)">{{ libelles[c.statut] }}</span>
+            <span class="commande-meta">{{ c.type === 'SUR_PLACE' ? 'Table ' + c.tableNumero : 'À emporter' }}</span>
+          </div>
+          <ul class="liste-panier">
+            @for (ligne of c.lignes; track ligne.platId) {
+              <li>
+                <span>{{ ligne.quantite }} × {{ ligne.platNom }}</span>
+                <span>{{ ligne.prixUnitaire * ligne.quantite }} FCFA</span>
+              </li>
+            }
+          </ul>
+          <p class="total-panier">Total : {{ c.montantTotal }} FCFA</p>
+          <button
+            type="button"
+            class="btn btn-secondaire btn-petit"
+            [disabled]="actionEnCours() === c.id"
+            (click)="annuler(c)"
+          >
+            Annuler
+          </button>
+        </article>
+      }
+    </div>
+  }
+</section>

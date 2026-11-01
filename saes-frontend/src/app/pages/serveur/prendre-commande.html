@@ -1,0 +1,76 @@
+<h1>Prendre une commande</h1>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+@if (chargement()) {
+  <p>Chargement…</p>
+} @else {
+  <div class="mise-en-page">
+    <div class="colonne-menu">
+      <section class="carte" style="margin-bottom: 1rem">
+        <div class="champ champ-inline" style="display: inline-flex; margin-right: 1.5rem">
+          <label>Type</label>
+          <select [(ngModel)]="type" name="type">
+            <option value="SUR_PLACE">Sur place</option>
+            <option value="A_EMPORTER">À emporter</option>
+          </select>
+        </div>
+        @if (type === 'SUR_PLACE') {
+          <div class="champ champ-inline" style="display: inline-flex">
+            <label>Table</label>
+            <select [(ngModel)]="tableId" name="table">
+              <option [ngValue]="null">— Choisir —</option>
+              @for (t of tables(); track t.id) {
+                <option [ngValue]="t.id" [disabled]="t.occupee">
+                  n°{{ t.numero }} ({{ t.capacite }} pl.){{ t.occupee ? ' — occupée' : '' }}
+                </option>
+              }
+            </select>
+          </div>
+        }
+      </section>
+
+      <div class="grille-plats">
+        @for (plat of plats(); track plat.id) {
+          <article class="carte plat">
+            <h3>{{ plat.nom }}</h3>
+            <p class="prix">{{ plat.prix }} FCFA</p>
+            @if (quantiteDe(plat) === 0) {
+              <button type="button" class="btn btn-secondaire btn-petit" (click)="ajouter(plat)">Ajouter</button>
+            } @else {
+              <div class="selecteur-quantite">
+                <button type="button" class="btn btn-secondaire btn-petit" (click)="retirer(plat)">−</button>
+                <span>{{ quantiteDe(plat) }}</span>
+                <button type="button" class="btn btn-secondaire btn-petit" (click)="ajouter(plat)">+</button>
+              </div>
+            }
+          </article>
+        }
+      </div>
+    </div>
+
+    <aside class="colonne-panier">
+      <div class="carte panier">
+        <h2>Commande</h2>
+        @if (lignesListe().length === 0) {
+          <p class="panier-vide">Ajoutez des plats.</p>
+        } @else {
+          <ul class="liste-panier">
+            @for (ligne of lignesListe(); track ligne.plat.id) {
+              <li>
+                <span>{{ ligne.quantite }} × {{ ligne.plat.nom }}</span>
+                <span>{{ ligne.plat.prix * ligne.quantite }} FCFA</span>
+              </li>
+            }
+          </ul>
+          <p class="total-panier">Total : {{ total() }} FCFA</p>
+          <button type="button" class="btn btn-primaire" [disabled]="envoiEnCours()" (click)="enregistrer()">
+            {{ envoiEnCours() ? 'Enregistrement…' : 'Enregistrer la commande' }}
+          </button>
+        }
+      </div>
+    </aside>
+  </div>
+}

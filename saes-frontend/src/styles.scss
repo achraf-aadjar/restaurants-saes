@@ -201,6 +201,159 @@ button {
   color: var(--saes-rouge-fonce);
 }
 
+.badge-attente {
+  background: #fff6d9;
+  color: #7a5900;
+}
+
+.liste-commandes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.commande {
+  display: flex;
+  flex-direction: column;
+}
+
+.commande-entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.commande-date {
+  font-size: 0.8rem;
+  color: #6b6b5f;
+}
+
+.commande-meta {
+  font-size: 0.85rem;
+  color: #6b6b5f;
+  margin: 0 0 0.5rem;
+}
+
+/* Mise en page "menu + panier", partagee entre la consultation des menus
+   (client) et la prise de commande (serveur). */
+.grille-plats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.plat h3 {
+  margin-bottom: 0.3rem;
+}
+
+.plat .description {
+  color: #6b6b5f;
+  font-size: 0.85rem;
+  margin: 0 0 0.6rem;
+}
+
+.plat .prix {
+  font-weight: 700;
+  color: var(--saes-rouge);
+  margin: 0 0 0.5rem;
+}
+
+.mise-en-page {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 1.5rem;
+}
+
+.colonne-menu {
+  flex: 1;
+  min-width: 0;
+}
+
+.colonne-panier {
+  width: 100%;
+}
+
+.panier h2 {
+  margin-top: 0;
+}
+
+.panier-vide {
+  color: #6b6b5f;
+  font-size: 0.9rem;
+}
+
+.liste-panier {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+}
+
+.liste-panier li {
+  display: flex;
+  justify-content: space-between;
+}
+
+.total-panier {
+  font-weight: 700;
+  border-top: 1px solid var(--saes-bordure);
+  padding-top: 0.6rem;
+  margin: 0 0 1rem;
+}
+
+.selecteur-quantite {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.selecteur-quantite span {
+  min-width: 1.2em;
+  text-align: center;
+  font-weight: 600;
+}
+
+.grille-tables {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 0.75rem;
+}
+
+.table-vignette {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.75rem;
+  border-radius: var(--saes-rayon);
+  background: #e9f5ee;
+  color: #0f4a2b;
+  font-size: 0.85rem;
+}
+
+.table-vignette.table-occupee {
+  background: #fdeceb;
+  color: var(--saes-rouge-fonce);
+}
+
+@media (min-width: 860px) {
+  .mise-en-page {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .colonne-panier {
+    width: 300px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 1rem;
+  }
+}
+
 .zone-danger {
   border-color: var(--saes-rouge);
   margin-top: 1rem;

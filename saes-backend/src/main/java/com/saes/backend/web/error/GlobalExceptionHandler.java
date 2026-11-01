@@ -17,6 +17,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ex.getStatus()).body(new ErrorResponse(ex.getMessage()));
     }
 
+    @ExceptionHandler(ConflitCommandeException.class)
+    public ResponseEntity<ConflitCommandeResponse> handleConflitCommande(ConflitCommandeException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ConflitCommandeResponse(ex.getMessage(), ex.getCommandeActuelle()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
         String motif = ex.getBindingResult().getFieldErrors().stream()

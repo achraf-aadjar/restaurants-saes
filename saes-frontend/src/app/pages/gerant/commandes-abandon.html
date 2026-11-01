@@ -1,0 +1,52 @@
+<h1>Commandes en préparation / prêtes</h1>
+<p class="commande-meta">
+  Déclarer une commande abandonnée quand elle ne sera pas payée (le client ne s'est pas présenté, par exemple).
+</p>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+@if (chargement()) {
+  <p>Chargement…</p>
+} @else if (commandes().length === 0) {
+  <p>Aucune commande en préparation ou prête.</p>
+} @else {
+  <div class="liste-commandes">
+    @for (c of commandes(); track c.id) {
+      <article class="carte commande">
+        <div class="commande-entete">
+          <span class="badge" [class]="classeBadge(c.statut)">{{ libelles[c.statut] }}</span>
+          <span class="commande-meta">{{ c.type === 'SUR_PLACE' ? 'Table ' + c.tableNumero : 'À emporter' }}</span>
+        </div>
+        <ul class="liste-panier">
+          @for (ligne of c.lignes; track ligne.platId) {
+            <li><span>{{ ligne.quantite }} × {{ ligne.platNom }}</span></li>
+          }
+        </ul>
+        <p class="total-panier">Total : {{ c.montantTotal }} FCFA</p>
+
+        @if (confirmationId() === c.id) {
+          <p class="message-refus">Confirmer l'abandon de cette commande ?</p>
+          <div class="actions-danger">
+            <button
+              type="button"
+              class="btn btn-primaire btn-petit"
+              [disabled]="actionEnCours() === c.id"
+              (click)="declarerAbandonnee(c)"
+            >
+              Oui, abandonner
+            </button>
+            <button type="button" class="btn btn-secondaire btn-petit" (click)="confirmationId.set(null)">
+              Annuler
+            </button>
+          </div>
+        } @else {
+          <button type="button" class="btn btn-secondaire btn-petit" (click)="confirmationId.set(c.id)">
+            Déclarer abandonnée
+          </button>
+        }
+      </article>
+    }
+  </div>
+}
