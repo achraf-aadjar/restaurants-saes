@@ -1,15 +1,19 @@
 package com.saes.backend.service;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.saes.backend.domain.HoraireOuverture;
+import com.saes.backend.domain.JourSemaine;
 import com.saes.backend.domain.Restaurant;
 import com.saes.backend.domain.TableRestaurant;
+import com.saes.backend.repository.CommandeRepository;
+import com.saes.backend.repository.ReservationRepository;
 import com.saes.backend.repository.RestaurantRepository;
 import com.saes.backend.web.dto.HoraireDto;
 import com.saes.backend.web.dto.RestaurantDto;
@@ -31,6 +35,8 @@ import lombok.RequiredArgsConstructor;
 public class AdminRestaurantService {
 
     private final RestaurantRepository restaurantRepository;
+    private final CommandeRepository commandeRepository;
+    private final ReservationRepository reservationRepository;
 
     public List<RestaurantDto> lister() {
         return restaurantRepository.findAll().stream().map(RestaurantDto::from).toList();
@@ -66,10 +72,17 @@ public class AdminRestaurantService {
     private void valider(RestaurantSaveRequest request) {
         long numerosDistincts = request.tables().stream().map(TableDto::numero).distinct().count();
         if (numerosDistincts != request.tables().size()) {
-            throw ApiException.conflict("Deux tables ne peuvent pas avoir le meme numero");
+            throw ApiException.conflict("Deux tables ne peuvent pas avoir le même numéro");
         }
 
-        for (var jour : com.saes.backend.domain.JourSemaine.values()) {
+        for (HoraireDto h : request.horaires()) {
+            if (!h.heureOuverture().isBefore(h.heureFermeture())) {
+                throw ApiException.badRequest(
+                        "Une plage du " + nomDuJour(h.jour()) + " doit finir après son début, le même jour");
+            }
+        }
+
+        for (JourSemaine jour : JourSemaine.values()) {
             List<HoraireDto> plagesDuJour = request.horaires().stream()
                     .filter(h -> h.jour() == jour)
                     .sorted((a, b) -> a.heureOuverture().compareTo(b.heureOuverture()))
@@ -78,7 +91,7 @@ public class AdminRestaurantService {
                 LocalTime finPrecedente = plagesDuJour.get(i - 1).heureFermeture();
                 LocalTime debutSuivante = plagesDuJour.get(i).heureOuverture();
                 if (debutSuivante.isBefore(finPrecedente)) {
-                    throw ApiException.conflict("Deux plages d'un meme jour se chevauchent (" + jour + ")");
+                    throw ApiException.conflict("Deux plages du " + nomDuJour(jour) + " se chevauchent");
                 }
             }
         }
@@ -90,14 +103,30 @@ public class AdminRestaurantService {
         restaurant.setTelephone(request.telephone());
         restaurant.setDureeReservationMinutes(request.dureeReservationMinutes());
 
-        restaurant.getTables().clear();
-        for (TableDto t : request.tables()) {
+        // Les tables sont reconnues par leur numero : on garde celles qui restent
+        // (seule leur capacite change), on retire les autres et on ajoute les
+        // nouvelles. Tout supprimer puis tout recreer echouait : Hibernate insere
+        // avant de supprimer, et une table deja utilisee ne peut pas etre supprimee.
+        Map<Integer, Integer> capacites = new LinkedHashMap<>();
+        request.tables().forEach(t -> capacites.put(t.numero(), t.capacite()));
+
+        for (TableRestaurant table : restaurant.getTables()) {
+            if (!capacites.containsKey(table.getNumero()) && estUtilisee(table)) {
+                throw ApiException.conflict("La table n° " + table.getNumero()
+                        + " a déjà des commandes ou des réservations : elle ne peut pas être retirée");
+            }
+        }
+        restaurant.getTables().removeIf(table -> !capacites.containsKey(table.getNumero()));
+        for (TableRestaurant table : restaurant.getTables()) {
+            table.setCapacite(capacites.remove(table.getNumero()));
+        }
+        capacites.forEach((numero, capacite) -> {
             TableRestaurant table = new TableRestaurant();
             table.setRestaurant(restaurant);
-            table.setNumero(t.numero());
-            table.setCapacite(t.capacite());
+            table.setNumero(numero);
+            table.setCapacite(capacite);
             restaurant.getTables().add(table);
-        }
+        });
 
         restaurant.getHoraires().clear();
         for (HoraireDto h : request.horaires()) {
@@ -108,6 +137,15 @@ public class AdminRestaurantService {
             horaire.setHeureFermeture(h.heureFermeture());
             restaurant.getHoraires().add(horaire);
         }
+    }
+
+    private boolean estUtilisee(TableRestaurant table) {
+        return commandeRepository.existsByTableId(table.getId())
+                || reservationRepository.existsByTablesTableId(table.getId());
+    }
+
+    private static String nomDuJour(JourSemaine jour) {
+        return jour.name().toLowerCase();
     }
 
     private Restaurant trouver(Long id) {

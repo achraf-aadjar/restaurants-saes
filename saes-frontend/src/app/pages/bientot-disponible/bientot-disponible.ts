@@ -9,7 +9,7 @@ import { Component, Input } from '@angular/core';
   template: `
     <section class="carte">
       <h1>{{ titre }}</h1>
-      <p>Cette fonction fait partie du lot 1 et n'est pas encore developpee.</p>
+      <p>Cette fonction fait partie du lot 1 et n'est pas encore développée.</p>
     </section>
   `,
 })

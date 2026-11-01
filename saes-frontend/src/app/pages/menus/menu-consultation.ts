@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 
 import { CategoriePlat, MenuDto, PlatResume, RestaurantSummary } from '../../core/models';
@@ -18,12 +19,27 @@ interface GroupeCategorie {
   plats: PlatResume[];
 }
 
+interface MenuAffiche {
+  menu: MenuDto;
+  groupes: GroupeCategorie[];
+}
+
+function grouperParCategorie(plats: PlatResume[]): GroupeCategorie[] {
+  return ORDRE_CATEGORIES.map((categorie) => ({
+    categorie,
+    libelle: LIBELLES_CATEGORIES[categorie],
+    plats: plats.filter((plat) => plat.categorie === categorie),
+  })).filter((groupe) => groupe.plats.length > 0);
+}
+
 /**
  * Consulter les menus (cahier des charges §4.2) : accessible a toute
- * personne, meme sans compte.
+ * personne, meme sans compte. Chaque menu en vigueur est affiche avec son
+ * nom, ses dates et ses plats actifs, ranges par categorie.
  */
 @Component({
   selector: 'app-menu-consultation',
+  imports: [DatePipe],
   templateUrl: './menu-consultation.html',
   styleUrl: './menu-consultation.scss',
 })
@@ -31,28 +47,14 @@ export class MenuConsultation {
   private readonly menuService = inject(MenuService);
 
   protected readonly restaurants = signal<RestaurantSummary[]>([]);
-  protected readonly restaurantSelectionne = signal<RestaurantSummary | null>(null);
+  protected readonly restaurantSelectionne = this.menuService.restaurantConsulte;
   protected readonly menus = signal<MenuDto[]>([]);
   protected readonly chargement = signal(false);
   protected readonly erreur = signal<string | null>(null);
 
-  protected readonly groupes = computed<GroupeCategorie[]>(() => {
-    const platsParCategorie = new Map<CategoriePlat, PlatResume[]>();
-    for (const menu of this.menus()) {
-      for (const plat of menu.plats) {
-        const liste = platsParCategorie.get(plat.categorie) ?? [];
-        if (!liste.some((p) => p.id === plat.id)) {
-          liste.push(plat);
-        }
-        platsParCategorie.set(plat.categorie, liste);
-      }
-    }
-    return ORDRE_CATEGORIES.filter((c) => platsParCategorie.has(c)).map((categorie) => ({
-      categorie,
-      libelle: LIBELLES_CATEGORIES[categorie],
-      plats: platsParCategorie.get(categorie)!,
-    }));
-  });
+  protected readonly menusAffiches = computed<MenuAffiche[]>(() =>
+    this.menus().map((menu) => ({ menu, groupes: grouperParCategorie(menu.plats) })),
+  );
 
   constructor() {
     this.chargement.set(true);
