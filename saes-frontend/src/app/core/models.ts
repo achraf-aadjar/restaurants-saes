@@ -3,13 +3,7 @@ export type Role = 'CLIENT' | 'SERVEUR' | 'CUISINIER' | 'CAISSIER' | 'GERANT' | 
 export type CategoriePlat = 'ENTREE' | 'PLAT_PRINCIPAL' | 'DESSERT' | 'BOISSON';
 
 export type JourSemaine =
-  | 'LUNDI'
-  | 'MARDI'
-  | 'MERCREDI'
-  | 'JEUDI'
-  | 'VENDREDI'
-  | 'SAMEDI'
-  | 'DIMANCHE';
+  'LUNDI' | 'MARDI' | 'MERCREDI' | 'JEUDI' | 'VENDREDI' | 'SAMEDI' | 'DIMANCHE';
 
 export interface Utilisateur {
   id: number;
@@ -46,6 +40,7 @@ export interface CompteUpdateRequest {
   prenom: string;
   email: string;
   telephone?: string;
+  motDePasseActuel?: string;
   nouveauMotDePasse?: string;
 }
 
@@ -125,4 +120,6 @@ export const JOURS_SEMAINE: JourSemaine[] = [
   'DIMANCHE',
 ];
 
-export const ROLES: Role[] = ['SERVEUR', 'CUISINIER', 'CAISSIER', 'GERANT'];
+export const ROLES_PERSONNEL: Role[] = ['SERVEUR', 'CUISINIER', 'CAISSIER', 'GERANT'];
+
+export const TOUS_LES_ROLES: Role[] = ['CLIENT', ...ROLES_PERSONNEL, 'ADMINISTRATEUR'];

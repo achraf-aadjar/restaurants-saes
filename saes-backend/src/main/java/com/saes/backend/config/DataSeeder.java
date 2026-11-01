@@ -79,7 +79,7 @@ public class DataSeeder {
 
             Restaurant restaurant = new Restaurant();
             restaurant.setNom("Restaurant de l'EPT");
-            restaurant.setAdresse("Ecole Polytechnique de Thies, Thies, Senegal");
+            restaurant.setAdresse("École polytechnique de Thiès, Thiès, Sénégal");
             restaurant.setTelephone("+221 33 951 00 00");
             restaurant.setDureeReservationMinutes(90);
             restaurant.setEstActif(true);
@@ -118,7 +118,7 @@ public class DataSeeder {
                     "Riz", ingredient(restaurant, "Riz", Unite.KILOGRAMME, 5, 30),
                     "Poisson", ingredient(restaurant, "Poisson", Unite.KILOGRAMME, 3, 20),
                     "Poulet", ingredient(restaurant, "Poulet", Unite.KILOGRAMME, 3, 20),
-                    "Legumes", ingredient(restaurant, "Legumes", Unite.KILOGRAMME, 4, 25),
+                    "Legumes", ingredient(restaurant, "Légumes", Unite.KILOGRAMME, 4, 25),
                     "Mil", ingredient(restaurant, "Mil", Unite.KILOGRAMME, 2, 10),
                     "Bissap", ingredient(restaurant, "Fleurs de bissap", Unite.GRAMME, 200, 2000),
                     "Bouye", ingredient(restaurant, "Pulpe de bouye", Unite.GRAMME, 200, 2000));
@@ -132,7 +132,7 @@ public class DataSeeder {
                 mouvementStockRepository.save(entree);
             }
 
-            Plat thieboudienne = plat(restaurant, "Thieboudienne", "Riz au poisson, legumes et sauce tomate",
+            Plat thieboudienne = plat(restaurant, "Thiéboudienne", "Riz au poisson, légumes et sauce tomate",
                     2500, CategoriePlat.PLAT_PRINCIPAL,
                     recette(ingredients.get("Riz"), new BigDecimal("0.300")),
                     recette(ingredients.get("Poisson"), new BigDecimal("0.250")),
@@ -141,17 +141,17 @@ public class DataSeeder {
                     2000, CategoriePlat.PLAT_PRINCIPAL,
                     recette(ingredients.get("Poulet"), new BigDecimal("0.300")),
                     recette(ingredients.get("Riz"), new BigDecimal("0.250")));
-            Plat mafe = plat(restaurant, "Mafé", "Viande et legumes dans une sauce a l'arachide",
+            Plat mafe = plat(restaurant, "Mafé", "Viande et légumes dans une sauce à l'arachide",
                     2000, CategoriePlat.PLAT_PRINCIPAL,
                     recette(ingredients.get("Poulet"), new BigDecimal("0.250")),
                     recette(ingredients.get("Riz"), new BigDecimal("0.250")));
-            Plat thiakry = plat(restaurant, "Thiakry", "Couscous de mil au lait caille et au sucre",
+            Plat thiakry = plat(restaurant, "Thiakry", "Couscous de mil au lait caillé et au sucre",
                     700, CategoriePlat.DESSERT,
                     recette(ingredients.get("Mil"), new BigDecimal("0.150")));
-            Plat jusDeBissap = plat(restaurant, "Jus de bissap", "Boisson rafraichissante a l'hibiscus",
+            Plat jusDeBissap = plat(restaurant, "Jus de bissap", "Boisson rafraîchissante à l'hibiscus",
                     500, CategoriePlat.BOISSON,
                     recette(ingredients.get("Bissap"), new BigDecimal("30")));
-            Plat jusDeBouye = plat(restaurant, "Jus de bouye", "Boisson a la pulpe de fruit du baobab",
+            Plat jusDeBouye = plat(restaurant, "Jus de bouye", "Boisson à la pulpe de fruit du baobab",
                     500, CategoriePlat.BOISSON,
                     recette(ingredients.get("Bouye"), new BigDecimal("30")));
             for (Plat p : List.of(thieboudienne, yassaPoulet, mafe, thiakry, jusDeBissap, jusDeBouye)) {

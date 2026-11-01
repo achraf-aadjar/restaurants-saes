@@ -41,6 +41,18 @@
       />
     </div>
 
+    <div class="champ">
+      <label for="motDePasseActuel">Mot de passe actuel (obligatoire pour en changer)</label>
+      <input
+        id="motDePasseActuel"
+        name="motDePasseActuel"
+        type="password"
+        [required]="!!nouveauMotDePasse"
+        [(ngModel)]="motDePasseActuel"
+        autocomplete="current-password"
+      />
+    </div>
+
     <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enCours()">
       {{ enCours() ? 'Enregistrement…' : 'Enregistrer' }}
     </button>
@@ -57,10 +69,19 @@
     } @else {
       <p>Cette action est définitive. Confirmez-vous la suppression de votre compte ?</p>
       <div class="actions-danger">
-        <button type="button" class="btn btn-primaire" [disabled]="enCours()" (click)="supprimerCompte()">
+        <button
+          type="button"
+          class="btn btn-primaire"
+          [disabled]="enCours()"
+          (click)="supprimerCompte()"
+        >
           Oui, supprimer
         </button>
-        <button type="button" class="btn btn-secondaire" (click)="confirmationSuppression.set(false)">
+        <button
+          type="button"
+          class="btn btn-secondaire"
+          (click)="confirmationSuppression.set(false)"
+        >
           Annuler
         </button>
       </div>

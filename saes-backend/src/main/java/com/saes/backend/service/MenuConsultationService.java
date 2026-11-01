@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.saes.backend.domain.Restaurant;
 import com.saes.backend.repository.MenuRepository;
 import com.saes.backend.repository.RestaurantRepository;
 import com.saes.backend.web.dto.MenuDto;
@@ -28,7 +29,7 @@ public class MenuConsultationService {
 
     public List<RestaurantSummaryDto> listerRestaurantsActifs() {
         return restaurantRepository.findAll().stream()
-                .filter(com.saes.backend.domain.Restaurant::isEstActif)
+                .filter(Restaurant::isEstActif)
                 .map(RestaurantSummaryDto::from)
                 .toList();
     }

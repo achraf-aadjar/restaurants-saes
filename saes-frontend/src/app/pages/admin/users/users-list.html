@@ -5,7 +5,11 @@
 }
 
 <section class="carte">
-  <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert.set(!formulaireOuvert())">
+  <button
+    type="button"
+    class="btn btn-secondaire"
+    (click)="formulaireOuvert.set(!formulaireOuvert())"
+  >
     {{ formulaireOuvert() ? 'Annuler' : 'Créer un compte pour le personnel' }}
   </button>
 
@@ -54,12 +58,12 @@
       <div class="champ">
         <label>Rôles</label>
         <div class="roles-cases">
-          @for (role of roles; track role) {
+          @for (role of rolesPersonnel; track role) {
             <label class="case-role">
               <input
                 type="checkbox"
                 [checked]="rolesSelectionnes.has(role)"
-                (change)="basculerRole(role)"
+                (change)="basculerRole(rolesSelectionnes, role)"
               />
               {{ role }}
             </label>
@@ -73,6 +77,50 @@
     </form>
   }
 </section>
+
+@if (enEdition(); as u) {
+  <section class="carte" style="margin-top: 1rem">
+    <h2>Rôles de {{ u.prenom }} {{ u.nom }}</h2>
+    @if (erreurEdition(); as e) {
+      <p class="message-refus">{{ e }}</p>
+    }
+    <form (ngSubmit)="enregistrerRoles()" class="formulaire-creation">
+      <div class="champ">
+        <div class="roles-cases">
+          @for (role of tousLesRoles; track role) {
+            <label class="case-role">
+              <input
+                type="checkbox"
+                [checked]="rolesEdition.has(role)"
+                (change)="basculerRole(rolesEdition, role)"
+              />
+              {{ role }}
+            </label>
+          }
+        </div>
+      </div>
+
+      @if (demandeRestaurant()) {
+        <div class="champ">
+          <label for="restaurantEdition">Restaurant</label>
+          <select id="restaurantEdition" name="restaurantEdition" [(ngModel)]="restaurantEdition">
+            <option [ngValue]="null">— Choisir —</option>
+            @for (r of restaurants(); track r.id) {
+              <option [ngValue]="r.id">{{ r.nom }}</option>
+            }
+          </select>
+        </div>
+      }
+
+      <div class="actions-colonne">
+        <button type="submit" class="btn btn-primaire">Enregistrer</button>
+        <button type="button" class="btn btn-secondaire" (click)="enEdition.set(null)">
+          Annuler
+        </button>
+      </div>
+    </form>
+  </section>
+}
 
 <section class="carte" style="margin-top: 1rem">
   @if (chargement()) {
@@ -97,12 +145,27 @@
             <td>{{ u.restaurantNom ?? '—' }}</td>
             <td>{{ u.roles.join(', ') }}</td>
             <td>
-              <span class="badge" [class.badge-actif]="u.estActif" [class.badge-inactif]="!u.estActif">
+              <span
+                class="badge"
+                [class.badge-actif]="u.estActif"
+                [class.badge-inactif]="!u.estActif"
+              >
                 {{ u.estActif ? 'Actif' : 'Désactivé' }}
               </span>
             </td>
-            <td>
-              <button type="button" class="btn btn-secondaire btn-petit" (click)="changerActivation(u)">
+            <td class="actions-colonne">
+              <button
+                type="button"
+                class="btn btn-secondaire btn-petit"
+                (click)="ouvrirEditionRoles(u)"
+              >
+                Rôles
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondaire btn-petit"
+                (click)="changerActivation(u)"
+              >
                 {{ u.estActif ? 'Désactiver' : 'Réactiver' }}
               </button>
             </td>
