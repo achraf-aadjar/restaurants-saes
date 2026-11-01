@@ -21,6 +21,27 @@
   height: 36px;
 }
 
+/* Sur telephone le logo complet est trop petit a lire : on n'affiche que le S
+   (design/logo/icon.svg), comme demande dans organisation_travail_sujet17.pdf
+   section "A regler en codant". */
+.logo-icone {
+  display: block;
+}
+
+.logo-complet {
+  display: none;
+}
+
+@media (min-width: 480px) {
+  .logo-icone {
+    display: none;
+  }
+
+  .logo-complet {
+    display: block;
+  }
+}
+
 .nav-desktop {
   display: none;
   gap: 1.1rem;

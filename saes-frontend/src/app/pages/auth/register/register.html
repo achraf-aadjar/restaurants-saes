@@ -39,6 +39,11 @@
       />
     </div>
 
+    <p class="mention-confidentialite">
+      En créant un compte, vous acceptez notre
+      <a routerLink="/confidentialite">politique de confidentialité</a>.
+    </p>
+
     <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enCours()">
       {{ enCours() ? 'Création…' : "Créer mon compte" }}
     </button>
