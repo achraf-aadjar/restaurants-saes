@@ -115,6 +115,91 @@ export interface RestaurantSaveRequest {
   horaires: HoraireDto[];
 }
 
+export type TypeCommande = 'SUR_PLACE' | 'A_EMPORTER';
+
+export type StatutCommande = 'EN_ATTENTE' | 'EN_PREPARATION' | 'PRETE' | 'PAYEE' | 'ANNULEE' | 'ABANDONNEE';
+
+export type StatutReservation = 'CONFIRMEE' | 'ANNULEE';
+
+export interface LigneDemandeeDto {
+  platId: number;
+  quantite: number;
+}
+
+export interface LigneCommandeDto {
+  platId: number;
+  platNom: string;
+  quantite: number;
+  prixUnitaire: number;
+}
+
+export interface CommandeDto {
+  id: number;
+  restaurantId: number;
+  tableId: number | null;
+  tableNumero: number | null;
+  type: TypeCommande;
+  statut: StatutCommande;
+  dateHeure: string;
+  version: number;
+  montantTotal: number;
+  lignes: LigneCommandeDto[];
+}
+
+export interface PasserCommandeRequest {
+  restaurantId: number;
+  lignes: LigneDemandeeDto[];
+}
+
+export interface PrendreCommandeRequest {
+  type: TypeCommande;
+  tableId?: number | null;
+  lignes: LigneDemandeeDto[];
+}
+
+export interface ModifierCommandeRequest {
+  lignes: LigneDemandeeDto[];
+  version: number;
+}
+
+export interface ActionAvecVersionRequest {
+  version: number;
+}
+
+export interface ConflitCommandeResponse {
+  motif: string;
+  commandeActuelle: CommandeDto;
+}
+
+export interface ReservationDto {
+  id: number;
+  restaurantId: number;
+  restaurantNom: string;
+  dateHeure: string;
+  dureeMinutes: number;
+  nombreCouverts: number;
+  statut: StatutReservation;
+  tables: TableDto[];
+}
+
+export interface FaireReservationRequest {
+  restaurantId: number;
+  dateHeure: string;
+  nombreCouverts: number;
+}
+
+export interface TableOccupationDto {
+  id: number;
+  numero: number;
+  capacite: number;
+  occupee: boolean;
+}
+
+export interface OccupationRestaurantDto {
+  tables: TableOccupationDto[];
+  reservationsDuJour: ReservationDto[];
+}
+
 export const JOURS_SEMAINE: JourSemaine[] = [
   'LUNDI',
   'MARDI',

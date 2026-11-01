@@ -1,6 +1,6 @@
 package com.saes.backend.domain;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +41,7 @@ public class Reservation {
     private Utilisateur client;
 
     @Column(name = "date_heure", nullable = false)
-    private Instant dateHeure;
+    private LocalDateTime dateHeure;
 
     @Column(name = "duree_minutes", nullable = false)
     private Integer dureeMinutes;

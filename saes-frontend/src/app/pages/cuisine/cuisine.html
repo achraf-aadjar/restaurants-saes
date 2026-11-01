@@ -1,0 +1,49 @@
+<h1>Préparation des commandes</h1>
+<p class="commande-meta">Par ordre d'arrivée, la plus ancienne en premier.</p>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+@if (chargement()) {
+  <p>Chargement…</p>
+} @else if (commandes().length === 0) {
+  <p>Aucune commande à préparer.</p>
+} @else {
+  <div class="liste-commandes">
+    @for (c of commandes(); track c.id) {
+      <article class="carte commande">
+        <div class="commande-entete">
+          <span class="badge" [class]="classeBadge(c.statut)">{{ libelles[c.statut] }}</span>
+          <span class="commande-meta">{{ c.type === 'SUR_PLACE' ? 'Table ' + c.tableNumero : 'À emporter' }}</span>
+        </div>
+        <ul class="liste-panier">
+          @for (ligne of c.lignes; track ligne.platId) {
+            <li>
+              <span>{{ ligne.quantite }} × {{ ligne.platNom }}</span>
+            </li>
+          }
+        </ul>
+        @if (c.statut === 'EN_ATTENTE') {
+          <button
+            type="button"
+            class="btn btn-primaire btn-petit"
+            [disabled]="actionEnCours() === c.id"
+            (click)="demarrer(c)"
+          >
+            Démarrer la préparation
+          </button>
+        } @else if (c.statut === 'EN_PREPARATION') {
+          <button
+            type="button"
+            class="btn btn-primaire btn-petit"
+            [disabled]="actionEnCours() === c.id"
+            (click)="terminer(c)"
+          >
+            Terminer la préparation
+          </button>
+        }
+      </article>
+    }
+  </div>
+}

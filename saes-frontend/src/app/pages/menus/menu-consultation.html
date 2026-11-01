@@ -28,27 +28,81 @@
   </section>
 }
 
-@if (chargement()) {
-  <p>Chargement du menu…</p>
-} @else if (restaurants().length === 0) {
-  <p>Aucun restaurant n'est actif pour le moment.</p>
-} @else if (groupes().length === 0) {
-  <p>Aucun menu en vigueur pour ce restaurant.</p>
-} @else {
-  @for (groupe of groupes(); track groupe.categorie) {
-    <section class="groupe-categorie">
-      <h2>{{ groupe.libelle }}</h2>
-      <div class="grille-plats">
-        @for (plat of groupe.plats; track plat.id) {
-          <article class="carte plat">
-            <h3>{{ plat.nom }}</h3>
-            @if (plat.description) {
-              <p class="description">{{ plat.description }}</p>
+<div class="mise-en-page">
+  <div class="colonne-menu">
+    @if (chargement()) {
+      <p>Chargement du menu…</p>
+    } @else if (restaurants().length === 0) {
+      <p>Aucun restaurant n'est actif pour le moment.</p>
+    } @else if (groupes().length === 0) {
+      <p>Aucun menu en vigueur pour ce restaurant.</p>
+    } @else {
+      @for (groupe of groupes(); track groupe.categorie) {
+        <section class="groupe-categorie">
+          <h2>{{ groupe.libelle }}</h2>
+          <div class="grille-plats">
+            @for (plat of groupe.plats; track plat.id) {
+              <article class="carte plat">
+                <h3>{{ plat.nom }}</h3>
+                @if (plat.description) {
+                  <p class="description">{{ plat.description }}</p>
+                }
+                <p class="prix">{{ plat.prix }} FCFA</p>
+
+                @if (auth.aLeRole('CLIENT')) {
+                  @if (quantiteDans(plat) === 0) {
+                    <button type="button" class="btn btn-secondaire btn-petit" (click)="ajouter(plat)">
+                      Ajouter
+                    </button>
+                  } @else {
+                    <div class="selecteur-quantite">
+                      <button type="button" class="btn btn-secondaire btn-petit" (click)="retirer(plat)">−</button>
+                      <span>{{ quantiteDans(plat) }}</span>
+                      <button type="button" class="btn btn-secondaire btn-petit" (click)="ajouter(plat)">+</button>
+                    </div>
+                  }
+                }
+              </article>
             }
-            <p class="prix">{{ plat.prix }} FCFA</p>
-          </article>
+          </div>
+        </section>
+      }
+    }
+  </div>
+
+  @if (auth.aLeRole('CLIENT')) {
+    <aside class="colonne-panier">
+      <div class="carte panier">
+        <h2>Votre commande</h2>
+
+        @if (commandeConfirmee()) {
+          <p class="message-ok">Commande enregistrée, en attente !</p>
+          <button type="button" class="btn btn-secondaire" (click)="voirMesCommandes()">Voir mes commandes</button>
+        } @else if (lignesPanier().length === 0) {
+          <p class="panier-vide">Ajoutez des plats pour commander à emporter.</p>
+        } @else {
+          @if (erreurCommande(); as e) {
+            <p class="message-refus">{{ e }}</p>
+          }
+          <ul class="liste-panier">
+            @for (ligne of lignesPanier(); track ligne.plat.id) {
+              <li>
+                <span>{{ ligne.quantite }} × {{ ligne.plat.nom }}</span>
+                <span>{{ ligne.plat.prix * ligne.quantite }} FCFA</span>
+              </li>
+            }
+          </ul>
+          <p class="total-panier">Total : {{ totalPanier() }} FCFA</p>
+          <button
+            type="button"
+            class="btn btn-primaire"
+            [disabled]="envoiEnCours()"
+            (click)="passerCommande()"
+          >
+            {{ envoiEnCours() ? 'Envoi…' : 'Passer la commande' }}
+          </button>
         }
       </div>
-    </section>
+    </aside>
   }
-}
+</div>

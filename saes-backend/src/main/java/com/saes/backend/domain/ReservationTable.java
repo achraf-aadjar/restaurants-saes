@@ -1,6 +1,6 @@
 package com.saes.backend.domain;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 import com.saes.backend.domain.id.ReservationTableId;
 
@@ -42,10 +42,10 @@ public class ReservationTable {
     private TableRestaurant table;
 
     @Column(name = "heure_debut", nullable = false)
-    private Instant heureDebut;
+    private LocalDateTime heureDebut;
 
     @Column(name = "heure_fin", nullable = false)
-    private Instant heureFin;
+    private LocalDateTime heureFin;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 15)
