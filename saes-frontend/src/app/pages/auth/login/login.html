@@ -1,35 +1,67 @@
-<section class="carte formulaire-etroit">
-  <h1>Connexion</h1>
+<div class="page-auth">
+  <aside class="auth-panneau">
+    <img src="assets/logo/icon.svg" alt="Restaurants du SAES" class="auth-icone" />
+    <h2>Content de te revoir</h2>
+    <p>
+      Connecte-toi pour commander en ligne, réserver une table et suivre tes commandes dans les
+      restaurants du SAES de Thiès.
+    </p>
+  </aside>
 
-  @if (erreur(); as e) {
-    <p class="message-refus">{{ e }}</p>
-  }
+  <section class="carte formulaire-etroit">
+    <h1>Connexion</h1>
+    <p class="auth-soustitre">Entre ton adresse e-mail et ton mot de passe.</p>
 
-  <form (ngSubmit)="valider()" #f="ngForm">
-    <div class="champ">
-      <label for="email">Adresse e-mail</label>
-      <input id="email" name="email" type="email" required [(ngModel)]="email" autocomplete="email" />
+    @if (erreur(); as e) {
+      <p class="message-refus">{{ e }}</p>
+    }
+
+    <form (ngSubmit)="valider()" #f="ngForm">
+      <div class="champ">
+        <label for="email">Adresse e-mail</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          required
+          [(ngModel)]="email"
+          autocomplete="email"
+          autofocus
+        />
+      </div>
+
+      <div class="champ">
+        <label for="motDePasse">Mot de passe</label>
+        <div class="champ-mot-de-passe">
+          <input
+            id="motDePasse"
+            name="motDePasse"
+            [type]="motDePasseVisible() ? 'text' : 'password'"
+            required
+            [(ngModel)]="motDePasse"
+            autocomplete="current-password"
+          />
+          <button
+            type="button"
+            class="bouton-oeil"
+            (click)="motDePasseVisible.set(!motDePasseVisible())"
+            [attr.aria-label]="motDePasseVisible() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+          >
+            {{ motDePasseVisible() ? 'Masquer' : 'Afficher' }}
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enCours()">
+        {{ enCours() ? 'Connexion…' : 'Se connecter' }}
+      </button>
+    </form>
+
+    <div class="separateur-ou">ou</div>
+    <div class="connexion-google">
+      <app-google-sign-in-button (jeton)="connecterAvecGoogle($event)" />
     </div>
 
-    <div class="champ">
-      <label for="motDePasse">Mot de passe</label>
-      <input
-        id="motDePasse"
-        name="motDePasse"
-        type="password"
-        required
-        [(ngModel)]="motDePasse"
-        autocomplete="current-password"
-      />
-    </div>
-
-    <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enCours()">
-      {{ enCours() ? 'Connexion…' : 'Se connecter' }}
-    </button>
-  </form>
-
-  <div class="separateur-ou">ou</div>
-  <app-google-sign-in-button (jeton)="connecterAvecGoogle($event)" />
-
-  <p class="lien-bas">Pas encore de compte ? <a routerLink="/inscription">S'inscrire</a></p>
-</section>
+    <p class="lien-bas">Pas encore de compte ? <a routerLink="/inscription">S'inscrire</a></p>
+  </section>
+</div>

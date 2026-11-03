@@ -1,63 +1,87 @@
-<section class="carte formulaire-etroit">
-  <h1>Créer un compte</h1>
-
-  @if (erreur(); as e) {
-    <p class="message-refus">{{ e }}</p>
-  }
-
-  <form (ngSubmit)="valider()" #f="ngForm">
-    <div class="champ">
-      <label for="prenom">Prénom</label>
-      <input id="prenom" name="prenom" type="text" required [(ngModel)]="prenom" />
-    </div>
-
-    <div class="champ">
-      <label for="nom">Nom</label>
-      <input id="nom" name="nom" type="text" required [(ngModel)]="nom" />
-    </div>
-
-    <div class="champ">
-      <label for="email">Adresse e-mail</label>
-      <input
-        id="email"
-        name="email"
-        type="email"
-        required
-        [(ngModel)]="email"
-        autocomplete="email"
-      />
-    </div>
-
-    <div class="champ">
-      <label for="telephone">Téléphone (facultatif)</label>
-      <input id="telephone" name="telephone" type="tel" [(ngModel)]="telephone" />
-    </div>
-
-    <div class="champ">
-      <label for="motDePasse">Mot de passe (8 caractères minimum)</label>
-      <input
-        id="motDePasse"
-        name="motDePasse"
-        type="password"
-        required
-        minlength="8"
-        [(ngModel)]="motDePasse"
-        autocomplete="new-password"
-      />
-    </div>
-
-    <p class="lien-bas">
-      Vos informations servent uniquement au fonctionnement de la plateforme : voir
-      <a routerLink="/confidentialite">Confidentialité</a>.
+<div class="page-auth">
+  <aside class="auth-panneau">
+    <img src="assets/logo/icon.svg" alt="Restaurants du SAES" class="auth-icone" />
+    <h2>Bienvenue</h2>
+    <p>
+      Crée ton compte pour commander en ligne, réserver une table et suivre tes commandes dans les
+      restaurants du SAES de Thiès.
     </p>
+  </aside>
 
-    <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enCours()">
-      {{ enCours() ? 'Création…' : 'Créer mon compte' }}
-    </button>
-  </form>
+  <section class="carte formulaire-etroit">
+    <h1>Créer un compte</h1>
+    <p class="auth-soustitre">Quelques informations suffisent.</p>
 
-  <div class="separateur-ou">ou</div>
-  <app-google-sign-in-button (jeton)="inscrireAvecGoogle($event)" />
+    @if (erreur(); as e) {
+      <p class="message-refus">{{ e }}</p>
+    }
 
-  <p class="lien-bas">Déjà un compte ? <a routerLink="/connexion">Se connecter</a></p>
-</section>
+    <form (ngSubmit)="valider()" #f="ngForm">
+      <div class="champ">
+        <label for="prenom">Prénom</label>
+        <input id="prenom" name="prenom" type="text" required [(ngModel)]="prenom" autofocus />
+      </div>
+
+      <div class="champ">
+        <label for="nom">Nom</label>
+        <input id="nom" name="nom" type="text" required [(ngModel)]="nom" />
+      </div>
+
+      <div class="champ">
+        <label for="email">Adresse e-mail</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          required
+          [(ngModel)]="email"
+          autocomplete="email"
+        />
+      </div>
+
+      <div class="champ">
+        <label for="telephone">Téléphone (facultatif)</label>
+        <input id="telephone" name="telephone" type="tel" [(ngModel)]="telephone" />
+      </div>
+
+      <div class="champ">
+        <label for="motDePasse">Mot de passe (8 caractères minimum)</label>
+        <div class="champ-mot-de-passe">
+          <input
+            id="motDePasse"
+            name="motDePasse"
+            [type]="motDePasseVisible() ? 'text' : 'password'"
+            required
+            minlength="8"
+            [(ngModel)]="motDePasse"
+            autocomplete="new-password"
+          />
+          <button
+            type="button"
+            class="bouton-oeil"
+            (click)="motDePasseVisible.set(!motDePasseVisible())"
+            [attr.aria-label]="motDePasseVisible() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+          >
+            {{ motDePasseVisible() ? 'Masquer' : 'Afficher' }}
+          </button>
+        </div>
+      </div>
+
+      <p class="lien-bas">
+        Vos informations servent uniquement au fonctionnement de la plateforme : voir
+        <a routerLink="/confidentialite">Confidentialité</a>.
+      </p>
+
+      <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enCours()">
+        {{ enCours() ? 'Création…' : 'Créer mon compte' }}
+      </button>
+    </form>
+
+    <div class="separateur-ou">ou</div>
+    <div class="connexion-google">
+      <app-google-sign-in-button (jeton)="inscrireAvecGoogle($event)" />
+    </div>
+
+    <p class="lien-bas">Déjà un compte ? <a routerLink="/connexion">Se connecter</a></p>
+  </section>
+</div>

@@ -23,6 +23,7 @@ export class Login {
   protected motDePasse = '';
   protected readonly enCours = signal(false);
   protected readonly erreur = signal<string | null>(null);
+  protected readonly motDePasseVisible = signal(false);
 
   protected valider(): void {
     this.erreur.set(null);
