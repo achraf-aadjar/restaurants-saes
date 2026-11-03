@@ -93,6 +93,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/serveur/**").hasRole("SERVEUR")
                         .requestMatchers("/api/cuisine/**").hasRole("CUISINIER")
                         .requestMatchers("/api/gerant/**").hasRole("GERANT")
+                        .requestMatchers("/api/caissier/**").hasRole("CAISSIER")
                         .anyRequest().authenticated())
                 // Sans jeton valide : 401 (non connecte), et non 403 (connecte mais
                 // sans le bon role). Le site s'en sert pour deconnecter.

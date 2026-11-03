@@ -1,0 +1,119 @@
+<h1>Stocks</h1>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+<section class="carte">
+  <button
+    type="button"
+    class="btn btn-secondaire"
+    (click)="formulaireOuvert() ? formulaireOuvert.set(false) : ouvrirCreation()"
+  >
+    {{ formulaireOuvert() ? 'Annuler' : 'Créer un ingrédient' }}
+  </button>
+
+  @if (formulaireOuvert()) {
+    <form (ngSubmit)="enregistrer()" #f="ngForm" class="formulaire-creation">
+      <h2>{{ idEnEdition ? "Modifier l'ingrédient" : 'Nouvel ingrédient' }}</h2>
+
+      @if (erreurFormulaire(); as e) {
+        <p class="message-refus">{{ e }}</p>
+      }
+
+      <div class="champ">
+        <label for="nomI">Nom</label>
+        <input id="nomI" name="nomI" type="text" required [(ngModel)]="nom" />
+      </div>
+      <div class="champ">
+        <label for="uniteI">Unité</label>
+        <select id="uniteI" name="uniteI" required [(ngModel)]="unite">
+          @for (u of unites; track u) {
+            <option [ngValue]="u">{{ u }}</option>
+          }
+        </select>
+      </div>
+      <div class="champ">
+        <label for="seuilI">Seuil d'alerte</label>
+        <input id="seuilI" name="seuilI" type="number" min="0" step="0.001" required [(ngModel)]="seuilAlerte" />
+      </div>
+      <div class="champ">
+        <label for="cibleI">Niveau cible</label>
+        <input id="cibleI" name="cibleI" type="number" min="0" step="0.001" required [(ngModel)]="niveauCible" />
+      </div>
+
+      <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enregistrementEnCours()">
+        {{ enregistrementEnCours() ? 'Enregistrement…' : 'Enregistrer' }}
+      </button>
+    </form>
+  }
+</section>
+
+<section class="carte" style="margin-top: 1rem">
+  @if (chargement()) {
+    <p>Chargement…</p>
+  } @else {
+    <table class="table-simple">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Unité</th>
+          <th>Stock</th>
+          <th>Seuil d'alerte</th>
+          <th>Niveau cible</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (i of ingredients(); track i.id) {
+          <tr>
+            <td>
+              {{ i.nom }}
+              @if (i.alerte) {
+                <span class="badge badge-inactif">Alerte</span>
+              }
+            </td>
+            <td>{{ i.unite }}</td>
+            <td>{{ i.stock }}</td>
+            <td>{{ i.seuilAlerte }}</td>
+            <td>{{ i.niveauCible }}</td>
+            <td class="actions-colonne">
+              <button type="button" class="btn btn-secondaire btn-petit" (click)="ouvrirEdition(i)">
+                Modifier
+              </button>
+              <button type="button" class="btn btn-secondaire btn-petit" (click)="ouvrirMouvement(i)">
+                Mouvement
+              </button>
+            </td>
+            <td>
+              @if (mouvementIngredientId() === i.id) {
+                <form (ngSubmit)="enregistrerMouvement()" class="ligne-dynamique">
+                  <select [(ngModel)]="typeMouvement" name="typeMouvement">
+                    <option value="ENTREE">Entrée</option>
+                    <option value="SORTIE">Sortie</option>
+                  </select>
+                  <input
+                    type="number"
+                    min="0.001"
+                    step="0.001"
+                    required
+                    [(ngModel)]="quantiteMouvement"
+                    name="quantiteMouvement"
+                    style="width: 100px"
+                  />
+                  <button type="submit" class="btn btn-primaire btn-petit" [disabled]="enregistrementEnCours()">
+                    Valider
+                  </button>
+                  <button type="button" class="btn btn-secondaire btn-petit" (click)="mouvementIngredientId.set(null)">
+                    Annuler
+                  </button>
+                </form>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

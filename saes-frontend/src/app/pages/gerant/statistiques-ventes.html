@@ -1,0 +1,84 @@
+<h1>Statistiques de ventes</h1>
+
+<section class="carte">
+  <form (ngSubmit)="charger()" class="ligne-dynamique">
+    <div class="champ champ-inline">
+      <label for="debutSV">Du</label>
+      <input id="debutSV" name="debutSV" type="date" [(ngModel)]="debut" />
+    </div>
+    <div class="champ champ-inline">
+      <label for="finSV">Au</label>
+      <input id="finSV" name="finSV" type="date" [(ngModel)]="fin" />
+    </div>
+    <button type="submit" class="btn btn-primaire btn-petit" [disabled]="chargement()">Afficher</button>
+  </form>
+</section>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+@if (chargement()) {
+  <p>Chargement…</p>
+} @else if (statistiques(); as s) {
+  <section class="carte" style="margin-top: 1rem">
+    <p class="total-panier">
+      {{ s.nombreCommandesPayees }} commande(s) payée(s) — montant moyen :
+      {{ s.montantMoyen | number: '1.0-0' }} FCFA
+    </p>
+  </section>
+
+  <section class="carte" style="margin-top: 1rem">
+    <h2>Ventes par plat</h2>
+    @if (s.parPlat.length === 0) {
+      <p>Aucune vente sur cette période.</p>
+    } @else {
+      <table class="table-simple">
+        <thead>
+          <tr>
+            <th>Plat</th>
+            <th>Catégorie</th>
+            <th>Quantité vendue</th>
+            <th>Montant</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (v of s.parPlat; track v.platId) {
+            <tr>
+              <td>{{ v.nom }}</td>
+              <td>{{ v.categorie }}</td>
+              <td>{{ v.quantiteVendue }}</td>
+              <td>{{ v.montant }} FCFA</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+
+  <section class="carte" style="margin-top: 1rem">
+    <h2>Ventes par catégorie</h2>
+    @if (s.parCategorie.length === 0) {
+      <p>Aucune vente sur cette période.</p>
+    } @else {
+      <table class="table-simple">
+        <thead>
+          <tr>
+            <th>Catégorie</th>
+            <th>Quantité vendue</th>
+            <th>Montant</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (v of s.parCategorie; track v.categorie) {
+            <tr>
+              <td>{{ v.categorie }}</td>
+              <td>{{ v.quantiteVendue }}</td>
+              <td>{{ v.montant }} FCFA</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+}

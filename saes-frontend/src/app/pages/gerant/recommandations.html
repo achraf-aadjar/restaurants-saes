@@ -1,0 +1,40 @@
+<h1>Recommandations d'approvisionnement</h1>
+<p class="commande-meta">
+  Quantité à réapprovisionner pour chaque ingrédient sous son niveau cible. La consommation moyenne par
+  semaine des 28 derniers jours est affichée pour information.
+</p>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+<section class="carte">
+  @if (chargement()) {
+    <p>Chargement…</p>
+  } @else if (recommandations().length === 0) {
+    <p>Aucun ingrédient à réapprovisionner.</p>
+  } @else {
+    <table class="table-simple">
+      <thead>
+        <tr>
+          <th>Ingrédient</th>
+          <th>Stock</th>
+          <th>Niveau cible</th>
+          <th>À réapprovisionner</th>
+          <th>Conso. moyenne / semaine</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of recommandations(); track r.ingredientId) {
+          <tr>
+            <td>{{ r.nom }}</td>
+            <td>{{ r.stock }} {{ r.unite }}</td>
+            <td>{{ r.niveauCible }} {{ r.unite }}</td>
+            <td><strong>{{ r.quantiteARecommander }} {{ r.unite }}</strong></td>
+            <td>{{ r.consommationMoyenneParSemaine }} {{ r.unite }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

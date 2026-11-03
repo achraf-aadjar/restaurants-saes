@@ -1,6 +1,7 @@
 package com.saes.backend.repository;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,4 +25,16 @@ public interface MouvementStockRepository extends JpaRepository<MouvementStock, 
             where m.ingredient.id = :ingredientId
             """)
     BigDecimal calculerStock(@Param("ingredientId") Long ingredientId);
+
+    /**
+     * Consommation (sorties) depuis une date, affichee pour information dans
+     * les recommandations d'approvisionnement (cahier des charges §4.6).
+     */
+    @Query("""
+            select coalesce(sum(m.quantite), 0) from MouvementStock m
+            where m.ingredient.id = :ingredientId
+              and m.type = com.saes.backend.domain.TypeMouvement.SORTIE
+              and m.dateHeure >= :depuis
+            """)
+    BigDecimal calculerSortiesDepuis(@Param("ingredientId") Long ingredientId, @Param("depuis") Instant depuis);
 }

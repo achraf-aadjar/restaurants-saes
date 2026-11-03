@@ -20,9 +20,19 @@
         <span class="separateur">·</span>
         <a routerLink="/cuisine" routerLinkActive="actif">Cuisine</a>
       }
+      @if (auth.aLeRole('CAISSIER')) {
+        <span class="separateur">·</span>
+        <a routerLink="/caissier/caisse" routerLinkActive="actif">Caisse</a>
+      }
       @if (auth.aLeRole('GERANT')) {
         <span class="separateur">·</span>
         <a routerLink="/gerant/commandes" routerLinkActive="actif">Commandes</a>
+        <a routerLink="/gerant/plats" routerLinkActive="actif">Plats</a>
+        <a routerLink="/gerant/menus" routerLinkActive="actif">Menus</a>
+        <a routerLink="/gerant/stocks" routerLinkActive="actif">Stocks</a>
+        <a routerLink="/gerant/recommandations" routerLinkActive="actif">Recommandations</a>
+        <a routerLink="/gerant/rapports-financiers" routerLinkActive="actif">Rapports</a>
+        <a routerLink="/gerant/statistiques-ventes" routerLinkActive="actif">Statistiques</a>
       }
       @if (estAdministrateur()) {
         <span class="separateur">·</span>
@@ -69,8 +79,17 @@
       @if (auth.aLeRole('CUISINIER')) {
         <a routerLink="/cuisine" (click)="basculerMenuMobile()">Cuisine</a>
       }
+      @if (auth.aLeRole('CAISSIER')) {
+        <a routerLink="/caissier/caisse" (click)="basculerMenuMobile()">Caisse</a>
+      }
       @if (auth.aLeRole('GERANT')) {
         <a routerLink="/gerant/commandes" (click)="basculerMenuMobile()">Commandes</a>
+        <a routerLink="/gerant/plats" (click)="basculerMenuMobile()">Plats</a>
+        <a routerLink="/gerant/menus" (click)="basculerMenuMobile()">Menus</a>
+        <a routerLink="/gerant/stocks" (click)="basculerMenuMobile()">Stocks</a>
+        <a routerLink="/gerant/recommandations" (click)="basculerMenuMobile()">Recommandations</a>
+        <a routerLink="/gerant/rapports-financiers" (click)="basculerMenuMobile()">Rapports</a>
+        <a routerLink="/gerant/statistiques-ventes" (click)="basculerMenuMobile()">Statistiques</a>
       }
       @if (estAdministrateur()) {
         <a routerLink="/admin/restaurants" (click)="basculerMenuMobile()">Restaurants</a>

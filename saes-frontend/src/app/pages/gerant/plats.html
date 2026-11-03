@@ -1,0 +1,127 @@
+<h1>Plats</h1>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+<section class="carte">
+  <button
+    type="button"
+    class="btn btn-secondaire"
+    (click)="formulaireOuvert() ? formulaireOuvert.set(false) : ouvrirCreation()"
+  >
+    {{ formulaireOuvert() ? 'Annuler' : 'Créer un plat' }}
+  </button>
+
+  @if (formulaireOuvert()) {
+    <form (ngSubmit)="enregistrer()" #f="ngForm" class="formulaire-creation formulaire-large">
+      <h2>{{ idEnEdition ? 'Modifier le plat' : 'Nouveau plat' }}</h2>
+
+      @if (erreurFormulaire(); as e) {
+        <p class="message-refus">{{ e }}</p>
+      }
+
+      <div class="champ">
+        <label for="nomP">Nom</label>
+        <input id="nomP" name="nomP" type="text" required [(ngModel)]="nom" />
+      </div>
+      <div class="champ">
+        <label for="descriptionP">Description (facultative)</label>
+        <textarea id="descriptionP" name="descriptionP" [(ngModel)]="description"></textarea>
+      </div>
+      <div class="champ">
+        <label for="prixP">Prix (FCFA)</label>
+        <input id="prixP" name="prixP" type="number" min="0" required [(ngModel)]="prix" />
+      </div>
+      <div class="champ">
+        <label for="categorieP">Catégorie</label>
+        <select id="categorieP" name="categorieP" required [(ngModel)]="categorie">
+          @for (c of categories; track c) {
+            <option [ngValue]="c">{{ libellesCategories[c] }}</option>
+          }
+        </select>
+      </div>
+
+      <h3>Recette (au moins un ingrédient)</h3>
+      @for (ligne of recette; track $index) {
+        <div class="ligne-dynamique">
+          <div class="champ champ-inline" style="width: 220px">
+            <label>Ingrédient</label>
+            <select [(ngModel)]="ligne.ingredientId" [name]="'ingredient' + $index" required>
+              @for (i of ingredients(); track i.id) {
+                <option [ngValue]="i.id">{{ i.nom }} ({{ i.unite }})</option>
+              }
+            </select>
+          </div>
+          <div class="champ champ-inline">
+            <label>Quantité</label>
+            <input
+              type="number"
+              min="0.001"
+              step="0.001"
+              required
+              [(ngModel)]="ligne.quantiteNecessaire"
+              [name]="'quantite' + $index"
+            />
+          </div>
+          <button type="button" class="btn btn-secondaire btn-petit" (click)="retirerLigneRecette($index)">
+            Retirer
+          </button>
+        </div>
+      }
+      <button type="button" class="btn btn-secondaire btn-petit" (click)="ajouterLigneRecette()">
+        + Ajouter un ingrédient
+      </button>
+
+      <div style="margin-top: 1.25rem">
+        <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enregistrementEnCours()">
+          {{ enregistrementEnCours() ? 'Enregistrement…' : 'Enregistrer' }}
+        </button>
+      </div>
+    </form>
+  }
+</section>
+
+<section class="carte" style="margin-top: 1rem">
+  @if (chargement()) {
+    <p>Chargement…</p>
+  } @else {
+    <table class="table-simple">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Catégorie</th>
+          <th>Prix</th>
+          <th>Recette</th>
+          <th>Statut</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of plats(); track p.id) {
+          <tr>
+            <td>{{ p.nom }}</td>
+            <td>{{ libellesCategories[p.categorie] }}</td>
+            <td>{{ p.prix }} FCFA</td>
+            <td>
+              {{ p.recette.map((l) => (l.ingredientNom ?? nomIngredient(l.ingredientId)) + ' (' + l.quantiteNecessaire + ')').join(', ') }}
+            </td>
+            <td>
+              <span class="badge" [class.badge-actif]="p.estActif" [class.badge-inactif]="!p.estActif">
+                {{ p.estActif ? 'Actif' : 'Désactivé' }}
+              </span>
+            </td>
+            <td class="actions-colonne">
+              <button type="button" class="btn btn-secondaire btn-petit" (click)="ouvrirEdition(p)">
+                Modifier
+              </button>
+              <button type="button" class="btn btn-secondaire btn-petit" (click)="changerActivation(p)">
+                {{ p.estActif ? 'Désactiver' : 'Réactiver' }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>
