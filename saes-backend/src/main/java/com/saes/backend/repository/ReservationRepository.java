@@ -1,6 +1,6 @@
 package com.saes.backend.repository;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +10,13 @@ import com.saes.backend.domain.StatutReservation;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
-    List<Reservation> findByClientIdAndStatutAndDateHeureAfter(Long clientId, StatutReservation statut, Instant date);
+    List<Reservation> findByClientIdOrderByDateHeureDesc(Long clientId);
+
+    List<Reservation> findByRestaurantIdAndStatutAndDateHeureBetween(
+            Long restaurantId, StatutReservation statut, LocalDateTime debut, LocalDateTime fin);
+
+    List<Reservation> findByClientIdAndStatutAndDateHeureAfter(
+            Long clientId, StatutReservation statut, LocalDateTime date);
 
     boolean existsByTablesTableId(Long tableId);
 }

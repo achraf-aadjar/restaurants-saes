@@ -1,6 +1,6 @@
 package com.saes.backend.service;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.UUID;
 
@@ -75,7 +75,7 @@ public class CompteService {
         }
 
         for (Reservation reservation : reservationRepository.findByClientIdAndStatutAndDateHeureAfter(
-                utilisateurId, StatutReservation.CONFIRMEE, Instant.now())) {
+                utilisateurId, StatutReservation.CONFIRMEE, LocalDateTime.now())) {
             reservation.setStatut(StatutReservation.ANNULEE);
             reservation.getTables().forEach(table -> table.setStatut(StatutReservation.ANNULEE));
         }

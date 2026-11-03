@@ -7,8 +7,23 @@
 
     <nav class="nav-desktop">
       <a routerLink="/menus" routerLinkActive="actif">Menus</a>
-      <a routerLink="/mes-commandes" routerLinkActive="actif">Mes commandes</a>
-      <a routerLink="/mes-reservations" routerLinkActive="actif">Mes réservations</a>
+      @if (auth.aLeRole('CLIENT')) {
+        <a routerLink="/mes-commandes" routerLinkActive="actif">Mes commandes</a>
+        <a routerLink="/mes-reservations" routerLinkActive="actif">Mes réservations</a>
+      }
+      @if (auth.aLeRole('SERVEUR')) {
+        <span class="separateur">·</span>
+        <a routerLink="/serveur/prendre-commande" routerLinkActive="actif">Prendre une commande</a>
+        <a routerLink="/serveur/occupation" routerLinkActive="actif">Occupation des tables</a>
+      }
+      @if (auth.aLeRole('CUISINIER')) {
+        <span class="separateur">·</span>
+        <a routerLink="/cuisine" routerLinkActive="actif">Cuisine</a>
+      }
+      @if (auth.aLeRole('GERANT')) {
+        <span class="separateur">·</span>
+        <a routerLink="/gerant/commandes" routerLinkActive="actif">Commandes</a>
+      }
       @if (estAdministrateur()) {
         <span class="separateur">·</span>
         <a routerLink="/admin/restaurants" routerLinkActive="actif">Restaurants</a>
@@ -43,8 +58,20 @@
   @if (menuMobileOuvert()) {
     <nav class="nav-mobile">
       <a routerLink="/menus" (click)="basculerMenuMobile()">Menus</a>
-      <a routerLink="/mes-commandes" (click)="basculerMenuMobile()">Mes commandes</a>
-      <a routerLink="/mes-reservations" (click)="basculerMenuMobile()">Mes réservations</a>
+      @if (auth.aLeRole('CLIENT')) {
+        <a routerLink="/mes-commandes" (click)="basculerMenuMobile()">Mes commandes</a>
+        <a routerLink="/mes-reservations" (click)="basculerMenuMobile()">Mes réservations</a>
+      }
+      @if (auth.aLeRole('SERVEUR')) {
+        <a routerLink="/serveur/prendre-commande" (click)="basculerMenuMobile()">Prendre une commande</a>
+        <a routerLink="/serveur/occupation" (click)="basculerMenuMobile()">Occupation des tables</a>
+      }
+      @if (auth.aLeRole('CUISINIER')) {
+        <a routerLink="/cuisine" (click)="basculerMenuMobile()">Cuisine</a>
+      }
+      @if (auth.aLeRole('GERANT')) {
+        <a routerLink="/gerant/commandes" (click)="basculerMenuMobile()">Commandes</a>
+      }
       @if (estAdministrateur()) {
         <a routerLink="/admin/restaurants" (click)="basculerMenuMobile()">Restaurants</a>
         <a routerLink="/admin/utilisateurs" (click)="basculerMenuMobile()">Comptes</a>

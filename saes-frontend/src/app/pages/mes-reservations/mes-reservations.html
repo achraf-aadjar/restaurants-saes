@@ -1,0 +1,82 @@
+<h1>Mes réservations</h1>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+<section class="carte">
+  <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert.set(!formulaireOuvert())">
+    {{ formulaireOuvert() ? 'Annuler' : 'Réserver une table' }}
+  </button>
+
+  @if (formulaireOuvert()) {
+    <form (ngSubmit)="reserver()" #f="ngForm" class="formulaire-creation">
+      @if (erreurFormulaire(); as e) {
+        <p class="message-refus">{{ e }}</p>
+      }
+
+      <div class="champ">
+        <label for="restaurant">Restaurant</label>
+        <select id="restaurant" name="restaurant" required [(ngModel)]="restaurantId">
+          @for (r of restaurants(); track r.id) {
+            <option [ngValue]="r.id">{{ r.nom }}</option>
+          }
+        </select>
+      </div>
+      <div class="champ">
+        <label for="date">Date</label>
+        <input id="date" name="date" type="date" required [(ngModel)]="date" />
+      </div>
+      <div class="champ">
+        <label for="heure">Heure</label>
+        <input id="heure" name="heure" type="time" required [(ngModel)]="heure" />
+      </div>
+      <div class="champ">
+        <label for="couverts">Nombre de couverts</label>
+        <input id="couverts" name="couverts" type="number" min="1" required [(ngModel)]="nombreCouverts" />
+      </div>
+
+      <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || envoiEnCours()">
+        {{ envoiEnCours() ? 'Réservation…' : 'Confirmer la réservation' }}
+      </button>
+    </form>
+  }
+</section>
+
+<section style="margin-top: 1rem">
+  @if (chargement()) {
+    <p>Chargement…</p>
+  } @else if (reservations().length === 0) {
+    <p>Vous n'avez pas encore de réservation.</p>
+  } @else {
+    <div class="liste-commandes">
+      @for (r of reservations(); track r.id) {
+        <article class="carte commande">
+          <div class="commande-entete">
+            <span class="badge" [class.badge-actif]="r.statut === 'CONFIRMEE'" [class.badge-inactif]="r.statut === 'ANNULEE'">
+              {{ r.statut === 'CONFIRMEE' ? 'Confirmée' : 'Annulée' }}
+            </span>
+          </div>
+          <p class="commande-meta">{{ r.restaurantNom }}</p>
+          <p>{{ r.dateHeure }} — {{ r.nombreCouverts }} couvert(s)</p>
+          <p class="commande-meta">
+            Table(s) : {{ r.tables.length ? '' : '—' }}
+            @for (t of r.tables; track t.numero) {
+              n°{{ t.numero }}{{ !$last ? ', ' : '' }}
+            }
+          </p>
+          @if (r.statut === 'CONFIRMEE') {
+            <button
+              type="button"
+              class="btn btn-secondaire btn-petit"
+              [disabled]="annulationEnCours() === r.id"
+              (click)="annuler(r)"
+            >
+              Annuler
+            </button>
+          }
+        </article>
+      }
+    </div>
+  }
+</section>

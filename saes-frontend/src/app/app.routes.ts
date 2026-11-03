@@ -27,17 +27,14 @@ export const routes: Routes = [
   },
   {
     path: 'mes-commandes',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./pages/bientot-disponible/bientot-disponible').then((m) => m.BientotDisponible),
-    data: { titre: 'Mes commandes' },
+    canActivate: [roleGuard('CLIENT')],
+    loadComponent: () => import('./pages/mes-commandes/mes-commandes').then((m) => m.MesCommandes),
   },
   {
     path: 'mes-reservations',
-    canActivate: [authGuard],
+    canActivate: [roleGuard('CLIENT')],
     loadComponent: () =>
-      import('./pages/bientot-disponible/bientot-disponible').then((m) => m.BientotDisponible),
-    data: { titre: 'Mes réservations' },
+      import('./pages/mes-reservations/mes-reservations').then((m) => m.MesReservations),
   },
   {
     path: 'admin/utilisateurs',
@@ -49,6 +46,28 @@ export const routes: Routes = [
     canActivate: [roleGuard('ADMINISTRATEUR')],
     loadComponent: () =>
       import('./pages/admin/restaurants/restaurants-list').then((m) => m.RestaurantsList),
+  },
+  {
+    path: 'serveur/prendre-commande',
+    canActivate: [roleGuard('SERVEUR')],
+    loadComponent: () => import('./pages/serveur/prendre-commande').then((m) => m.PrendreCommande),
+  },
+  {
+    path: 'serveur/occupation',
+    canActivate: [roleGuard('SERVEUR')],
+    loadComponent: () =>
+      import('./pages/serveur/occupation-tables').then((m) => m.OccupationTables),
+  },
+  {
+    path: 'cuisine',
+    canActivate: [roleGuard('CUISINIER')],
+    loadComponent: () => import('./pages/cuisine/cuisine').then((m) => m.Cuisine),
+  },
+  {
+    path: 'gerant/commandes',
+    canActivate: [roleGuard('GERANT')],
+    loadComponent: () =>
+      import('./pages/gerant/commandes-abandon').then((m) => m.CommandesAbandon),
   },
   { path: '**', redirectTo: 'menus' },
 ];

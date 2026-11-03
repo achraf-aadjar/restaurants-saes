@@ -89,6 +89,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMINISTRATEUR")
+                        .requestMatchers("/api/reservations/**", "/api/commandes/**").hasRole("CLIENT")
+                        .requestMatchers("/api/serveur/**").hasRole("SERVEUR")
+                        .requestMatchers("/api/cuisine/**").hasRole("CUISINIER")
+                        .requestMatchers("/api/gerant/**").hasRole("GERANT")
                         .anyRequest().authenticated())
                 // Sans jeton valide : 401 (non connecte), et non 403 (connecte mais
                 // sans le bon role). Le site s'en sert pour deconnecter.

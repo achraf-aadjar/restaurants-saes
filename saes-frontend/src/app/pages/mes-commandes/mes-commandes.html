@@ -1,0 +1,41 @@
+<h1>Mes commandes</h1>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+@if (chargement()) {
+  <p>Chargement…</p>
+} @else if (commandes().length === 0) {
+  <p>Vous n'avez pas encore passé de commande.</p>
+} @else {
+  <div class="liste-commandes">
+    @for (c of commandes(); track c.id) {
+      <article class="carte commande">
+        <div class="commande-entete">
+          <span class="badge" [class]="classeBadge(c.statut)">{{ libelles[c.statut] }}</span>
+          <span class="commande-date">{{ c.dateHeure | date: 'd MMM y, HH:mm' }}</span>
+        </div>
+        <ul class="liste-panier">
+          @for (ligne of c.lignes; track ligne.platId) {
+            <li>
+              <span>{{ ligne.quantite }} × {{ ligne.platNom }}</span>
+              <span>{{ ligne.prixUnitaire * ligne.quantite }} FCFA</span>
+            </li>
+          }
+        </ul>
+        <p class="total-panier">Total : {{ c.montantTotal }} FCFA</p>
+        @if (c.statut === 'EN_ATTENTE') {
+          <button
+            type="button"
+            class="btn btn-secondaire btn-petit"
+            [disabled]="annulationEnCours() === c.id"
+            (click)="annuler(c)"
+          >
+            Annuler
+          </button>
+        }
+      </article>
+    }
+  </div>
+}
