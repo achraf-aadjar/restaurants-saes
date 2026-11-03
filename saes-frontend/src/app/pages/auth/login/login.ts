@@ -14,6 +14,7 @@ import { GoogleSignInButton } from '../../../shared/google-sign-in-button';
   selector: 'app-login',
   imports: [FormsModule, RouterLink, GoogleSignInButton],
   templateUrl: './login.html',
+  styleUrl: '../auth.scss',
 })
 export class Login {
   private readonly auth = inject(AuthService);

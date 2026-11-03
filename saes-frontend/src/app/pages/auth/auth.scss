@@ -1,0 +1,293 @@
+// Styles communs a Connexion et Inscription.
+
+:host {
+  display: flex;
+  flex: 1;
+}
+
+.auth {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0 1rem;
+}
+
+.auth-carte {
+  width: 100%;
+  min-width: 0; // sans cela, l'iframe du bouton Google peut elargir la carte au-dela de l'ecran
+  max-width: 440px;
+  background: #fff;
+  border: 1px solid var(--saes-bordure);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(8, 49, 45, 0.08);
+  padding: 2.25rem 2.25rem 1.5rem;
+}
+
+// 472 px - 2 x 36 px de marge interieure = 400 px, la largeur maximale du
+// bouton Google : bouton et champs sont ainsi exactement alignes.
+.auth-carte--large {
+  max-width: 472px;
+}
+
+// En-tete
+
+.auth-entete {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.auth-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.auth-entete h1 {
+  font-size: 1.6rem;
+  line-height: 1.2;
+  margin: 0 0 0.4rem;
+}
+
+.auth-soustitre {
+  margin: 0;
+  color: #5f6b66;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+// Google + separateur
+
+.auth-google {
+  min-width: 0;
+  margin-bottom: 1.25rem;
+}
+
+.auth-separateur {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 1.25rem;
+  color: #7a817c;
+  font-size: 0.82rem;
+  text-align: center;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--saes-bordure);
+  }
+}
+
+// Formulaire
+
+.auth-formulaire {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.auth-ligne {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.1rem;
+}
+
+.auth-champ {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.auth-champ label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.auth-facultatif {
+  font-weight: 400;
+  color: #7a817c;
+}
+
+.auth-champ input {
+  width: 100%;
+  min-height: 46px;
+  padding: 0.6rem 0.85rem;
+  font-family: inherit;
+  font-size: 1rem; // 16px : evite le zoom automatique sur iPhone
+  color: var(--saes-vert);
+  background: #fff;
+  border: 1px solid #d9d2bd;
+  border-radius: 10px;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+
+  &::placeholder {
+    color: #a3a89f;
+  }
+
+  &:hover {
+    border-color: #c4bca3;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--saes-vert);
+    box-shadow: 0 0 0 3px rgba(8, 49, 45, 0.12);
+  }
+
+  &.invalide {
+    border-color: var(--saes-rouge);
+  }
+
+  &.invalide:focus {
+    box-shadow: 0 0 0 3px rgba(230, 12, 26, 0.12);
+  }
+}
+
+.auth-aide,
+.auth-erreur-champ {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.auth-aide {
+  color: #7a817c;
+}
+
+.auth-erreur-champ {
+  color: var(--saes-rouge-fonce);
+  font-weight: 600;
+}
+
+// Mot de passe avec bouton Afficher / Masquer
+
+.auth-mot-de-passe {
+  position: relative;
+}
+
+.auth-mot-de-passe input {
+  padding-right: 5.5rem;
+}
+
+.auth-oeil {
+  position: absolute;
+  top: 50%;
+  right: 0.4rem;
+  transform: translateY(-50%);
+  min-height: 34px;
+  padding: 0 0.6rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--saes-vert);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(8, 49, 45, 0.06);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--saes-vert);
+    outline-offset: 1px;
+  }
+}
+
+// Bouton principal
+
+.auth-bouton {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 0.35rem;
+  font-size: 1rem;
+  border-radius: 10px;
+}
+
+.auth-mention {
+  margin: -0.25rem 0 0;
+  text-align: center;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: #7a817c;
+}
+
+.auth-erreur {
+  margin: 0 0 1.25rem;
+}
+
+// Pied de carte
+
+.auth-pied {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--saes-bordure);
+  text-align: center;
+  font-size: 0.92rem;
+  color: #5f6b66;
+}
+
+.auth-pied a {
+  font-weight: 700;
+  color: var(--saes-rouge);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Ecrans moyens et grands : prenom / nom cote a cote
+@media (min-width: 520px) {
+  .auth-ligne {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+// Telephones : carte plus compacte
+@media (max-width: 479px) {
+  .auth {
+    padding: 0;
+    align-items: flex-start;
+  }
+
+  .auth-carte {
+    padding: 1.75rem 1.25rem 1.25rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(8, 49, 45, 0.06);
+  }
+
+  .auth-entete {
+    margin-bottom: 1.4rem;
+  }
+
+  .auth-logo {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 0.75rem;
+  }
+
+  .auth-entete h1 {
+    font-size: 1.4rem;
+  }
+}
+
+// Tres petits ecrans (ex. 320 px de large)
+@media (max-width: 359px) {
+  .auth-carte {
+    padding: 1.5rem 1rem 1rem;
+  }
+
+  .auth-mot-de-passe input {
+    padding-right: 4.75rem;
+  }
+}

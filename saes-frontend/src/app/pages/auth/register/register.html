@@ -1,76 +1,143 @@
-  <section class="carte formulaire-etroit">
-    <h1>Créer un compte</h1>
-    <p class="auth-soustitre">Quelques informations suffisent.</p>
+<div class="auth">
+  <section class="auth-carte auth-carte--large" aria-labelledby="titre-inscription">
+    <header class="auth-entete">
+      <img class="auth-logo" src="assets/logo/icon.svg" alt="" />
+      <h1 id="titre-inscription">Créer un compte</h1>
+      <p class="auth-soustitre">Commandez en ligne et réservez une table en quelques secondes.</p>
+    </header>
+
+    <div class="auth-google">
+      <app-google-sign-in-button texte="signup_with" (jeton)="inscrireAvecGoogle($event)" />
+    </div>
+
+    <div class="auth-separateur">ou avec votre adresse e-mail</div>
 
     @if (erreur(); as e) {
-      <p class="message-refus">{{ e }}</p>
+      <p class="message-refus auth-erreur" role="alert">{{ e }}</p>
     }
 
-    <form (ngSubmit)="valider()" #f="ngForm">
-      <div class="champ">
-        <label for="prenom">Prénom</label>
-        <input id="prenom" name="prenom" type="text" required [(ngModel)]="prenom" autofocus />
+    <form class="auth-formulaire" (ngSubmit)="f.valid && valider()" #f="ngForm" novalidate>
+      <div class="auth-ligne">
+        <div class="auth-champ">
+          <label for="prenom">Prénom</label>
+          <input
+            id="prenom"
+            name="prenom"
+            type="text"
+            required
+            autocomplete="given-name"
+            [(ngModel)]="prenom"
+            #prenomCtrl="ngModel"
+            [class.invalide]="prenomCtrl.invalid && (prenomCtrl.touched || f.submitted)"
+            [attr.aria-invalid]="prenomCtrl.invalid && (prenomCtrl.touched || f.submitted)"
+          />
+          @if (prenomCtrl.invalid && (prenomCtrl.touched || f.submitted)) {
+            <p class="auth-erreur-champ">Saisissez votre prénom.</p>
+          }
+        </div>
+
+        <div class="auth-champ">
+          <label for="nom">Nom</label>
+          <input
+            id="nom"
+            name="nom"
+            type="text"
+            required
+            autocomplete="family-name"
+            [(ngModel)]="nom"
+            #nomCtrl="ngModel"
+            [class.invalide]="nomCtrl.invalid && (nomCtrl.touched || f.submitted)"
+            [attr.aria-invalid]="nomCtrl.invalid && (nomCtrl.touched || f.submitted)"
+          />
+          @if (nomCtrl.invalid && (nomCtrl.touched || f.submitted)) {
+            <p class="auth-erreur-champ">Saisissez votre nom.</p>
+          }
+        </div>
       </div>
 
-      <div class="champ">
-        <label for="nom">Nom</label>
-        <input id="nom" name="nom" type="text" required [(ngModel)]="nom" />
-      </div>
-
-      <div class="champ">
+      <div class="auth-champ">
         <label for="email">Adresse e-mail</label>
         <input
           id="email"
           name="email"
           type="email"
+          inputmode="email"
+          placeholder="nom@exemple.com"
           required
-          [(ngModel)]="email"
+          email
           autocomplete="email"
+          [(ngModel)]="email"
+          #emailCtrl="ngModel"
+          [class.invalide]="emailCtrl.invalid && (emailCtrl.touched || f.submitted)"
+          [attr.aria-invalid]="emailCtrl.invalid && (emailCtrl.touched || f.submitted)"
+        />
+        @if (emailCtrl.invalid && (emailCtrl.touched || f.submitted)) {
+          <p class="auth-erreur-champ">
+            {{ emailCtrl.errors?.['required'] ? 'Saisissez votre adresse e-mail.' : 'Adresse e-mail invalide.' }}
+          </p>
+        }
+      </div>
+
+      <div class="auth-champ">
+        <label for="telephone">Téléphone <span class="auth-facultatif">(facultatif)</span></label>
+        <input
+          id="telephone"
+          name="telephone"
+          type="tel"
+          inputmode="tel"
+          placeholder="77 123 45 67"
+          autocomplete="tel"
+          [(ngModel)]="telephone"
         />
       </div>
 
-      <div class="champ">
-        <label for="telephone">Téléphone (facultatif)</label>
-        <input id="telephone" name="telephone" type="tel" [(ngModel)]="telephone" />
-      </div>
-
-      <div class="champ">
-        <label for="motDePasse">Mot de passe (8 caractères minimum)</label>
-        <div class="champ-mot-de-passe">
+      <div class="auth-champ">
+        <label for="motDePasse">Mot de passe</label>
+        <div class="auth-mot-de-passe">
           <input
             id="motDePasse"
             name="motDePasse"
             [type]="motDePasseVisible() ? 'text' : 'password'"
             required
             minlength="8"
-            [(ngModel)]="motDePasse"
             autocomplete="new-password"
+            [(ngModel)]="motDePasse"
+            #mdpCtrl="ngModel"
+            [class.invalide]="mdpCtrl.invalid && (mdpCtrl.touched || f.submitted)"
+            [attr.aria-invalid]="mdpCtrl.invalid && (mdpCtrl.touched || f.submitted)"
+            aria-describedby="mdp-aide"
           />
           <button
             type="button"
-            class="bouton-oeil"
+            class="auth-oeil"
             (click)="motDePasseVisible.set(!motDePasseVisible())"
+            [attr.aria-pressed]="motDePasseVisible()"
             [attr.aria-label]="motDePasseVisible() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
           >
             {{ motDePasseVisible() ? 'Masquer' : 'Afficher' }}
           </button>
         </div>
+        @if (mdpCtrl.invalid && (mdpCtrl.touched || f.submitted)) {
+          <p class="auth-erreur-champ" id="mdp-aide">
+            {{ mdpCtrl.errors?.['required'] ? 'Choisissez un mot de passe.' : 'Au moins 8 caractères.' }}
+          </p>
+        } @else {
+          <p class="auth-aide" id="mdp-aide">Au moins 8 caractères.</p>
+        }
       </div>
 
-      <p class="lien-bas">
-        Vos informations servent uniquement au fonctionnement de la plateforme : voir
-        <a routerLink="/confidentialite">Confidentialité</a>.
-      </p>
-
-      <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enCours()">
-        {{ enCours() ? 'Création…' : 'Créer mon compte' }}
+      <button type="submit" class="btn btn-primaire auth-bouton" [disabled]="enCours()">
+        {{ enCours() ? 'Création du compte…' : 'Créer mon compte' }}
       </button>
+
+      <p class="auth-mention">
+        Vos informations servent uniquement au fonctionnement de la plateforme.
+        <a routerLink="/confidentialite">Confidentialité</a>
+      </p>
     </form>
 
-    <div class="separateur-ou">ou</div>
-    <div class="connexion-google">
-      <app-google-sign-in-button (jeton)="inscrireAvecGoogle($event)" />
-    </div>
-
-    <p class="lien-bas">Déjà un compte ? <a routerLink="/connexion">Se connecter</a></p>
+    <footer class="auth-pied">
+      Déjà un compte ? <a routerLink="/connexion">Se connecter</a>
+    </footer>
   </section>
+</div>
