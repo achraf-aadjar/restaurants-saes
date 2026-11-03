@@ -10,7 +10,7 @@ export function motifErreur(erreur: unknown, motifParDefaut = 'Une erreur est su
       return motif;
     }
     if (erreur.status === 0) {
-      return 'Serveur injoignable. Verifiez que saes-backend est demarre.';
+      return 'Serveur injoignable. Vérifiez que saes-backend est démarré.';
     }
   }
   return motifParDefaut;
