@@ -1,5 +1,6 @@
 package com.saes.backend.web.error;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -48,5 +49,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleOptimisticLock(ObjectOptimisticLockingFailureException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse("La ressource a changé depuis que vous l'avez affichée"));
+    }
+
+    /**
+     * Une contrainte de la base a refuse l'operation, le plus souvent parce
+     * qu'une autre personne a fait la meme action au meme instant (ex. deux
+     * encaissements de la meme commande) : c'est un conflit, pas une panne.
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrity(DataIntegrityViolationException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse("Cette action vient d'être faite par quelqu'un d'autre, rechargez la page"));
     }
 }
