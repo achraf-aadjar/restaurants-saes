@@ -1,5 +1,7 @@
 package com.saes.backend.service;
 
+import java.util.EnumSet;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
@@ -13,7 +15,6 @@ import com.saes.backend.domain.Role;
 import com.saes.backend.domain.Utilisateur;
 import com.saes.backend.repository.UtilisateurRepository;
 import com.saes.backend.security.JwtService;
-import com.saes.backend.security.UserPrincipal;
 import com.saes.backend.web.dto.AuthResponse;
 import com.saes.backend.web.dto.InscriptionRequest;
 import com.saes.backend.web.dto.LoginRequest;
@@ -37,7 +38,7 @@ public class AuthService {
     @Transactional
     public AuthResponse inscrire(InscriptionRequest request) {
         if (utilisateurRepository.existsByEmailIgnoreCase(request.email())) {
-            throw ApiException.conflict("Cette adresse e-mail est deja utilisee");
+            throw ApiException.conflict("Cette adresse e-mail est déjà utilisée");
         }
 
         Utilisateur utilisateur = new Utilisateur();
@@ -46,7 +47,7 @@ public class AuthService {
         utilisateur.setEmail(request.email());
         utilisateur.setMotDePasse(passwordEncoder.encode(request.motDePasse()));
         utilisateur.setTelephone(request.telephone());
-        utilisateur.setRoles(java.util.EnumSet.of(Role.CLIENT));
+        utilisateur.setRoles(EnumSet.of(Role.CLIENT));
         utilisateur.setEstActif(true);
 
         utilisateur = utilisateurRepository.save(utilisateur);
@@ -59,7 +60,7 @@ public class AuthService {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.email(), request.motDePasse()));
         } catch (DisabledException e) {
-            throw new ApiException(HttpStatus.UNAUTHORIZED, "Ce compte est desactive");
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "Ce compte est désactivé");
         } catch (AuthenticationException e) {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "Adresse e-mail ou mot de passe incorrect");
         }
@@ -70,8 +71,6 @@ public class AuthService {
     }
 
     private AuthResponse toAuthResponse(Utilisateur utilisateur) {
-        String token = jwtService.generate(
-                utilisateur.getId(), utilisateur.getEmail(), UserPrincipal.roleNames(utilisateur));
-        return new AuthResponse(token, UtilisateurDto.from(utilisateur));
+        return new AuthResponse(jwtService.generate(utilisateur.getId()), UtilisateurDto.from(utilisateur));
     }
 }

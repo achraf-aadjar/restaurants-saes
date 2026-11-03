@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
         String motif = ex.getBindingResult().getFieldErrors().stream()
                 .findFirst()
                 .map(e -> e.getField() + " : " + e.getDefaultMessage())
-                .orElse("Donnees invalides");
+                .orElse("Données invalides");
         return ResponseEntity.badRequest().body(new ErrorResponse(motif));
     }
 
@@ -35,12 +35,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(new ErrorResponse("Acces refuse pour ce role"));
+                .body(new ErrorResponse("Accès refusé pour ce rôle"));
     }
 
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
     public ResponseEntity<ErrorResponse> handleOptimisticLock(ObjectOptimisticLockingFailureException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ErrorResponse("La ressource a change depuis que vous l'avez affichee"));
+                .body(new ErrorResponse("La ressource a changé depuis que vous l'avez affichée"));
     }
 }

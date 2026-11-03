@@ -32,23 +32,38 @@
   <p>Chargement du menu…</p>
 } @else if (restaurants().length === 0) {
   <p>Aucun restaurant n'est actif pour le moment.</p>
-} @else if (groupes().length === 0) {
+} @else if (menusAffiches().length === 0) {
   <p>Aucun menu en vigueur pour ce restaurant.</p>
 } @else {
-  @for (groupe of groupes(); track groupe.categorie) {
-    <section class="groupe-categorie">
-      <h2>{{ groupe.libelle }}</h2>
-      <div class="grille-plats">
-        @for (plat of groupe.plats; track plat.id) {
-          <article class="carte plat">
-            <h3>{{ plat.nom }}</h3>
-            @if (plat.description) {
-              <p class="description">{{ plat.description }}</p>
-            }
-            <p class="prix">{{ plat.prix }} FCFA</p>
-          </article>
+  @for (m of menusAffiches(); track m.menu.id) {
+    <section class="menu">
+      <h2>{{ m.menu.nom }}</h2>
+      <p class="dates-menu">
+        @if (m.menu.dateFin) {
+          Du {{ m.menu.dateDebut | date: 'dd/MM/yyyy' }} au
+          {{ m.menu.dateFin | date: 'dd/MM/yyyy' }}
+        } @else {
+          À partir du {{ m.menu.dateDebut | date: 'dd/MM/yyyy' }}
         }
-      </div>
+      </p>
+      @for (groupe of m.groupes; track groupe.categorie) {
+        <section class="groupe-categorie">
+          <h3>{{ groupe.libelle }}</h3>
+          <div class="grille-plats">
+            @for (plat of groupe.plats; track plat.id) {
+              <article class="carte plat">
+                <h4>{{ plat.nom }}</h4>
+                @if (plat.description) {
+                  <p class="description">{{ plat.description }}</p>
+                }
+                <p class="prix">{{ plat.prix }} FCFA</p>
+              </article>
+            }
+          </div>
+        </section>
+      } @empty {
+        <p>Aucun plat disponible pour le moment.</p>
+      }
     </section>
   }
 }

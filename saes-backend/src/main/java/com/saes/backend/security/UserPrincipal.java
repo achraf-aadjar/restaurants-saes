@@ -1,7 +1,6 @@
 package com.saes.backend.security;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -64,9 +63,5 @@ public class UserPrincipal implements UserDetails {
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
-    }
-
-    public static List<String> roleNames(Utilisateur utilisateur) {
-        return utilisateur.getRoles().stream().map(Enum::name).toList();
     }
 }

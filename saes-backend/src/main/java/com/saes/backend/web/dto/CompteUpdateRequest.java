@@ -6,12 +6,14 @@ import jakarta.validation.constraints.Size;
 
 /**
  * Gerer son compte (cahier des charges §4.1) : voir et modifier ses
- * informations. nouveauMotDePasse est facultatif.
+ * informations. nouveauMotDePasse est facultatif ; s'il est donne,
+ * motDePasseActuel est exige (OWASP ASVS 2.1.6).
  */
 public record CompteUpdateRequest(
         @NotBlank String nom,
         @NotBlank String prenom,
         @NotBlank @Email String email,
         String telephone,
-        @Size(min = 8, message = "doit contenir au moins 8 caracteres") String nouveauMotDePasse) {
+        String motDePasseActuel,
+        @Size(min = 8, message = "doit contenir au moins 8 caractères") String nouveauMotDePasse) {
 }

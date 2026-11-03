@@ -4,7 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { AdminRestaurantService } from '../../../core/admin-restaurant.service';
 import { AdminUserService } from '../../../core/admin-user.service';
 import { motifErreur } from '../../../core/erreur.util';
-import { ROLES, RestaurantDto, Role, Utilisateur } from '../../../core/models';
+import {
+  ROLES_PERSONNEL,
+  RestaurantDto,
+  Role,
+  TOUS_LES_ROLES,
+  Utilisateur,
+} from '../../../core/models';
 
 /**
  * Gerer les comptes utilisateurs (cahier des charges §4.7), reserve a
@@ -20,7 +26,8 @@ export class UsersList {
   private readonly adminUserService = inject(AdminUserService);
   private readonly adminRestaurantService = inject(AdminRestaurantService);
 
-  protected readonly roles = ROLES;
+  protected readonly rolesPersonnel = ROLES_PERSONNEL;
+  protected readonly tousLesRoles = TOUS_LES_ROLES;
   protected readonly utilisateurs = signal<Utilisateur[]>([]);
   protected readonly restaurants = signal<RestaurantDto[]>([]);
   protected readonly chargement = signal(true);
@@ -36,6 +43,12 @@ export class UsersList {
   protected telephone = '';
   protected restaurantId: number | null = null;
   protected rolesSelectionnes = new Set<Role>();
+
+  /** Attribuer ou retirer des roles : le compte en cours de modification. */
+  protected readonly enEdition = signal<Utilisateur | null>(null);
+  protected readonly erreurEdition = signal<string | null>(null);
+  protected rolesEdition = new Set<Role>();
+  protected restaurantEdition: number | null = null;
 
   constructor() {
     this.charger();
@@ -56,11 +69,11 @@ export class UsersList {
     });
   }
 
-  protected basculerRole(role: Role): void {
-    if (this.rolesSelectionnes.has(role)) {
-      this.rolesSelectionnes.delete(role);
+  protected basculerRole(roles: Set<Role>, role: Role): void {
+    if (roles.has(role)) {
+      roles.delete(role);
     } else {
-      this.rolesSelectionnes.add(role);
+      roles.add(role);
     }
   }
 
@@ -103,6 +116,47 @@ export class UsersList {
     this.restaurantId = null;
     this.rolesSelectionnes = new Set<Role>();
     this.formulaireOuvert.set(false);
+  }
+
+  protected ouvrirEditionRoles(utilisateur: Utilisateur): void {
+    this.enEdition.set(utilisateur);
+    this.rolesEdition = new Set(utilisateur.roles);
+    this.restaurantEdition = null;
+    this.erreurEdition.set(null);
+  }
+
+  /**
+   * Contrainte 2 de la conception : un compte qui devient membre du personnel
+   * alors qu'il n'a pas de restaurant doit en recevoir un.
+   */
+  protected demandeRestaurant(): boolean {
+    const utilisateur = this.enEdition();
+    return (
+      utilisateur !== null &&
+      utilisateur.restaurantId === null &&
+      ROLES_PERSONNEL.some((role) => this.rolesEdition.has(role))
+    );
+  }
+
+  protected enregistrerRoles(): void {
+    const utilisateur = this.enEdition();
+    if (!utilisateur) {
+      return;
+    }
+    this.erreurEdition.set(null);
+    this.adminUserService
+      .modifierRoles(
+        utilisateur.id,
+        Array.from(this.rolesEdition),
+        this.demandeRestaurant() ? this.restaurantEdition : null,
+      )
+      .subscribe({
+        next: () => {
+          this.enEdition.set(null);
+          this.charger();
+        },
+        error: (err) => this.erreurEdition.set(motifErreur(err, 'Modification impossible')),
+      });
   }
 
   protected changerActivation(utilisateur: Utilisateur): void {

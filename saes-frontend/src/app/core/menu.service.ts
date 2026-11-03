@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { MenuDto, RestaurantSummary } from './models';
@@ -10,6 +10,9 @@ import { MenuDto, RestaurantSummary } from './models';
 @Injectable({ providedIn: 'root' })
 export class MenuService {
   private readonly http = inject(HttpClient);
+
+  /** Restaurant consulte dans la page Menus ; le pied de page client l'affiche. */
+  readonly restaurantConsulte = signal<RestaurantSummary | null>(null);
 
   restaurants(): Observable<RestaurantSummary[]> {
     return this.http.get<RestaurantSummary[]>('/api/public/restaurants');
