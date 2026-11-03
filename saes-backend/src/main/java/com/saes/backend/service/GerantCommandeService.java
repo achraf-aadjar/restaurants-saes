@@ -57,6 +57,6 @@ public class GerantCommandeService {
         }
 
         commande.setStatut(StatutCommande.ABANDONNEE);
-        return CommandeDto.from(commande);
+        return CommandeDto.from(commandeRepository.saveAndFlush(commande));
     }
 }

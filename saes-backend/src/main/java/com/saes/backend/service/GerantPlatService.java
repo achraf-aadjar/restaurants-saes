@@ -1,6 +1,8 @@
 package com.saes.backend.service;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,8 +70,26 @@ public class GerantPlatService {
         plat.setPrix(request.prix());
         plat.setCategorie(request.categorie());
 
-        plat.getRecette().clear();
+        Map<Long, RecetteLigneDto> demandees = new LinkedHashMap<>();
         for (RecetteLigneDto ligne : request.recette()) {
+            if (demandees.putIfAbsent(ligne.ingredientId(), ligne) != null) {
+                throw ApiException.badRequest("Un ingredient apparait deux fois dans la recette");
+            }
+        }
+
+        // Mise a jour sur place : une ligne de recette est identifiee par (plat,
+        // ingredient) ; la supprimer puis la recreer dans la meme transaction
+        // ferait echouer Hibernate des que l'ingredient est conserve.
+        plat.getRecette().removeIf(r -> !demandees.containsKey(r.getIngredient().getId()));
+        for (RecetteLigneDto ligne : demandees.values()) {
+            Recette existante = plat.getRecette().stream()
+                    .filter(r -> r.getIngredient().getId().equals(ligne.ingredientId()))
+                    .findFirst()
+                    .orElse(null);
+            if (existante != null) {
+                existante.setQuantiteNecessaire(ligne.quantiteNecessaire());
+                continue;
+            }
             Ingredient ingredient = ingredientRepository.findById(ligne.ingredientId())
                     .orElseThrow(() -> ApiException.badRequest("Ingredient introuvable"));
             if (!ingredient.getRestaurant().getId().equals(restaurant.getId())) {

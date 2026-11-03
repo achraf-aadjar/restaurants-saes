@@ -29,6 +29,8 @@ import com.saes.backend.web.dto.TableOccupationDto;
 import com.saes.backend.web.error.ApiException;
 import com.saes.backend.web.error.ConflitCommandeException;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -50,6 +52,7 @@ public class CommandeServeurService {
     private final CommandeLigneFactory commandeLigneFactory;
     private final PersonnelRestaurantResolver personnelRestaurantResolver;
     private final CommandeRestaurantResolver commandeRestaurantResolver;
+    private final EntityManager entityManager;
 
     /**
      * Pas une fonction nommee du cahier des charges : liste necessaire pour
@@ -118,7 +121,10 @@ public class CommandeServeurService {
                     commande.getLignes().add(ligne);
                 });
 
-        return CommandeDto.from(commande);
+        // Seules les lignes changent : sans cela la version de la commande
+        // resterait la meme et la regle 3 ne detecterait pas la modification.
+        entityManager.lock(commande, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
+        return CommandeDto.from(commandeRepository.saveAndFlush(commande));
     }
 
     @Transactional
@@ -133,7 +139,7 @@ public class CommandeServeurService {
             throw ApiException.conflict("Cette commande n'est plus en attente");
         }
         commande.setStatut(StatutCommande.ANNULEE);
-        return CommandeDto.from(commande);
+        return CommandeDto.from(commandeRepository.saveAndFlush(commande));
     }
 
     public OccupationRestaurantDto occupationTables(Long serveurId) {

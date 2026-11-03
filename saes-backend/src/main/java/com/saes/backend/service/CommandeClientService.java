@@ -89,6 +89,6 @@ public class CommandeClientService {
             throw ApiException.conflict("Cette commande n'est plus en attente");
         }
         commande.setStatut(StatutCommande.ANNULEE);
-        return CommandeDto.from(commande);
+        return CommandeDto.from(commandeRepository.saveAndFlush(commande));
     }
 }
