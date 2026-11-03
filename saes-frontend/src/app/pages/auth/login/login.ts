@@ -4,13 +4,15 @@ import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../core/auth.service';
 import { motifErreur } from '../../../core/erreur.util';
+import { GoogleSignInButton } from '../../../shared/google-sign-in-button';
 
 /**
- * S'authentifier (cahier des charges §4.1).
+ * S'authentifier (cahier des charges §4.1), avec en plus la connexion
+ * Google.
  */
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, GoogleSignInButton],
   templateUrl: './login.html',
 })
 export class Login {
@@ -33,6 +35,21 @@ export class Login {
       error: (err) => {
         this.enCours.set(false);
         this.erreur.set(motifErreur(err, 'Connexion impossible'));
+      },
+    });
+  }
+
+  protected connecterAvecGoogle(idToken: string): void {
+    this.erreur.set(null);
+    this.enCours.set(true);
+    this.auth.authentifierAvecGoogle({ idToken }).subscribe({
+      next: () => {
+        this.enCours.set(false);
+        this.router.navigate(['/menus']);
+      },
+      error: (err) => {
+        this.enCours.set(false);
+        this.erreur.set(motifErreur(err, 'Connexion avec Google impossible'));
       },
     });
   }
