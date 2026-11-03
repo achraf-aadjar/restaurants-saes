@@ -71,7 +71,7 @@ public class CuisineService {
             mouvementStockRepository.save(sortie);
         }));
 
-        return CommandeDto.from(commande);
+        return CommandeDto.from(commandeRepository.saveAndFlush(commande));
     }
 
     @Transactional
@@ -87,6 +87,6 @@ public class CuisineService {
         }
 
         commande.setStatut(StatutCommande.PRETE);
-        return CommandeDto.from(commande);
+        return CommandeDto.from(commandeRepository.saveAndFlush(commande));
     }
 }

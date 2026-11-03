@@ -96,7 +96,7 @@ public class CaisseService {
         paiement.setDateHeure(Instant.now());
         paiementRepository.save(paiement);
 
-        return CommandeDto.from(commande);
+        return CommandeDto.from(commandeRepository.saveAndFlush(commande));
     }
 
     @Transactional
