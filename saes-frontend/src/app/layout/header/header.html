@@ -28,7 +28,7 @@
         <span class="separateur">·</span>
         <a routerLink="/gerant/commandes" routerLinkActive="actif">Commandes</a>
         <a routerLink="/gerant/plats" routerLinkActive="actif">Plats</a>
-        <a routerLink="/gerant/menus" routerLinkActive="actif">Menus</a>
+        <a routerLink="/gerant/menus" routerLinkActive="actif">Gérer les menus</a>
         <a routerLink="/gerant/stocks" routerLinkActive="actif">Stocks</a>
         <a routerLink="/gerant/recommandations" routerLinkActive="actif">Recommandations</a>
         <a routerLink="/gerant/rapports-financiers" routerLinkActive="actif">Rapports</a>
@@ -85,7 +85,7 @@
       @if (auth.aLeRole('GERANT')) {
         <a routerLink="/gerant/commandes" (click)="basculerMenuMobile()">Commandes</a>
         <a routerLink="/gerant/plats" (click)="basculerMenuMobile()">Plats</a>
-        <a routerLink="/gerant/menus" (click)="basculerMenuMobile()">Menus</a>
+        <a routerLink="/gerant/menus" (click)="basculerMenuMobile()">Gérer les menus</a>
         <a routerLink="/gerant/stocks" (click)="basculerMenuMobile()">Stocks</a>
         <a routerLink="/gerant/recommandations" (click)="basculerMenuMobile()">Recommandations</a>
         <a routerLink="/gerant/rapports-financiers" (click)="basculerMenuMobile()">Rapports</a>

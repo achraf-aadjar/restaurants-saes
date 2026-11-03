@@ -66,9 +66,34 @@
                 <option value="MOBILE_MONEY">Mobile Money</option>
               </select>
             </div>
-            <button type="button" class="btn btn-primaire btn-petit" [disabled]="actionEnCours()" (click)="encaisser(c)">
-              Encaisser
-            </button>
+            @if (confirmationEncaissement() === c.id) {
+              <p class="message-refus">
+                Encaisser {{ c.montantTotal }} FCFA en
+                {{ modePaiementDe(c.id) === 'ESPECES' ? 'espèces' : 'Mobile Money' }} ?
+              </p>
+              <div class="actions-danger">
+                <button
+                  type="button"
+                  class="btn btn-primaire btn-petit"
+                  [disabled]="actionEnCours()"
+                  (click)="encaisser(c)"
+                >
+                  Oui, encaisser
+                </button>
+                <button type="button" class="btn btn-secondaire btn-petit" (click)="confirmationEncaissement.set(null)">
+                  Annuler
+                </button>
+              </div>
+            } @else {
+              <button
+                type="button"
+                class="btn btn-primaire btn-petit"
+                [disabled]="actionEnCours()"
+                (click)="confirmationEncaissement.set(c.id)"
+              >
+                Encaisser
+              </button>
+            }
           </article>
         }
       </div>

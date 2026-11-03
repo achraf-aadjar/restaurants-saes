@@ -32,6 +32,7 @@ export class Caisse {
   protected montantCompte = 0;
   protected modePaiementParCommande = new Map<number, ModePaiement>();
   protected readonly clotureOuverte = signal(false);
+  protected readonly confirmationEncaissement = signal<number | null>(null);
   protected readonly resultatCloture = signal<SessionCaisseDto | null>(null);
 
   constructor() {
@@ -100,10 +101,12 @@ export class Caisse {
       .subscribe({
         next: () => {
           this.actionEnCours.set(false);
+          this.confirmationEncaissement.set(null);
           this.chargerCommandes();
         },
         error: (err) => {
           this.actionEnCours.set(false);
+          this.confirmationEncaissement.set(null);
           this.erreur.set(motifErreur(err, "Impossible d'encaisser la commande"));
           this.chargerCommandes();
         },

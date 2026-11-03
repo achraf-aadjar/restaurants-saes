@@ -12,23 +12,45 @@
   @if (ingredients().length === 0) {
     <p>Aucun ingrédient.</p>
   } @else {
-    <form (ngSubmit)="signalerRupture()" class="ligne-dynamique">
-      <div class="champ champ-inline" style="width: 220px">
-        <label>Ingrédient</label>
-        <select [(ngModel)]="ingredientSelectionne" name="ingredientRupture">
+    <form (ngSubmit)="confirmationRupture.set(true)" class="ligne-dynamique">
+      <div class="champ champ-inline" style="flex: 1; max-width: 360px">
+        <label for="ingredientRupture">Ingrédient</label>
+        <select
+          id="ingredientRupture"
+          style="width: 100%"
+          [(ngModel)]="ingredientSelectionne"
+          (ngModelChange)="confirmationRupture.set(false)"
+          name="ingredientRupture"
+        >
           @for (i of ingredients(); track i.id) {
             <option [ngValue]="i.id">{{ i.nom }} (stock : {{ i.stock }} {{ i.unite }})</option>
           }
         </select>
       </div>
-      <button
-        type="submit"
-        class="btn btn-primaire btn-petit"
-        [disabled]="ruptureEnCours() === ingredientSelectionne"
-      >
-        Signaler la rupture
-      </button>
+      @if (!confirmationRupture()) {
+        <button type="submit" class="btn btn-primaire btn-petit">Signaler la rupture</button>
+      }
     </form>
+
+    @if (confirmationRupture()) {
+      <p class="message-refus">
+        Confirmer la rupture de « {{ nomIngredientSelectionne() }} » ? Les plats qui en contiennent seront
+        désactivés et son stock ramené à zéro.
+      </p>
+      <div class="actions-danger">
+        <button
+          type="button"
+          class="btn btn-primaire btn-petit"
+          [disabled]="ruptureEnCours() !== null"
+          (click)="signalerRupture()"
+        >
+          Oui, signaler la rupture
+        </button>
+        <button type="button" class="btn btn-secondaire btn-petit" (click)="confirmationRupture.set(false)">
+          Annuler
+        </button>
+      </div>
+    }
   }
 </section>
 

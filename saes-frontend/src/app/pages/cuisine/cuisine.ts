@@ -32,7 +32,12 @@ export class Cuisine {
   protected readonly erreurRupture = signal<string | null>(null);
   protected readonly ruptureEnCours = signal<number | null>(null);
   protected readonly ruptureConfirmee = signal<number | null>(null);
+  protected readonly confirmationRupture = signal(false);
   protected ingredientSelectionne: number | null = null;
+
+  protected nomIngredientSelectionne(): string {
+    return this.ingredients().find((i) => i.id === this.ingredientSelectionne)?.nom ?? '';
+  }
 
   constructor() {
     this.charger();
@@ -55,11 +60,13 @@ export class Cuisine {
     this.ruptureService.signaler(this.ingredientSelectionne).subscribe({
       next: () => {
         this.ruptureEnCours.set(null);
+        this.confirmationRupture.set(false);
         this.ruptureConfirmee.set(this.ingredientSelectionne);
         this.chargerIngredients();
       },
       error: (err) => {
         this.ruptureEnCours.set(null);
+        this.confirmationRupture.set(false);
         this.erreurRupture.set(motifErreur(err, 'Action impossible'));
       },
     });

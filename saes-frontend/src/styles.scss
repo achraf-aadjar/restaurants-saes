@@ -40,6 +40,7 @@ h2,
 h3 {
   color: var(--saes-vert);
   margin: 0 0 0.5em;
+  overflow-wrap: break-word; /* un mot trop long pour un petit ecran passe a la ligne */
 }
 
 a {
@@ -170,6 +171,12 @@ button {
   font-size: 0.8rem;
   color: #6b6b5f;
   margin: -0.4rem 0 1rem;
+}
+
+/* Sur telephone, un tableau trop large defile dans sa carte au lieu d'elargir
+   toute la page (qui obligeait a zoomer ou masquait les boutons d'action). */
+.carte:has(.table-simple) {
+  overflow-x: auto;
 }
 
 .table-simple {
