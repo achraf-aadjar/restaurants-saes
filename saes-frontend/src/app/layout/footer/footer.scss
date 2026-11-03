@@ -11,13 +11,14 @@
   padding: 0 1rem;
 }
 
+// Soulignes, comme sur les ecrans de reference.
 .pied a {
   color: inherit;
-  text-decoration: none;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 
   &:hover {
     color: var(--saes-vert);
-    text-decoration: underline;
   }
 
   &:focus-visible {
@@ -27,84 +28,40 @@
   }
 }
 
-// Client ou visiteur : fond clair un peu different de la page.
+// Client ou visiteur : fond clair un peu different de la page, comme sur l'ecran 1.
 
 .pied-client {
   background: #f3efe2;
 }
 
 .pied-client .pied-conteneur {
-  padding-top: 2.25rem;
+  padding-top: 1.1rem;
+  padding-bottom: 1.25rem;
 }
 
-.pied-haut {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.75rem;
+.pied-ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 1.5rem;
 }
 
-.pied-logo {
-  display: block;
-  height: 40px;
-  margin-bottom: 0.75rem;
-}
-
-.pied-marque p {
+.pied-restaurant {
   margin: 0;
-  max-width: 320px;
-  line-height: 1.55;
+  line-height: 1.5;
+
+  strong {
+    color: var(--saes-vert);
+  }
 }
 
-.pied-titre {
-  margin: 0 0 0.8rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--saes-vert);
+// A droite, meme quand les coordonnees du restaurant manquent.
+.pied-confidentialite {
+  margin-left: auto;
 }
 
-.pied-nom {
-  margin: 0 0 0.6rem;
-  font-weight: 700;
-  color: var(--saes-vert);
-}
-
-.pied-liste {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-}
-
-.pied-coordonnee {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.55rem;
-  line-height: 1.45;
-}
-
-.pied-coordonnee svg {
-  flex-shrink: 0;
-  width: 18px;
-  height: 18px;
-  margin-top: 0.05rem;
-  fill: none;
-  stroke: var(--saes-rouge);
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.pied-bas {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  margin-top: 2rem;
-  padding: 1.1rem 0 1.25rem;
-  border-top: 1px solid #e2dbc6;
+.pied-copyright {
+  margin: 0.4rem 0 0;
   font-size: 0.82rem;
   color: #6b6b5f;
 }
@@ -121,29 +78,4 @@
   padding-bottom: 0.9rem;
   font-size: 0.82rem;
   color: #6b6b5f;
-}
-
-// Tablettes et ordinateurs
-
-@media (min-width: 720px) {
-  .pied-haut {
-    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 0.8fr);
-    gap: 3rem;
-  }
-
-  .pied-bas {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-}
-
-// Telephones : marque en haut, puis les deux colonnes cote a cote
-@media (min-width: 420px) and (max-width: 719px) {
-  .pied-haut {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .pied-marque {
-    grid-column: 1 / -1;
-  }
 }

@@ -12,12 +12,7 @@
   <div class="liste-commandes">
     @for (c of commandes(); track c.id) {
       <article class="carte commande">
-        <div class="commande-entete">
-          <span class="badge" [class]="classeBadge(c.statut)">{{ libelles[c.statut] }}</span>
-          <span class="commande-meta">{{
-            c.type === 'SUR_PLACE' ? 'Table ' + c.tableNumero : 'À emporter'
-          }}</span>
-        </div>
+        <app-commande-entete [commande]="c" />
         <ul class="liste-panier">
           @for (ligne of c.lignes; track ligne.platId) {
             <li>

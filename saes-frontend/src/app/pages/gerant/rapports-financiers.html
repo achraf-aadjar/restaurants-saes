@@ -1,5 +1,9 @@
 <h1>Rapports financiers</h1>
 
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
 <section class="carte">
   <form (ngSubmit)="charger()" class="ligne-dynamique">
     <div class="champ champ-inline">
@@ -13,10 +17,6 @@
     <button type="submit" class="btn btn-primaire btn-petit" [disabled]="chargement()">Afficher</button>
   </form>
 </section>
-
-@if (erreur(); as e) {
-  <p class="message-refus">{{ e }}</p>
-}
 
 @if (chargement()) {
   <p>Chargement…</p>

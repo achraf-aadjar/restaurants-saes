@@ -10,21 +10,33 @@
   <div class="mise-en-page">
     <div class="colonne-menu">
       <section class="carte" style="margin-bottom: 1rem">
-        <div class="champ champ-inline" style="display: inline-flex; margin-right: 1.5rem">
-          <label>Type</label>
-          <select [(ngModel)]="type" name="type">
-            <option value="SUR_PLACE">Sur place</option>
-            <option value="A_EMPORTER">À emporter</option>
-          </select>
+        <div class="choix-groupe" role="group" aria-label="Type de commande">
+          <button
+            type="button"
+            class="choix"
+            [attr.aria-pressed]="type === 'SUR_PLACE'"
+            (click)="type = 'SUR_PLACE'"
+          >
+            Sur place
+          </button>
+          <button
+            type="button"
+            class="choix"
+            [attr.aria-pressed]="type === 'A_EMPORTER'"
+            (click)="type = 'A_EMPORTER'"
+          >
+            À emporter
+          </button>
         </div>
         @if (type === 'SUR_PLACE') {
-          <div class="champ champ-inline" style="display: inline-flex">
-            <label>Table</label>
-            <select [(ngModel)]="tableId" name="table">
+          <div class="champ champ-inline champ-etire">
+            <label for="table">Table</label>
+            <select id="table" [(ngModel)]="tableId" name="table">
               <option [ngValue]="null">— Choisir —</option>
               @for (t of tables(); track t.id) {
                 <option [ngValue]="t.id" [disabled]="t.occupee">
-                  n°{{ t.numero }} ({{ t.capacite }} pl.){{ t.occupee ? ' — occupée' : '' }}
+                  Table {{ t.numero }} · {{ t.capacite }} place{{ t.capacite > 1 ? 's' : '' }}
+                  {{ t.occupee ? '— occupée' : '' }}
                 </option>
               }
             </select>

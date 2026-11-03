@@ -1,19 +1,14 @@
-<h1>Menus</h1>
+<div class="titre-page">
+  <h1>Menus</h1>
+  <button type="button" class="btn btn-primaire" (click)="ouvrirCreation()">+ Nouveau menu</button>
+</div>
 
 @if (erreur(); as e) {
   <p class="message-refus">{{ e }}</p>
 }
 
-<section class="carte">
-  <button
-    type="button"
-    class="btn btn-secondaire"
-    (click)="formulaireOuvert() ? formulaireOuvert.set(false) : ouvrirCreation()"
-  >
-    {{ formulaireOuvert() ? 'Annuler' : 'Créer un menu' }}
-  </button>
-
-  @if (formulaireOuvert()) {
+@if (formulaireOuvert()) {
+  <section class="carte">
     <form (ngSubmit)="enregistrer()" #f="ngForm" class="formulaire-creation formulaire-large">
       <h2>{{ idEnEdition ? 'Modifier le menu' : 'Nouveau menu' }}</h2>
 
@@ -48,14 +43,17 @@
         }
       </div>
 
-      <div style="margin-top: 1.25rem">
+      <div class="actions-colonne" style="margin-top: 1.25rem">
         <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enregistrementEnCours()">
           {{ enregistrementEnCours() ? 'Enregistrement…' : 'Enregistrer' }}
         </button>
+        <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert.set(false)">
+          Annuler
+        </button>
       </div>
     </form>
-  }
-</section>
+  </section>
+}
 
 <section class="carte" style="margin-top: 1rem">
   @if (chargement()) {

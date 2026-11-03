@@ -66,7 +66,29 @@ class CommandesTest extends IntegrationTest {
 
     @Test
     void passerUneCommandeEstRefuseSiLeRestaurantEstFerme() {
-        // Ouvert seulement demain : ferme en ce moment.
+        ouvrirSeulementDemain();
+
+        Reponse commande = monde.passerCommande(monde.jetonClient, monde.platId, 1);
+
+        assertThat(commande.statut()).isEqualTo(409);
+    }
+
+    @Test
+    void laListeDesRestaurantsDitSIlEstOuvertAvecSesHorairesDuJour() {
+        String restaurant = "$[?(@.id == " + monde.restaurantId + ")]";
+        Reponse ouvert = api.get(null, "/api/public/restaurants");
+        assertThat(ouvert.liste(restaurant + ".ouvert")).containsExactly(true);
+        assertThat(ouvert.liste(restaurant + ".horairesDuJour[*]")).hasSize(1);
+
+        ouvrirSeulementDemain();
+
+        Reponse ferme = api.get(null, "/api/public/restaurants");
+        assertThat(ferme.liste(restaurant + ".ouvert")).containsExactly(false);
+        assertThat(ferme.liste(restaurant + ".horairesDuJour[*]")).isEmpty();
+    }
+
+    /** Ouvert seulement demain : ferme en ce moment. */
+    private void ouvrirSeulementDemain() {
         Map<String, Object> restaurant = Monde.requeteRestaurant("Ferme aujourd'hui");
         String jourDemain = switch (LocalDate.now().plusDays(1).getDayOfWeek()) {
             case MONDAY -> "LUNDI";
@@ -80,10 +102,6 @@ class CommandesTest extends IntegrationTest {
         restaurant.put("horaires", List.of(
                 Map.of("jour", jourDemain, "heureOuverture", "08:00:00", "heureFermeture", "20:00:00")));
         ok(api.put(monde.jetonAdmin, "/api/admin/restaurants/" + monde.restaurantId, avecTables(restaurant)));
-
-        Reponse commande = monde.passerCommande(monde.jetonClient, monde.platId, 1);
-
-        assertThat(commande.statut()).isEqualTo(409);
     }
 
     @Test

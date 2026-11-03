@@ -1,9 +1,9 @@
-import { DatePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, LOCALE_ID, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../../core/auth.service';
 import { CommandeClientService } from '../../core/commande-client.service';
+import { heureEnLettres, periodeEnLettres } from '../../core/date.util';
 import { motifErreur } from '../../core/erreur.util';
 import { CategoriePlat, MenuDto, PlatResume, RestaurantSummary } from '../../core/models';
 import { MenuService } from '../../core/menu.service';
@@ -30,6 +30,7 @@ interface LignePanier {
 
 interface MenuAffiche {
   menu: MenuDto;
+  periode: string;
   groupes: GroupeCategorie[];
 }
 
@@ -49,7 +50,7 @@ function grouperParCategorie(plats: PlatResume[]): GroupeCategorie[] {
  */
 @Component({
   selector: 'app-menu-consultation',
-  imports: [DatePipe, MontantPipe],
+  imports: [MontantPipe],
   templateUrl: './menu-consultation.html',
   styleUrl: './menu-consultation.scss',
 })
@@ -57,6 +58,7 @@ export class MenuConsultation {
   private readonly menuService = inject(MenuService);
   private readonly commandeClientService = inject(CommandeClientService);
   private readonly router = inject(Router);
+  private readonly locale = inject(LOCALE_ID);
   protected readonly auth = inject(AuthService);
 
   protected readonly restaurants = signal<RestaurantSummary[]>([]);
@@ -67,11 +69,21 @@ export class MenuConsultation {
 
   protected readonly panier = signal<Map<number, LignePanier>>(new Map());
   protected readonly envoiEnCours = signal(false);
-  protected readonly erreurCommande = signal<string | null>(null);
   protected readonly commandeConfirmee = signal(false);
 
   protected readonly menusAffiches = computed<MenuAffiche[]>(() =>
-    this.menus().map((menu) => ({ menu, groupes: grouperParCategorie(menu.plats) })),
+    this.menus().map((menu) => ({
+      menu,
+      periode: periodeEnLettres(menu.dateDebut, menu.dateFin, this.locale),
+      groupes: grouperParCategorie(menu.plats),
+    })),
+  );
+
+  /** « 11 h 30 – 15 h · 19 h – 21 h 30 », comme sur l'ecran de reference 1 ; vide si ferme. */
+  protected readonly horairesDuJour = computed(() =>
+    (this.restaurantSelectionne()?.horairesDuJour ?? [])
+      .map((h) => `${heureEnLettres(h.heureOuverture)} – ${heureEnLettres(h.heureFermeture)}`)
+      .join(' · '),
   );
 
   protected readonly lignesPanier = computed(() => Array.from(this.panier().values()));
@@ -141,7 +153,7 @@ export class MenuConsultation {
     const restaurant = this.restaurantSelectionne();
     if (!restaurant || this.lignesPanier().length === 0) return;
 
-    this.erreurCommande.set(null);
+    this.erreur.set(null);
     this.envoiEnCours.set(true);
     this.commandeClientService
       .passerCommande({
@@ -156,7 +168,10 @@ export class MenuConsultation {
         },
         error: (err) => {
           this.envoiEnCours.set(false);
-          this.erreurCommande.set(motifErreur(err, 'La commande n\'a pas pu être enregistrée'));
+          this.erreur.set(motifErreur(err, 'La commande n\'a pas pu être enregistrée'));
+          // Le refus s'affiche en haut de l'ecran (Design) ; le panier reste visible quand on
+          // descend dans le menu, on remonte donc pour que le refus soit vu.
+          window.scrollTo(0, 0);
         },
       });
   }

@@ -140,4 +140,10 @@ export class GerantPlats {
   protected nomIngredient(id: number): string {
     return this.ingredients().find((i) => i.id === id)?.nom ?? '';
   }
+
+  /** Unite de l'ingredient, ecrite a cote de la quantite (ecran de reference 4). */
+  protected symboleUnite(id: number): string {
+    const unite = this.ingredients().find((i) => i.id === id)?.unite;
+    return unite ? this.symbolesUnites[unite] : '';
+  }
 }

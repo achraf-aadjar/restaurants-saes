@@ -1,20 +1,19 @@
-<h1>Comptes utilisateurs</h1>
+<div class="titre-page">
+  <h1>Comptes utilisateurs</h1>
+  <button type="button" class="btn btn-primaire" (click)="formulaireOuvert.set(true)">
+    + Nouveau compte du personnel
+  </button>
+</div>
 
 @if (erreur(); as e) {
   <p class="message-refus">{{ e }}</p>
 }
 
-<section class="carte">
-  <button
-    type="button"
-    class="btn btn-secondaire"
-    (click)="formulaireOuvert.set(!formulaireOuvert())"
-  >
-    {{ formulaireOuvert() ? 'Annuler' : 'Créer un compte pour le personnel' }}
-  </button>
-
-  @if (formulaireOuvert()) {
+@if (formulaireOuvert()) {
+  <section class="carte">
     <form (ngSubmit)="creerPersonnel()" #f="ngForm" class="formulaire-creation">
+      <h2>Nouveau compte du personnel</h2>
+
       @if (erreurFormulaire(); as e) {
         <p class="message-refus">{{ e }}</p>
       }
@@ -71,12 +70,17 @@
         </div>
       </div>
 
-      <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || creationEnCours()">
-        {{ creationEnCours() ? 'Création…' : 'Créer le compte' }}
-      </button>
+      <div class="actions-colonne">
+        <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || creationEnCours()">
+          {{ creationEnCours() ? 'Création…' : 'Créer le compte' }}
+        </button>
+        <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert.set(false)">
+          Annuler
+        </button>
+      </div>
     </form>
-  }
-</section>
+  </section>
+}
 
 @if (enEdition(); as u) {
   <section class="carte" style="margin-top: 1rem">

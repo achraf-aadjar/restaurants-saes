@@ -1,5 +1,9 @@
 <h1>Statistiques de ventes</h1>
 
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
 <section class="carte">
   <form (ngSubmit)="charger()" class="ligne-dynamique">
     <div class="champ champ-inline">
@@ -14,19 +18,19 @@
   </form>
 </section>
 
-@if (erreur(); as e) {
-  <p class="message-refus">{{ e }}</p>
-}
-
 @if (chargement()) {
   <p>Chargement…</p>
 } @else if (statistiques(); as s) {
-  <section class="carte" style="margin-top: 1rem">
-    <p class="total-panier">
-      {{ s.nombreCommandesPayees }} commande(s) payée(s) — montant moyen :
-      {{ s.montantMoyen | montant }}
-    </p>
-  </section>
+  <div class="chiffres-cles">
+    <section class="carte">
+      <p class="grand-nombre">{{ s.nombreCommandesPayees }}</p>
+      <p>{{ s.nombreCommandesPayees > 1 ? 'commandes payées' : 'commande payée' }}</p>
+    </section>
+    <section class="carte">
+      <p class="grand-nombre">{{ s.montantMoyen | montant }}</p>
+      <p>montant moyen d'une commande</p>
+    </section>
+  </div>
 
   <section class="carte" style="margin-top: 1rem">
     <h2>Ventes par plat</h2>

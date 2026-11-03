@@ -1,16 +1,17 @@
-<h1>Mes réservations</h1>
+<div class="titre-page">
+  <h1>Mes réservations</h1>
+  <button type="button" class="btn btn-primaire" (click)="formulaireOuvert.set(true)">Réserver une table</button>
+</div>
 
 @if (erreur(); as e) {
   <p class="message-refus">{{ e }}</p>
 }
 
-<section class="carte">
-  <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert.set(!formulaireOuvert())">
-    {{ formulaireOuvert() ? 'Annuler' : 'Réserver une table' }}
-  </button>
-
-  @if (formulaireOuvert()) {
+@if (formulaireOuvert()) {
+  <section class="carte">
     <form (ngSubmit)="reserver()" #f="ngForm" class="formulaire-creation">
+      <h2>Nouvelle réservation</h2>
+
       @if (erreurFormulaire(); as e) {
         <p class="message-refus">{{ e }}</p>
       }
@@ -36,12 +37,17 @@
         <input id="couverts" name="couverts" type="number" min="1" required [(ngModel)]="nombreCouverts" />
       </div>
 
-      <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || envoiEnCours()">
-        {{ envoiEnCours() ? 'Réservation…' : 'Confirmer la réservation' }}
-      </button>
+      <div class="actions-colonne">
+        <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || envoiEnCours()">
+          {{ envoiEnCours() ? 'Réservation…' : 'Confirmer la réservation' }}
+        </button>
+        <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert.set(false)">
+          Annuler
+        </button>
+      </div>
     </form>
-  }
-</section>
+  </section>
+}
 
 <section style="margin-top: 1rem">
   @if (chargement()) {

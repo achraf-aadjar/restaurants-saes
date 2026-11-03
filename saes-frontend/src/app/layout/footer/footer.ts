@@ -22,7 +22,6 @@ export class Footer {
   private readonly menuService = inject(MenuService);
 
   protected readonly annee = new Date().getFullYear();
-  protected readonly estConnecte = this.auth.estConnecte;
 
   /** Premier restaurant actif, affiche tant qu'aucun n'a ete choisi dans la page Menus. */
   private readonly restaurantParDefaut = signal<RestaurantSummary | null>(null);

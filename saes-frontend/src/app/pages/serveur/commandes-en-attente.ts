@@ -1,22 +1,19 @@
 import { Component, inject, signal } from '@angular/core';
 
 import { CommandeServeurService } from '../../core/commande-serveur.service';
-import { classeBadgeStatut, LIBELLES_STATUT_COMMANDE } from '../../core/commande.util';
 import { motifErreur } from '../../core/erreur.util';
 import { CommandeDto } from '../../core/models';
+import { CommandeEntete } from '../../shared/commande-entete';
 import { MontantPipe } from '../../shared/montant.pipe';
 
 /** Modifier ou annuler une commande (cahier des charges §4.3), cote serveur. */
 @Component({
   selector: 'app-commandes-en-attente',
-  imports: [MontantPipe],
+  imports: [CommandeEntete, MontantPipe],
   templateUrl: './commandes-en-attente.html',
 })
 export class CommandesEnAttente {
   private readonly commandeServeurService = inject(CommandeServeurService);
-
-  protected readonly libelles = LIBELLES_STATUT_COMMANDE;
-  protected readonly classeBadge = classeBadgeStatut;
 
   protected readonly commandes = signal<CommandeDto[]>([]);
   protected readonly chargement = signal(true);

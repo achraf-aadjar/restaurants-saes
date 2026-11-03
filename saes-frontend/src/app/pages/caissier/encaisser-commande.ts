@@ -1,25 +1,21 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { CaisseService } from '../../core/caisse.service';
-import { classeBadgeStatut, LIBELLES_STATUT_COMMANDE } from '../../core/commande.util';
 import { motifErreur } from '../../core/erreur.util';
 import { CommandeDto, ModePaiement, SessionCaisseDto } from '../../core/models';
+import { CommandeEntete } from '../../shared/commande-entete';
 import { MontantPipe } from '../../shared/montant.pipe';
 import { MaCaisse } from './ma-caisse';
 
 /** Encaisser une commande (cahier des charges §4.5), cote caissier. */
 @Component({
   selector: 'app-encaisser-commande',
-  imports: [FormsModule, RouterLink, MaCaisse, MontantPipe],
+  imports: [RouterLink, CommandeEntete, MaCaisse, MontantPipe],
   templateUrl: './encaisser-commande.html',
 })
 export class EncaisserCommande {
   private readonly caisseService = inject(CaisseService);
-
-  protected readonly libelles = LIBELLES_STATUT_COMMANDE;
-  protected readonly classeBadge = classeBadgeStatut;
 
   protected readonly caisseOuverte = signal<SessionCaisseDto | null>(null);
   protected readonly commandes = signal<CommandeDto[]>([]);

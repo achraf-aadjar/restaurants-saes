@@ -93,11 +93,11 @@ export class PrendreCommande {
   protected enregistrer(): void {
     this.erreur.set(null);
     if (this.lignesListe().length === 0) {
-      this.erreur.set('Ajoutez au moins un plat');
+      this.refuser('Ajoutez au moins un plat');
       return;
     }
     if (this.type === 'SUR_PLACE' && !this.tableId) {
-      this.erreur.set('Choisissez une table pour une commande sur place');
+      this.refuser('Choisissez une table pour une commande sur place');
       return;
     }
     this.envoiEnCours.set(true);
@@ -114,8 +114,17 @@ export class PrendreCommande {
         },
         error: (err) => {
           this.envoiEnCours.set(false);
-          this.erreur.set(motifErreur(err, 'La commande n\'a pas pu être enregistrée'));
+          this.refuser(motifErreur(err, 'La commande n\'a pas pu être enregistrée'));
         },
       });
+  }
+
+  /**
+   * Refus en haut de l'ecran (Design) ; la commande reste visible quand on descend dans
+   * les plats, on remonte donc pour que le refus soit vu.
+   */
+  private refuser(motif: string): void {
+    this.erreur.set(motif);
+    window.scrollTo(0, 0);
   }
 }

@@ -25,6 +25,20 @@
     @if (restaurant.telephone) {
       <p>{{ restaurant.telephone }}</p>
     }
+    <p class="horaires-du-jour">
+      @if (horairesDuJour()) {
+        Aujourd'hui : {{ horairesDuJour() }}
+        <span
+          class="badge"
+          [class.badge-actif]="restaurant.ouvert"
+          [class.badge-inactif]="!restaurant.ouvert"
+        >
+          {{ restaurant.ouvert ? 'Ouvert' : 'Fermé' }}
+        </span>
+      } @else {
+        <span class="badge badge-inactif">Fermé aujourd'hui</span>
+      }
+    </p>
   </section>
 }
 
@@ -40,14 +54,7 @@
       @for (m of menusAffiches(); track m.menu.id) {
         <section class="menu">
           <h2>{{ m.menu.nom }}</h2>
-          <p class="dates-menu">
-            @if (m.menu.dateFin) {
-              Du {{ m.menu.dateDebut | date: 'shortDate' }} au
-              {{ m.menu.dateFin | date: 'shortDate' }}
-            } @else {
-              À partir du {{ m.menu.dateDebut | date: 'shortDate' }}
-            }
-          </p>
+          <p class="dates-menu">{{ m.periode }}</p>
           @for (groupe of m.groupes; track groupe.categorie) {
             <section class="groupe-categorie">
               <h3>{{ groupe.libelle }}</h3>
@@ -100,9 +107,6 @@
         } @else if (lignesPanier().length === 0) {
           <p class="panier-vide">Ajoutez des plats pour commander à emporter.</p>
         } @else {
-          @if (erreurCommande(); as e) {
-            <p class="message-refus">{{ e }}</p>
-          }
           <ul class="liste-panier">
             @for (ligne of lignesPanier(); track ligne.plat.id) {
               <li>
@@ -112,6 +116,9 @@
             }
           </ul>
           <p class="total-panier">Total : {{ totalPanier() | montant }}</p>
+          <p class="commande-meta">
+            À emporter, à payer à la caisse au retrait, en espèces ou par Mobile Money.
+          </p>
           <button
             type="button"
             class="btn btn-primaire"

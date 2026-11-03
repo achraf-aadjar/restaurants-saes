@@ -15,10 +15,7 @@
   <div class="liste-commandes">
     @for (c of commandes(); track c.id) {
       <article class="carte commande">
-        <div class="commande-entete">
-          <span class="badge" [class]="classeBadge(c.statut)">{{ libelles[c.statut] }}</span>
-          <span class="commande-meta">{{ c.type === 'SUR_PLACE' ? 'Table ' + c.tableNumero : 'À emporter' }}</span>
-        </div>
+        <app-commande-entete [commande]="c" />
         <ul class="liste-panier">
           @for (ligne of c.lignes; track ligne.platId) {
             <li><span>{{ ligne.quantite }} × {{ ligne.platNom }}</span></li>
@@ -27,7 +24,7 @@
         <p class="total-panier">Total : {{ c.montantTotal | montant }}</p>
 
         @if (confirmationId() === c.id) {
-          <p class="message-refus">Confirmer l'abandon de cette commande ?</p>
+          <p>Confirmer l'abandon de cette commande ?</p>
           <div class="actions-danger">
             <button
               type="button"
