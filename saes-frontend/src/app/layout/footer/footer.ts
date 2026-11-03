@@ -39,8 +39,10 @@ export class Footer {
   );
 
   constructor() {
+    // Si l'API ne repond pas, le pied de page reste affiche, sans les coordonnees.
     this.menuService.restaurants().subscribe({
       next: (restaurants) => this.restaurantParDefaut.set(restaurants[0] ?? null),
+      error: () => this.restaurantParDefaut.set(null),
     });
   }
 
