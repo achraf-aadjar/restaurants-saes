@@ -15,3 +15,7 @@ target/
 node_modules/
 dist/
 .angular/
+
+# Secrets de production et sauvegardes
+.env
+sauvegardes/

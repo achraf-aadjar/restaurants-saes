@@ -83,7 +83,7 @@ ajoute un nouveau fichier `V<n>__description.sql`.
 
 ```bash
 # backend (dans saes-backend)
-.\mvnw test                 # tests (PostgreSQL doit être démarré)
+.\mvnw test                 # 87 tests sur une PostgreSQL jetable (Docker doit tourner)
 .\mvnw clean package        # jar dans target/
 
 # frontend (dans saes-frontend)
@@ -92,7 +92,33 @@ npm run build               # build de production dans dist/
 npx prettier --write src    # formatage automatique
 ```
 
-## Production
+## Déploiement (HTTPS)
 
-La variable d'environnement `SAES_JWT_SECRET` (au moins 32 caractères) est
-obligatoire : sans elle, le backend refuse de démarrer.
+Tout tient dans `docker-compose.prod.yml` : PostgreSQL 16 (volume persistant,
+non exposée), le backend (profil `prod`, sans données de test) et le site
+Angular servi par **Caddy**, qui obtient seul le certificat HTTPS (Let's
+Encrypt), redirige HTTP vers HTTPS et transmet `/api` au backend. Seuls les
+ports 80 et 443 sont ouverts.
+
+1. Sur le serveur (Docker installé), faire pointer le nom de domaine vers son
+   adresse IP et ouvrir les ports 80 et 443.
+2. Copier `.env.example` en `.env` et le remplir (domaine, mot de passe de la
+   base, `SAES_JWT_SECRET` d'au moins 32 caractères, premier administrateur).
+   **`.env` ne doit jamais être commité** (il est dans `.gitignore`).
+3. Lancer :
+
+   ```bash
+   docker compose -f docker-compose.prod.yml --env-file .env up -d --build
+   ```
+
+   Le premier administrateur est créé au démarrage s'il n'en existe aucun ;
+   retirer ensuite `SAES_ADMIN_EMAIL` et `SAES_ADMIN_MOT_DE_PASSE` de `.env`.
+4. Connexion Google : ajouter `https://<domaine>` aux « Origines JavaScript
+   autorisées » du Client ID dans Google Cloud Console.
+
+**Sauvegardes** : `scripts/sauvegarder-base.sh` écrit
+`sauvegardes/saes-<date>.sql.gz` et garde les 14 plus récentes ; à planifier
+chaque nuit (la commande de restauration est en tête du script).
+
+Pour essayer en local : `SAES_DOMAINE=localhost` dans `.env`, puis
+https://localhost (certificat local, à accepter dans le navigateur).
