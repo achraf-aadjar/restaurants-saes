@@ -41,10 +41,8 @@ class HoraireService {
 
     /** Vrai si l'instant donne tombe dans une plage d'ouverture du restaurant. */
     boolean estOuvertA(Restaurant restaurant, LocalDateTime instant) {
-        JourSemaine jour = JOURS.get(instant.getDayOfWeek());
         LocalTime heure = instant.toLocalTime();
-        return horaireOuvertureRepository.findByRestaurantId(restaurant.getId()).stream()
-                .filter(h -> h.getJour() == jour)
+        return plagesDuJour(restaurant, instant.toLocalDate()).stream()
                 .anyMatch(h -> !heure.isBefore(h.getHeureOuverture()) && heure.isBefore(h.getHeureFermeture()));
     }
 

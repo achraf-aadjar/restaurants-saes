@@ -77,9 +77,11 @@
                 Encaisser {{ c.montantTotal | montant }}
               </button>
             }
-            <p class="commande-meta" style="margin-top: 0.75rem">
-              Pour Mobile Money, vérifiez d'abord que le paiement est bien reçu.
-            </p>
+            @if (modePaiementDe(c.id) === 'MOBILE_MONEY') {
+              <p class="commande-meta" style="margin-top: 0.75rem">
+                Pour Mobile Money, vérifiez d'abord que le paiement est bien reçu.
+              </p>
+            }
           </article>
         }
       </div>
