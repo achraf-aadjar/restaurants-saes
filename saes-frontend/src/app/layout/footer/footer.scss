@@ -1,33 +1,149 @@
-// Ligne discrete (personnel, administrateur, ou aucun restaurant consulte).
 .pied {
   border-top: 1px solid var(--saes-bordure);
-  padding: 1rem;
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  font-size: 0.85rem;
-  color: #5a5a4e;
+  color: #4f5a55;
+  font-size: 0.9rem;
+}
+
+// Meme largeur que le contenu de l'en-tete, pour que tout soit aligne.
+.pied-conteneur {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 
 .pied a {
-  color: #5a5a4e;
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--saes-vert);
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--saes-vert);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 // Client ou visiteur : fond clair un peu different de la page.
+
 .pied-client {
   background: #f3efe2;
+}
+
+.pied-client .pied-conteneur {
+  padding-top: 2.25rem;
+}
+
+.pied-haut {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.75rem;
+}
+
+.pied-logo {
+  display: block;
+  height: 40px;
+  margin-bottom: 0.75rem;
+}
+
+.pied-marque p {
+  margin: 0;
+  max-width: 320px;
+  line-height: 1.55;
+}
+
+.pied-titre {
+  margin: 0 0 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--saes-vert);
+}
+
+.pied-nom {
+  margin: 0 0 0.6rem;
+  font-weight: 700;
+  color: var(--saes-vert);
+}
+
+.pied-liste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.pied-coordonnee {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  line-height: 1.45;
+}
+
+.pied-coordonnee svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 0.05rem;
+  fill: none;
+  stroke: var(--saes-rouge);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pied-bas {
+  display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  padding: 1rem 1.5rem;
+  margin-top: 2rem;
+  padding: 1.1rem 0 1.25rem;
+  border-top: 1px solid #e2dbc6;
+  font-size: 0.82rem;
+  color: #6b6b5f;
 }
 
-.pied-ligne {
+// Personnel et administrateur : une seule ligne discrete.
+
+.pied-discret .pied-conteneur {
   display: flex;
-  justify-content: space-between;
   flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
   gap: 0.5rem 1.5rem;
+  padding-top: 0.9rem;
+  padding-bottom: 0.9rem;
+  font-size: 0.82rem;
+  color: #6b6b5f;
 }
 
-.copyright {
-  font-size: 0.78rem;
+// Tablettes et ordinateurs
+
+@media (min-width: 720px) {
+  .pied-haut {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 0.8fr);
+    gap: 3rem;
+  }
+
+  .pied-bas {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+// Telephones : marque en haut, puis les deux colonnes cote a cote
+@media (min-width: 420px) and (max-width: 719px) {
+  .pied-haut {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .pied-marque {
+    grid-column: 1 / -1;
+  }
 }
