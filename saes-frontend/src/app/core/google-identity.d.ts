@@ -9,9 +9,13 @@ interface GoogleIdConfiguration {
 }
 
 interface GoogleButtonOptions {
+  type?: 'standard' | 'icon';
   theme?: 'outline' | 'filled_blue' | 'filled_black';
   size?: 'large' | 'medium' | 'small';
+  shape?: 'rectangular' | 'pill' | 'circle' | 'square';
   text?: 'signin_with' | 'signup_with' | 'continue_with';
+  logo_alignment?: 'left' | 'center';
+  locale?: string;
   width?: number;
 }
 

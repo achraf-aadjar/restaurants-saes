@@ -1,35 +1,82 @@
-<section class="carte formulaire-etroit">
-  <h1>Connexion</h1>
+<div class="auth">
+  <section class="auth-carte" aria-labelledby="titre-connexion">
+    <header class="auth-entete">
+      <h1 id="titre-connexion">Connexion</h1>
+      <p class="auth-soustitre">Heureux de vous revoir.</p>
+    </header>
 
-  @if (erreur(); as e) {
-    <p class="message-refus">{{ e }}</p>
-  }
-
-  <form (ngSubmit)="valider()" #f="ngForm">
-    <div class="champ">
-      <label for="email">Adresse e-mail</label>
-      <input id="email" name="email" type="email" required [(ngModel)]="email" autocomplete="email" />
+    <div class="auth-google">
+      <app-google-sign-in-button texte="signin_with" (jeton)="connecterAvecGoogle($event)" />
     </div>
 
-    <div class="champ">
-      <label for="motDePasse">Mot de passe</label>
-      <input
-        id="motDePasse"
-        name="motDePasse"
-        type="password"
-        required
-        [(ngModel)]="motDePasse"
-        autocomplete="current-password"
-      />
-    </div>
+    <div class="auth-separateur">ou avec votre adresse e-mail</div>
 
-    <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enCours()">
-      {{ enCours() ? 'Connexion…' : 'Se connecter' }}
-    </button>
-  </form>
+    @if (erreur(); as e) {
+      <p class="message-refus auth-erreur" role="alert">{{ e }}</p>
+    }
 
-  <div class="separateur-ou">ou</div>
-  <app-google-sign-in-button (jeton)="connecterAvecGoogle($event)" />
+    <form class="auth-formulaire" (ngSubmit)="f.valid && valider()" #f="ngForm" novalidate>
+      <div class="auth-champ">
+        <label for="email">Adresse e-mail</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          inputmode="email"
+          placeholder="nom@exemple.com"
+          required
+          email
+          autocomplete="email"
+          [(ngModel)]="email"
+          #emailCtrl="ngModel"
+          [class.invalide]="emailCtrl.invalid && (emailCtrl.touched || f.submitted)"
+          [attr.aria-invalid]="emailCtrl.invalid && (emailCtrl.touched || f.submitted)"
+          aria-describedby="email-erreur"
+        />
+        @if (emailCtrl.invalid && (emailCtrl.touched || f.submitted)) {
+          <p class="auth-erreur-champ" id="email-erreur">
+            {{ emailCtrl.errors?.['required'] ? 'Saisissez votre adresse e-mail.' : 'Adresse e-mail invalide.' }}
+          </p>
+        }
+      </div>
 
-  <p class="lien-bas">Pas encore de compte ? <a routerLink="/inscription">S'inscrire</a></p>
-</section>
+      <div class="auth-champ">
+        <label for="motDePasse">Mot de passe</label>
+        <div class="auth-mot-de-passe">
+          <input
+            id="motDePasse"
+            name="motDePasse"
+            [type]="motDePasseVisible() ? 'text' : 'password'"
+            required
+            autocomplete="current-password"
+            [(ngModel)]="motDePasse"
+            #mdpCtrl="ngModel"
+            [class.invalide]="mdpCtrl.invalid && (mdpCtrl.touched || f.submitted)"
+            [attr.aria-invalid]="mdpCtrl.invalid && (mdpCtrl.touched || f.submitted)"
+            aria-describedby="mdp-erreur"
+          />
+          <button
+            type="button"
+            class="auth-oeil"
+            (click)="motDePasseVisible.set(!motDePasseVisible())"
+            [attr.aria-pressed]="motDePasseVisible()"
+            [attr.aria-label]="motDePasseVisible() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+          >
+            {{ motDePasseVisible() ? 'Masquer' : 'Afficher' }}
+          </button>
+        </div>
+        @if (mdpCtrl.invalid && (mdpCtrl.touched || f.submitted)) {
+          <p class="auth-erreur-champ" id="mdp-erreur">Saisissez votre mot de passe.</p>
+        }
+      </div>
+
+      <button type="submit" class="btn btn-primaire auth-bouton" [disabled]="enCours()">
+        {{ enCours() ? 'Connexion…' : 'Se connecter' }}
+      </button>
+    </form>
+
+    <footer class="auth-pied">
+      Pas encore de compte ? <a routerLink="/inscription">Créer un compte</a>
+    </footer>
+  </section>
+</div>

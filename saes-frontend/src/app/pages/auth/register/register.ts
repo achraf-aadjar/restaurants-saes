@@ -13,6 +13,7 @@ import { GoogleSignInButton } from '../../../shared/google-sign-in-button';
   selector: 'app-register',
   imports: [FormsModule, RouterLink, GoogleSignInButton],
   templateUrl: './register.html',
+  styleUrl: '../auth.scss',
 })
 export class Register {
   private readonly auth = inject(AuthService);
@@ -25,6 +26,7 @@ export class Register {
   protected motDePasse = '';
   protected readonly enCours = signal(false);
   protected readonly erreur = signal<string | null>(null);
+  protected readonly motDePasseVisible = signal(false);
 
   protected valider(): void {
     this.erreur.set(null);

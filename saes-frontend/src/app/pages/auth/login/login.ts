@@ -14,6 +14,7 @@ import { GoogleSignInButton } from '../../../shared/google-sign-in-button';
   selector: 'app-login',
   imports: [FormsModule, RouterLink, GoogleSignInButton],
   templateUrl: './login.html',
+  styleUrl: '../auth.scss',
 })
 export class Login {
   private readonly auth = inject(AuthService);
@@ -23,6 +24,7 @@ export class Login {
   protected motDePasse = '';
   protected readonly enCours = signal(false);
   protected readonly erreur = signal<string | null>(null);
+  protected readonly motDePasseVisible = signal(false);
 
   protected valider(): void {
     this.erreur.set(null);
