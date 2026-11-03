@@ -1,6 +1,37 @@
 <h1>Préparation des commandes</h1>
 <p class="commande-meta">Par ordre d'arrivée, la plus ancienne en premier.</p>
 
+<section class="carte">
+  <h2>Signaler une rupture</h2>
+  @if (erreurRupture(); as e) {
+    <p class="message-refus">{{ e }}</p>
+  }
+  @if (ruptureConfirmee(); as id) {
+    <p class="message-ok">Rupture signalée : les plats concernés ont été désactivés.</p>
+  }
+  @if (ingredients().length === 0) {
+    <p>Aucun ingrédient.</p>
+  } @else {
+    <form (ngSubmit)="signalerRupture()" class="ligne-dynamique">
+      <div class="champ champ-inline" style="width: 220px">
+        <label>Ingrédient</label>
+        <select [(ngModel)]="ingredientSelectionne" name="ingredientRupture">
+          @for (i of ingredients(); track i.id) {
+            <option [ngValue]="i.id">{{ i.nom }} (stock : {{ i.stock }} {{ i.unite }})</option>
+          }
+        </select>
+      </div>
+      <button
+        type="submit"
+        class="btn btn-primaire btn-petit"
+        [disabled]="ruptureEnCours() === ingredientSelectionne"
+      >
+        Signaler la rupture
+      </button>
+    </form>
+  }
+</section>
+
 @if (erreur(); as e) {
   <p class="message-refus">{{ e }}</p>
 }

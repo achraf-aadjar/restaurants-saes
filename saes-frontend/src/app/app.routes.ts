@@ -69,5 +69,43 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/gerant/commandes-abandon').then((m) => m.CommandesAbandon),
   },
+  {
+    path: 'gerant/plats',
+    canActivate: [roleGuard('GERANT')],
+    loadComponent: () => import('./pages/gerant/plats').then((m) => m.GerantPlats),
+  },
+  {
+    path: 'gerant/menus',
+    canActivate: [roleGuard('GERANT')],
+    loadComponent: () => import('./pages/gerant/menus').then((m) => m.GerantMenus),
+  },
+  {
+    path: 'gerant/stocks',
+    canActivate: [roleGuard('GERANT')],
+    loadComponent: () => import('./pages/gerant/stocks').then((m) => m.GerantStocks),
+  },
+  {
+    path: 'gerant/recommandations',
+    canActivate: [roleGuard('GERANT')],
+    loadComponent: () =>
+      import('./pages/gerant/recommandations').then((m) => m.GerantRecommandations),
+  },
+  {
+    path: 'gerant/rapports-financiers',
+    canActivate: [roleGuard('GERANT')],
+    loadComponent: () =>
+      import('./pages/gerant/rapports-financiers').then((m) => m.GerantRapportsFinanciers),
+  },
+  {
+    path: 'gerant/statistiques-ventes',
+    canActivate: [roleGuard('GERANT')],
+    loadComponent: () =>
+      import('./pages/gerant/statistiques-ventes').then((m) => m.GerantStatistiquesVentes),
+  },
+  {
+    path: 'caissier/caisse',
+    canActivate: [roleGuard('CAISSIER')],
+    loadComponent: () => import('./pages/caissier/caisse').then((m) => m.Caisse),
+  },
   { path: '**', redirectTo: 'menus' },
 ];

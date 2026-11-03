@@ -208,3 +208,157 @@ export const JOURS_SEMAINE: JourSemaine[] = [
 export const ROLES_PERSONNEL: Role[] = ['SERVEUR', 'CUISINIER', 'CAISSIER', 'GERANT'];
 
 export const TOUS_LES_ROLES: Role[] = ['CLIENT', ...ROLES_PERSONNEL, 'ADMINISTRATEUR'];
+
+export type Unite = 'GRAMME' | 'KILOGRAMME' | 'MILLILITRE' | 'LITRE' | 'PIECE';
+
+export const UNITES: Unite[] = ['GRAMME', 'KILOGRAMME', 'MILLILITRE', 'LITRE', 'PIECE'];
+
+export type TypeMouvement = 'ENTREE' | 'SORTIE';
+
+export type ModePaiement = 'ESPECES' | 'MOBILE_MONEY';
+
+/** Gerer les plats (cahier des charges §4.2), cote gerant. */
+export interface RecetteLigneDto {
+  ingredientId: number;
+  ingredientNom?: string;
+  unite?: Unite;
+  quantiteNecessaire: number;
+}
+
+export interface PlatGerantDto {
+  id: number;
+  nom: string;
+  description: string | null;
+  prix: number;
+  categorie: CategoriePlat;
+  estActif: boolean;
+  recette: RecetteLigneDto[];
+}
+
+export interface PlatSaveRequest {
+  nom: string;
+  description?: string;
+  prix: number;
+  categorie: CategoriePlat;
+  recette: RecetteLigneDto[];
+}
+
+/** Gerer les menus (cahier des charges §4.2), cote gerant. */
+export interface MenuGerantDto {
+  id: number;
+  nom: string;
+  dateDebut: string;
+  dateFin: string | null;
+  plats: PlatResume[];
+}
+
+export interface MenuSaveRequest {
+  nom: string;
+  dateDebut: string;
+  dateFin?: string | null;
+  platIds: number[];
+}
+
+/** Gerer les stocks (cahier des charges §4.6), cote gerant. */
+export interface IngredientDto {
+  id: number;
+  nom: string;
+  unite: Unite;
+  seuilAlerte: number;
+  niveauCible: number;
+  stock: number;
+  alerte: boolean;
+}
+
+export interface IngredientSaveRequest {
+  nom: string;
+  unite: Unite;
+  seuilAlerte: number;
+  niveauCible: number;
+}
+
+export interface MouvementStockRequest {
+  type: TypeMouvement;
+  quantite: number;
+}
+
+/** Consulter les recommandations d'approvisionnement (§4.6), cote gerant. */
+export interface RecommandationDto {
+  ingredientId: number;
+  nom: string;
+  unite: Unite;
+  stock: number;
+  niveauCible: number;
+  quantiteARecommander: number;
+  consommationMoyenneParSemaine: number;
+}
+
+/** Finances (cahier des charges §4.5), cote caissier. */
+export interface SessionCaisseDto {
+  id: number;
+  dateHeureOuverture: string;
+  fondDeCaisse: number;
+  dateHeureCloture: string | null;
+  montantCompte: number | null;
+  montantTheorique: number | null;
+  ecart: number | null;
+}
+
+export interface OuvrirCaisseRequest {
+  fondDeCaisse: number;
+}
+
+export interface ClotureCaisseRequest {
+  montantCompte: number;
+}
+
+export interface EncaisserRequest {
+  modePaiement: ModePaiement;
+  version: number;
+}
+
+/** Consulter les rapports financiers (§4.5), cote gerant. */
+export interface EncaissementJourDto {
+  jour: string;
+  montantEspeces: number;
+  montantMobileMoney: number;
+}
+
+export interface EcartCaisseDto {
+  sessionId: number;
+  caissierNom: string;
+  dateHeureOuverture: string;
+  dateHeureCloture: string;
+  fondDeCaisse: number;
+  montantTheorique: number;
+  montantCompte: number;
+  ecart: number;
+}
+
+export interface RapportFinancierDto {
+  encaissementsParJour: EncaissementJourDto[];
+  ecartsCaisse: EcartCaisseDto[];
+  montantCommandesAbandonnees: number;
+}
+
+/** Consulter les statistiques de ventes (§4.6), cote gerant. */
+export interface VenteParPlatDto {
+  platId: number;
+  nom: string;
+  categorie: CategoriePlat;
+  quantiteVendue: number;
+  montant: number;
+}
+
+export interface VenteParCategorieDto {
+  categorie: CategoriePlat;
+  quantiteVendue: number;
+  montant: number;
+}
+
+export interface StatistiquesVentesDto {
+  nombreCommandesPayees: number;
+  montantMoyen: number;
+  parPlat: VenteParPlatDto[];
+  parCategorie: VenteParCategorieDto[];
+}

@@ -1,0 +1,91 @@
+<h1>Menus</h1>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+<section class="carte">
+  <button
+    type="button"
+    class="btn btn-secondaire"
+    (click)="formulaireOuvert() ? formulaireOuvert.set(false) : ouvrirCreation()"
+  >
+    {{ formulaireOuvert() ? 'Annuler' : 'Créer un menu' }}
+  </button>
+
+  @if (formulaireOuvert()) {
+    <form (ngSubmit)="enregistrer()" #f="ngForm" class="formulaire-creation formulaire-large">
+      <h2>{{ idEnEdition ? 'Modifier le menu' : 'Nouveau menu' }}</h2>
+
+      @if (erreurFormulaire(); as e) {
+        <p class="message-refus">{{ e }}</p>
+      }
+
+      <div class="champ">
+        <label for="nomM">Nom</label>
+        <input id="nomM" name="nomM" type="text" required [(ngModel)]="nom" />
+      </div>
+      <div class="champ">
+        <label for="debutM">Date de début</label>
+        <input id="debutM" name="debutM" type="date" required [(ngModel)]="dateDebut" />
+      </div>
+      <div class="champ">
+        <label for="finM">Date de fin (facultative)</label>
+        <input id="finM" name="finM" type="date" [(ngModel)]="dateFin" />
+      </div>
+
+      <h3>Plats du menu (au moins un)</h3>
+      <div class="roles-cases">
+        @for (p of plats(); track p.id) {
+          <label class="case-role">
+            <input
+              type="checkbox"
+              [checked]="platIdsSelectionnes.has(p.id)"
+              (change)="basculerPlat(p.id)"
+            />
+            {{ p.nom }}
+          </label>
+        }
+      </div>
+
+      <div style="margin-top: 1.25rem">
+        <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enregistrementEnCours()">
+          {{ enregistrementEnCours() ? 'Enregistrement…' : 'Enregistrer' }}
+        </button>
+      </div>
+    </form>
+  }
+</section>
+
+<section class="carte" style="margin-top: 1rem">
+  @if (chargement()) {
+    <p>Chargement…</p>
+  } @else {
+    <table class="table-simple">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Début</th>
+          <th>Fin</th>
+          <th>Plats</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (m of menus(); track m.id) {
+          <tr>
+            <td>{{ m.nom }}</td>
+            <td>{{ m.dateDebut }}</td>
+            <td>{{ m.dateFin ?? '—' }}</td>
+            <td>{{ m.plats.length }}</td>
+            <td class="actions-colonne">
+              <button type="button" class="btn btn-secondaire btn-petit" (click)="ouvrirEdition(m)">
+                Modifier
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>
