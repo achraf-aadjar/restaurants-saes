@@ -5,11 +5,12 @@ import { CommandeClientService } from '../../core/commande-client.service';
 import { classeBadgeStatut, LIBELLES_STATUT_COMMANDE } from '../../core/commande.util';
 import { motifErreur } from '../../core/erreur.util';
 import { CommandeDto } from '../../core/models';
+import { MontantPipe } from '../../shared/montant.pipe';
 
 /** Suivre sa commande, Annuler sa commande (cahier des charges §4.3). */
 @Component({
   selector: 'app-mes-commandes',
-  imports: [DatePipe],
+  imports: [DatePipe, MontantPipe],
   templateUrl: './mes-commandes.html',
 })
 export class MesCommandes {

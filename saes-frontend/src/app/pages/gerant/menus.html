@@ -75,8 +75,8 @@
         @for (m of menus(); track m.id) {
           <tr>
             <td>{{ m.nom }}</td>
-            <td>{{ m.dateDebut }}</td>
-            <td>{{ m.dateFin ?? '—' }}</td>
+            <td>{{ m.dateDebut | date: 'shortDate' }}</td>
+            <td>{{ (m.dateFin | date: 'shortDate') ?? '—' }}</td>
             <td>{{ m.plats.length }}</td>
             <td class="actions-colonne">
               <button type="button" class="btn btn-secondaire btn-petit" (click)="ouvrirEdition(m)">

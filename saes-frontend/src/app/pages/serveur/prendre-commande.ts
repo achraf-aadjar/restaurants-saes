@@ -7,6 +7,7 @@ import { CommandeServeurService } from '../../core/commande-serveur.service';
 import { motifErreur } from '../../core/erreur.util';
 import { MenuService } from '../../core/menu.service';
 import { PlatResume, TableOccupationDto, TypeCommande } from '../../core/models';
+import { MontantPipe } from '../../shared/montant.pipe';
 
 interface LigneSaisie {
   plat: PlatResume;
@@ -16,7 +17,7 @@ interface LigneSaisie {
 /** Prendre une commande (cahier des charges §4.3), cote serveur. */
 @Component({
   selector: 'app-prendre-commande',
-  imports: [FormsModule],
+  imports: [FormsModule, MontantPipe],
   templateUrl: './prendre-commande.html',
 })
 export class PrendreCommande {

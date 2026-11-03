@@ -36,7 +36,7 @@
         @for (plat of plats(); track plat.id) {
           <article class="carte plat">
             <h3>{{ plat.nom }}</h3>
-            <p class="prix">{{ plat.prix }} FCFA</p>
+            <p class="prix">{{ plat.prix | montant }}</p>
             @if (quantiteDe(plat) === 0) {
               <button type="button" class="btn btn-secondaire btn-petit" (click)="ajouter(plat)">Ajouter</button>
             } @else {
@@ -61,11 +61,11 @@
             @for (ligne of lignesListe(); track ligne.plat.id) {
               <li>
                 <span>{{ ligne.quantite }} × {{ ligne.plat.nom }}</span>
-                <span>{{ ligne.plat.prix * ligne.quantite }} FCFA</span>
+                <span>{{ ligne.plat.prix * ligne.quantite | montant }}</span>
               </li>
             }
           </ul>
-          <p class="total-panier">Total : {{ total() }} FCFA</p>
+          <p class="total-panier">Total : {{ total() | montant }}</p>
           <button type="button" class="btn btn-primaire" [disabled]="envoiEnCours()" (click)="enregistrer()">
             {{ envoiEnCours() ? 'Enregistrement…' : 'Enregistrer la commande' }}
           </button>

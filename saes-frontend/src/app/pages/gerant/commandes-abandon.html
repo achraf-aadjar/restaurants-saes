@@ -24,7 +24,7 @@
             <li><span>{{ ligne.quantite }} × {{ ligne.platNom }}</span></li>
           }
         </ul>
-        <p class="total-panier">Total : {{ c.montantTotal }} FCFA</p>
+        <p class="total-panier">Total : {{ c.montantTotal | montant }}</p>
 
         @if (confirmationId() === c.id) {
           <p class="message-refus">Confirmer l'abandon de cette commande ?</p>

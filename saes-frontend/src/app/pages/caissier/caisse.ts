@@ -6,6 +6,7 @@ import { CaisseService } from '../../core/caisse.service';
 import { classeBadgeStatut, LIBELLES_STATUT_COMMANDE } from '../../core/commande.util';
 import { motifErreur } from '../../core/erreur.util';
 import { CommandeDto, ModePaiement, SessionCaisseDto } from '../../core/models';
+import { MontantPipe } from '../../shared/montant.pipe';
 
 /**
  * Ouvrir la caisse, Encaisser une commande, Cloturer la caisse (cahier des
@@ -13,7 +14,7 @@ import { CommandeDto, ModePaiement, SessionCaisseDto } from '../../core/models';
  */
 @Component({
   selector: 'app-caisse',
-  imports: [FormsModule, DatePipe],
+  imports: [FormsModule, DatePipe, MontantPipe],
   templateUrl: './caisse.html',
 })
 export class Caisse {

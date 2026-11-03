@@ -1,10 +1,10 @@
-import { DecimalPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { motifErreur } from '../../core/erreur.util';
 import { GerantStatistiquesService } from '../../core/gerant-statistiques.service';
 import { StatistiquesVentesDto } from '../../core/models';
+import { MontantPipe } from '../../shared/montant.pipe';
 
 function ilYA(jours: number): string {
   const date = new Date();
@@ -19,7 +19,7 @@ function ilYA(jours: number): string {
  */
 @Component({
   selector: 'app-gerant-statistiques-ventes',
-  imports: [FormsModule, DecimalPipe],
+  imports: [FormsModule, MontantPipe],
   templateUrl: './statistiques-ventes.html',
 })
 export class GerantStatistiquesVentes {

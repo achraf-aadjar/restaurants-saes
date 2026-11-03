@@ -1,9 +1,11 @@
+import { DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 
 import { CommandeServeurService } from '../../core/commande-serveur.service';
 import { classeBadgeStatut, LIBELLES_STATUT_COMMANDE } from '../../core/commande.util';
 import { motifErreur } from '../../core/erreur.util';
 import { CommandeDto, OccupationRestaurantDto } from '../../core/models';
+import { MontantPipe } from '../../shared/montant.pipe';
 
 /**
  * Visualiser l'occupation des tables, Modifier ou annuler une commande
@@ -11,6 +13,7 @@ import { CommandeDto, OccupationRestaurantDto } from '../../core/models';
  */
 @Component({
   selector: 'app-occupation-tables',
+  imports: [DatePipe, MontantPipe],
   templateUrl: './occupation-tables.html',
 })
 export class OccupationTables {

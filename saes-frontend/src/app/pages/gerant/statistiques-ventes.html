@@ -24,7 +24,7 @@
   <section class="carte" style="margin-top: 1rem">
     <p class="total-panier">
       {{ s.nombreCommandesPayees }} commande(s) payée(s) — montant moyen :
-      {{ s.montantMoyen | number: '1.0-0' }} FCFA
+      {{ s.montantMoyen | montant }}
     </p>
   </section>
 
@@ -48,7 +48,7 @@
               <td>{{ v.nom }}</td>
               <td>{{ v.categorie }}</td>
               <td>{{ v.quantiteVendue }}</td>
-              <td>{{ v.montant }} FCFA</td>
+              <td>{{ v.montant | montant }}</td>
             </tr>
           }
         </tbody>
@@ -74,7 +74,7 @@
             <tr>
               <td>{{ v.categorie }}</td>
               <td>{{ v.quantiteVendue }}</td>
-              <td>{{ v.montant }} FCFA</td>
+              <td>{{ v.montant | montant }}</td>
             </tr>
           }
         </tbody>

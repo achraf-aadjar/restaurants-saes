@@ -42,10 +42,10 @@
           <h2>{{ m.menu.nom }}</h2>
           <p class="dates-menu">
             @if (m.menu.dateFin) {
-              Du {{ m.menu.dateDebut | date: 'dd/MM/yyyy' }} au
-              {{ m.menu.dateFin | date: 'dd/MM/yyyy' }}
+              Du {{ m.menu.dateDebut | date: 'shortDate' }} au
+              {{ m.menu.dateFin | date: 'shortDate' }}
             } @else {
-              À partir du {{ m.menu.dateDebut | date: 'dd/MM/yyyy' }}
+              À partir du {{ m.menu.dateDebut | date: 'shortDate' }}
             }
           </p>
           @for (groupe of m.groupes; track groupe.categorie) {
@@ -58,7 +58,7 @@
                     @if (plat.description) {
                       <p class="description">{{ plat.description }}</p>
                     }
-                    <p class="prix">{{ plat.prix }} FCFA</p>
+                    <p class="prix">{{ plat.prix | montant }}</p>
 
                     @if (auth.aLeRole('CLIENT')) {
                       @if (quantiteDans(plat) === 0) {
@@ -107,11 +107,11 @@
             @for (ligne of lignesPanier(); track ligne.plat.id) {
               <li>
                 <span>{{ ligne.quantite }} × {{ ligne.plat.nom }}</span>
-                <span>{{ ligne.plat.prix * ligne.quantite }} FCFA</span>
+                <span>{{ ligne.plat.prix * ligne.quantite | montant }}</span>
               </li>
             }
           </ul>
-          <p class="total-panier">Total : {{ totalPanier() }} FCFA</p>
+          <p class="total-panier">Total : {{ totalPanier() | montant }}</p>
           <button
             type="button"
             class="btn btn-primaire"

@@ -102,7 +102,7 @@
           <tr>
             <td>{{ p.nom }}</td>
             <td>{{ libellesCategories[p.categorie] }}</td>
-            <td>{{ p.prix }} FCFA</td>
+            <td>{{ p.prix | montant }}</td>
             <td>
               {{ p.recette.map((l) => (l.ingredientNom ?? nomIngredient(l.ingredientId)) + ' (' + l.quantiteNecessaire + ')').join(', ') }}
             </td>

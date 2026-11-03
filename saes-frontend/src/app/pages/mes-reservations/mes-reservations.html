@@ -58,7 +58,7 @@
             </span>
           </div>
           <p class="commande-meta">{{ r.restaurantNom }}</p>
-          <p>{{ r.dateHeure }} — {{ r.nombreCouverts }} couvert(s)</p>
+          <p>{{ r.dateHeure | date }} — {{ r.nombreCouverts }} couvert(s)</p>
           <p class="commande-meta">
             Table(s) : {{ r.tables.length ? '' : '—' }}
             @for (t of r.tables; track t.numero) {

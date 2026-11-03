@@ -5,6 +5,7 @@ import { motifErreur } from '../../core/erreur.util';
 import { GerantPlatService } from '../../core/gerant-plat.service';
 import { GerantStockService } from '../../core/gerant-stock.service';
 import { CategoriePlat, IngredientDto, PlatGerantDto, PlatSaveRequest, RecetteLigneDto } from '../../core/models';
+import { MontantPipe } from '../../shared/montant.pipe';
 
 const CATEGORIES: CategoriePlat[] = ['ENTREE', 'PLAT_PRINCIPAL', 'DESSERT', 'BOISSON'];
 const LIBELLES_CATEGORIES: Record<CategoriePlat, string> = {
@@ -21,7 +22,7 @@ const LIBELLES_CATEGORIES: Record<CategoriePlat, string> = {
  */
 @Component({
   selector: 'app-gerant-plats',
-  imports: [FormsModule],
+  imports: [FormsModule, MontantPipe],
   templateUrl: './plats.html',
 })
 export class GerantPlats {

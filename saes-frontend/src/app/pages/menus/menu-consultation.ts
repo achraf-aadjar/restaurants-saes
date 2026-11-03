@@ -7,6 +7,7 @@ import { CommandeClientService } from '../../core/commande-client.service';
 import { motifErreur } from '../../core/erreur.util';
 import { CategoriePlat, MenuDto, PlatResume, RestaurantSummary } from '../../core/models';
 import { MenuService } from '../../core/menu.service';
+import { MontantPipe } from '../../shared/montant.pipe';
 
 const ORDRE_CATEGORIES: CategoriePlat[] = ['ENTREE', 'PLAT_PRINCIPAL', 'DESSERT', 'BOISSON'];
 const LIBELLES_CATEGORIES: Record<CategoriePlat, string> = {
@@ -48,7 +49,7 @@ function grouperParCategorie(plats: PlatResume[]): GroupeCategorie[] {
  */
 @Component({
   selector: 'app-menu-consultation',
-  imports: [DatePipe],
+  imports: [DatePipe, MontantPipe],
   templateUrl: './menu-consultation.html',
   styleUrl: './menu-consultation.scss',
 })

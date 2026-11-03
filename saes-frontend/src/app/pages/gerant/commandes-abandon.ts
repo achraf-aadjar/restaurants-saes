@@ -4,10 +4,12 @@ import { classeBadgeStatut, LIBELLES_STATUT_COMMANDE } from '../../core/commande
 import { motifErreur } from '../../core/erreur.util';
 import { GerantCommandeService } from '../../core/gerant-commande.service';
 import { CommandeDto } from '../../core/models';
+import { MontantPipe } from '../../shared/montant.pipe';
 
 /** Declarer une commande abandonnee (cahier des charges §4.3), cote gerant. */
 @Component({
   selector: 'app-commandes-abandon',
+  imports: [MontantPipe],
   templateUrl: './commandes-abandon.html',
 })
 export class CommandesAbandon {

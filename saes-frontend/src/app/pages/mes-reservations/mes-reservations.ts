@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -9,7 +10,7 @@ import { ReservationService } from '../../core/reservation.service';
 /** Faire une reservation, Gerer ses reservations (cahier des charges §4.4). */
 @Component({
   selector: 'app-mes-reservations',
-  imports: [FormsModule],
+  imports: [FormsModule, DatePipe],
   templateUrl: './mes-reservations.html',
 })
 export class MesReservations {
