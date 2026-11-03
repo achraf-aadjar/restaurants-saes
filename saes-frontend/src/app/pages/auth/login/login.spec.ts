@@ -68,6 +68,20 @@ describe('Page de connexion', () => {
     expect(navigation).toHaveBeenCalledWith(['/menus']);
   });
 
+  it('le personnel arrive sur sa premiere fonction', async () => {
+    const navigation = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    await saisir('#email', 'fallou@test.sn');
+    await saisir('#motDePasse', 'motdepasse123');
+    await envoyer();
+
+    serveur
+      .expectOne('/api/auth/login')
+      .flush({ token: 'jeton', utilisateur: { id: 2, roles: ['CUISINIER'] } });
+    await fixture.whenStable();
+
+    expect(navigation).toHaveBeenCalledWith(['/cuisine/preparation']);
+  });
+
   it('un refus du serveur affiche son motif', async () => {
     await saisir('#email', 'awa@test.sn');
     await saisir('#motDePasse', 'mauvais');

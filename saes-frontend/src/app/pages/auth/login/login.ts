@@ -4,11 +4,12 @@ import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../core/auth.service';
 import { motifErreur } from '../../../core/erreur.util';
+import { accueilDe } from '../../../core/navigation';
 import { GoogleSignInButton } from '../../../shared/google-sign-in-button';
 
 /**
  * S'authentifier (cahier des charges §4.1), avec en plus la connexion
- * Google.
+ * Google. Le personnel arrive sur sa premiere fonction, le client sur les menus.
  */
 @Component({
   selector: 'app-login',
@@ -30,9 +31,9 @@ export class Login {
     this.erreur.set(null);
     this.enCours.set(true);
     this.auth.authentifier({ email: this.email, motDePasse: this.motDePasse }).subscribe({
-      next: () => {
+      next: (reponse) => {
         this.enCours.set(false);
-        this.router.navigate(['/menus']);
+        this.router.navigate([accueilDe(reponse.utilisateur)]);
       },
       error: (err) => {
         this.enCours.set(false);
@@ -45,9 +46,9 @@ export class Login {
     this.erreur.set(null);
     this.enCours.set(true);
     this.auth.authentifierAvecGoogle({ idToken }).subscribe({
-      next: () => {
+      next: (reponse) => {
         this.enCours.set(false);
-        this.router.navigate(['/menus']);
+        this.router.navigate([accueilDe(reponse.utilisateur)]);
       },
       error: (err) => {
         this.enCours.set(false);

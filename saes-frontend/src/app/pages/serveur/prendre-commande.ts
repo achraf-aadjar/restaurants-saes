@@ -110,7 +110,7 @@ export class PrendreCommande {
       .subscribe({
         next: () => {
           this.envoiEnCours.set(false);
-          this.router.navigate(['/serveur/occupation']);
+          this.router.navigate(['/serveur/commandes']);
         },
         error: (err) => {
           this.envoiEnCours.set(false);

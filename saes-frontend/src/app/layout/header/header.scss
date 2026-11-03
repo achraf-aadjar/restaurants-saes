@@ -12,6 +12,43 @@
   gap: 1.5rem;
 }
 
+/* Le personnel a sa barre laterale contre le bord gauche : l'en-tete et le
+   bandeau prennent toute la largeur, comme sur les ecrans de reference. */
+.entete-personnel .entete-ligne {
+  max-width: none;
+}
+
+.bandeau {
+  background: var(--saes-jaune);
+  padding: 0.7rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.bandeau-restaurant {
+  font-size: 1.15rem;
+}
+
+/* Sur telephone, le bandeau ne garde que le restaurant (ecran 6). */
+.bandeau-date {
+  display: none;
+  font-size: 0.95rem;
+}
+
+/* « mardi 3 novembre 2026 » devient « Mardi 3 novembre 2026 ». */
+.bandeau-date::first-letter {
+  text-transform: uppercase;
+}
+
+/* Des la tablette, il y a la place pour la date. */
+@media (min-width: 600px) {
+  .bandeau-date {
+    display: inline-block;
+  }
+}
+
 .marque {
   display: flex;
   align-items: center;
@@ -60,10 +97,6 @@
   a.actif {
     border-bottom-color: var(--saes-rouge);
   }
-
-  .separateur {
-    color: var(--saes-bordure);
-  }
 }
 
 .compte {
@@ -83,12 +116,6 @@
   display: flex;
   align-items: center;
   gap: 0.35em;
-}
-
-.role {
-  color: #6b6b5f;
-  font-weight: 400;
-  font-size: 0.85em;
 }
 
 .menu-deroulant {
@@ -155,12 +182,43 @@
     font-size: 0.95rem;
     cursor: pointer;
   }
+
+  a.actif {
+    color: var(--saes-rouge);
+  }
+}
+
+.nav-mobile-nom {
+  margin: 0.4rem 0;
+  font-weight: 700;
+}
+
+.nav-mobile-intitule {
+  margin: 0.9rem 0 0.2rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nav-mobile .nav-mobile-compte {
+  margin-top: 0.6rem;
+  border-top: 1px solid var(--saes-bordure);
+  padding-top: 0.9em;
 }
 
 @media (min-width: 860px) {
   .nav-desktop,
   .compte {
     display: flex;
+  }
+
+  .bandeau {
+    padding: 0.7rem 2rem;
+  }
+
+  .entete-personnel .entete-ligne {
+    padding: 0.6rem 2rem;
   }
 
   .bouton-burger {

@@ -48,12 +48,18 @@ describe('Gardes de navigation (droits d acces, qualite attendue 1)', () => {
     expect(executer(authGuard)).toBe(true);
   });
 
-  it('une page de role est refusee aux autres roles et renvoie a l accueil', () => {
+  it('une page de role est refusee aux autres roles et renvoie a leur premiere fonction', () => {
     connecter(['SERVEUR']);
 
     expect(executer(roleGuard('SERVEUR'))).toBe(true);
-    expect(cheminDe(executer(roleGuard('CAISSIER')))).toBe('/');
-    expect(cheminDe(executer(roleGuard('ADMINISTRATEUR')))).toBe('/');
+    expect(cheminDe(executer(roleGuard('CAISSIER')))).toBe('/serveur/prendre-commande');
+    expect(cheminDe(executer(roleGuard('ADMINISTRATEUR')))).toBe('/serveur/prendre-commande');
+  });
+
+  it('un client renvoye d une page du personnel arrive sur les menus', () => {
+    connecter(['CLIENT']);
+
+    expect(cheminDe(executer(roleGuard('GERANT')))).toBe('/menus');
   });
 
   it('un compte a plusieurs roles accede aux pages de chacun', () => {
@@ -61,6 +67,6 @@ describe('Gardes de navigation (droits d acces, qualite attendue 1)', () => {
 
     expect(executer(roleGuard('GERANT'))).toBe(true);
     expect(executer(roleGuard('CAISSIER'))).toBe(true);
-    expect(cheminDe(executer(roleGuard('CUISINIER')))).toBe('/');
+    expect(cheminDe(executer(roleGuard('CUISINIER')))).toBe('/caissier/encaisser');
   });
 });

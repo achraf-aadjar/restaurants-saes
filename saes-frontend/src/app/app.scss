@@ -4,8 +4,15 @@
   flex-direction: column;
 }
 
+/* Barre laterale (personnel, administrateur) a gauche du contenu. */
+.corps {
+  flex: 1;
+  display: flex;
+}
+
 .contenu {
   flex: 1;
+  min-width: 0;
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
