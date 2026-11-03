@@ -13,4 +13,7 @@ public interface SessionCaisseRepository extends JpaRepository<SessionCaisse, Lo
 
     List<SessionCaisse> findByCaissier_Restaurant_IdAndDateHeureOuvertureBetween(
             Long restaurantId, java.time.Instant debut, java.time.Instant fin);
+
+    List<SessionCaisse> findByCaissier_Restaurant_IdAndDateHeureClotureBetween(
+            Long restaurantId, java.time.Instant debut, java.time.Instant fin);
 }

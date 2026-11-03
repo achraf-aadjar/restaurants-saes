@@ -1,5 +1,6 @@
 package com.saes.backend.repository;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +15,9 @@ public interface CommandeRepository extends JpaRepository<Commande, Long> {
     List<Commande> findByClientIdOrderByDateHeureDesc(Long clientId);
 
     List<Commande> findByRestaurantIdAndStatutInOrderByDateHeureAsc(Long restaurantId, List<StatutCommande> statuts);
+
+    List<Commande> findByRestaurantIdAndStatutAndDateHeureBetween(
+            Long restaurantId, StatutCommande statut, Instant debut, Instant fin);
 
     /**
      * Numeros des tables occupees du restaurant : une table est occupee si
