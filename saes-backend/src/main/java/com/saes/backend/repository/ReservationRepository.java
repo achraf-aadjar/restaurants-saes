@@ -14,4 +14,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     List<Reservation> findByRestaurantIdAndStatutAndDateHeureBetween(
             Long restaurantId, StatutReservation statut, LocalDateTime debut, LocalDateTime fin);
+
+    List<Reservation> findByClientIdAndStatutAndDateHeureAfter(
+            Long clientId, StatutReservation statut, LocalDateTime date);
+
+    boolean existsByTablesTableId(Long tableId);
 }

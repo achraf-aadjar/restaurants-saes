@@ -24,6 +24,7 @@ export class MonCompte {
   protected prenom = this.utilisateurInitial?.prenom ?? '';
   protected email = this.utilisateurInitial?.email ?? '';
   protected telephone = this.utilisateurInitial?.telephone ?? '';
+  protected motDePasseActuel = '';
   protected nouveauMotDePasse = '';
 
   protected readonly enCours = signal(false);
@@ -45,11 +46,13 @@ export class MonCompte {
         prenom: this.prenom,
         email: this.email,
         telephone: this.telephone || undefined,
+        motDePasseActuel: this.motDePasseActuel || undefined,
         nouveauMotDePasse: this.nouveauMotDePasse || undefined,
       })
       .subscribe({
         next: () => {
           this.enCours.set(false);
+          this.motDePasseActuel = '';
           this.nouveauMotDePasse = '';
           this.succes.set('Vos informations ont été mises à jour.');
         },

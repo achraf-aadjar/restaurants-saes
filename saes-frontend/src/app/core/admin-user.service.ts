@@ -20,8 +20,8 @@ export class AdminUserService {
     return this.http.post<Utilisateur>('/api/admin/users', request);
   }
 
-  modifierRoles(id: number, roles: Role[]): Observable<Utilisateur> {
-    return this.http.put<Utilisateur>(`/api/admin/users/${id}/roles`, { roles });
+  modifierRoles(id: number, roles: Role[], restaurantId: number | null): Observable<Utilisateur> {
+    return this.http.put<Utilisateur>(`/api/admin/users/${id}/roles`, { roles, restaurantId });
   }
 
   activer(id: number): Observable<Utilisateur> {

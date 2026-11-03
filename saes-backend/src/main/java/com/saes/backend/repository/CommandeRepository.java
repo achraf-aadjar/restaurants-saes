@@ -29,4 +29,6 @@ public interface CommandeRepository extends JpaRepository<Commande, Long> {
     List<Long> idsTablesOccupees(
             @Param("restaurantId") Long restaurantId,
             @Param("statutsOccupation") List<StatutCommande> statutsOccupation);
+
+    boolean existsByTableId(Long tableId);
 }

@@ -1,4 +1,19 @@
-<footer class="pied">
-  <span>© {{ annee }} Restaurants du SAES</span>
-  <a routerLink="/confidentialite">Confidentialité</a>
-</footer>
+@if (restaurantAffiche(); as restaurant) {
+  <footer class="pied pied-client">
+    <div class="pied-ligne">
+      <span>
+        <strong>{{ restaurant.nom }}</strong> · {{ restaurant.adresse }}
+        @if (restaurant.telephone) {
+          · Tél. {{ restaurant.telephone }}
+        }
+      </span>
+      <a routerLink="/confidentialite">Confidentialité</a>
+    </div>
+    <span class="copyright">© {{ annee }} Restaurants du SAES</span>
+  </footer>
+} @else {
+  <footer class="pied">
+    <span>© {{ annee }} Restaurants du SAES</span>
+    <a routerLink="/confidentialite">Confidentialité</a>
+  </footer>
+}

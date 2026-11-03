@@ -1,5 +1,5 @@
+// Ligne discrete (personnel, administrateur, ou aucun restaurant consulte).
 .pied {
-  background: #f3efe2;
   border-top: 1px solid var(--saes-bordure);
   padding: 1rem;
   display: flex;
@@ -11,4 +11,23 @@
 
 .pied a {
   color: #5a5a4e;
+}
+
+// Client ou visiteur : fond clair un peu different de la page.
+.pied-client {
+  background: #f3efe2;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem 1.5rem;
+}
+
+.pied-ligne {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+
+.copyright {
+  font-size: 0.78rem;
 }
