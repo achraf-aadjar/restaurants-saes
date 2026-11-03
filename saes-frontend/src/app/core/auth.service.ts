@@ -5,6 +5,7 @@ import { Observable, tap } from 'rxjs';
 import {
   AuthResponse,
   CompteUpdateRequest,
+  GoogleAuthRequest,
   InscriptionRequest,
   LoginRequest,
   Role,
@@ -41,6 +42,12 @@ export class AuthService {
   authentifier(request: LoginRequest): Observable<AuthResponse> {
     return this.http
       .post<AuthResponse>('/api/auth/login', request)
+      .pipe(tap((reponse) => this.enregistrerSession(reponse)));
+  }
+
+  authentifierAvecGoogle(request: GoogleAuthRequest): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>('/api/auth/google', request)
       .pipe(tap((reponse) => this.enregistrerSession(reponse)));
   }
 

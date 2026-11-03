@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.saes.backend.service.AuthService;
 import com.saes.backend.web.dto.AuthResponse;
+import com.saes.backend.web.dto.GoogleAuthRequest;
 import com.saes.backend.web.dto.InscriptionRequest;
 import com.saes.backend.web.dto.LoginRequest;
 
@@ -34,5 +35,10 @@ public class AuthController {
     @PostMapping("/login")
     public AuthResponse authentifier(@Valid @RequestBody LoginRequest request) {
         return authService.authentifier(request);
+    }
+
+    @PostMapping("/google")
+    public AuthResponse authentifierGoogle(@Valid @RequestBody GoogleAuthRequest request) {
+        return authService.authentifierGoogle(request);
     }
 }

@@ -4,13 +4,14 @@ import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../core/auth.service';
 import { motifErreur } from '../../../core/erreur.util';
+import { GoogleSignInButton } from '../../../shared/google-sign-in-button';
 
 /**
- * S'inscrire (cahier des charges §4.1).
+ * S'inscrire (cahier des charges §4.1), avec en plus l'inscription Google.
  */
 @Component({
   selector: 'app-register',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, GoogleSignInButton],
   templateUrl: './register.html',
 })
 export class Register {
@@ -46,5 +47,20 @@ export class Register {
           this.erreur.set(motifErreur(err, 'Inscription impossible'));
         },
       });
+  }
+
+  protected inscrireAvecGoogle(idToken: string): void {
+    this.erreur.set(null);
+    this.enCours.set(true);
+    this.auth.authentifierAvecGoogle({ idToken }).subscribe({
+      next: () => {
+        this.enCours.set(false);
+        this.router.navigate(['/menus']);
+      },
+      error: (err) => {
+        this.enCours.set(false);
+        this.erreur.set(motifErreur(err, 'Inscription avec Google impossible'));
+      },
+    });
   }
 }

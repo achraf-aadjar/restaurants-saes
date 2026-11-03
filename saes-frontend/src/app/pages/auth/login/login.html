@@ -28,5 +28,8 @@
     </button>
   </form>
 
+  <div class="separateur-ou">ou</div>
+  <app-google-sign-in-button (jeton)="connecterAvecGoogle($event)" />
+
   <p class="lien-bas">Pas encore de compte ? <a routerLink="/inscription">S'inscrire</a></p>
 </section>

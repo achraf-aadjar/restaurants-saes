@@ -35,6 +35,10 @@ export interface LoginRequest {
   motDePasse: string;
 }
 
+export interface GoogleAuthRequest {
+  idToken: string;
+}
+
 export interface CompteUpdateRequest {
   nom: string;
   prenom: string;
