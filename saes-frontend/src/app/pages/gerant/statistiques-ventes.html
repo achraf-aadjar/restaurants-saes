@@ -46,7 +46,7 @@
           @for (v of s.parPlat; track v.platId) {
             <tr>
               <td>{{ v.nom }}</td>
-              <td>{{ v.categorie }}</td>
+              <td>{{ libellesCategories[v.categorie] }}</td>
               <td>{{ v.quantiteVendue }}</td>
               <td>{{ v.montant | montant }}</td>
             </tr>
@@ -72,7 +72,7 @@
         <tbody>
           @for (v of s.parCategorie; track v.categorie) {
             <tr>
-              <td>{{ v.categorie }}</td>
+              <td>{{ libellesCategories[v.categorie] }}</td>
               <td>{{ v.quantiteVendue }}</td>
               <td>{{ v.montant | montant }}</td>
             </tr>

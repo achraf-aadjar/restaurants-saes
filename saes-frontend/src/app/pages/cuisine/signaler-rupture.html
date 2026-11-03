@@ -22,7 +22,9 @@
           name="ingredientRupture"
         >
           @for (i of ingredients(); track i.id) {
-            <option [ngValue]="i.id">{{ i.nom }} (stock : {{ i.stock }} {{ i.unite }})</option>
+            <option [ngValue]="i.id">
+              {{ i.nom }} (stock : {{ i.stock | quantite: i.unite }})
+            </option>
           }
         </select>
       </div>

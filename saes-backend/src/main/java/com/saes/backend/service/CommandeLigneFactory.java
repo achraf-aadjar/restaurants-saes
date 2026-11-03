@@ -39,7 +39,7 @@ class CommandeLigneFactory {
                     .orElseThrow(() -> ApiException.badRequest("Plat introuvable"));
 
             if (!plat.getRestaurant().getId().equals(restaurant.getId())) {
-                throw ApiException.badRequest("Ce plat n'appartient pas a ce restaurant");
+                throw ApiException.badRequest("Ce plat n'appartient pas à ce restaurant");
             }
             if (!menuRepository.estCommandable(restaurant.getId(), plat.getId(), aujourdHui)) {
                 throw ApiException.conflict(

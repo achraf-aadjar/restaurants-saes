@@ -156,7 +156,7 @@ export class MenuConsultation {
         },
         error: (err) => {
           this.envoiEnCours.set(false);
-          this.erreurCommande.set(motifErreur(err, 'La commande n\'a pas pu etre enregistree'));
+          this.erreurCommande.set(motifErreur(err, 'La commande n\'a pas pu être enregistrée'));
         },
       });
   }

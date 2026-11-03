@@ -77,7 +77,7 @@ public class GerantStockService {
 
     private void valider(IngredientSaveRequest request) {
         if (request.niveauCible().compareTo(request.seuilAlerte()) < 0) {
-            throw ApiException.badRequest("Le niveau cible ne peut pas etre inferieur au seuil d'alerte");
+            throw ApiException.badRequest("Le niveau cible ne peut pas être inférieur au seuil d'alerte");
         }
     }
 
@@ -90,9 +90,9 @@ public class GerantStockService {
 
     private Ingredient ingredientDuRestaurant(Long ingredientId, Restaurant restaurant) {
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> ApiException.notFound("Ingredient introuvable"));
+                .orElseThrow(() -> ApiException.notFound("Ingrédient introuvable"));
         if (!ingredient.getRestaurant().getId().equals(restaurant.getId())) {
-            throw ApiException.forbidden("Cet ingredient n'appartient pas a votre restaurant");
+            throw ApiException.forbidden("Cet ingrédient n'appartient pas à votre restaurant");
         }
         return ingredient;
     }

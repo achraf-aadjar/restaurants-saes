@@ -65,7 +65,7 @@
                 [checked]="rolesSelectionnes.has(role)"
                 (change)="basculerRole(rolesSelectionnes, role)"
               />
-              {{ role }}
+              {{ libellesRoles[role] }}
             </label>
           }
         </div>
@@ -94,7 +94,7 @@
                 [checked]="rolesEdition.has(role)"
                 (change)="basculerRole(rolesEdition, role)"
               />
-              {{ role }}
+              {{ libellesRoles[role] }}
             </label>
           }
         </div>
@@ -143,7 +143,11 @@
             <td>{{ u.prenom }} {{ u.nom }}</td>
             <td>{{ u.email }}</td>
             <td>{{ u.restaurantNom ?? '—' }}</td>
-            <td>{{ u.roles.join(', ') }}</td>
+            <td>
+              @for (role of u.roles; track role) {
+                {{ libellesRoles[role] }}{{ $last ? '' : ', ' }}
+              }
+            </td>
             <td>
               <span
                 class="badge"

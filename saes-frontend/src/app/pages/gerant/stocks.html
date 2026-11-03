@@ -29,16 +29,16 @@
         <label for="uniteI">Unité</label>
         <select id="uniteI" name="uniteI" required [(ngModel)]="unite">
           @for (u of unites; track u) {
-            <option [ngValue]="u">{{ u }}</option>
+            <option [ngValue]="u">{{ libellesUnites[u] }}</option>
           }
         </select>
       </div>
       <div class="champ">
-        <label for="seuilI">Seuil d'alerte</label>
+        <label for="seuilI">Seuil d'alerte ({{ symbolesUnites[unite] }})</label>
         <input id="seuilI" name="seuilI" type="number" min="0" step="0.001" required [(ngModel)]="seuilAlerte" />
       </div>
       <div class="champ">
-        <label for="cibleI">Niveau cible</label>
+        <label for="cibleI">Niveau cible ({{ symbolesUnites[unite] }})</label>
         <input id="cibleI" name="cibleI" type="number" min="0" step="0.001" required [(ngModel)]="niveauCible" />
       </div>
 
@@ -74,10 +74,10 @@
                 <span class="badge badge-inactif">Alerte</span>
               }
             </td>
-            <td>{{ i.unite }}</td>
-            <td>{{ i.stock }}</td>
-            <td>{{ i.seuilAlerte }}</td>
-            <td>{{ i.niveauCible }}</td>
+            <td>{{ libellesUnites[i.unite] }}</td>
+            <td>{{ i.stock | quantite: i.unite }}</td>
+            <td>{{ i.seuilAlerte | quantite: i.unite }}</td>
+            <td>{{ i.niveauCible | quantite: i.unite }}</td>
             <td class="actions-colonne">
               <button type="button" class="btn btn-secondaire btn-petit" (click)="ouvrirEdition(i)">
                 Modifier
@@ -102,6 +102,7 @@
                     name="quantiteMouvement"
                     style="width: 100px"
                   />
+                  <span>{{ symbolesUnites[i.unite] }}</span>
                   <button type="submit" class="btn btn-primaire btn-petit" [disabled]="enregistrementEnCours()">
                     Valider
                   </button>

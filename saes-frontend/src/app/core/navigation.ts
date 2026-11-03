@@ -1,4 +1,5 @@
-import { Role, Utilisateur } from './models';
+import { LIBELLES_ROLES } from './libelles';
+import { ROLES_PERSONNEL, Role, Utilisateur } from './models';
 
 export interface Fonction {
   libelle: string;
@@ -76,18 +77,6 @@ export const SECTIONS: Section[] = [
   },
 ];
 
-/** Roles du personnel, rattache a un restaurant (cahier des charges §3). */
-const ROLES_PERSONNEL: Role[] = ['SERVEUR', 'CUISINIER', 'CAISSIER', 'GERANT'];
-
-const LIBELLES_ROLES: Record<Role, string> = {
-  CLIENT: 'client',
-  SERVEUR: 'serveur',
-  CUISINIER: 'cuisinier',
-  CAISSIER: 'caissier',
-  GERANT: 'gérant',
-  ADMINISTRATEUR: 'administrateur',
-};
-
 /** Sections de la barre laterale d'un utilisateur ; aucune pour un client ou un visiteur. */
 export function sectionsDe(utilisateur: Utilisateur | null): Section[] {
   return SECTIONS.filter((section) => utilisateur?.roles.includes(section.role));
@@ -98,6 +87,7 @@ export function accueilDe(utilisateur: Utilisateur | null): string {
   return sectionsDe(utilisateur)[0]?.accueil ?? '/menus';
 }
 
+/** Personnel, rattache a un restaurant (cahier des charges §3) ; l'administrateur n'en est pas. */
 export function estPersonnel(utilisateur: Utilisateur | null): boolean {
   return ROLES_PERSONNEL.some((role) => utilisateur?.roles.includes(role));
 }
@@ -108,8 +98,10 @@ export function estPersonnel(utilisateur: Utilisateur | null): boolean {
  */
 export function nomAffiche(utilisateur: Utilisateur): string {
   const nom = `${utilisateur.prenom.charAt(0)}. ${utilisateur.nom}`;
-  // Dans l'ordre de la barre laterale.
-  const roles = sectionsDe(utilisateur).map((section) => LIBELLES_ROLES[section.role]);
+  // Dans l'ordre de la barre laterale, en minuscules apres la virgule.
+  const roles = sectionsDe(utilisateur).map((section) =>
+    LIBELLES_ROLES[section.role].toLowerCase(),
+  );
   return roles.length > 0
     ? `${nom}, ${new Intl.ListFormat('fr', { type: 'conjunction' }).format(roles)}`
     : nom;

@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 
 import { AdminRestaurantService } from '../../../core/admin-restaurant.service';
 import { motifErreur } from '../../../core/erreur.util';
+import { LIBELLES_JOURS } from '../../../core/libelles';
 import {
   HoraireDto,
   JOURS_SEMAINE,
@@ -26,6 +27,7 @@ export class RestaurantsList {
   private readonly adminRestaurantService = inject(AdminRestaurantService);
 
   protected readonly jours = JOURS_SEMAINE;
+  protected readonly libellesJours = LIBELLES_JOURS;
   protected readonly restaurants = signal<RestaurantDto[]>([]);
   protected readonly chargement = signal(true);
   protected readonly erreur = signal<string | null>(null);

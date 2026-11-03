@@ -72,7 +72,7 @@
             <label>Jour</label>
             <select [(ngModel)]="horaire.jour" [name]="'jour' + $index" required>
               @for (j of jours; track j) {
-                <option [ngValue]="j">{{ j }}</option>
+                <option [ngValue]="j">{{ libellesJours[j] }}</option>
               }
             </select>
           </div>

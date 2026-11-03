@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { motifErreur } from '../../core/erreur.util';
 import { RecommandationDto } from '../../core/models';
 import { RecommandationService } from '../../core/recommandation.service';
+import { QuantitePipe } from '../../shared/quantite.pipe';
 
 /**
  * Consulter les recommandations d'approvisionnement (cahier des charges
@@ -10,6 +11,7 @@ import { RecommandationService } from '../../core/recommandation.service';
  */
 @Component({
   selector: 'app-gerant-recommandations',
+  imports: [QuantitePipe],
   templateUrl: './recommandations.html',
 })
 export class GerantRecommandations {

@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 
 import { motifErreur } from '../../core/erreur.util';
 import { GerantStatistiquesService } from '../../core/gerant-statistiques.service';
+import { LIBELLES_CATEGORIES } from '../../core/libelles';
 import { StatistiquesVentesDto } from '../../core/models';
 import { MontantPipe } from '../../shared/montant.pipe';
 
@@ -24,6 +25,8 @@ function ilYA(jours: number): string {
 })
 export class GerantStatistiquesVentes {
   private readonly gerantStatistiquesService = inject(GerantStatistiquesService);
+
+  protected readonly libellesCategories = LIBELLES_CATEGORIES;
 
   protected debut = ilYA(30);
   protected fin = ilYA(0);

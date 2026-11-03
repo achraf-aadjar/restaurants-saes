@@ -52,7 +52,7 @@ public class GerantMenuService {
         Menu menu = menuRepository.findById(menuId)
                 .orElseThrow(() -> ApiException.notFound("Menu introuvable"));
         if (!menu.getRestaurant().getId().equals(restaurant.getId())) {
-            throw ApiException.forbidden("Ce menu n'appartient pas a votre restaurant");
+            throw ApiException.forbidden("Ce menu n'appartient pas à votre restaurant");
         }
         appliquer(menu, restaurant, request);
         return MenuGerantDto.from(menu);
@@ -60,7 +60,7 @@ public class GerantMenuService {
 
     private void appliquer(Menu menu, Restaurant restaurant, MenuSaveRequest request) {
         if (request.dateFin() != null && request.dateFin().isBefore(request.dateDebut())) {
-            throw ApiException.badRequest("La date de fin ne peut pas etre avant la date de debut");
+            throw ApiException.badRequest("La date de fin ne peut pas être avant la date de début");
         }
 
         menu.setNom(request.nom());
@@ -72,7 +72,7 @@ public class GerantMenuService {
             Plat plat = platRepository.findById(platId)
                     .orElseThrow(() -> ApiException.badRequest("Plat introuvable"));
             if (!plat.getRestaurant().getId().equals(restaurant.getId())) {
-                throw ApiException.badRequest("Ce plat n'appartient pas a votre restaurant");
+                throw ApiException.badRequest("Ce plat n'appartient pas à votre restaurant");
             }
             plats.add(plat);
         }

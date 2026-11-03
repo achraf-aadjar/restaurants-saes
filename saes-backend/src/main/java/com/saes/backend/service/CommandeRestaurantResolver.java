@@ -24,7 +24,7 @@ class CommandeRestaurantResolver {
         Commande commande = commandeRepository.findById(commandeId)
                 .orElseThrow(() -> ApiException.notFound("Commande introuvable"));
         if (!commande.getRestaurant().getId().equals(restaurant.getId())) {
-            throw ApiException.forbidden("Cette commande n'appartient pas a votre restaurant");
+            throw ApiException.forbidden("Cette commande n'appartient pas à votre restaurant");
         }
         return commande;
     }

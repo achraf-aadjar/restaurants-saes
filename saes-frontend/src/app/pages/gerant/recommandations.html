@@ -28,10 +28,10 @@
         @for (r of recommandations(); track r.ingredientId) {
           <tr>
             <td>{{ r.nom }}</td>
-            <td>{{ r.stock }} {{ r.unite }}</td>
-            <td>{{ r.niveauCible }} {{ r.unite }}</td>
-            <td><strong>{{ r.quantiteARecommander }} {{ r.unite }}</strong></td>
-            <td>{{ r.consommationMoyenneParSemaine }} {{ r.unite }}</td>
+            <td>{{ r.stock | quantite: r.unite }}</td>
+            <td>{{ r.niveauCible | quantite: r.unite }}</td>
+            <td><strong>{{ r.quantiteARecommander | quantite: r.unite }}</strong></td>
+            <td>{{ r.consommationMoyenneParSemaine | quantite: r.unite }}</td>
           </tr>
         }
       </tbody>

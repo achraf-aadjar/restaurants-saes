@@ -23,7 +23,7 @@ class PersonnelRestaurantResolver {
         Utilisateur utilisateur = utilisateurRepository.findById(utilisateurId)
                 .orElseThrow(() -> ApiException.notFound("Utilisateur introuvable"));
         if (utilisateur.getRestaurant() == null) {
-            throw ApiException.forbidden("Ce compte n'est rattache a aucun restaurant");
+            throw ApiException.forbidden("Ce compte n'est rattaché à aucun restaurant");
         }
         return utilisateur.getRestaurant();
     }

@@ -4,16 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { motifErreur } from '../../core/erreur.util';
 import { GerantPlatService } from '../../core/gerant-plat.service';
 import { GerantStockService } from '../../core/gerant-stock.service';
+import { LIBELLES_CATEGORIES, SYMBOLES_UNITES } from '../../core/libelles';
 import { CategoriePlat, IngredientDto, PlatGerantDto, PlatSaveRequest, RecetteLigneDto } from '../../core/models';
 import { MontantPipe } from '../../shared/montant.pipe';
+import { QuantitePipe } from '../../shared/quantite.pipe';
 
 const CATEGORIES: CategoriePlat[] = ['ENTREE', 'PLAT_PRINCIPAL', 'DESSERT', 'BOISSON'];
-const LIBELLES_CATEGORIES: Record<CategoriePlat, string> = {
-  ENTREE: 'Entrée',
-  PLAT_PRINCIPAL: 'Plat principal',
-  DESSERT: 'Dessert',
-  BOISSON: 'Boisson',
-};
 
 /**
  * Gerer les plats (cahier des charges §4.2), reserve au gerant : creer,
@@ -22,7 +18,7 @@ const LIBELLES_CATEGORIES: Record<CategoriePlat, string> = {
  */
 @Component({
   selector: 'app-gerant-plats',
-  imports: [FormsModule, MontantPipe],
+  imports: [FormsModule, MontantPipe, QuantitePipe],
   templateUrl: './plats.html',
 })
 export class GerantPlats {
@@ -31,6 +27,7 @@ export class GerantPlats {
 
   protected readonly categories = CATEGORIES;
   protected readonly libellesCategories = LIBELLES_CATEGORIES;
+  protected readonly symbolesUnites = SYMBOLES_UNITES;
 
   protected readonly plats = signal<PlatGerantDto[]>([]);
   protected readonly ingredients = signal<IngredientDto[]>([]);

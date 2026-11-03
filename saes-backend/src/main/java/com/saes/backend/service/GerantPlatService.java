@@ -73,7 +73,7 @@ public class GerantPlatService {
         Map<Long, RecetteLigneDto> demandees = new LinkedHashMap<>();
         for (RecetteLigneDto ligne : request.recette()) {
             if (demandees.putIfAbsent(ligne.ingredientId(), ligne) != null) {
-                throw ApiException.badRequest("Un ingredient apparait deux fois dans la recette");
+                throw ApiException.badRequest("Un ingrédient apparaît deux fois dans la recette");
             }
         }
 
@@ -91,9 +91,9 @@ public class GerantPlatService {
                 continue;
             }
             Ingredient ingredient = ingredientRepository.findById(ligne.ingredientId())
-                    .orElseThrow(() -> ApiException.badRequest("Ingredient introuvable"));
+                    .orElseThrow(() -> ApiException.badRequest("Ingrédient introuvable"));
             if (!ingredient.getRestaurant().getId().equals(restaurant.getId())) {
-                throw ApiException.badRequest("Cet ingredient n'appartient pas a votre restaurant");
+                throw ApiException.badRequest("Cet ingrédient n'appartient pas à votre restaurant");
             }
             Recette recette = new Recette();
             recette.setPlat(plat);
@@ -107,7 +107,7 @@ public class GerantPlatService {
         Plat plat = platRepository.findById(platId)
                 .orElseThrow(() -> ApiException.notFound("Plat introuvable"));
         if (!plat.getRestaurant().getId().equals(restaurant.getId())) {
-            throw ApiException.forbidden("Ce plat n'appartient pas a votre restaurant");
+            throw ApiException.forbidden("Ce plat n'appartient pas à votre restaurant");
         }
         return plat;
     }

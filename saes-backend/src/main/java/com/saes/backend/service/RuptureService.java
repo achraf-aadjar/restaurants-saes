@@ -47,9 +47,9 @@ public class RuptureService {
     public void signaler(Long cuisinierId, Long ingredientId) {
         Restaurant restaurant = personnelRestaurantResolver.restaurantDe(cuisinierId);
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> ApiException.notFound("Ingredient introuvable"));
+                .orElseThrow(() -> ApiException.notFound("Ingrédient introuvable"));
         if (!ingredient.getRestaurant().getId().equals(restaurant.getId())) {
-            throw ApiException.forbidden("Cet ingredient n'appartient pas a votre restaurant");
+            throw ApiException.forbidden("Cet ingrédient n'appartient pas à votre restaurant");
         }
 
         platRepository.findByRestaurantIdAndRecette_Ingredient_Id(restaurant.getId(), ingredientId)

@@ -49,7 +49,7 @@
             <label>Ingrédient</label>
             <select [(ngModel)]="ligne.ingredientId" [name]="'ingredient' + $index" required>
               @for (i of ingredients(); track i.id) {
-                <option [ngValue]="i.id">{{ i.nom }} ({{ i.unite }})</option>
+                <option [ngValue]="i.id">{{ i.nom }} ({{ symbolesUnites[i.unite] }})</option>
               }
             </select>
           </div>
@@ -104,7 +104,10 @@
             <td>{{ libellesCategories[p.categorie] }}</td>
             <td>{{ p.prix | montant }}</td>
             <td>
-              {{ p.recette.map((l) => (l.ingredientNom ?? nomIngredient(l.ingredientId)) + ' (' + l.quantiteNecessaire + ')').join(', ') }}
+              @for (l of p.recette; track l.ingredientId) {
+                {{ l.ingredientNom ?? nomIngredient(l.ingredientId) }}
+                ({{ l.quantiteNecessaire | quantite: l.unite! }}){{ $last ? '' : ', ' }}
+              }
             </td>
             <td>
               <span class="badge" [class.badge-actif]="p.estActif" [class.badge-inactif]="!p.estActif">

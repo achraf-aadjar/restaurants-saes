@@ -53,7 +53,7 @@ public class GerantCommandeService {
             throw new ConflitCommandeException(CommandeDto.from(commande));
         }
         if (!STATUTS_ABANDONNABLES.contains(commande.getStatut())) {
-            throw ApiException.conflict("Cette commande n'est ni en preparation ni prete");
+            throw ApiException.conflict("Cette commande n'est ni en préparation ni prête");
         }
 
         commande.setStatut(StatutCommande.ABANDONNEE);
