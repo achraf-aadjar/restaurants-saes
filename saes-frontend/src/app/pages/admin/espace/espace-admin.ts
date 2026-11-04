@@ -1,5 +1,7 @@
-import { Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { filter, map, startWith } from 'rxjs';
 
 import { AuthService } from '../../../core/auth.service';
 
@@ -35,7 +37,34 @@ const ICONES: Record<string, string> = {
 })
 export class EspaceAdmin {
   protected readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
   protected readonly icones = ICONES;
+  protected readonly annee = new Date().getFullYear();
+
+  private readonly url = toSignal(
+    this.router.events.pipe(
+      filter((e) => e instanceof NavigationEnd),
+      map(() => this.router.url),
+      startWith(this.router.url),
+    ),
+    { initialValue: this.router.url },
+  );
+
+  protected readonly titrePage = computed(() => {
+    const chemin = this.url().split('?')[0];
+    const tous = [...this.sections.flatMap((s) => s.liens), this.historique];
+    return tous.find((l) => l.chemin === chemin)?.libelle ?? 'Administration';
+  });
+
+  protected readonly initiales = computed(() => {
+    const u = this.auth.utilisateur();
+    return u ? (u.prenom[0] ?? '') + (u.nom[0] ?? '') : '';
+  });
+
+  protected seDeconnecter(): void {
+    this.auth.deconnecter();
+    this.router.navigate(['/connexion']);
+  }
 
   protected readonly sections: { titre: string; liens: LienAdmin[] }[] = [
     {

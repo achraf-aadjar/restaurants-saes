@@ -705,3 +705,48 @@ main.contenu:has(.admin) {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
+
+/* Theme de la console d'administration (cartes, tuiles et tableaux). */
+.admin {
+  h1 {
+    font-size: 1.65rem;
+    letter-spacing: -0.01em;
+  }
+
+  .carte,
+  .panneau,
+  .tuile {
+    border-color: #e4e6e1;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  }
+
+  .carte + .carte {
+    margin-top: 1.25rem !important;
+  }
+
+  .table-simple {
+    th {
+      background: #f7f8f6;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #6b736e;
+      border-bottom-color: #e4e6e1;
+    }
+
+    td {
+      border-bottom-color: #eef0ec;
+    }
+
+    tbody tr:hover td {
+      background: #fafbf9;
+    }
+  }
+
+  .tuile-valeur {
+    font-size: 1.75rem;
+    letter-spacing: -0.01em;
+  }
+}
