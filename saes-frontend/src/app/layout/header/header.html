@@ -38,6 +38,7 @@
         <span class="separateur">·</span>
         <a routerLink="/admin/restaurants" routerLinkActive="actif">Restaurants</a>
         <a routerLink="/admin/utilisateurs" routerLinkActive="actif">Comptes</a>
+        <a routerLink="/admin/journal" routerLinkActive="actif">Historique</a>
       }
     </nav>
 
@@ -94,6 +95,7 @@
       @if (estAdministrateur()) {
         <a routerLink="/admin/restaurants" (click)="basculerMenuMobile()">Restaurants</a>
         <a routerLink="/admin/utilisateurs" (click)="basculerMenuMobile()">Comptes</a>
+        <a routerLink="/admin/journal" (click)="basculerMenuMobile()">Historique</a>
       }
       @if (auth.estConnecte()) {
         <a routerLink="/mon-compte" (click)="basculerMenuMobile()">Mon compte</a>

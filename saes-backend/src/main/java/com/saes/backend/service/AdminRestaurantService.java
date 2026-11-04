@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.saes.backend.domain.ActionJournal;
 import com.saes.backend.domain.HoraireOuverture;
 import com.saes.backend.domain.JourSemaine;
 import com.saes.backend.domain.Restaurant;
@@ -35,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminRestaurantService {
 
     private final RestaurantRepository restaurantRepository;
+    private final JournalService journalService;
     private final CommandeRepository commandeRepository;
     private final ReservationRepository reservationRepository;
 
@@ -51,7 +53,9 @@ public class AdminRestaurantService {
         valider(request);
         Restaurant restaurant = new Restaurant();
         appliquer(restaurant, request);
-        return RestaurantDto.from(restaurantRepository.save(restaurant));
+        restaurant = restaurantRepository.save(restaurant);
+        journalService.enregistrer(ActionJournal.RESTAURANT_CREE, "RESTAURANT", restaurant.getId(), restaurant.getNom());
+        return RestaurantDto.from(restaurant);
     }
 
     @Transactional
@@ -59,6 +63,7 @@ public class AdminRestaurantService {
         valider(request);
         Restaurant restaurant = trouver(id);
         appliquer(restaurant, request);
+        journalService.enregistrer(ActionJournal.RESTAURANT_MODIFIE, "RESTAURANT", restaurant.getId(), restaurant.getNom());
         return RestaurantDto.from(restaurant);
     }
 
@@ -66,6 +71,8 @@ public class AdminRestaurantService {
     public RestaurantDto changerActivation(Long id, boolean actif) {
         Restaurant restaurant = trouver(id);
         restaurant.setEstActif(actif);
+        journalService.enregistrer(actif ? ActionJournal.RESTAURANT_ACTIVE : ActionJournal.RESTAURANT_DESACTIVE,
+                "RESTAURANT", restaurant.getId(), restaurant.getNom());
         return RestaurantDto.from(restaurant);
     }
 
