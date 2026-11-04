@@ -8,6 +8,7 @@ import { motifErreur } from '../../core/erreur.util';
 import { CategoriePlat, MenuDto, PlatResume, RestaurantSummary } from '../../core/models';
 import { MenuService } from '../../core/menu.service';
 import { MontantPipe } from '../../shared/montant.pipe';
+import { RefusVisible } from '../../shared/refus-visible';
 
 const ORDRE_CATEGORIES: CategoriePlat[] = ['ENTREE', 'PLAT_PRINCIPAL', 'DESSERT', 'BOISSON'];
 const LIBELLES_CATEGORIES: Record<CategoriePlat, string> = {
@@ -50,7 +51,7 @@ function grouperParCategorie(plats: PlatResume[]): GroupeCategorie[] {
  */
 @Component({
   selector: 'app-menu-consultation',
-  imports: [MontantPipe],
+  imports: [MontantPipe, RefusVisible],
   templateUrl: './menu-consultation.html',
   styleUrl: './menu-consultation.scss',
 })
@@ -169,9 +170,6 @@ export class MenuConsultation {
         error: (err) => {
           this.envoiEnCours.set(false);
           this.erreur.set(motifErreur(err, 'La commande n\'a pas pu être enregistrée'));
-          // Le refus s'affiche en haut de l'ecran (Design) ; le panier reste visible quand on
-          // descend dans le menu, on remonte donc pour que le refus soit vu.
-          window.scrollTo(0, 0);
         },
       });
   }

@@ -5,12 +5,13 @@ import { Router } from '@angular/router';
 import { CaisseService } from '../../core/caisse.service';
 import { motifErreur } from '../../core/erreur.util';
 import { SessionCaisseDto } from '../../core/models';
+import { RefusVisible } from '../../shared/refus-visible';
 import { MaCaisse } from './ma-caisse';
 
 /** Ouvrir la caisse (cahier des charges §4.5), cote caissier. */
 @Component({
   selector: 'app-ouvrir-caisse',
-  imports: [FormsModule, MaCaisse],
+  imports: [FormsModule, MaCaisse, RefusVisible],
   templateUrl: './ouvrir-caisse.html',
 })
 export class OuvrirCaisse {

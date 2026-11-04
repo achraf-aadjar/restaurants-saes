@@ -6,12 +6,13 @@ import { CaisseService } from '../../core/caisse.service';
 import { motifErreur } from '../../core/erreur.util';
 import { SessionCaisseDto } from '../../core/models';
 import { MontantPipe } from '../../shared/montant.pipe';
+import { RefusVisible } from '../../shared/refus-visible';
 import { MaCaisse } from './ma-caisse';
 
 /** Cloturer la caisse (cahier des charges §4.5), cote caissier. */
 @Component({
   selector: 'app-cloturer-caisse',
-  imports: [FormsModule, RouterLink, MaCaisse, MontantPipe],
+  imports: [FormsModule, RouterLink, MaCaisse, MontantPipe, RefusVisible],
   templateUrl: './cloturer-caisse.html',
 })
 export class CloturerCaisse {

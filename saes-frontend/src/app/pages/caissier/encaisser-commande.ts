@@ -6,12 +6,13 @@ import { motifErreur } from '../../core/erreur.util';
 import { CommandeDto, ModePaiement, SessionCaisseDto } from '../../core/models';
 import { CommandeEntete } from '../../shared/commande-entete';
 import { MontantPipe } from '../../shared/montant.pipe';
+import { RefusVisible } from '../../shared/refus-visible';
 import { MaCaisse } from './ma-caisse';
 
 /** Encaisser une commande (cahier des charges §4.5), cote caissier. */
 @Component({
   selector: 'app-encaisser-commande',
-  imports: [RouterLink, CommandeEntete, MaCaisse, MontantPipe],
+  imports: [RouterLink, CommandeEntete, MaCaisse, MontantPipe, RefusVisible],
   templateUrl: './encaisser-commande.html',
 })
 export class EncaisserCommande {

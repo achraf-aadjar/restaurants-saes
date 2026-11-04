@@ -4,6 +4,7 @@ import { motifErreur } from '../../core/erreur.util';
 import { RecommandationDto } from '../../core/models';
 import { RecommandationService } from '../../core/recommandation.service';
 import { QuantitePipe } from '../../shared/quantite.pipe';
+import { RefusVisible } from '../../shared/refus-visible';
 
 /**
  * Consulter les recommandations d'approvisionnement (cahier des charges
@@ -11,7 +12,7 @@ import { QuantitePipe } from '../../shared/quantite.pipe';
  */
 @Component({
   selector: 'app-gerant-recommandations',
-  imports: [QuantitePipe],
+  imports: [QuantitePipe, RefusVisible],
   templateUrl: './recommandations.html',
 })
 export class GerantRecommandations {

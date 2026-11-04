@@ -12,6 +12,7 @@ import {
   TOUS_LES_ROLES,
   Utilisateur,
 } from '../../../core/models';
+import { RefusVisible } from '../../../shared/refus-visible';
 
 /**
  * Gerer les comptes utilisateurs (cahier des charges §4.7), reserve a
@@ -20,7 +21,7 @@ import {
  */
 @Component({
   selector: 'app-users-list',
-  imports: [FormsModule],
+  imports: [FormsModule, RefusVisible],
   templateUrl: './users-list.html',
 })
 export class UsersList {

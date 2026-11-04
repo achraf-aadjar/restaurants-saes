@@ -26,7 +26,7 @@
       </div>
       <div class="champ">
         <label for="date">Date</label>
-        <input id="date" name="date" type="date" required [(ngModel)]="date" />
+        <input id="date" name="date" type="date" [min]="aujourdhui" required [(ngModel)]="date" />
       </div>
       <div class="champ">
         <label for="heure">Heure</label>

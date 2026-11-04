@@ -6,11 +6,12 @@ import { motifErreur } from '../../core/erreur.util';
 import { MenuService } from '../../core/menu.service';
 import { ReservationDto, RestaurantSummary } from '../../core/models';
 import { ReservationService } from '../../core/reservation.service';
+import { RefusVisible } from '../../shared/refus-visible';
 
 /** Faire une reservation, Gerer ses reservations (cahier des charges §4.4). */
 @Component({
   selector: 'app-mes-reservations',
-  imports: [FormsModule, DatePipe],
+  imports: [FormsModule, DatePipe, RefusVisible],
   templateUrl: './mes-reservations.html',
 })
 export class MesReservations {
@@ -31,6 +32,8 @@ export class MesReservations {
   protected date = '';
   protected heure = '';
   protected nombreCouverts = 2;
+  // Grise les jours passes dans le calendrier
+  protected readonly aujourdhui = new Date().toISOString().slice(0, 10);
 
   constructor() {
     this.menuService.restaurants().subscribe((r) => {
@@ -60,6 +63,11 @@ export class MesReservations {
     this.erreurFormulaire.set(null);
     if (!this.restaurantId || !this.date || !this.heure) {
       this.erreurFormulaire.set('Merci de renseigner le restaurant, la date et l\'heure');
+      return;
+    }
+    // Le calendrier grise les jours passes, pas les heures : on verifie les deux ici
+    if (new Date(`${this.date}T${this.heure}`) <= new Date()) {
+      this.erreurFormulaire.set('Choisissez une date et une heure à venir');
       return;
     }
     this.envoiEnCours.set(true);

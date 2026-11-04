@@ -5,11 +5,12 @@ import { GerantCommandeService } from '../../core/gerant-commande.service';
 import { CommandeDto } from '../../core/models';
 import { CommandeEntete } from '../../shared/commande-entete';
 import { MontantPipe } from '../../shared/montant.pipe';
+import { RefusVisible } from '../../shared/refus-visible';
 
 /** Declarer une commande abandonnee (cahier des charges §4.3), cote gerant. */
 @Component({
   selector: 'app-commandes-abandon',
-  imports: [CommandeEntete, MontantPipe],
+  imports: [CommandeEntete, MontantPipe, RefusVisible],
   templateUrl: './commandes-abandon.html',
 })
 export class CommandesAbandon {

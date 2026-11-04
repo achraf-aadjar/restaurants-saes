@@ -5,11 +5,12 @@ import { motifErreur } from '../../core/erreur.util';
 import { CommandeDto } from '../../core/models';
 import { CommandeEntete } from '../../shared/commande-entete';
 import { MontantPipe } from '../../shared/montant.pipe';
+import { RefusVisible } from '../../shared/refus-visible';
 
 /** Modifier ou annuler une commande (cahier des charges §4.3), cote serveur. */
 @Component({
   selector: 'app-commandes-en-attente',
-  imports: [CommandeEntete, MontantPipe],
+  imports: [CommandeEntete, MontantPipe, RefusVisible],
   templateUrl: './commandes-en-attente.html',
 })
 export class CommandesEnAttente {

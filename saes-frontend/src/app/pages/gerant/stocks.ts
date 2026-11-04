@@ -6,6 +6,7 @@ import { GerantStockService } from '../../core/gerant-stock.service';
 import { LIBELLES_UNITES, SYMBOLES_UNITES } from '../../core/libelles';
 import { IngredientDto, IngredientSaveRequest, TypeMouvement, UNITES, Unite } from '../../core/models';
 import { QuantitePipe } from '../../shared/quantite.pipe';
+import { RefusVisible } from '../../shared/refus-visible';
 
 /**
  * Gerer les stocks (cahier des charges §4.6), reserve au gerant : creer et
@@ -14,7 +15,7 @@ import { QuantitePipe } from '../../shared/quantite.pipe';
  */
 @Component({
   selector: 'app-gerant-stocks',
-  imports: [FormsModule, QuantitePipe],
+  imports: [FormsModule, QuantitePipe, RefusVisible],
   templateUrl: './stocks.html',
 })
 export class GerantStocks {

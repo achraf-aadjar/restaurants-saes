@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 import { AuthService } from '../../core/auth.service';
 import { motifErreur } from '../../core/erreur.util';
+import { RefusVisible } from '../../shared/refus-visible';
 
 /**
  * Gerer son compte (cahier des charges §4.1) : voir/modifier ses
@@ -11,7 +12,7 @@ import { motifErreur } from '../../core/erreur.util';
  */
 @Component({
   selector: 'app-mon-compte',
-  imports: [FormsModule],
+  imports: [FormsModule, RefusVisible],
   templateUrl: './mon-compte.html',
 })
 export class MonCompte {

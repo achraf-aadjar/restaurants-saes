@@ -18,7 +18,7 @@
 
       <div class="champ">
         <label for="nomP">Nom</label>
-        <input id="nomP" name="nomP" type="text" required [(ngModel)]="nom" />
+        <input id="nomP" name="nomP" type="text" required pattern=".*\S.*" [(ngModel)]="nom" />
       </div>
       <div class="champ">
         <label for="descriptionP">Description (facultative)</label>
@@ -26,7 +26,7 @@
       </div>
       <div class="champ">
         <label for="prixP">Prix (FCFA)</label>
-        <input id="prixP" name="prixP" type="number" min="0" required [(ngModel)]="prix" />
+        <input id="prixP" name="prixP" type="number" min="1" required [(ngModel)]="prix" />
       </div>
       <div class="champ">
         <label for="categorieP">Catégorie</label>

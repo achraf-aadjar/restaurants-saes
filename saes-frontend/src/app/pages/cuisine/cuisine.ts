@@ -4,11 +4,12 @@ import { CuisineService } from '../../core/cuisine.service';
 import { motifErreur } from '../../core/erreur.util';
 import { CommandeDto } from '../../core/models';
 import { CommandeEntete } from '../../shared/commande-entete';
+import { RefusVisible } from '../../shared/refus-visible';
 
 /** Gerer la preparation des commandes (cahier des charges §4.3), cote cuisinier. */
 @Component({
   selector: 'app-cuisine',
-  imports: [CommandeEntete],
+  imports: [CommandeEntete, RefusVisible],
   templateUrl: './cuisine.html',
 })
 export class Cuisine {

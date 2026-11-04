@@ -6,11 +6,12 @@ import { motifErreur } from '../../core/erreur.util';
 import { GerantMenuService } from '../../core/gerant-menu.service';
 import { GerantPlatService } from '../../core/gerant-plat.service';
 import { MenuGerantDto, MenuSaveRequest, PlatGerantDto } from '../../core/models';
+import { RefusVisible } from '../../shared/refus-visible';
 
 /** Gerer les menus (cahier des charges §4.2), reserve au gerant. */
 @Component({
   selector: 'app-gerant-menus',
-  imports: [FormsModule, DatePipe],
+  imports: [FormsModule, DatePipe, RefusVisible],
   templateUrl: './menus.html',
 })
 export class GerantMenus {

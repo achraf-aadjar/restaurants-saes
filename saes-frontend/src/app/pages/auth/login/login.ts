@@ -6,6 +6,7 @@ import { AuthService } from '../../../core/auth.service';
 import { motifErreur } from '../../../core/erreur.util';
 import { accueilDe } from '../../../core/navigation';
 import { GoogleSignInButton } from '../../../shared/google-sign-in-button';
+import { RefusVisible } from '../../../shared/refus-visible';
 
 /**
  * S'authentifier (cahier des charges §4.1), avec en plus la connexion
@@ -13,7 +14,7 @@ import { GoogleSignInButton } from '../../../shared/google-sign-in-button';
  */
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, RouterLink, GoogleSignInButton],
+  imports: [FormsModule, RouterLink, GoogleSignInButton, RefusVisible],
   templateUrl: './login.html',
   styleUrl: '../auth.scss',
 })

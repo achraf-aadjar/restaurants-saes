@@ -12,6 +12,7 @@ import {
   RestaurantSaveRequest,
   TableDto,
 } from '../../../core/models';
+import { RefusVisible } from '../../../shared/refus-visible';
 
 /**
  * Gerer les restaurants (cahier des charges §4.7), reserve a
@@ -20,7 +21,7 @@ import {
  */
 @Component({
   selector: 'app-restaurants-list',
-  imports: [FormsModule],
+  imports: [FormsModule, RefusVisible],
   templateUrl: './restaurants-list.html',
 })
 export class RestaurantsList {

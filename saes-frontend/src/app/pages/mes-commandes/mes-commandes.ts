@@ -6,11 +6,12 @@ import { classeBadgeStatut, LIBELLES_STATUT_COMMANDE } from '../../core/commande
 import { motifErreur } from '../../core/erreur.util';
 import { CommandeDto } from '../../core/models';
 import { MontantPipe } from '../../shared/montant.pipe';
+import { RefusVisible } from '../../shared/refus-visible';
 
 /** Suivre sa commande, Annuler sa commande (cahier des charges §4.3). */
 @Component({
   selector: 'app-mes-commandes',
-  imports: [DatePipe, MontantPipe],
+  imports: [DatePipe, MontantPipe, RefusVisible],
   templateUrl: './mes-commandes.html',
 })
 export class MesCommandes {

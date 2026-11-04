@@ -5,11 +5,12 @@ import { motifErreur } from '../../core/erreur.util';
 import { IngredientDto } from '../../core/models';
 import { RuptureService } from '../../core/rupture.service';
 import { QuantitePipe } from '../../shared/quantite.pipe';
+import { RefusVisible } from '../../shared/refus-visible';
 
 /** Signaler une rupture (cahier des charges §4.6), cote cuisinier. */
 @Component({
   selector: 'app-signaler-rupture',
-  imports: [FormsModule, QuantitePipe],
+  imports: [FormsModule, QuantitePipe, RefusVisible],
   templateUrl: './signaler-rupture.html',
 })
 export class SignalerRupture {

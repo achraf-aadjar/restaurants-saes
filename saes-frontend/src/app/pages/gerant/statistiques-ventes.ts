@@ -6,6 +6,7 @@ import { GerantStatistiquesService } from '../../core/gerant-statistiques.servic
 import { LIBELLES_CATEGORIES } from '../../core/libelles';
 import { StatistiquesVentesDto } from '../../core/models';
 import { MontantPipe } from '../../shared/montant.pipe';
+import { RefusVisible } from '../../shared/refus-visible';
 
 function ilYA(jours: number): string {
   const date = new Date();
@@ -20,7 +21,7 @@ function ilYA(jours: number): string {
  */
 @Component({
   selector: 'app-gerant-statistiques-ventes',
-  imports: [FormsModule, MontantPipe],
+  imports: [FormsModule, MontantPipe, RefusVisible],
   templateUrl: './statistiques-ventes.html',
 })
 export class GerantStatistiquesVentes {

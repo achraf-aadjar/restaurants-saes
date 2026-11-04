@@ -18,7 +18,7 @@
 
       <div class="champ">
         <label for="nomM">Nom</label>
-        <input id="nomM" name="nomM" type="text" required [(ngModel)]="nom" />
+        <input id="nomM" name="nomM" type="text" required pattern=".*\S.*" [(ngModel)]="nom" />
       </div>
       <div class="champ">
         <label for="debutM">Date de début</label>

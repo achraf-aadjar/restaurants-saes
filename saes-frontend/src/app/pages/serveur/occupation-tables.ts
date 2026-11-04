@@ -4,11 +4,12 @@ import { Component, inject, signal } from '@angular/core';
 import { CommandeServeurService } from '../../core/commande-serveur.service';
 import { motifErreur } from '../../core/erreur.util';
 import { OccupationRestaurantDto } from '../../core/models';
+import { RefusVisible } from '../../shared/refus-visible';
 
 /** Visualiser l'occupation des tables (cahier des charges §4.3), cote serveur. */
 @Component({
   selector: 'app-occupation-tables',
-  imports: [DatePipe],
+  imports: [DatePipe, RefusVisible],
   templateUrl: './occupation-tables.html',
 })
 export class OccupationTables {

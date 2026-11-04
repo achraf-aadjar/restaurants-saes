@@ -5,13 +5,14 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
 import { motifErreur } from '../../../core/erreur.util';
 import { GoogleSignInButton } from '../../../shared/google-sign-in-button';
+import { RefusVisible } from '../../../shared/refus-visible';
 
 /**
  * S'inscrire (cahier des charges §4.1), avec en plus l'inscription Google.
  */
 @Component({
   selector: 'app-register',
-  imports: [FormsModule, RouterLink, GoogleSignInButton],
+  imports: [FormsModule, RouterLink, GoogleSignInButton, RefusVisible],
   templateUrl: './register.html',
   styleUrl: '../auth.scss',
 })

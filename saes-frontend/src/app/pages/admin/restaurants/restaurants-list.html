@@ -18,11 +18,18 @@
 
       <div class="champ">
         <label for="nomR">Nom</label>
-        <input id="nomR" name="nomR" type="text" required [(ngModel)]="nom" />
+        <input id="nomR" name="nomR" type="text" required pattern=".*\S.*" [(ngModel)]="nom" />
       </div>
       <div class="champ">
         <label for="adresseR">Adresse</label>
-        <input id="adresseR" name="adresseR" type="text" required [(ngModel)]="adresse" />
+        <input
+          id="adresseR"
+          name="adresseR"
+          type="text"
+          required
+          pattern=".*\S.*"
+          [(ngModel)]="adresse"
+        />
       </div>
       <div class="champ">
         <label for="telephoneR">Téléphone</label>

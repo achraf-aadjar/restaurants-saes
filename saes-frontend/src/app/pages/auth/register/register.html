@@ -24,6 +24,7 @@
             name="prenom"
             type="text"
             required
+            pattern=".*\S.*"
             autocomplete="given-name"
             [(ngModel)]="prenom"
             #prenomCtrl="ngModel"
@@ -42,6 +43,7 @@
             name="nom"
             type="text"
             required
+            pattern=".*\S.*"
             autocomplete="family-name"
             [(ngModel)]="nom"
             #nomCtrl="ngModel"

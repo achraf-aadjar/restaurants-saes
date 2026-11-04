@@ -20,7 +20,7 @@
 
       <div class="champ">
         <label for="nomI">Nom</label>
-        <input id="nomI" name="nomI" type="text" required [(ngModel)]="nom" />
+        <input id="nomI" name="nomI" type="text" required pattern=".*\S.*" [(ngModel)]="nom" />
       </div>
       <div class="champ">
         <label for="uniteI">Unité</label>

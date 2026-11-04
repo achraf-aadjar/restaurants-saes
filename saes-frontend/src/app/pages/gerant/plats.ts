@@ -8,6 +8,7 @@ import { LIBELLES_CATEGORIES, SYMBOLES_UNITES } from '../../core/libelles';
 import { CategoriePlat, IngredientDto, PlatGerantDto, PlatSaveRequest, RecetteLigneDto } from '../../core/models';
 import { MontantPipe } from '../../shared/montant.pipe';
 import { QuantitePipe } from '../../shared/quantite.pipe';
+import { RefusVisible } from '../../shared/refus-visible';
 
 const CATEGORIES: CategoriePlat[] = ['ENTREE', 'PLAT_PRINCIPAL', 'DESSERT', 'BOISSON'];
 
@@ -18,7 +19,7 @@ const CATEGORIES: CategoriePlat[] = ['ENTREE', 'PLAT_PRINCIPAL', 'DESSERT', 'BOI
  */
 @Component({
   selector: 'app-gerant-plats',
-  imports: [FormsModule, MontantPipe, QuantitePipe],
+  imports: [FormsModule, MontantPipe, QuantitePipe, RefusVisible],
   templateUrl: './plats.html',
 })
 export class GerantPlats {
