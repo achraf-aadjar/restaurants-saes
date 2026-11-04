@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.saes.backend.domain.ActionJournal;
 import com.saes.backend.domain.Commande;
 import com.saes.backend.domain.Restaurant;
 import com.saes.backend.domain.StatutCommande;
@@ -53,6 +54,7 @@ public class CommandeServeurService {
     private final PersonnelRestaurantResolver personnelRestaurantResolver;
     private final CommandeRestaurantResolver commandeRestaurantResolver;
     private final EntityManager entityManager;
+    private final JournalService journalService;
 
     /**
      * Pas une fonction nommee du cahier des charges : liste necessaire pour
@@ -124,7 +126,10 @@ public class CommandeServeurService {
         // Seules les lignes changent : sans cela la version de la commande
         // resterait la meme et la regle 3 ne detecterait pas la modification.
         entityManager.lock(commande, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
-        return CommandeDto.from(commandeRepository.saveAndFlush(commande));
+        CommandeDto modifiee = CommandeDto.from(commandeRepository.saveAndFlush(commande));
+        journalService.enregistrer(ActionJournal.COMMANDE_MODIFIEE, "COMMANDE", commande.getId(),
+                "Nouveau montant : " + modifiee.montantTotal() + " FCFA");
+        return modifiee;
     }
 
     @Transactional
@@ -139,6 +144,7 @@ public class CommandeServeurService {
             throw ApiException.conflict("Cette commande n'est plus en attente");
         }
         commande.setStatut(StatutCommande.ANNULEE);
+        journalService.enregistrer(ActionJournal.COMMANDE_ANNULEE, "COMMANDE", commande.getId(), "Annulee par le serveur");
         return CommandeDto.from(commandeRepository.saveAndFlush(commande));
     }
 

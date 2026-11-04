@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.saes.backend.domain.ActionJournal;
 import com.saes.backend.domain.Commande;
 import com.saes.backend.domain.Restaurant;
 import com.saes.backend.domain.StatutCommande;
@@ -34,6 +35,7 @@ public class GerantCommandeService {
     private final PersonnelRestaurantResolver personnelRestaurantResolver;
     private final CommandeRestaurantResolver commandeRestaurantResolver;
     private final CommandeRepository commandeRepository;
+    private final JournalService journalService;
 
     public List<CommandeDto> commandesAbandonnables(Long gerantId) {
         Restaurant restaurant = personnelRestaurantResolver.restaurantDe(gerantId);
@@ -57,6 +59,9 @@ public class GerantCommandeService {
         }
 
         commande.setStatut(StatutCommande.ABANDONNEE);
-        return CommandeDto.from(commandeRepository.saveAndFlush(commande));
+        CommandeDto abandonnee = CommandeDto.from(commandeRepository.saveAndFlush(commande));
+        journalService.enregistrer(ActionJournal.COMMANDE_ABANDONNEE, "COMMANDE", commande.getId(),
+                "Montant non paye : " + abandonnee.montantTotal() + " FCFA");
+        return abandonnee;
     }
 }
