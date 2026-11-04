@@ -88,6 +88,10 @@ public class AdminUserService {
     @Transactional
     public UtilisateurDto changerActivation(Long utilisateurId, boolean actif) {
         Utilisateur utilisateur = trouver(utilisateurId);
+        // Un compte supprime par son titulaire n'a plus de donnees personnelles : il ne revient pas.
+        if (actif && CompteService.estSupprime(utilisateur)) {
+            throw ApiException.conflict("Ce compte a été supprimé par son titulaire : il ne peut pas être réactivé");
+        }
         utilisateur.setEstActif(actif);
         return UtilisateurDto.from(utilisateur);
     }

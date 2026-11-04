@@ -71,6 +71,17 @@ class AdministrationTest extends IntegrationTest {
                 .statut()).isEqualTo(200);
     }
 
+    @Test
+    void unCompteSupprimeParSonTitulaireNePeutPasEtreReactive() {
+        String jeton = monde.nouveauClient();
+        long clientId = api.get(jeton, "/api/me").entier("$.id");
+        assertThat(api.delete(jeton, "/api/me").statut()).isEqualTo(204);
+
+        Reponse reactivation = api.put(monde.jetonAdmin, "/api/admin/users/" + clientId + "/activer", null);
+
+        assertThat(reactivation.statut()).as(reactivation.toString()).isEqualTo(409);
+    }
+
     // Gerer les restaurants
 
     @Test
