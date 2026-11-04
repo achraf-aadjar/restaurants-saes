@@ -1,0 +1,66 @@
+<header class="admin-page-entete">
+  <div>
+    <h1>Réservations</h1>
+    <p class="admin-page-soustitre">Réservations de tous les restaurants (30 prochains jours par défaut).</p>
+  </div>
+</header>
+
+@if (erreur(); as e) {
+  <p class="message-refus" role="alert">{{ e }}</p>
+}
+
+<div class="tuiles">
+  <div class="tuile">
+    <span class="tuile-libelle">Confirmées</span>
+    <span class="tuile-valeur">{{ confirmees().length }}</span>
+    <span class="tuile-note">{{ couverts() }} couvert(s)</span>
+  </div>
+  <div class="tuile">
+    <span class="tuile-libelle">Annulées</span>
+    <span class="tuile-valeur">{{ reservations().length - confirmees().length }}</span>
+    <span class="tuile-note">sur la période</span>
+  </div>
+</div>
+
+<section class="panneau">
+  <form class="filtres" (ngSubmit)="charger()">
+    <div class="champ">
+      <label for="debutR">Du</label>
+      <input id="debutR" name="debutR" type="date" [(ngModel)]="debut" />
+    </div>
+    <div class="champ">
+      <label for="finR">Au</label>
+      <input id="finR" name="finR" type="date" [(ngModel)]="fin" />
+    </div>
+    <button type="submit" class="btn btn-secondaire" [disabled]="chargement()">Afficher</button>
+  </form>
+
+  @if (chargement()) {
+    <p class="vide">Chargement…</p>
+  } @else if (reservations().length === 0) {
+    <p class="vide">Aucune réservation sur cette période.</p>
+  } @else {
+    <table class="table-simple">
+      <thead>
+        <tr><th>Date</th><th>Restaurant</th><th>Client</th><th>Couverts</th><th>Tables</th><th>Durée</th><th>Statut</th></tr>
+      </thead>
+      <tbody>
+        @for (r of reservations(); track r.id) {
+          <tr>
+            <td>{{ r.dateHeure | date: 'EEE dd/MM HH:mm' }}</td>
+            <td>{{ r.restaurant }}</td>
+            <td>{{ r.client }}</td>
+            <td>{{ r.nombreCouverts }}</td>
+            <td>{{ r.tables.join(', ') }}</td>
+            <td>{{ r.dureeMinutes }} min</td>
+            <td>
+              <span class="badge" [class.badge-actif]="r.statut === 'CONFIRMEE'" [class.badge-inactif]="r.statut !== 'CONFIRMEE'">
+                {{ r.statut === 'CONFIRMEE' ? 'Confirmée' : 'Annulée' }}
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

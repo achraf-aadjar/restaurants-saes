@@ -1,0 +1,34 @@
+<div class="admin">
+  <aside class="admin-nav" aria-label="Navigation de l'administration">
+    <div class="admin-nav-titre">
+      <span class="admin-nav-marque">Administration</span>
+      <span class="admin-nav-utilisateur">{{ auth.utilisateur()?.prenom }} {{ auth.utilisateur()?.nom }}</span>
+    </div>
+
+    <nav class="admin-nav-liens">
+      @for (section of sections; track section.titre) {
+        <p class="admin-nav-section">{{ section.titre }}</p>
+        @for (lien of section.liens; track lien.chemin) {
+          <a
+            class="admin-nav-lien"
+            [routerLink]="lien.chemin"
+            routerLinkActive="actif"
+            [routerLinkActiveOptions]="{ exact: lien.exact ?? false }"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="icones[lien.icone]" /></svg>
+            {{ lien.libelle }}
+          </a>
+        }
+      }
+    </nav>
+
+    <a class="admin-nav-lien admin-nav-bas" [routerLink]="historique.chemin" routerLinkActive="actif">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="icones[historique.icone]" /></svg>
+      {{ historique.libelle }}
+    </a>
+  </aside>
+
+  <section class="admin-contenu">
+    <router-outlet />
+  </section>
+</div>

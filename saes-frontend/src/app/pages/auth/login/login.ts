@@ -32,7 +32,7 @@ export class Login {
     this.auth.authentifier({ email: this.email, motDePasse: this.motDePasse }).subscribe({
       next: () => {
         this.enCours.set(false);
-        this.router.navigate(['/menus']);
+        this.router.navigate([this.auth.aLeRole('ADMINISTRATEUR') ? '/admin' : '/menus']);
       },
       error: (err) => {
         this.enCours.set(false);

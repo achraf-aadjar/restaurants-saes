@@ -435,3 +435,273 @@ button {
   display: flex;
   gap: 0.5rem;
 }
+
+/* ---------- Espace d'administration (pages/admin) ---------- */
+
+/* L'espace d'administration occupe toute la largeur sous l'en-tete. */
+main.contenu:has(.admin) {
+  max-width: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-page-entete {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  h1 {
+    margin: 0;
+  }
+}
+
+.admin-page-soustitre {
+  margin: 0.3rem 0 0;
+  color: #5f6b66;
+  font-size: 0.92rem;
+}
+
+.periode {
+  display: inline-flex;
+  background: #fff;
+  border: 1px solid var(--saes-bordure);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+
+  button {
+    border: none;
+    background: transparent;
+    padding: 0.4rem 0.8rem;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #5f6b66;
+    cursor: pointer;
+  }
+
+  button.actif {
+    background: var(--saes-vert);
+    color: #fff;
+  }
+}
+
+.tuiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 1100px) {
+  .tuiles {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.tuile {
+  background: #fff;
+  border: 1px solid var(--saes-bordure);
+  border-radius: 12px;
+  padding: 1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.tuile-libelle {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6b736e;
+}
+
+.tuile-valeur {
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--saes-vert);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.tuile-note {
+  font-size: 0.82rem;
+  color: #6b736e;
+}
+
+.tuile-alerte .tuile-valeur {
+  color: var(--saes-rouge-fonce);
+}
+
+.panneaux {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 1200px) {
+  .panneaux {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .panneau-large {
+    grid-column: 1 / -1;
+  }
+}
+
+.panneau {
+  background: #fff;
+  border: 1px solid var(--saes-bordure);
+  border-radius: 12px;
+  padding: 1.15rem 1.25rem;
+  min-width: 0;
+}
+
+.panneau:has(.table-simple) {
+  overflow-x: auto;
+}
+
+.panneau-entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.02rem;
+  }
+
+  a {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+}
+
+.barres-h {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.barre-h {
+  display: grid;
+  grid-template-columns: minmax(90px, 34%) 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.88rem;
+}
+
+.barre-h-nom {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barre-h-piste {
+  height: 10px;
+  background: #f1ede1;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.barre-h-remplie {
+  height: 100%;
+  background: #00856f;
+  border-radius: 4px;
+  min-width: 2px;
+}
+
+.barre-h-valeur {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.filtres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+
+  .champ {
+    margin: 0;
+    min-width: 160px;
+  }
+}
+
+.vide {
+  color: #6b736e;
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+}
+
+.montant {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ecart-negatif {
+  color: var(--saes-rouge-fonce);
+  font-weight: 700;
+}
+
+.ecart-positif {
+  color: #0f6b3d;
+  font-weight: 700;
+}
+
+.activite {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+
+  li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.1rem 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #f0ebdd;
+    font-size: 0.88rem;
+  }
+
+  li:last-child {
+    border-bottom: none;
+  }
+}
+
+.activite-action {
+  font-weight: 700;
+}
+
+.activite-meta {
+  color: #7a817c;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.activite-detail {
+  grid-column: 1 / -1;
+  color: #5f6b66;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 1200px) {
+  .tuiles.tuiles-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}

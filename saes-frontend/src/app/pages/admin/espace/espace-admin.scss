@@ -1,0 +1,155 @@
+:host {
+  display: block;
+  flex: 1;
+  min-width: 0;
+}
+
+.admin {
+  display: flex;
+  min-height: 100%;
+}
+
+// Barre laterale
+
+.admin-nav {
+  width: 236px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--saes-vert);
+  color: #dfe9e6;
+  padding: 1.25rem 0.75rem 1rem;
+  position: sticky;
+  top: 0;
+  height: calc(100vh - 57px);
+}
+
+.admin-nav-titre {
+  display: flex;
+  flex-direction: column;
+  padding: 0 0.6rem 1.1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 0.75rem;
+}
+
+.admin-nav-marque {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.admin-nav-utilisateur {
+  font-size: 0.8rem;
+  color: #a9c2bc;
+}
+
+.admin-nav-liens {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.admin-nav-section {
+  margin: 0.9rem 0.6rem 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #86a8a0;
+}
+
+.admin-nav-lien {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.6rem;
+  border-radius: 8px;
+  color: #dfe9e6;
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+  }
+
+  &.actif {
+    background: #fff;
+    color: var(--saes-vert);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--saes-jaune);
+    outline-offset: 1px;
+  }
+}
+
+.admin-nav-bas {
+  margin-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0 0 8px 8px;
+  padding-top: 0.8rem;
+}
+
+// Contenu
+
+.admin-contenu {
+  flex: 1;
+  min-width: 0;
+  padding: 1.75rem 2rem 2.5rem;
+}
+
+// Tablettes et telephones : la barre laterale devient une barre d'onglets
+@media (max-width: 899px) {
+  .admin {
+    flex-direction: column;
+  }
+
+  .admin-nav {
+    width: 100%;
+    height: auto;
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    padding: 0.5rem;
+    overflow-x: auto;
+    gap: 0.25rem;
+  }
+
+  .admin-nav-titre,
+  .admin-nav-section {
+    display: none;
+  }
+
+  .admin-nav-liens {
+    flex-direction: row;
+    overflow: visible;
+    flex: none;
+  }
+
+  .admin-nav-bas {
+    margin: 0;
+    border: none;
+    padding-top: 0.55rem;
+    border-radius: 8px;
+  }
+
+  .admin-contenu {
+    padding: 1.25rem 1rem 2rem;
+  }
+}
