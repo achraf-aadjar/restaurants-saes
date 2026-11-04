@@ -126,6 +126,7 @@ public final class Monde {
         Map<String, Object> requete = new HashMap<>();
         requete.put("nom", nom);
         requete.put("adresse", "Ecole Polytechnique de Thies");
+        requete.put("telephone", "+221 33 000 00 00");
         requete.put("dureeReservationMinutes", 90);
         requete.put("tables", List.of(
                 Map.of("numero", 1, "capacite", 2),

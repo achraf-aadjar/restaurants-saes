@@ -33,7 +33,14 @@
       </div>
       <div class="champ">
         <label for="telephoneR">Téléphone</label>
-        <input id="telephoneR" name="telephoneR" type="tel" [(ngModel)]="telephone" />
+        <input
+          id="telephoneR"
+          name="telephoneR"
+          type="tel"
+          required
+          pattern=".*\S.*"
+          [(ngModel)]="telephone"
+        />
       </div>
       <div class="champ">
         <label for="dureeR">Durée de réservation (minutes)</label>

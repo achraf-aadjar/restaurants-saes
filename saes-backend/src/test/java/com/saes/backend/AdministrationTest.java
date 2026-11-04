@@ -114,6 +114,17 @@ class AdministrationTest extends IntegrationTest {
     }
 
     @Test
+    void unRestaurantAUnTelephone() {
+        Map<String, Object> sansTelephone = Monde.requeteRestaurant("Sans telephone");
+        sansTelephone.remove("telephone");
+        Map<String, Object> telephoneVide = Monde.requeteRestaurant("Telephone vide");
+        telephoneVide.put("telephone", "   ");
+
+        assertThat(api.post(monde.jetonAdmin, "/api/admin/restaurants", sansTelephone).statut()).isEqualTo(400);
+        assertThat(api.post(monde.jetonAdmin, "/api/admin/restaurants", telephoneVide).statut()).isEqualTo(400);
+    }
+
+    @Test
     void regle13UnRestaurantDesactiveNEstPlusProposePuisRevientUneFoisReactive() {
         ok(api.put(monde.jetonAdmin, "/api/admin/restaurants/" + monde.restaurantId + "/desactiver", null));
         assertThat(api.get(null, "/api/public/restaurants").liste("$[*].id")).doesNotContain((int) monde.restaurantId);

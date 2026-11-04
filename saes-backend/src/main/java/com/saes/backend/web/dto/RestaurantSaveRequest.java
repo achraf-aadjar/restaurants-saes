@@ -16,7 +16,7 @@ import jakarta.validation.constraints.Positive;
 public record RestaurantSaveRequest(
         @NotBlank String nom,
         @NotBlank String adresse,
-        String telephone,
+        @NotBlank String telephone,
         @NotNull @Positive Integer dureeReservationMinutes,
         @NotEmpty @Valid List<TableDto> tables,
         @NotEmpty @Valid List<HoraireDto> horaires) {

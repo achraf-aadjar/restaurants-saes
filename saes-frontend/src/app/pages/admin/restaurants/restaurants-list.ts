@@ -122,7 +122,7 @@ export class RestaurantsList {
     const request: RestaurantSaveRequest = {
       nom: this.nom,
       adresse: this.adresse,
-      telephone: this.telephone || undefined,
+      telephone: this.telephone,
       dureeReservationMinutes: this.dureeReservationMinutes,
       tables: this.tables,
       horaires: this.horaires,
