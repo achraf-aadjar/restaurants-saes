@@ -199,9 +199,10 @@ class ReservationsTest extends IntegrationTest {
         }
         pool.shutdown();
 
-        // 12 places : au plus deux reservations de 6 couverts (table de 6, puis tables de 2 + 4).
+        // Cadre « critical » : les reservations passent l'une apres l'autre et la seconde
+        // obtient d'autres tables. 12 places : la table de 6, puis les tables de 2 + 4.
         assertThat(statuts).allMatch(s -> s == 201 || s == 409);
-        assertThat(statuts.stream().filter(s -> s == 201).count()).isBetween(1L, 2L);
+        assertThat(statuts.stream().filter(s -> s == 201).count()).isEqualTo(2);
         Integer chevauchements = jdbc.queryForObject("""
                 select count(*) from reservation_table a join reservation_table b
                   on a.table_id = b.table_id and a.reservation_id < b.reservation_id

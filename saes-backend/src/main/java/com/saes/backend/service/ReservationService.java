@@ -48,7 +48,10 @@ public class ReservationService {
     public ReservationDto faireReservation(Long clientId, FaireReservationRequest request) {
         Utilisateur client = utilisateurRepository.findById(clientId)
                 .orElseThrow(() -> ApiException.notFound("Utilisateur introuvable"));
-        Restaurant restaurant = restaurantRepository.findById(request.restaurantId())
+        // Cadre « critical » de Faire une reservation : le restaurant reste verrouille
+        // jusqu'a l'enregistrement, donc deux reservations simultanees passent l'une
+        // apres l'autre et la seconde voit les tables prises par la premiere.
+        Restaurant restaurant = restaurantRepository.findVerrouille(request.restaurantId())
                 .orElseThrow(() -> ApiException.notFound("Restaurant introuvable"));
         if (!restaurant.isEstActif()) {
             throw ApiException.notFound("Restaurant introuvable");
@@ -93,9 +96,9 @@ public class ReservationService {
         try {
             reservation = reservationRepository.saveAndFlush(reservation);
         } catch (DataIntegrityViolationException e) {
-            // Contrainte d'exclusion PostgreSQL : une autre reservation a pris la
-            // meme table sur un creneau chevauchant entre notre lecture et notre
-            // ecriture (choix_techniques_architecture.pdf §3, "le premier l'emporte").
+            // Dernier filet, si une ecriture echappait au verrou : la contrainte
+            // d'exclusion PostgreSQL refuse une seconde reservation de la meme table
+            // sur un creneau chevauchant (choix_techniques_architecture.pdf §3).
             throw ApiException.conflict("Ce créneau vient d'être réservé par quelqu'un d'autre, veuillez réessayer");
         }
 
