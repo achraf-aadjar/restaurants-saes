@@ -17,7 +17,7 @@
 
   p {
     margin: 0;
-    color: #4a3c00;
+    color: var(--saes-vert);
     font-size: 0.9rem;
   }
 
@@ -36,7 +36,7 @@
 
 .dates-menu {
   margin: 0 0 1.25rem;
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
 }
 
 .groupe-categorie {
@@ -55,7 +55,7 @@
 }
 
 .plat .description {
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
   font-size: 0.85rem;
   margin: 0 0 0.6rem;
 }

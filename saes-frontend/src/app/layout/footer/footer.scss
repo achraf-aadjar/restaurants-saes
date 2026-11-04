@@ -1,6 +1,6 @@
 .pied {
   border-top: 1px solid var(--saes-bordure);
-  color: #4f5a55;
+  color: var(--saes-vert-attenue);
   font-size: 0.9rem;
 }
 
@@ -63,7 +63,7 @@
 .pied-copyright {
   margin: 0.4rem 0 0;
   font-size: 0.82rem;
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
 }
 
 // Personnel et administrateur : une seule ligne discrete.
@@ -77,5 +77,5 @@
   padding-top: 0.9rem;
   padding-bottom: 0.9rem;
   font-size: 0.82rem;
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
 }

@@ -9,6 +9,7 @@
   --saes-creme: #fcfbf7; /* fond */
 
   --saes-vert-clair: #0f4a43;
+  --saes-vert-attenue: #526f6c; /* textes secondaires : le vert eclairci, contraste 5,3 */
   --saes-rouge-fonce: #b50a15;
   --saes-bordure: #e4ddc9;
   --saes-texte-clair: #ffffff;
@@ -171,7 +172,7 @@ button {
 
 .mention-confidentialite {
   font-size: 0.8rem;
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
   margin: -0.4rem 0 1rem;
 }
 
@@ -194,7 +195,7 @@ button {
   }
 
   th {
-    color: #6b6b5f;
+    color: var(--saes-vert-attenue);
     font-weight: 600;
   }
 }
@@ -242,12 +243,12 @@ button {
 
 .commande-date {
   font-size: 0.8rem;
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
 }
 
 .commande-meta {
   font-size: 0.85rem;
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
   margin: 0 0 0.5rem;
 }
 
@@ -335,7 +336,7 @@ button {
 }
 
 .plat .description {
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
   font-size: 0.85rem;
   margin: 0 0 0.6rem;
 }
@@ -366,7 +367,7 @@ button {
 }
 
 .panier-vide {
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
   font-size: 0.9rem;
 }
 
