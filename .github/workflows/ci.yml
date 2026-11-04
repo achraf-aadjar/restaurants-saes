@@ -68,3 +68,19 @@ jobs:
 
       - name: Tests unitaires
         run: npx ng test --watch=false
+
+  images:
+    name: Images Docker de production
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Construire l'image du backend
+        run: docker build --tag saes-backend saes-backend
+
+      - name: Construire l'image du frontend (Caddy)
+        run: docker build --tag saes-frontend saes-frontend
+
+      - name: Verifier le Caddyfile
+        run: docker run --rm saes-frontend caddy validate --config /etc/caddy/Caddyfile
