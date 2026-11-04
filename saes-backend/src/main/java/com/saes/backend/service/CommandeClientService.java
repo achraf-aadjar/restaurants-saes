@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.saes.backend.domain.ActionJournal;
 import com.saes.backend.domain.Commande;
 import com.saes.backend.domain.StatutCommande;
 import com.saes.backend.domain.TypeCommande;
@@ -38,6 +39,7 @@ public class CommandeClientService {
     private final UtilisateurRepository utilisateurRepository;
     private final HoraireService horaireService;
     private final CommandeLigneFactory commandeLigneFactory;
+    private final JournalService journalService;
 
     public List<CommandeDto> suivreCommandes(Long clientId) {
         return commandeRepository.findByClientIdOrderByDateHeureDesc(clientId).stream()
@@ -89,6 +91,7 @@ public class CommandeClientService {
             throw ApiException.conflict("Cette commande n'est plus en attente");
         }
         commande.setStatut(StatutCommande.ANNULEE);
+        journalService.enregistrer(ActionJournal.COMMANDE_ANNULEE, "COMMANDE", commande.getId(), "Annulee par le client");
         return CommandeDto.from(commandeRepository.saveAndFlush(commande));
     }
 }

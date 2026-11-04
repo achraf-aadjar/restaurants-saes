@@ -1,0 +1,49 @@
+<h1>Historique des opérations</h1>
+<p class="commande-meta">
+  Les 500 dernières opérations sensibles : caisse, annulations, abandons, ruptures et administration.
+</p>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+<section class="carte">
+  <div class="champ champ-inline" style="max-width: 320px; margin-bottom: 1rem">
+    <label for="filtreAction">Type d'opération</label>
+    <select id="filtreAction" style="width: 100%" [ngModel]="filtre()" (ngModelChange)="filtre.set($event)">
+      <option value="">Toutes</option>
+      @for (a of actions; track a) {
+        <option [value]="a">{{ libelles[a] }}</option>
+      }
+    </select>
+  </div>
+
+  @if (chargement()) {
+    <p>Chargement…</p>
+  } @else if (entreesAffichees().length === 0) {
+    <p>Aucune opération enregistrée.</p>
+  } @else {
+    <table class="table-simple">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Par</th>
+          <th>Opération</th>
+          <th>Objet</th>
+          <th>Détails</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (e of entreesAffichees(); track e.id) {
+          <tr>
+            <td>{{ e.dateHeure | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ e.acteur ?? 'Système' }}</td>
+            <td>{{ libelles[e.action] }}</td>
+            <td>{{ objets[e.objetType] ?? e.objetType }} n° {{ e.objetId }}</td>
+            <td>{{ e.details }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

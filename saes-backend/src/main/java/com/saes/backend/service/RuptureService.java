@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.saes.backend.domain.ActionJournal;
 import com.saes.backend.domain.Ingredient;
 import com.saes.backend.domain.MouvementStock;
 import com.saes.backend.domain.Restaurant;
@@ -34,6 +35,7 @@ public class RuptureService {
     private final MouvementStockRepository mouvementStockRepository;
     private final PlatRepository platRepository;
     private final PersonnelRestaurantResolver personnelRestaurantResolver;
+    private final JournalService journalService;
 
     /** Pour que le cuisinier choisisse l'ingredient en rupture (hypothese 4 du cahier des charges). */
     public List<IngredientDto> listerIngredients(Long cuisinierId) {
@@ -52,8 +54,8 @@ public class RuptureService {
             throw ApiException.forbidden("Cet ingrédient n'appartient pas à votre restaurant");
         }
 
-        platRepository.findByRestaurantIdAndRecette_Ingredient_Id(restaurant.getId(), ingredientId)
-                .forEach(plat -> plat.setEstActif(false));
+        var plats = platRepository.findByRestaurantIdAndRecette_Ingredient_Id(restaurant.getId(), ingredientId);
+        plats.forEach(plat -> plat.setEstActif(false));
 
         BigDecimal stock = mouvementStockRepository.calculerStock(ingredientId);
         if (stock.signum() > 0) {
@@ -64,5 +66,8 @@ public class RuptureService {
             sortie.setDateHeure(Instant.now());
             mouvementStockRepository.save(sortie);
         }
+        journalService.enregistrer(ActionJournal.RUPTURE_SIGNALEE, "INGREDIENT", ingredientId,
+                ingredient.getNom() + " : " + plats.size() + " plat(s) desactive(s), "
+                        + (stock.signum() > 0 ? "stock de " + stock + " ramene a zero" : "stock inchange (" + stock + ")"));
     }
 }

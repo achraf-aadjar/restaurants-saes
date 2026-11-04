@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.saes.backend.domain.ActionJournal;
 import com.saes.backend.domain.Restaurant;
 import com.saes.backend.domain.Role;
 import com.saes.backend.domain.Utilisateur;
@@ -39,6 +40,7 @@ public class AdminUserService {
     private final UtilisateurRepository utilisateurRepository;
     private final RestaurantRepository restaurantRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JournalService journalService;
 
     public List<UtilisateurDto> lister() {
         return utilisateurRepository.findAll().stream().map(UtilisateurDto::from).toList();
@@ -63,7 +65,10 @@ public class AdminUserService {
         utilisateur.setRoles(EnumSet.copyOf(request.roles()));
         utilisateur.setEstActif(true);
 
-        return UtilisateurDto.from(utilisateurRepository.save(utilisateur));
+        utilisateur = utilisateurRepository.save(utilisateur);
+        journalService.enregistrer(ActionJournal.COMPTE_CREE, "UTILISATEUR", utilisateur.getId(),
+                utilisateur.getEmail() + ", roles : " + utilisateur.getRoles());
+        return UtilisateurDto.from(utilisateur);
     }
 
     @Transactional
@@ -81,7 +86,10 @@ public class AdminUserService {
             }
             utilisateur.setRestaurant(trouverRestaurant(request.restaurantId()));
         }
+        Set<Role> anciens = EnumSet.copyOf(utilisateur.getRoles());
         utilisateur.setRoles(EnumSet.copyOf(request.roles()));
+        journalService.enregistrer(ActionJournal.ROLES_MODIFIES, "UTILISATEUR", utilisateur.getId(),
+                anciens + " -> " + utilisateur.getRoles());
         return UtilisateurDto.from(utilisateur);
     }
 
@@ -93,6 +101,8 @@ public class AdminUserService {
             throw ApiException.conflict("Ce compte a été supprimé par son titulaire : il ne peut pas être réactivé");
         }
         utilisateur.setEstActif(actif);
+        journalService.enregistrer(actif ? ActionJournal.COMPTE_ACTIVE : ActionJournal.COMPTE_DESACTIVE,
+                "UTILISATEUR", utilisateur.getId(), utilisateur.getEmail());
         return UtilisateurDto.from(utilisateur);
     }
 

@@ -1,0 +1,67 @@
+# Deploiement complet : PostgreSQL, backend Spring Boot et site Angular derriere
+# Caddy (HTTPS automatique). Les secrets viennent du fichier .env (jamais
+# commite) : copier .env.example en .env et le remplir. Lancement :
+#   docker compose -f docker-compose.prod.yml --env-file .env up -d --build
+# Le docker-compose.yml du developpement (base seule) est inchange.
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: saes
+      POSTGRES_USER: ${SAES_DB_USER:?SAES_DB_USER manquant dans .env}
+      POSTGRES_PASSWORD: ${SAES_DB_PASSWORD:?SAES_DB_PASSWORD manquant dans .env}
+    volumes:
+      - saes-donnees:/var/lib/postgresql/data
+    # Aucun port publie : la base n'est joignable que par le backend.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d saes"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build: ./saes-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SAES_DB_URL: jdbc:postgresql://db:5432/saes
+      DB_USER: ${SAES_DB_USER}
+      DB_PASSWORD: ${SAES_DB_PASSWORD}
+      SAES_JWT_SECRET: ${SAES_JWT_SECRET:?SAES_JWT_SECRET manquant dans .env}
+      SAES_CORS_ORIGINS: https://${SAES_DOMAINE:-localhost}
+      SAES_GOOGLE_CLIENT_ID: ${SAES_GOOGLE_CLIENT_ID:-}
+      SAES_ADMIN_EMAIL: ${SAES_ADMIN_EMAIL:-}
+      SAES_ADMIN_MOT_DE_PASSE: ${SAES_ADMIN_MOT_DE_PASSE:-}
+    # Aucun port publie : le backend n'est joignable que par Caddy.
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080 && printf \"GET /actuator/health HTTP/1.0\\r\\n\\r\\n\" >&3 && grep -q UP <&3'"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  web:
+    build: ./saes-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      SAES_DOMAINE: ${SAES_DOMAINE:-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - caddy-certificats:/data
+      - caddy-configuration:/config
+
+volumes:
+  saes-donnees:
+  caddy-certificats:
+  caddy-configuration:

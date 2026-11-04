@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.saes.backend.domain.ActionJournal;
 import com.saes.backend.domain.Commande;
 import com.saes.backend.domain.ModePaiement;
 import com.saes.backend.domain.Paiement;
@@ -42,6 +43,7 @@ public class CaisseService {
     private final UtilisateurRepository utilisateurRepository;
     private final PersonnelRestaurantResolver personnelRestaurantResolver;
     private final CommandeRestaurantResolver commandeRestaurantResolver;
+    private final JournalService journalService;
 
     public SessionCaisseDto maSessionOuverte(Long caissierId) {
         return sessionCaisseRepository.findByCaissierIdAndDateHeureClotureIsNull(caissierId)
@@ -70,7 +72,10 @@ public class CaisseService {
         session.setDateHeureOuverture(Instant.now());
         session.setFondDeCaisse(request.fondDeCaisse());
 
-        return SessionCaisseDto.ouverte(sessionCaisseRepository.save(session));
+        session = sessionCaisseRepository.save(session);
+        journalService.enregistrer(ActionJournal.CAISSE_OUVERTE, "SESSION_CAISSE", session.getId(),
+                "Fond de caisse : " + session.getFondDeCaisse() + " FCFA");
+        return SessionCaisseDto.ouverte(session);
     }
 
     @Transactional
@@ -96,7 +101,10 @@ public class CaisseService {
         paiement.setDateHeure(Instant.now());
         paiementRepository.save(paiement);
 
-        return CommandeDto.from(commandeRepository.saveAndFlush(commande));
+        CommandeDto payee = CommandeDto.from(commandeRepository.saveAndFlush(commande));
+        journalService.enregistrer(ActionJournal.COMMANDE_ENCAISSEE, "COMMANDE", commande.getId(),
+                payee.montantTotal() + " FCFA en " + request.modePaiement() + ", caisse n° " + session.getId());
+        return payee;
     }
 
     @Transactional
@@ -115,6 +123,9 @@ public class CaisseService {
 
         session.setDateHeureCloture(Instant.now());
         session.setMontantCompte(request.montantCompte());
+        journalService.enregistrer(ActionJournal.CAISSE_CLOTUREE, "SESSION_CAISSE", session.getId(),
+                "Theorique : " + montantTheorique + " FCFA, compte : " + request.montantCompte()
+                        + " FCFA, ecart : " + ecart + " FCFA");
 
         return SessionCaisseDto.cloturee(session, montantTheorique, ecart);
     }

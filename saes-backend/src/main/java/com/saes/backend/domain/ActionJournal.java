@@ -1,0 +1,20 @@
+package com.saes.backend.domain;
+
+/** Operations sensibles enregistrees dans l'historique. */
+public enum ActionJournal {
+    CAISSE_OUVERTE,
+    COMMANDE_ENCAISSEE,
+    CAISSE_CLOTUREE,
+    COMMANDE_MODIFIEE,
+    COMMANDE_ANNULEE,
+    COMMANDE_ABANDONNEE,
+    RUPTURE_SIGNALEE,
+    COMPTE_CREE,
+    ROLES_MODIFIES,
+    COMPTE_ACTIVE,
+    COMPTE_DESACTIVE,
+    RESTAURANT_CREE,
+    RESTAURANT_MODIFIE,
+    RESTAURANT_ACTIVE,
+    RESTAURANT_DESACTIVE
+}

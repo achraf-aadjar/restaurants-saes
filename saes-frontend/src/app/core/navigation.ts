@@ -73,6 +73,7 @@ export const SECTIONS: Section[] = [
     fonctions: [
       { libelle: 'Gérer les comptes utilisateurs', lien: '/admin/utilisateurs' },
       { libelle: 'Gérer les restaurants', lien: '/admin/restaurants' },
+      { libelle: 'Historique des opérations', lien: '/admin/journal' },
     ],
   },
 ];

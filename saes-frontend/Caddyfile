@@ -1,0 +1,29 @@
+# Qualite attendue §6.2 : les mots de passe et les donnees de caisse ne
+# circulent qu'en HTTPS. Caddy obtient et renouvelle seul le certificat pour
+# SAES_DOMAINE (Let's Encrypt) et redirige tout acces HTTP vers HTTPS.
+# Avec SAES_DOMAINE=localhost, il utilise un certificat local de test.
+
+{$SAES_DOMAINE:localhost} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+
+	# L'API (le backend n'est joignable que par ce chemin, pas depuis Internet).
+	handle /api/* {
+		reverse_proxy backend:8080
+	}
+
+	# L'application Angular : toute autre adresse renvoie index.html (routes du site).
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}
