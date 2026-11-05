@@ -9,6 +9,10 @@ import com.saes.backend.domain.SessionCaisse;
 
 public interface SessionCaisseRepository extends JpaRepository<SessionCaisse, Long> {
 
+    List<SessionCaisse> findTop100ByOrderByDateHeureOuvertureDesc();
+
+    long countByDateHeureClotureIsNull();
+
     Optional<SessionCaisse> findByCaissierIdAndDateHeureClotureIsNull(Long caissierId);
 
     List<SessionCaisse> findByCaissier_Restaurant_IdAndDateHeureOuvertureBetween(

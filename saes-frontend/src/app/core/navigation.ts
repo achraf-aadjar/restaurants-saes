@@ -71,7 +71,7 @@ export const SECTIONS: Section[] = [
   {
     role: 'ADMINISTRATEUR',
     intitule: 'Administration',
-    accueil: '/admin/utilisateurs',
+    accueil: '/admin',
     fonctions: [
       { libelle: 'Gérer les comptes utilisateurs', lien: '/admin/utilisateurs' },
       { libelle: 'Gérer les restaurants', lien: '/admin/restaurants' },

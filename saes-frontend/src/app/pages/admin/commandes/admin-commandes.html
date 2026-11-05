@@ -1,0 +1,76 @@
+<header class="admin-page-entete">
+  <div>
+    <h1>Commandes</h1>
+    <p class="admin-page-soustitre">Toutes les commandes de tous les restaurants.</p>
+  </div>
+</header>
+
+@if (erreur(); as e) {
+  <p class="message-refus" role="alert">{{ e }}</p>
+}
+
+<section class="panneau">
+  <form class="filtres" (ngSubmit)="charger()">
+    <div class="champ">
+      <label for="debutC">Du</label>
+      <input id="debutC" name="debutC" type="date" [(ngModel)]="debut" />
+    </div>
+    <div class="champ">
+      <label for="finC">Au</label>
+      <input id="finC" name="finC" type="date" [(ngModel)]="fin" />
+    </div>
+    <button type="submit" class="btn btn-secondaire" [disabled]="chargement()">Afficher</button>
+    <div class="champ">
+      <label for="restaurantC">Restaurant</label>
+      <select id="restaurantC" name="restaurantC" [ngModel]="filtreRestaurant()" (ngModelChange)="filtreRestaurant.set($event)">
+        <option value="">Tous</option>
+        @for (r of restaurants(); track r) {
+          <option [value]="r">{{ r }}</option>
+        }
+      </select>
+    </div>
+    <div class="champ">
+      <label for="statutC">Statut</label>
+      <select id="statutC" name="statutC" [ngModel]="filtreStatut()" (ngModelChange)="filtreStatut.set($event)">
+        <option value="">Tous</option>
+        @for (s of statuts; track s) {
+          <option [value]="s">{{ libelles[s] }}</option>
+        }
+      </select>
+    </div>
+  </form>
+
+  <p class="tuile-note">
+    {{ affichees().length }} commande(s) · payées : {{ total() | number: '1.0-0' }} FCFA
+  </p>
+
+  @if (chargement()) {
+    <p class="vide">Chargement…</p>
+  } @else if (affichees().length === 0) {
+    <p class="vide">Aucune commande pour ces critères.</p>
+  } @else {
+    <table class="table-simple">
+      <thead>
+        <tr>
+          <th>N°</th><th>Date</th><th>Restaurant</th><th>Type</th><th>Passée par</th><th>Plats</th>
+          <th>Montant</th><th>Statut</th><th>Paiement</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (c of affichees(); track c.id) {
+          <tr>
+            <td>{{ c.id }}</td>
+            <td>{{ c.dateHeure | date: 'dd/MM HH:mm' }}</td>
+            <td>{{ c.restaurant }}</td>
+            <td>{{ c.type === 'SUR_PLACE' ? 'Table ' + c.tableNumero : 'À emporter' }}</td>
+            <td>{{ c.passeePar }}</td>
+            <td>{{ c.lignes }}</td>
+            <td class="montant">{{ c.montantTotal | number: '1.0-0' }} FCFA</td>
+            <td><span class="badge" [class]="classeBadge(c.statut)">{{ libelles[c.statut] }}</span></td>
+            <td>{{ c.modePaiement ? modes[c.modePaiement] : '—' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

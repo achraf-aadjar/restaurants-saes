@@ -54,7 +54,7 @@ describe('Page de connexion', () => {
     expect(page.textContent).toContain('Adresse e-mail invalide.');
   });
 
-  it('des identifiants valides sont envoyes puis on arrive sur les menus', async () => {
+  it('des identifiants valides sont envoyes puis on arrive sur l accueil de son role', async () => {
     const navigation = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     await saisir('#email', 'awa@test.sn');
     await saisir('#motDePasse', 'motdepasse123');
@@ -65,6 +65,7 @@ describe('Page de connexion', () => {
     requete.flush({ token: 'jeton', utilisateur: { id: 1, roles: ['CLIENT'] } });
     await fixture.whenStable();
 
+    // L'accueil du client : les menus.
     expect(navigation).toHaveBeenCalledWith(['/menus']);
   });
 
