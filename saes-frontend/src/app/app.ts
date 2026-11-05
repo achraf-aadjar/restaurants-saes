@@ -3,12 +3,13 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 
+import { BarreLaterale } from './layout/barre-laterale/barre-laterale';
 import { Footer } from './layout/footer/footer';
 import { Header } from './layout/header/header';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Footer],
+  imports: [RouterOutlet, Header, BarreLaterale, Footer],
   styleUrl: './app.scss',
   templateUrl: './app.html',
 })

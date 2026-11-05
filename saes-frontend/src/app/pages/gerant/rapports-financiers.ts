@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { motifErreur } from '../../core/erreur.util';
 import { GerantRapportService } from '../../core/gerant-rapport.service';
 import { RapportFinancierDto } from '../../core/models';
+import { MontantPipe } from '../../shared/montant.pipe';
+import { RefusVisible } from '../../shared/refus-visible';
 
 function ilYA(jours: number): string {
   const date = new Date();
@@ -19,7 +21,7 @@ function ilYA(jours: number): string {
  */
 @Component({
   selector: 'app-gerant-rapports-financiers',
-  imports: [FormsModule, DatePipe],
+  imports: [FormsModule, DatePipe, MontantPipe, RefusVisible],
   templateUrl: './rapports-financiers.html',
 })
 export class GerantRapportsFinanciers {

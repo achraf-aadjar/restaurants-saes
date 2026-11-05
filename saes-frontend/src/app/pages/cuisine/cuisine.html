@@ -1,59 +1,6 @@
 <h1>Préparation des commandes</h1>
 <p class="commande-meta">Par ordre d'arrivée, la plus ancienne en premier.</p>
 
-<section class="carte">
-  <h2>Signaler une rupture</h2>
-  @if (erreurRupture(); as e) {
-    <p class="message-refus">{{ e }}</p>
-  }
-  @if (ruptureConfirmee(); as id) {
-    <p class="message-ok">Rupture signalée : les plats concernés ont été désactivés.</p>
-  }
-  @if (ingredients().length === 0) {
-    <p>Aucun ingrédient.</p>
-  } @else {
-    <form (ngSubmit)="confirmationRupture.set(true)" class="ligne-dynamique">
-      <div class="champ champ-inline" style="flex: 1; max-width: 360px">
-        <label for="ingredientRupture">Ingrédient</label>
-        <select
-          id="ingredientRupture"
-          style="width: 100%"
-          [(ngModel)]="ingredientSelectionne"
-          (ngModelChange)="confirmationRupture.set(false)"
-          name="ingredientRupture"
-        >
-          @for (i of ingredients(); track i.id) {
-            <option [ngValue]="i.id">{{ i.nom }} (stock : {{ i.stock }} {{ i.unite }})</option>
-          }
-        </select>
-      </div>
-      @if (!confirmationRupture()) {
-        <button type="submit" class="btn btn-primaire btn-petit">Signaler la rupture</button>
-      }
-    </form>
-
-    @if (confirmationRupture()) {
-      <p class="message-refus">
-        Confirmer la rupture de « {{ nomIngredientSelectionne() }} » ? Les plats qui en contiennent seront
-        désactivés et son stock ramené à zéro.
-      </p>
-      <div class="actions-danger">
-        <button
-          type="button"
-          class="btn btn-primaire btn-petit"
-          [disabled]="ruptureEnCours() !== null"
-          (click)="signalerRupture()"
-        >
-          Oui, signaler la rupture
-        </button>
-        <button type="button" class="btn btn-secondaire btn-petit" (click)="confirmationRupture.set(false)">
-          Annuler
-        </button>
-      </div>
-    }
-  }
-</section>
-
 @if (erreur(); as e) {
   <p class="message-refus">{{ e }}</p>
 }
@@ -66,10 +13,7 @@
   <div class="liste-commandes">
     @for (c of commandes(); track c.id) {
       <article class="carte commande">
-        <div class="commande-entete">
-          <span class="badge" [class]="classeBadge(c.statut)">{{ libelles[c.statut] }}</span>
-          <span class="commande-meta">{{ c.type === 'SUR_PLACE' ? 'Table ' + c.tableNumero : 'À emporter' }}</span>
-        </div>
+        <app-commande-entete [commande]="c" />
         <ul class="liste-panier">
           @for (ligne of c.lignes; track ligne.platId) {
             <li>

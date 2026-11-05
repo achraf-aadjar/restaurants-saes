@@ -1,4 +1,4 @@
-import { registerLocaleData } from '@angular/common';
+import { DATE_PIPE_DEFAULT_OPTIONS, registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
@@ -12,8 +12,11 @@ registerLocaleData(localeFr);
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    { provide: LOCALE_ID, useValue: 'fr' },
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     provideRouter(routes, withComponentInputBinding()),
+    // Dates et nombres a la francaise : « 20 000 », « 03/11/2026 ».
+    { provide: LOCALE_ID, useValue: 'fr' },
+    // Format du pipe date sans argument : « 03/11/2026 à 13 h 53 ».
+    { provide: DATE_PIPE_DEFAULT_OPTIONS, useValue: { dateFormat: "dd/MM/y 'à' H 'h' mm" } },
   ],
 };

@@ -84,7 +84,7 @@ public class CommandeServeurService {
             table = tableRestaurantRepository.findById(request.tableId())
                     .orElseThrow(() -> ApiException.notFound("Table introuvable"));
             if (!table.getRestaurant().getId().equals(restaurant.getId())) {
-                throw ApiException.badRequest("Cette table n'appartient pas a votre restaurant");
+                throw ApiException.badRequest("Cette table n'appartient pas à votre restaurant");
             }
         }
 

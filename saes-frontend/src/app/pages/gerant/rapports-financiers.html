@@ -1,5 +1,9 @@
 <h1>Rapports financiers</h1>
 
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
 <section class="carte">
   <form (ngSubmit)="charger()" class="ligne-dynamique">
     <div class="champ champ-inline">
@@ -13,10 +17,6 @@
     <button type="submit" class="btn btn-primaire btn-petit" [disabled]="chargement()">Afficher</button>
   </form>
 </section>
-
-@if (erreur(); as e) {
-  <p class="message-refus">{{ e }}</p>
-}
 
 @if (chargement()) {
   <p>Chargement…</p>
@@ -38,10 +38,10 @@
         <tbody>
           @for (j of r.encaissementsParJour; track j.jour) {
             <tr>
-              <td>{{ j.jour }}</td>
-              <td>{{ j.montantEspeces }} FCFA</td>
-              <td>{{ j.montantMobileMoney }} FCFA</td>
-              <td>{{ j.montantEspeces + j.montantMobileMoney }} FCFA</td>
+              <td>{{ j.jour | date: 'shortDate' }}</td>
+              <td>{{ j.montantEspeces | montant }}</td>
+              <td>{{ j.montantMobileMoney | montant }}</td>
+              <td>{{ j.montantEspeces + j.montantMobileMoney | montant }}</td>
             </tr>
           }
         </tbody>
@@ -70,12 +70,12 @@
           @for (c of r.ecartsCaisse; track c.sessionId) {
             <tr>
               <td>{{ c.caissierNom }}</td>
-              <td>{{ c.dateHeureOuverture | date: 'short' }}</td>
-              <td>{{ c.dateHeureCloture | date: 'short' }}</td>
-              <td>{{ c.fondDeCaisse }} FCFA</td>
-              <td>{{ c.montantTheorique }} FCFA</td>
-              <td>{{ c.montantCompte }} FCFA</td>
-              <td [class.message-refus]="c.ecart !== 0">{{ c.ecart }} FCFA</td>
+              <td>{{ c.dateHeureOuverture | date }}</td>
+              <td>{{ c.dateHeureCloture | date }}</td>
+              <td>{{ c.fondDeCaisse | montant }}</td>
+              <td>{{ c.montantTheorique | montant }}</td>
+              <td>{{ c.montantCompte | montant }}</td>
+              <td [class.message-refus]="c.ecart !== 0">{{ c.ecart | montant }}</td>
             </tr>
           }
         </tbody>
@@ -85,6 +85,6 @@
 
   <section class="carte" style="margin-top: 1rem">
     <h2>Commandes abandonnées</h2>
-    <p class="total-panier">Montant total : {{ r.montantCommandesAbandonnees }} FCFA</p>
+    <p class="total-panier">Montant total : {{ r.montantCommandesAbandonnees | montant }}</p>
   </section>
 }

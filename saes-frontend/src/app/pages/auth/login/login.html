@@ -35,7 +35,11 @@
         />
         @if (emailCtrl.invalid && (emailCtrl.touched || f.submitted)) {
           <p class="auth-erreur-champ" id="email-erreur">
-            {{ emailCtrl.errors?.['required'] ? 'Saisissez votre adresse e-mail.' : 'Adresse e-mail invalide.' }}
+            {{
+              emailCtrl.errors?.['required']
+                ? 'Saisissez votre adresse e-mail.'
+                : 'Adresse e-mail invalide.'
+            }}
           </p>
         }
       </div>
@@ -60,7 +64,9 @@
             class="auth-oeil"
             (click)="motDePasseVisible.set(!motDePasseVisible())"
             [attr.aria-pressed]="motDePasseVisible()"
-            [attr.aria-label]="motDePasseVisible() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+            [attr.aria-label]="
+              motDePasseVisible() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'
+            "
           >
             {{ motDePasseVisible() ? 'Masquer' : 'Afficher' }}
           </button>
@@ -76,7 +82,8 @@
     </form>
 
     <footer class="auth-pied">
-      Pas encore de compte ? <a routerLink="/inscription">Créer un compte</a>
+      Pas encore de compte ?
+      <a queryParamsHandling="preserve" routerLink="/inscription">Créer un compte</a>
     </footer>
   </section>
 </div>

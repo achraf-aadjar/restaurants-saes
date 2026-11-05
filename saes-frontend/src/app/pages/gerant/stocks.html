@@ -1,19 +1,16 @@
-<h1>Stocks</h1>
+<div class="titre-page">
+  <h1>Stocks</h1>
+  <button type="button" class="btn btn-primaire" (click)="ouvrirCreation()">
+    + Nouvel ingrédient
+  </button>
+</div>
 
 @if (erreur(); as e) {
   <p class="message-refus">{{ e }}</p>
 }
 
-<section class="carte">
-  <button
-    type="button"
-    class="btn btn-secondaire"
-    (click)="formulaireOuvert() ? formulaireOuvert.set(false) : ouvrirCreation()"
-  >
-    {{ formulaireOuvert() ? 'Annuler' : 'Créer un ingrédient' }}
-  </button>
-
-  @if (formulaireOuvert()) {
+@if (formulaireOuvert()) {
+  <section class="carte">
     <form (ngSubmit)="enregistrer()" #f="ngForm" class="formulaire-creation">
       <h2>{{ idEnEdition ? "Modifier l'ingrédient" : 'Nouvel ingrédient' }}</h2>
 
@@ -23,31 +20,40 @@
 
       <div class="champ">
         <label for="nomI">Nom</label>
-        <input id="nomI" name="nomI" type="text" required [(ngModel)]="nom" />
+        <input id="nomI" name="nomI" type="text" required pattern=".*\S.*" [(ngModel)]="nom" />
       </div>
       <div class="champ">
         <label for="uniteI">Unité</label>
         <select id="uniteI" name="uniteI" required [(ngModel)]="unite">
           @for (u of unites; track u) {
-            <option [ngValue]="u">{{ u }}</option>
+            <option [ngValue]="u">{{ libellesUnites[u] }}</option>
           }
         </select>
       </div>
       <div class="champ">
-        <label for="seuilI">Seuil d'alerte</label>
+        <label for="seuilI">Seuil d'alerte ({{ symbolesUnites[unite] }})</label>
         <input id="seuilI" name="seuilI" type="number" min="0" step="0.001" required [(ngModel)]="seuilAlerte" />
       </div>
       <div class="champ">
-        <label for="cibleI">Niveau cible</label>
+        <label for="cibleI">Niveau cible ({{ symbolesUnites[unite] }})</label>
         <input id="cibleI" name="cibleI" type="number" min="0" step="0.001" required [(ngModel)]="niveauCible" />
       </div>
 
-      <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enregistrementEnCours()">
-        {{ enregistrementEnCours() ? 'Enregistrement…' : 'Enregistrer' }}
-      </button>
+      <div class="actions-colonne">
+        <button
+          type="submit"
+          class="btn btn-primaire"
+          [disabled]="f.invalid || enregistrementEnCours()"
+        >
+          {{ enregistrementEnCours() ? 'Enregistrement…' : 'Enregistrer' }}
+        </button>
+        <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert.set(false)">
+          Annuler
+        </button>
+      </div>
     </form>
-  }
-</section>
+  </section>
+}
 
 <section class="carte" style="margin-top: 1rem">
   @if (chargement()) {
@@ -74,10 +80,10 @@
                 <span class="badge badge-inactif">Alerte</span>
               }
             </td>
-            <td>{{ i.unite }}</td>
-            <td>{{ i.stock }}</td>
-            <td>{{ i.seuilAlerte }}</td>
-            <td>{{ i.niveauCible }}</td>
+            <td>{{ libellesUnites[i.unite] }}</td>
+            <td>{{ i.stock | quantite: i.unite }}</td>
+            <td>{{ i.seuilAlerte | quantite: i.unite }}</td>
+            <td>{{ i.niveauCible | quantite: i.unite }}</td>
             <td class="actions-colonne">
               <button type="button" class="btn btn-secondaire btn-petit" (click)="ouvrirEdition(i)">
                 Modifier
@@ -102,6 +108,7 @@
                     name="quantiteMouvement"
                     style="width: 100px"
                   />
+                  <span>{{ symbolesUnites[i.unite] }}</span>
                   <button type="submit" class="btn btn-primaire btn-petit" [disabled]="enregistrementEnCours()">
                     Valider
                   </button>

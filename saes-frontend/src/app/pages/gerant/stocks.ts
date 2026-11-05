@@ -3,7 +3,10 @@ import { FormsModule } from '@angular/forms';
 
 import { motifErreur } from '../../core/erreur.util';
 import { GerantStockService } from '../../core/gerant-stock.service';
+import { LIBELLES_UNITES, SYMBOLES_UNITES } from '../../core/libelles';
 import { IngredientDto, IngredientSaveRequest, TypeMouvement, UNITES, Unite } from '../../core/models';
+import { QuantitePipe } from '../../shared/quantite.pipe';
+import { RefusVisible } from '../../shared/refus-visible';
 
 /**
  * Gerer les stocks (cahier des charges §4.6), reserve au gerant : creer et
@@ -12,13 +15,15 @@ import { IngredientDto, IngredientSaveRequest, TypeMouvement, UNITES, Unite } fr
  */
 @Component({
   selector: 'app-gerant-stocks',
-  imports: [FormsModule],
+  imports: [FormsModule, QuantitePipe, RefusVisible],
   templateUrl: './stocks.html',
 })
 export class GerantStocks {
   private readonly gerantStockService = inject(GerantStockService);
 
   protected readonly unites = UNITES;
+  protected readonly libellesUnites = LIBELLES_UNITES;
+  protected readonly symbolesUnites = SYMBOLES_UNITES;
 
   protected readonly ingredients = signal<IngredientDto[]>([]);
   protected readonly chargement = signal(true);

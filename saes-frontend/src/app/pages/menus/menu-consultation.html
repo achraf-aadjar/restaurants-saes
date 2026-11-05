@@ -19,12 +19,84 @@
 }
 
 @if (restaurantSelectionne(); as restaurant) {
-  <section class="bandeau-restaurant">
-    <h1>{{ restaurant.nom }}</h1>
-    <p>{{ restaurant.adresse }}</p>
-    @if (restaurant.telephone) {
-      <p>{{ restaurant.telephone }}</p>
+  <section class="bandeau-restaurant" [class.pleine-largeur]="vueClient()">
+    @if (vueClient()) {
+      <img
+        class="decor-bandeau"
+        src="assets/decor/bandeau-plats-200.webp"
+        srcset="assets/decor/bandeau-plats-200.webp 1x, assets/decor/bandeau-plats-400.webp 2x"
+        width="199"
+        height="200"
+        alt=""
+        aria-hidden="true"
+      />
     }
+    <div class="bandeau-interieur">
+      @if (photoRestaurant(); as photo) {
+        <img
+          class="photo-restaurant"
+          [src]="photo.src"
+          [srcset]="photo.srcset"
+          sizes="(max-width: 859px) 100vw, 210px"
+          width="400"
+          height="213"
+          alt=""
+          [title]="
+            photo.credit.description + ' · ' + photo.credit.auteur + ', ' + photo.credit.licence
+          "
+        />
+      }
+
+      <div class="identite">
+        <h1>{{ restaurant.nom }}</h1>
+        <p class="ligne-icone">
+          <svg class="icone-pleine" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z" />
+            <circle cx="12" cy="9.5" r="2.5" />
+          </svg>
+          {{ restaurant.adresse }}
+        </p>
+      </div>
+
+      <div class="horaires-du-jour">
+        <p class="ligne-icone">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 7v5l3 2" />
+          </svg>
+          @if (horairesDuJour()) {
+            Aujourd'hui : {{ horairesDuJour() }}
+          } @else {
+            Fermé aujourd'hui
+          }
+        </p>
+        @if (horairesDuJour()) {
+          <span
+            class="badge badge-point"
+            [class.badge-actif]="restaurant.ouvert"
+            [class.badge-inactif]="!restaurant.ouvert"
+          >
+            {{ restaurant.ouvert ? 'Ouvert' : 'Fermé' }}
+          </span>
+        }
+      </div>
+
+      @if (vueClient()) {
+        <a
+          class="btn btn-primaire btn-reserver"
+          routerLink="/mes-reservations"
+          [queryParams]="{ restaurant: restaurant.id }"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3.5" y="5" width="17" height="15" rx="2" />
+            <path d="M3.5 10h17M8 3v4M16 3v4" />
+            <path class="points" d="M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01M16 17h.01" />
+          </svg>
+          Réserver
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </a>
+      }
+    </div>
   </section>
 }
 
@@ -40,50 +112,47 @@
       @for (m of menusAffiches(); track m.menu.id) {
         <section class="menu">
           <h2>{{ m.menu.nom }}</h2>
-          <p class="dates-menu">
-            @if (m.menu.dateFin) {
-              Du {{ m.menu.dateDebut | date: 'dd/MM/yyyy' }} au
-              {{ m.menu.dateFin | date: 'dd/MM/yyyy' }}
-            } @else {
-              À partir du {{ m.menu.dateDebut | date: 'dd/MM/yyyy' }}
-            }
-          </p>
-          @for (groupe of m.groupes; track groupe.categorie) {
-            <section class="groupe-categorie">
-              <h3>{{ groupe.libelle }}</h3>
-              <div class="grille-plats">
-                @for (plat of groupe.plats; track plat.id) {
-                  <article class="carte plat">
-                    <h4>{{ plat.nom }}</h4>
-                    @if (plat.description) {
-                      <p class="description">{{ plat.description }}</p>
-                    }
-                    <p class="prix">{{ plat.prix }} FCFA</p>
+          <p class="dates-menu">{{ m.periode }}</p>
+          <div class="groupes">
+            @for (groupe of m.groupes; track groupe.categorie) {
+              <section class="groupe-categorie" [style.--n]="groupe.plats.length">
+                <h3>
+                  <app-icone-categorie class="icone-titre" [categorie]="groupe.categorie" />
+                  {{ groupe.libelle }}
+                </h3>
+                <div class="grille-plats">
+                  @for (plat of groupe.plats; track plat.id) {
+                    <article class="carte plat">
+                      <app-photo-plat [nom]="plat.nom" [categorie]="plat.categorie" />
+                      <div class="contenu-plat">
+                        <h4>{{ plat.nom }}</h4>
+                        @if (plat.description) {
+                          <p class="description">{{ plat.description }}</p>
+                        }
+                        <p class="prix">{{ plat.prix | montant }}</p>
 
-                    @if (auth.aLeRole('CLIENT')) {
-                      @if (quantiteDans(plat) === 0) {
-                        <button type="button" class="btn btn-secondaire btn-petit" (click)="ajouter(plat)">
-                          Ajouter
-                        </button>
-                      } @else {
-                        <div class="selecteur-quantite">
-                          <button type="button" class="btn btn-secondaire btn-petit" (click)="retirer(plat)">
-                            −
+                        @if (auth.aLeRole('CLIENT')) {
+                          <button
+                            type="button"
+                            class="btn btn-primaire btn-ajouter"
+                            (click)="ajouter(plat)"
+                          >
+                            Ajouter
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                              <circle cx="12" cy="12" r="10" />
+                              <path d="M12 7.5v9M7.5 12h9" />
+                            </svg>
                           </button>
-                          <span>{{ quantiteDans(plat) }}</span>
-                          <button type="button" class="btn btn-secondaire btn-petit" (click)="ajouter(plat)">
-                            +
-                          </button>
-                        </div>
-                      }
-                    }
-                  </article>
-                }
-              </div>
-            </section>
-          } @empty {
-            <p>Aucun plat disponible pour le moment.</p>
-          }
+                        }
+                      </div>
+                    </article>
+                  }
+                </div>
+              </section>
+            } @empty {
+              <p>Aucun plat disponible pour le moment.</p>
+            }
+          </div>
         </section>
       }
     }
@@ -92,33 +161,94 @@
   @if (auth.aLeRole('CLIENT')) {
     <aside class="colonne-panier">
       <div class="carte panier">
-        <h2>Votre commande</h2>
+        <div class="panier-entete">
+          <svg class="icone-panier" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M2.5 3.5h2.6l2.4 11.2h10.6l2.1-7.7H6.2" />
+            <circle cx="9.5" cy="19.5" r="1.4" />
+            <circle cx="17" cy="19.5" r="1.4" />
+          </svg>
+          <h2>Votre commande</h2>
+          @if (nombreArticles() > 0 && !commandeConfirmee()) {
+            <span class="pastille-articles">
+              {{ nombreArticles() }} {{ nombreArticles() > 1 ? 'articles' : 'article' }}
+            </span>
+          }
+        </div>
 
         @if (commandeConfirmee()) {
           <p class="message-ok">Commande enregistrée, en attente !</p>
-          <button type="button" class="btn btn-secondaire" (click)="voirMesCommandes()">Voir mes commandes</button>
+          <button type="button" class="btn btn-secondaire" (click)="voirMesCommandes()">
+            Voir mes commandes
+          </button>
         } @else if (lignesPanier().length === 0) {
           <p class="panier-vide">Ajoutez des plats pour commander à emporter.</p>
         } @else {
-          @if (erreurCommande(); as e) {
-            <p class="message-refus">{{ e }}</p>
-          }
-          <ul class="liste-panier">
+          <ul class="lignes-commande">
             @for (ligne of lignesPanier(); track ligne.plat.id) {
               <li>
-                <span>{{ ligne.quantite }} × {{ ligne.plat.nom }}</span>
-                <span>{{ ligne.plat.prix * ligne.quantite }} FCFA</span>
+                <app-photo-plat
+                  class="vignette"
+                  [nom]="ligne.plat.nom"
+                  [categorie]="ligne.plat.categorie"
+                  taille="96px"
+                />
+                <div class="ligne-detail">
+                  <p class="ligne-nom">{{ ligne.plat.nom }}</p>
+                  <p class="ligne-prix">{{ ligne.plat.prix | montant }}</p>
+                </div>
+                <div class="ligne-bas">
+                  <div
+                    class="quantite"
+                    role="group"
+                    [attr.aria-label]="'Quantité de ' + ligne.plat.nom"
+                  >
+                    <button type="button" (click)="retirer(ligne.plat)" aria-label="Un de moins">
+                      −
+                    </button>
+                    <span>{{ ligne.quantite }}</span>
+                    <button type="button" (click)="ajouter(ligne.plat)" aria-label="Un de plus">
+                      +
+                    </button>
+                  </div>
+                  <span class="ligne-total">{{ ligne.plat.prix * ligne.quantite | montant }}</span>
+                </div>
+                <button
+                  type="button"
+                  class="corbeille"
+                  (click)="enlever(ligne.plat)"
+                  [attr.aria-label]="'Retirer ' + ligne.plat.nom + ' de la commande'"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
+                  </svg>
+                </button>
               </li>
             }
           </ul>
-          <p class="total-panier">Total : {{ totalPanier() }} FCFA</p>
+          <p class="total-commande">
+            <span>Total</span>
+            <strong>{{ totalPanier() | montant }}</strong>
+          </p>
+          <p class="info-retrait">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 11v5M12 8h.01" />
+            </svg>
+            À emporter, à payer à la caisse au retrait, en espèces ou par Mobile Money.
+          </p>
           <button
             type="button"
-            class="btn btn-primaire"
+            class="btn btn-primaire btn-commander"
             [disabled]="envoiEnCours()"
             (click)="passerCommande()"
           >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M2.5 3.5h2.6l2.4 11.2h10.6l2.1-7.7H6.2" />
+              <circle cx="9.5" cy="19.5" r="1.4" />
+              <circle cx="17" cy="19.5" r="1.4" />
+            </svg>
             {{ envoiEnCours() ? 'Envoi…' : 'Passer la commande' }}
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </button>
         }
       </div>

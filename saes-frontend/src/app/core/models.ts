@@ -78,7 +78,11 @@ export interface RestaurantSummary {
   id: number;
   nom: string;
   adresse: string;
-  telephone: string | null;
+  telephone: string;
+  /** Plages d'ouverture d'aujourd'hui, de la plus tot a la plus tardive. */
+  horairesDuJour: HoraireDto[];
+  /** Ouvert en ce moment : la meme regle que le refus de « Passer une commande ». */
+  ouvert: boolean;
 }
 
 export interface TableDto {
@@ -98,7 +102,7 @@ export interface RestaurantDto {
   id: number;
   nom: string;
   adresse: string;
-  telephone: string | null;
+  telephone: string;
   dureeReservationMinutes: number;
   estActif: boolean;
   tables: TableDto[];
@@ -108,7 +112,7 @@ export interface RestaurantDto {
 export interface RestaurantSaveRequest {
   nom: string;
   adresse: string;
-  telephone?: string;
+  telephone: string;
   dureeReservationMinutes: number;
   tables: TableDto[];
   horaires: HoraireDto[];

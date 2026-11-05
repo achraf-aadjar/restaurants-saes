@@ -5,59 +5,706 @@
   flex-wrap: wrap;
 }
 
+/*
+ * Bandeau du restaurant, mesure sur l'ecran de reference 1 (1536 px) : 167 px
+ * de haut, photo 208 x 111, nom de 36 px, trait vertical de 84 px, pastille
+ * « Ouvert » vert vif, bouton « Reserver » 260 x 61. Les tailles suivent la
+ * largeur de la fenetre (vw) : a 1536 px et au-dela, ce sont celles de l'ecran.
+ *
+ * Par defaut (personnel), le bandeau reste dans un cadre : le personnel a deja
+ * son bandeau et sa barre laterale. En vue client, il va d'un bord a l'autre
+ * de la fenetre et colle a l'en-tete ; l'ombre et le clip-path peignent le
+ * jaune hors de la colonne sans elargir la page.
+ */
 .bandeau-restaurant {
+  --texte: 1.05rem;
+  --ecart: 0.9rem;
+  --marge-v: 1.25rem;
+  /* Decor de plats : carre colle au bord droit de la fenetre. */
+  --decor: 6.5rem;
+  position: relative;
   background: var(--saes-jaune);
   border-radius: var(--saes-rayon);
-  padding: 1rem 1.25rem;
-  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  margin-bottom: 1.75rem;
+  color: var(--saes-vert);
 
   h1 {
-    margin: 0 0 0.2rem;
+    margin: 0 0 0.35rem;
+    font-weight: 800;
+    text-wrap: balance;
   }
 
   p {
     margin: 0;
-    color: #4a3c00;
-    font-size: 0.9rem;
   }
 }
 
+.bandeau-restaurant.pleine-largeur {
+  border-radius: 0;
+  box-shadow: 0 0 0 100vmax var(--saes-jaune);
+  clip-path: inset(0 -100vmax);
+  margin-top: -1.25rem;
+  padding: var(--marge-v) 0;
+}
+
+.selecteur-restaurant + .bandeau-restaurant {
+  margin-top: 0;
+}
+
+/* Le decor est derriere le contenu ; ses feuilles (le quart gauche) peuvent
+   passer sous le bouton, comme sur l'ecran, jamais le plat. Sur telephone, il
+   est en bas a droite, a cote du bouton. */
+.decor-bandeau {
+  position: absolute;
+  bottom: 0;
+  right: calc((100% - 100vw) / 2);
+  width: var(--decor);
+  height: var(--decor);
+  object-fit: contain;
+  object-position: right bottom;
+  pointer-events: none;
+}
+
+/* Sur telephone, la photo en haut puis le reste l'un sous l'autre. */
+.bandeau-interieur {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--ecart);
+}
+
+/* Sur un ecran etroit, la photo prend la largeur mais pas plus de 190 px de
+   haut : elle ne doit pas repousser le menu hors de l'ecran. */
+.photo-restaurant {
+  width: 100%;
+  height: auto;
+  max-height: 190px;
+  aspect-ratio: 400 / 213;
+  object-fit: cover;
+  border-radius: var(--saes-rayon);
+}
+
+.identite {
+  min-width: 0;
+}
+
+.ligne-icone {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: var(--texte);
+  /* Une adresse trop longue passe sur deux lignes equilibrees. */
+  text-wrap: balance;
+
+  svg {
+    flex: none;
+    width: 1.15em;
+    height: 1.15em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* L'epingle du lieu est pleine sur l'ecran, son centre en jaune. */
+  .icone-pleine {
+    fill: currentColor;
+    stroke: none;
+
+    circle {
+      fill: var(--saes-jaune);
+    }
+  }
+}
+
+.horaires-du-jour {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.5rem;
+
+  /* Sous le texte des horaires, pas sous l'horloge : icone (1,15 em) + ecart. */
+  .badge {
+    margin-left: calc(1.15 * var(--texte) + 0.45rem);
+  }
+}
+
+/* Pastille d'etat avec son point, comme sur l'ecran de reference 1. */
+.badge-point {
+  padding: 0.25em 0.75em;
+  font-size: calc(var(--texte) * 0.857);
+  font-weight: 700;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 0.6em;
+    height: 0.6em;
+    margin-right: 0.45em;
+    border-radius: 50%;
+    background: currentColor;
+    vertical-align: 0.02em;
+  }
+
+  /* Le vert vif de l'ecran 1, lisible sur le jaune ; le point en vert fonce. */
+  &.badge-actif {
+    background: #84d45c;
+    color: var(--saes-vert);
+
+    &::before {
+      background: #075d11;
+    }
+  }
+}
+
+.btn-reserver {
+  align-self: flex-start;
+  gap: 0.5em;
+  padding: 0.79em 2em;
+  border-radius: 999px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  white-space: nowrap;
+
+  svg {
+    width: 1.2em;
+    height: 1.2em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .points {
+    stroke-width: 2.4;
+  }
+}
+
+/*
+ * A partir de 860 px : la photo a gauche, le bouton a droite. Entre les deux,
+ * le nom et l'adresse, puis les horaires en dessous ; a partir de 1200 px, les
+ * horaires passent a droite du nom, derriere un trait, comme sur l'ecran.
+ */
+@media (min-width: 860px) {
+  .bandeau-restaurant {
+    --texte: clamp(0.95rem, 1.146vw, 1.1rem);
+    --ecart: clamp(1rem, 1.82vw, 1.75rem);
+    --marge-v: clamp(1.25rem, 1.82vw, 1.75rem);
+    --photo: clamp(130px, 13.54vw, 208px);
+    /* Le decor a la hauteur du bandeau : photo + marges haut et bas. */
+    --decor: calc(var(--photo) * 213 / 400 + 2 * var(--marge-v));
+
+    h1 {
+      font-size: clamp(1.35rem, 2.344vw, 2.25rem);
+    }
+  }
+
+  .decor-bandeau {
+    top: 0;
+    bottom: auto;
+    object-position: right top;
+  }
+
+  .bandeau-interieur {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'photo identite bouton'
+      'photo horaires bouton';
+    align-items: center;
+    column-gap: var(--ecart);
+    row-gap: 0.6rem;
+  }
+
+  /* Place du decor : le bouton s'arrete au quart gauche du decor (ses
+     feuilles). (100vw - 100 %) / 2 est ce qui separe le bandeau du bord. */
+  .pleine-largeur .bandeau-interieur {
+    padding-right: max(0px, calc(0.75 * var(--decor) - (100vw - 100%) / 2));
+  }
+
+  .photo-restaurant {
+    grid-area: photo;
+    width: var(--photo);
+    max-height: none;
+  }
+
+  .identite {
+    grid-area: identite;
+    align-self: end;
+  }
+
+  .horaires-du-jour {
+    grid-area: horaires;
+    align-self: start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    column-gap: 0.75rem;
+
+    .badge {
+      margin-left: 0;
+    }
+  }
+
+  .btn-reserver {
+    grid-area: bouton;
+    align-self: center;
+    padding: 0.79em 3.08em;
+    font-size: clamp(1rem, 1.25vw, 1.2rem);
+  }
+}
+
+@media (min-width: 1200px) {
+  .bandeau-interieur {
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    grid-template-areas: 'photo identite horaires bouton';
+  }
+
+  .identite {
+    align-self: center;
+  }
+
+  .horaires-du-jour {
+    align-self: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: clamp(4rem, 5.47vw, 5.25rem);
+    padding-left: var(--ecart);
+    border-left: 1px solid rgb(8 49 45 / 25%);
+
+    .badge {
+      margin-left: calc(1.15 * var(--texte) + 0.45rem);
+    }
+  }
+}
+
+/*
+ * Menu, mesure sur l'ecran de reference 1 (1536 px) : titre de 46 px tres
+ * gras, dates foncees de 19 px, titres de categorie de 25 px avec icone rouge
+ * et trait fin, cartes photo a gauche (48 %), nom de 18 px, prix rouge de
+ * 20 px, « Ajouter » rouge plein. Les tailles suivent la fenetre jusqu'a ces
+ * valeurs.
+ */
 .menu {
   margin-bottom: 2.5rem;
 
   h2 {
     margin-bottom: 0.2rem;
+    font-size: clamp(1.75rem, 3vw, 2.875rem);
+    font-weight: 800;
+    line-height: 1.15;
   }
 }
 
 .dates-menu {
-  margin: 0 0 1.25rem;
-  color: #6b6b5f;
+  margin: 0 0 1.5rem;
+  font-size: clamp(1rem, 1.25vw, 1.2rem);
+  color: var(--saes-vert);
+}
+
+/*
+ * Les categories se partagent les colonnes, comme sur l'ecran : chacune prend
+ * autant de colonnes que de plats (Desserts et Boissons sur la meme rangee).
+ * Le nombre de colonnes suit la largeur de la colonne du menu ; les cartes
+ * suivent la grille commune (subgrid), donc toutes ont la meme largeur.
+ */
+.colonne-menu {
+  container-type: inline-size;
+}
+
+.groupes {
+  --colonnes: 1;
+  display: grid;
+  grid-template-columns: repeat(var(--colonnes), minmax(0, 1fr));
+  column-gap: 1rem;
+  row-gap: 1.75rem;
+}
+
+@container (min-width: 560px) {
+  .groupes {
+    --colonnes: 2;
+  }
+}
+
+@container (min-width: 900px) {
+  .groupes {
+    --colonnes: 3;
+  }
+}
+
+@container (min-width: 1300px) {
+  .groupes {
+    --colonnes: 4;
+  }
 }
 
 .groupe-categorie {
-  margin-bottom: 1.75rem;
+  grid-column: span min(var(--n), var(--colonnes));
+  display: grid;
+  grid-template-columns: subgrid;
+  /* Titre puis cartes, qui prennent toute la hauteur de la rangee : les
+     cartes d'une meme rangee ont la meme hauteur, comme sur l'ecran. */
+  grid-template-rows: auto 1fr;
+
+  h3 {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.25rem, 1.63vw, 1.55rem);
+    font-weight: 800;
+
+    /* Trait fin jusqu'au bout du groupe. */
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      margin-left: 0.4em;
+      background: rgb(8 49 45 / 10%);
+    }
+  }
+}
+
+.icone-titre {
+  flex: none;
+  width: 1.15em;
+  height: 1.15em;
+  color: var(--saes-rouge);
+  --epaisseur: 2.2;
 }
 
 .grille-plats {
+  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1rem;
+  grid-template-columns: subgrid;
+  row-gap: 1rem;
+}
+
+/* Photo a gauche, texte a droite, comme sur les ecrans de reference 1 et 1b. */
+.plat {
+  display: grid;
+  grid-template-columns: 48% 1fr;
+  gap: 0.9rem;
+  padding: 0.5rem;
+}
+
+.contenu-plat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.5rem 0.25rem 0.25rem 0;
+
+  .btn,
+  .selecteur-quantite {
+    margin-top: auto;
+    align-self: flex-end;
+  }
+
+  .prix {
+    margin-top: auto;
+    margin-bottom: 0.6rem;
+  }
+
+  .prix + .btn,
+  .prix + .selecteur-quantite {
+    margin-top: 0;
+  }
 }
 
 .plat h3,
 .plat h4 {
-  margin: 0 0 0.3rem;
+  margin: 0 0 0.45rem;
+  font-size: clamp(1rem, 1.17vw, 1.125rem);
+  font-weight: 700;
 }
 
 .plat .description {
-  color: #6b6b5f;
-  font-size: 0.85rem;
+  color: var(--saes-vert-clair);
+  font-size: 0.875rem;
+  line-height: 1.45;
   margin: 0 0 0.6rem;
 }
 
 .plat .prix {
-  font-weight: 700;
+  font-size: clamp(1.05rem, 1.3vw, 1.25rem);
+  font-weight: 800;
   color: var(--saes-rouge);
+}
+
+/* « Ajouter ⊕ » rouge plein, le plus dans un rond blanc. */
+.btn-ajouter {
+  gap: 0.5em;
+  padding: 0.5em 0.85em 0.5em 1em;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  svg {
+    width: 1.2em;
+    height: 1.2em;
+
+    circle {
+      fill: currentColor;
+    }
+
+    path {
+      fill: none;
+      stroke: var(--saes-rouge);
+      stroke-width: 2.6;
+      stroke-linecap: round;
+    }
+  }
+}
+
+/*
+ * Commande, mesuree sur l'ecran de reference 1 (1536 px) : icone de chariot
+ * rouge, titre de 28 px tres gras, pastille « N articles » sur fond rose ;
+ * par plat : vignette de 96 px, nom, prix unitaire rouge, quantite − + dans
+ * une pilule, total de la ligne, corbeille ; total dans un cadre rose ; gros
+ * bouton « Passer la commande ».
+ */
+.panier {
+  padding: clamp(1.1rem, 1.5vw, 1.5rem);
+}
+
+.panier-entete {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid rgb(8 49 45 / 10%);
+
+  /* Le titre reste sur une ligne ; si la carte est etroite, c'est la pastille
+     qui passe dessous. */
+  h2 {
+    flex: 1;
+    margin: 0;
+    white-space: nowrap;
+    font-size: clamp(1.35rem, 1.82vw, 1.75rem);
+    font-weight: 800;
+  }
+}
+
+.icone-panier {
+  flex: none;
+  width: clamp(1.75rem, 2.4vw, 2.3rem);
+  height: auto;
+  fill: none;
+  stroke: var(--saes-rouge);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pastille-articles {
+  flex: none;
+  padding: 0.3em 0.7em;
+  border-radius: 8px;
+  background: var(--saes-rose);
+  color: var(--saes-rouge);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.panier-vide {
+  margin: 1rem 0 0;
+}
+
+.lignes-commande {
+  list-style: none;
   margin: 0;
+  padding: 0;
+
+  li {
+    display: grid;
+    grid-template-columns: clamp(64px, 6.25vw, 96px) minmax(0, 1fr) auto;
+    /* Comme sur l'ecran : le total de la ligne va jusqu'au bord droit,
+       sous la corbeille. */
+    grid-template-areas:
+      'vignette detail corbeille'
+      'vignette bas bas';
+    gap: 0 1.1rem;
+    align-items: start;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid rgb(8 49 45 / 10%);
+  }
+}
+
+.vignette {
+  grid-area: vignette;
+  border-radius: 6px;
+}
+
+.ligne-detail {
+  grid-area: detail;
+}
+
+.ligne-detail p {
+  margin: 0;
+}
+
+.ligne-nom {
+  font-size: clamp(1rem, 1.1vw, 1.06rem);
+  font-weight: 700;
+}
+
+.ligne-detail .ligne-prix {
+  margin-top: 0.2rem;
+  color: var(--saes-rouge);
+  font-weight: 700;
+}
+
+.ligne-bas {
+  grid-area: bas;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+/* − 2 + dans une pilule, comme sur l'ecran. */
+.quantite {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgb(8 49 45 / 14%);
+  border-radius: 999px;
+  background: #fff;
+
+  button {
+    width: 2.2em;
+    height: 2.2em;
+    border: none;
+    background: none;
+    color: var(--saes-vert);
+    font-size: 1.05rem;
+    cursor: pointer;
+    border-radius: 999px;
+
+    &:hover {
+      background: var(--saes-creme);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--saes-vert);
+      outline-offset: -2px;
+    }
+  }
+
+  span {
+    min-width: 1.6em;
+    text-align: center;
+    font-weight: 600;
+  }
+}
+
+.ligne-total {
+  margin-left: auto;
+  font-weight: 700;
+}
+
+.corbeille {
+  grid-area: corbeille;
+  padding: 0.2rem;
+  border: none;
+  background: none;
+  color: #5a5f61;
+  cursor: pointer;
+  border-radius: 6px;
+  line-height: 0;
+
+  svg {
+    width: 1.3rem;
+    height: 1.3rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:hover {
+    color: var(--saes-rouge);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--saes-vert);
+  }
+}
+
+.total-commande {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1.25rem 0 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  background: var(--saes-rose);
+
+  span {
+    font-size: clamp(1.25rem, 1.7vw, 1.6rem);
+    font-weight: 800;
+  }
+
+  strong {
+    color: var(--saes-rouge);
+    font-size: clamp(1.4rem, 2vw, 1.9rem);
+    font-weight: 800;
+  }
+}
+
+.info-retrait {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0 0 1.25rem;
+  padding: 0 0.25rem;
+  color: var(--saes-vert);
+  font-size: 0.95rem;
+  line-height: 1.5;
+
+  svg {
+    flex: none;
+    width: 1.35rem;
+    height: 1.35rem;
+    fill: none;
+    stroke: var(--saes-vert-attenue);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+  }
+}
+
+.btn-commander {
+  width: 100%;
+  gap: 0.75em;
+  padding: 0.8em 1em;
+  border-radius: 14px;
+  font-size: clamp(1.1rem, 1.56vw, 1.5rem);
+  font-weight: 800;
+
+  svg {
+    width: 1.3em;
+    height: 1.3em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* Le chariot est plus grand que la fleche, comme sur l'ecran. */
+  svg:first-child {
+    width: 1.6em;
+    height: 1.6em;
+  }
 }

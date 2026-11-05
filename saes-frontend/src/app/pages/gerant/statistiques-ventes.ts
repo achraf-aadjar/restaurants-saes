@@ -1,10 +1,12 @@
-import { DecimalPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { motifErreur } from '../../core/erreur.util';
 import { GerantStatistiquesService } from '../../core/gerant-statistiques.service';
+import { LIBELLES_CATEGORIES } from '../../core/libelles';
 import { StatistiquesVentesDto } from '../../core/models';
+import { MontantPipe } from '../../shared/montant.pipe';
+import { RefusVisible } from '../../shared/refus-visible';
 
 function ilYA(jours: number): string {
   const date = new Date();
@@ -19,11 +21,13 @@ function ilYA(jours: number): string {
  */
 @Component({
   selector: 'app-gerant-statistiques-ventes',
-  imports: [FormsModule, DecimalPipe],
+  imports: [FormsModule, MontantPipe, RefusVisible],
   templateUrl: './statistiques-ventes.html',
 })
 export class GerantStatistiquesVentes {
   private readonly gerantStatistiquesService = inject(GerantStatistiquesService);
+
+  protected readonly libellesCategories = LIBELLES_CATEGORIES;
 
   protected debut = ilYA(30);
   protected fin = ilYA(0);

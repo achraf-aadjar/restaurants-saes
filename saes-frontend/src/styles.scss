@@ -9,14 +9,22 @@
   --saes-creme: #fcfbf7; /* fond */
 
   --saes-vert-clair: #0f4a43;
+  --saes-vert-attenue: #526f6c; /* textes secondaires : le vert eclairci, contraste 5,3 */
   --saes-rouge-fonce: #b50a15;
   --saes-bordure: #e4ddc9;
   --saes-texte-clair: #ffffff;
+  --saes-rose: #f9ece4; /* cadres roses de l'ecran 1 : total, pastille d'articles */
 
   --saes-rayon: 10px;
   --saes-ombre: 0 2px 8px rgba(8, 49, 45, 0.08);
 
   --saes-font: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Mise en page des ecrans de reference (1536 px de large) : le contenu prend
+     toute la largeur avec 36 px de marge ; la marge suit la fenetre (16 px sur
+     telephone). Au-dela de 1536 px, le contenu reste a sa largeur, centre. */
+  --saes-gouttiere: clamp(1rem, 2.35vw, 2.25rem);
+  --saes-largeur-page: 1536px;
 }
 
 * {
@@ -47,6 +55,11 @@ a {
   color: var(--saes-vert);
 }
 
+/* Sous l'en-tete, le bandeau jaune des menus suit sans trait (ecran 1). */
+.page:has(.bandeau-restaurant.pleine-largeur) .entete {
+  border-bottom-color: transparent;
+}
+
 button {
   font-family: inherit;
 }
@@ -61,6 +74,7 @@ button {
   border: 1px solid transparent;
   font-weight: 600;
   font-size: 0.95rem;
+  text-decoration: none; /* un lien presente comme un bouton (« Clôturer la caisse ») */
   cursor: pointer;
   transition:
     background-color 0.15s ease,
@@ -138,6 +152,7 @@ button {
   padding: 0.75em 1em;
   font-weight: 600;
   margin-bottom: 1rem;
+  scroll-margin-top: 1rem; /* marge gardee quand la page defile jusqu'au refus */
 }
 
 .message-ok {
@@ -169,7 +184,7 @@ button {
 
 .mention-confidentialite {
   font-size: 0.8rem;
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
   margin: -0.4rem 0 1rem;
 }
 
@@ -192,7 +207,7 @@ button {
   }
 
   th {
-    color: #6b6b5f;
+    color: var(--saes-vert-attenue);
     font-weight: 600;
   }
 }
@@ -240,13 +255,84 @@ button {
 
 .commande-date {
   font-size: 0.8rem;
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
 }
 
 .commande-meta {
   font-size: 0.85rem;
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
   margin: 0 0 0.5rem;
+}
+
+/* Nombre a lire d'un coup d'oeil : numero d'une commande (ecran de reference 2),
+   chiffre cle d'un rapport (ecran de reference 5). */
+.grand-nombre {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.chiffres-cles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+
+  p {
+    margin: 0;
+  }
+}
+
+/* Carte « Ma caisse » : ses informations a gauche, « Clôturer la caisse » a droite. */
+.ma-caisse {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+
+  h2 {
+    margin-bottom: 0.3rem;
+  }
+
+  .commande-meta {
+    margin-bottom: 0.2rem;
+  }
+}
+
+/* Choix parmi deux ou trois options (mode de paiement, sur place ou a emporter).
+   Le choix retenu est entoure de rouge, la couleur de la selection (charte, Design). */
+.choix-groupe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.choix-groupe:last-child {
+  margin-bottom: 0;
+}
+
+.choix {
+  flex: 1;
+  padding: 0.6em 1em;
+  border: 1px solid var(--saes-bordure);
+  border-radius: var(--saes-rayon);
+  background: #fff;
+  color: var(--saes-vert);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.choix[aria-pressed='true'] {
+  border-color: var(--saes-rouge);
+  box-shadow: inset 0 0 0 1px var(--saes-rouge);
+}
+
+.choix[aria-pressed='true']::before {
+  content: '✓ ';
+  color: var(--saes-rouge);
 }
 
 /* Mise en page "menu + panier", partagee entre la consultation des menus
@@ -262,7 +348,7 @@ button {
 }
 
 .plat .description {
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
   font-size: 0.85rem;
   margin: 0 0 0.6rem;
 }
@@ -293,7 +379,7 @@ button {
 }
 
 .panier-vide {
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
   font-size: 0.9rem;
 }
 
@@ -360,8 +446,9 @@ button {
     align-items: flex-start;
   }
 
+  /* 480 px sur l'ecran de reference 1, a 1536 px. */
   .colonne-panier {
-    width: 300px;
+    width: clamp(300px, 31.25vw, 480px);
     flex-shrink: 0;
     position: sticky;
     top: 1rem;
@@ -384,10 +471,22 @@ button {
   font-size: 0.82rem;
 }
 
+/* Titre d'un ecran et son action principale a droite, comme « + Nouveau plat »
+   sur l'ecran de reference 4. */
+.titre-page {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.titre-page h1 {
+  margin: 0;
+}
+
 .formulaire-creation {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--saes-bordure);
   max-width: 480px;
 }
 
@@ -429,6 +528,21 @@ button {
 .champ-inline input,
 .champ-inline select {
   width: 110px;
+}
+
+/* Une date ne tient pas dans 110 px : le champ garde sa largeur naturelle. */
+.champ-inline input[type='date'] {
+  width: auto;
+}
+
+/* Champ qui prend la place restante de sa ligne, comme l'ingredient d'une recette. */
+.champ-inline.champ-etire {
+  flex: 1;
+  max-width: 320px;
+}
+
+.champ-inline.champ-etire select {
+  width: 100%;
 }
 
 .actions-colonne {

@@ -1,51 +1,38 @@
-import { DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 import { CaisseService } from '../../core/caisse.service';
-import { classeBadgeStatut, LIBELLES_STATUT_COMMANDE } from '../../core/commande.util';
 import { motifErreur } from '../../core/erreur.util';
 import { CommandeDto, ModePaiement, SessionCaisseDto } from '../../core/models';
+import { CommandeEntete } from '../../shared/commande-entete';
+import { MontantPipe } from '../../shared/montant.pipe';
+import { RefusVisible } from '../../shared/refus-visible';
+import { MaCaisse } from './ma-caisse';
 
-/**
- * Ouvrir la caisse, Encaisser une commande, Cloturer la caisse (cahier des
- * charges §4.5), cote caissier.
- */
+/** Encaisser une commande (cahier des charges §4.5), cote caissier. */
 @Component({
-  selector: 'app-caisse',
-  imports: [FormsModule, DatePipe],
-  templateUrl: './caisse.html',
+  selector: 'app-encaisser-commande',
+  imports: [RouterLink, CommandeEntete, MaCaisse, MontantPipe, RefusVisible],
+  templateUrl: './encaisser-commande.html',
 })
-export class Caisse {
+export class EncaisserCommande {
   private readonly caisseService = inject(CaisseService);
 
-  protected readonly libelles = LIBELLES_STATUT_COMMANDE;
-  protected readonly classeBadge = classeBadgeStatut;
-
-  protected readonly session = signal<SessionCaisseDto | null>(null);
+  protected readonly caisseOuverte = signal<SessionCaisseDto | null>(null);
   protected readonly commandes = signal<CommandeDto[]>([]);
   protected readonly chargement = signal(true);
   protected readonly erreur = signal<string | null>(null);
   protected readonly actionEnCours = signal(false);
 
-  protected fondDeCaisse = 10000;
-  protected montantCompte = 0;
   protected modePaiementParCommande = new Map<number, ModePaiement>();
-  protected readonly clotureOuverte = signal(false);
   protected readonly confirmationEncaissement = signal<number | null>(null);
-  protected readonly resultatCloture = signal<SessionCaisseDto | null>(null);
 
   constructor() {
-    this.charger();
-  }
-
-  private charger(): void {
-    this.chargement.set(true);
     this.caisseService.maSession().subscribe({
       next: (session) => {
-        this.session.set(session);
+        this.caisseOuverte.set(session && !session.dateHeureCloture ? session : null);
         this.chargement.set(false);
-        if (session && !session.dateHeureCloture) {
+        if (this.caisseOuverte()) {
           this.chargerCommandes();
         }
       },
@@ -66,22 +53,7 @@ export class Caisse {
           }
         }
       },
-    });
-  }
-
-  protected ouvrir(): void {
-    this.erreur.set(null);
-    this.actionEnCours.set(true);
-    this.caisseService.ouvrir({ fondDeCaisse: this.fondDeCaisse }).subscribe({
-      next: () => {
-        this.actionEnCours.set(false);
-        this.resultatCloture.set(null);
-        this.charger();
-      },
-      error: (err) => {
-        this.actionEnCours.set(false);
-        this.erreur.set(motifErreur(err, "Impossible d'ouvrir la caisse"));
-      },
+      error: (err) => this.erreur.set(motifErreur(err, 'Impossible de charger les commandes')),
     });
   }
 
@@ -97,7 +69,10 @@ export class Caisse {
     this.erreur.set(null);
     this.actionEnCours.set(true);
     this.caisseService
-      .encaisser(commande.id, { modePaiement: this.modePaiementDe(commande.id), version: commande.version })
+      .encaisser(commande.id, {
+        modePaiement: this.modePaiementDe(commande.id),
+        version: commande.version,
+      })
       .subscribe({
         next: () => {
           this.actionEnCours.set(false);
@@ -111,22 +86,5 @@ export class Caisse {
           this.chargerCommandes();
         },
       });
-  }
-
-  protected cloturer(): void {
-    this.erreur.set(null);
-    this.actionEnCours.set(true);
-    this.caisseService.cloturer({ montantCompte: this.montantCompte }).subscribe({
-      next: (session) => {
-        this.actionEnCours.set(false);
-        this.clotureOuverte.set(false);
-        this.resultatCloture.set(session);
-        this.charger();
-      },
-      error: (err) => {
-        this.actionEnCours.set(false);
-        this.erreur.set(motifErreur(err, 'Impossible de clôturer la caisse'));
-      },
-    });
   }
 }

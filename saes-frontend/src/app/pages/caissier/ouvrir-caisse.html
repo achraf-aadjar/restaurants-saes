@@ -1,0 +1,30 @@
+<h1>Ouvrir la caisse</h1>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+@if (chargement()) {
+  <p>Chargement…</p>
+} @else if (caisseOuverte(); as session) {
+  <app-ma-caisse [session]="session" />
+} @else {
+  <section class="carte">
+    <form (ngSubmit)="ouvrir()" #f="ngForm" class="formulaire-etroit">
+      <div class="champ">
+        <label for="fondDeCaisse">Fond de caisse (FCFA)</label>
+        <input
+          id="fondDeCaisse"
+          name="fondDeCaisse"
+          type="number"
+          min="0"
+          required
+          [(ngModel)]="fondDeCaisse"
+        />
+      </div>
+      <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || actionEnCours()">
+        {{ actionEnCours() ? 'Ouverture…' : 'Ouvrir la caisse' }}
+      </button>
+    </form>
+  </section>
+}

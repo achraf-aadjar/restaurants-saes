@@ -63,7 +63,7 @@ public class CaisseService {
     @Transactional
     public SessionCaisseDto ouvrir(Long caissierId, OuvrirCaisseRequest request) {
         if (sessionCaisseRepository.findByCaissierIdAndDateHeureClotureIsNull(caissierId).isPresent()) {
-            throw ApiException.conflict("Vous avez deja une caisse ouverte");
+            throw ApiException.conflict("Vous avez déjà une caisse ouverte");
         }
         Utilisateur caissier = utilisateurRepository.getReferenceById(caissierId);
 
@@ -89,7 +89,7 @@ public class CaisseService {
             throw new ConflitCommandeException(CommandeDto.from(commande));
         }
         if (commande.getStatut() != StatutCommande.PRETE) {
-            throw ApiException.conflict("Cette commande n'est pas prete");
+            throw ApiException.conflict("Cette commande n'est pas prête");
         }
 
         commande.setStatut(StatutCommande.PAYEE);

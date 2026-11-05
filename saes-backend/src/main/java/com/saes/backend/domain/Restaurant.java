@@ -32,6 +32,7 @@ public class Restaurant {
     @Column(nullable = false)
     private String adresse;
 
+    @Column(nullable = false)
     private String telephone;
 
     @Column(name = "duree_reservation_minutes", nullable = false)

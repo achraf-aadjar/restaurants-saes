@@ -1,19 +1,14 @@
-<h1>Plats</h1>
+<div class="titre-page">
+  <h1>Plats</h1>
+  <button type="button" class="btn btn-primaire" (click)="ouvrirCreation()">+ Nouveau plat</button>
+</div>
 
 @if (erreur(); as e) {
   <p class="message-refus">{{ e }}</p>
 }
 
-<section class="carte">
-  <button
-    type="button"
-    class="btn btn-secondaire"
-    (click)="formulaireOuvert() ? formulaireOuvert.set(false) : ouvrirCreation()"
-  >
-    {{ formulaireOuvert() ? 'Annuler' : 'Créer un plat' }}
-  </button>
-
-  @if (formulaireOuvert()) {
+@if (formulaireOuvert()) {
+  <section class="carte">
     <form (ngSubmit)="enregistrer()" #f="ngForm" class="formulaire-creation formulaire-large">
       <h2>{{ idEnEdition ? 'Modifier le plat' : 'Nouveau plat' }}</h2>
 
@@ -23,7 +18,7 @@
 
       <div class="champ">
         <label for="nomP">Nom</label>
-        <input id="nomP" name="nomP" type="text" required [(ngModel)]="nom" />
+        <input id="nomP" name="nomP" type="text" required pattern=".*\S.*" [(ngModel)]="nom" />
       </div>
       <div class="champ">
         <label for="descriptionP">Description (facultative)</label>
@@ -31,7 +26,7 @@
       </div>
       <div class="champ">
         <label for="prixP">Prix (FCFA)</label>
-        <input id="prixP" name="prixP" type="number" min="0" required [(ngModel)]="prix" />
+        <input id="prixP" name="prixP" type="number" min="1" required [(ngModel)]="prix" />
       </div>
       <div class="champ">
         <label for="categorieP">Catégorie</label>
@@ -45,16 +40,16 @@
       <h3>Recette (au moins un ingrédient)</h3>
       @for (ligne of recette; track $index) {
         <div class="ligne-dynamique">
-          <div class="champ champ-inline" style="width: 220px">
+          <div class="champ champ-inline champ-etire">
             <label>Ingrédient</label>
             <select [(ngModel)]="ligne.ingredientId" [name]="'ingredient' + $index" required>
               @for (i of ingredients(); track i.id) {
-                <option [ngValue]="i.id">{{ i.nom }} ({{ i.unite }})</option>
+                <option [ngValue]="i.id">{{ i.nom }}</option>
               }
             </select>
           </div>
           <div class="champ champ-inline">
-            <label>Quantité</label>
+            <label>Quantité ({{ symboleUnite(ligne.ingredientId) }})</label>
             <input
               type="number"
               min="0.001"
@@ -73,14 +68,17 @@
         + Ajouter un ingrédient
       </button>
 
-      <div style="margin-top: 1.25rem">
+      <div class="actions-colonne" style="margin-top: 1.25rem">
         <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enregistrementEnCours()">
           {{ enregistrementEnCours() ? 'Enregistrement…' : 'Enregistrer' }}
         </button>
+        <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert.set(false)">
+          Annuler
+        </button>
       </div>
     </form>
-  }
-</section>
+  </section>
+}
 
 <section class="carte" style="margin-top: 1rem">
   @if (chargement()) {
@@ -102,9 +100,12 @@
           <tr>
             <td>{{ p.nom }}</td>
             <td>{{ libellesCategories[p.categorie] }}</td>
-            <td>{{ p.prix }} FCFA</td>
+            <td>{{ p.prix | montant }}</td>
             <td>
-              {{ p.recette.map((l) => (l.ingredientNom ?? nomIngredient(l.ingredientId)) + ' (' + l.quantiteNecessaire + ')').join(', ') }}
+              @for (l of p.recette; track l.ingredientId) {
+                {{ l.ingredientNom ?? nomIngredient(l.ingredientId) }}
+                ({{ l.quantiteNecessaire | quantite: l.unite! }}){{ $last ? '' : ', ' }}
+              }
             </td>
             <td>
               <span class="badge" [class.badge-actif]="p.estActif" [class.badge-inactif]="!p.estActif">

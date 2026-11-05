@@ -1,0 +1,36 @@
+<h1>Commandes en attente</h1>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+@if (chargement()) {
+  <p>Chargement…</p>
+} @else if (commandes().length === 0) {
+  <p>Aucune commande en attente.</p>
+} @else {
+  <div class="liste-commandes">
+    @for (c of commandes(); track c.id) {
+      <article class="carte commande">
+        <app-commande-entete [commande]="c" />
+        <ul class="liste-panier">
+          @for (ligne of c.lignes; track ligne.platId) {
+            <li>
+              <span>{{ ligne.quantite }} × {{ ligne.platNom }}</span>
+              <span>{{ ligne.prixUnitaire * ligne.quantite | montant }}</span>
+            </li>
+          }
+        </ul>
+        <p class="total-panier">Total : {{ c.montantTotal | montant }}</p>
+        <button
+          type="button"
+          class="btn btn-secondaire btn-petit"
+          [disabled]="actionEnCours() === c.id"
+          (click)="annuler(c)"
+        >
+          Annuler
+        </button>
+      </article>
+    }
+  </div>
+}

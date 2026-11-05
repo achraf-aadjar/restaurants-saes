@@ -1,12 +1,17 @@
-import { DatePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, computed, inject, LOCALE_ID, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../core/auth.service';
 import { CommandeClientService } from '../../core/commande-client.service';
+import { heureEnLettres, periodeEnLettres } from '../../core/date.util';
 import { motifErreur } from '../../core/erreur.util';
 import { CategoriePlat, MenuDto, PlatResume, RestaurantSummary } from '../../core/models';
 import { MenuService } from '../../core/menu.service';
+import { photoDuRestaurant } from '../../core/photos-restaurants';
+import { IconeCategorie } from '../../shared/icone-categorie';
+import { MontantPipe } from '../../shared/montant.pipe';
+import { PhotoPlat } from '../../shared/photo-plat';
+import { RefusVisible } from '../../shared/refus-visible';
 
 const ORDRE_CATEGORIES: CategoriePlat[] = ['ENTREE', 'PLAT_PRINCIPAL', 'DESSERT', 'BOISSON'];
 const LIBELLES_CATEGORIES: Record<CategoriePlat, string> = {
@@ -29,6 +34,7 @@ interface LignePanier {
 
 interface MenuAffiche {
   menu: MenuDto;
+  periode: string;
   groupes: GroupeCategorie[];
 }
 
@@ -48,7 +54,7 @@ function grouperParCategorie(plats: PlatResume[]): GroupeCategorie[] {
  */
 @Component({
   selector: 'app-menu-consultation',
-  imports: [DatePipe],
+  imports: [IconeCategorie, MontantPipe, PhotoPlat, RefusVisible, RouterLink],
   templateUrl: './menu-consultation.html',
   styleUrl: './menu-consultation.scss',
 })
@@ -56,6 +62,7 @@ export class MenuConsultation {
   private readonly menuService = inject(MenuService);
   private readonly commandeClientService = inject(CommandeClientService);
   private readonly router = inject(Router);
+  private readonly locale = inject(LOCALE_ID);
   protected readonly auth = inject(AuthService);
 
   protected readonly restaurants = signal<RestaurantSummary[]>([]);
@@ -66,16 +73,53 @@ export class MenuConsultation {
 
   protected readonly panier = signal<Map<number, LignePanier>>(new Map());
   protected readonly envoiEnCours = signal(false);
-  protected readonly erreurCommande = signal<string | null>(null);
   protected readonly commandeConfirmee = signal(false);
 
   protected readonly menusAffiches = computed<MenuAffiche[]>(() =>
-    this.menus().map((menu) => ({ menu, groupes: grouperParCategorie(menu.plats) })),
+    this.menus().map((menu) => ({
+      menu,
+      periode: periodeEnLettres(menu.dateDebut, menu.dateFin, this.locale),
+      groupes: grouperParCategorie(menu.plats),
+    })),
+  );
+
+  /**
+   * L'ecran de reference 1 est celui du client (et du visiteur) : bandeau
+   * pleine largeur, decor et bouton « Reserver ». Le personnel, qui a deja son
+   * bandeau et sa barre laterale, voit le bandeau dans un cadre.
+   */
+  protected readonly vueClient = computed(
+    () => !this.auth.estConnecte() || this.auth.aLeRole('CLIENT'),
+  );
+
+  protected readonly photoRestaurant = computed(() => {
+    const restaurant = this.restaurantSelectionne();
+    return restaurant ? photoDuRestaurant(restaurant.nom) : null;
+  });
+
+  /**
+   * « 11 h 30 – 15 h · 19 h – 21 h 30 », comme sur l'ecran de reference 1 ; vide
+   * si ferme. Espaces insecables dans chaque plage : une ligne ne se coupe
+   * qu'entre deux plages, jamais dans « 8 h – 21 h ».
+   */
+  protected readonly horairesDuJour = computed(() =>
+    (this.restaurantSelectionne()?.horairesDuJour ?? [])
+      .map((h) =>
+        `${heureEnLettres(h.heureOuverture)} – ${heureEnLettres(h.heureFermeture)}`.replace(
+          / /g,
+          ' ',
+        ),
+      )
+      .join(' · '),
   );
 
   protected readonly lignesPanier = computed(() => Array.from(this.panier().values()));
   protected readonly totalPanier = computed(() =>
     this.lignesPanier().reduce((total, l) => total + l.plat.prix * l.quantite, 0),
+  );
+  /** « 4 articles » : la somme des quantites, comme sur l'ecran de reference 1. */
+  protected readonly nombreArticles = computed(() =>
+    this.lignesPanier().reduce((total, l) => total + l.quantite, 0),
   );
 
   constructor() {
@@ -113,10 +157,6 @@ export class MenuConsultation {
     });
   }
 
-  protected quantiteDans(plat: PlatResume): number {
-    return this.panier().get(plat.id)?.quantite ?? 0;
-  }
-
   protected ajouter(plat: PlatResume): void {
     const copie = new Map(this.panier());
     const existant = copie.get(plat.id);
@@ -136,11 +176,18 @@ export class MenuConsultation {
     this.panier.set(copie);
   }
 
+  /** La corbeille d'une ligne : le plat sort de la commande. */
+  protected enlever(plat: PlatResume): void {
+    const copie = new Map(this.panier());
+    copie.delete(plat.id);
+    this.panier.set(copie);
+  }
+
   protected passerCommande(): void {
     const restaurant = this.restaurantSelectionne();
     if (!restaurant || this.lignesPanier().length === 0) return;
 
-    this.erreurCommande.set(null);
+    this.erreur.set(null);
     this.envoiEnCours.set(true);
     this.commandeClientService
       .passerCommande({
@@ -155,7 +202,7 @@ export class MenuConsultation {
         },
         error: (err) => {
           this.envoiEnCours.set(false);
-          this.erreurCommande.set(motifErreur(err, 'La commande n\'a pas pu etre enregistree'));
+          this.erreur.set(motifErreur(err, "La commande n'a pas pu être enregistrée"));
         },
       });
   }

@@ -74,7 +74,10 @@ describe("Page d'inscription", () => {
       motDePasse: 'motdepasse123',
       telephone: undefined,
     });
-    requete.flush({ token: 'jeton', utilisateur: { id: 1, roles: ['CLIENT'] } }, { status: 201, statusText: 'Created' });
+    requete.flush(
+      { token: 'jeton', utilisateur: { id: 1, roles: ['CLIENT'] } },
+      { status: 201, statusText: 'Created' },
+    );
     await fixture.whenStable();
 
     expect(navigation).toHaveBeenCalledWith(['/menus']);
@@ -86,10 +89,15 @@ describe("Page d'inscription", () => {
 
     serveur
       .expectOne('/api/auth/register')
-      .flush({ motif: 'Cette adresse e-mail est déjà utilisée' }, { status: 409, statusText: 'Conflict' });
+      .flush(
+        { motif: 'Cette adresse e-mail est déjà utilisée' },
+        { status: 409, statusText: 'Conflict' },
+      );
     await fixture.whenStable();
 
-    expect(page.querySelector('[role="alert"]')?.textContent).toContain('Cette adresse e-mail est déjà utilisée');
+    expect(page.querySelector('[role="alert"]')?.textContent).toContain(
+      'Cette adresse e-mail est déjà utilisée',
+    );
   });
 
   it('la page renvoie vers la politique de confidentialite (loi n° 2008-12)', () => {

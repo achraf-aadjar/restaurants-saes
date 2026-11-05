@@ -1,35 +1,41 @@
-<h1>Comptes utilisateurs</h1>
+<div class="titre-page">
+  <h1>Comptes utilisateurs</h1>
+  <button type="button" class="btn btn-primaire" (click)="formulaireOuvert.set(true)">
+    + Nouveau compte du personnel
+  </button>
+</div>
 
 @if (erreur(); as e) {
   <p class="message-refus">{{ e }}</p>
 }
 
-<section class="carte">
-  <button
-    type="button"
-    class="btn btn-secondaire"
-    (click)="formulaireOuvert.set(!formulaireOuvert())"
-  >
-    {{ formulaireOuvert() ? 'Annuler' : 'Créer un compte pour le personnel' }}
-  </button>
-
-  @if (formulaireOuvert()) {
+@if (formulaireOuvert()) {
+  <section class="carte">
     <form (ngSubmit)="creerPersonnel()" #f="ngForm" class="formulaire-creation">
+      <h2>Nouveau compte du personnel</h2>
+
       @if (erreurFormulaire(); as e) {
         <p class="message-refus">{{ e }}</p>
       }
 
       <div class="champ">
         <label for="prenom">Prénom</label>
-        <input id="prenom" name="prenom" type="text" required [(ngModel)]="prenom" />
+        <input
+          id="prenom"
+          name="prenom"
+          type="text"
+          required
+          pattern=".*\S.*"
+          [(ngModel)]="prenom"
+        />
       </div>
       <div class="champ">
         <label for="nom">Nom</label>
-        <input id="nom" name="nom" type="text" required [(ngModel)]="nom" />
+        <input id="nom" name="nom" type="text" required pattern=".*\S.*" [(ngModel)]="nom" />
       </div>
       <div class="champ">
         <label for="email">Adresse e-mail</label>
-        <input id="email" name="email" type="email" required [(ngModel)]="email" />
+        <input id="email" name="email" type="email" required email [(ngModel)]="email" />
       </div>
       <div class="champ">
         <label for="telephone">Téléphone</label>
@@ -65,18 +71,23 @@
                 [checked]="rolesSelectionnes.has(role)"
                 (change)="basculerRole(rolesSelectionnes, role)"
               />
-              {{ role }}
+              {{ libellesRoles[role] }}
             </label>
           }
         </div>
       </div>
 
-      <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || creationEnCours()">
-        {{ creationEnCours() ? 'Création…' : 'Créer le compte' }}
-      </button>
+      <div class="actions-colonne">
+        <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || creationEnCours()">
+          {{ creationEnCours() ? 'Création…' : 'Créer le compte' }}
+        </button>
+        <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert.set(false)">
+          Annuler
+        </button>
+      </div>
     </form>
-  }
-</section>
+  </section>
+}
 
 @if (enEdition(); as u) {
   <section class="carte" style="margin-top: 1rem">
@@ -94,7 +105,7 @@
                 [checked]="rolesEdition.has(role)"
                 (change)="basculerRole(rolesEdition, role)"
               />
-              {{ role }}
+              {{ libellesRoles[role] }}
             </label>
           }
         </div>
@@ -143,7 +154,11 @@
             <td>{{ u.prenom }} {{ u.nom }}</td>
             <td>{{ u.email }}</td>
             <td>{{ u.restaurantNom ?? '—' }}</td>
-            <td>{{ u.roles.join(', ') }}</td>
+            <td>
+              @for (role of u.roles; track role) {
+                {{ libellesRoles[role] }}{{ $last ? '' : ', ' }}
+              }
+            </td>
             <td>
               <span
                 class="badge"

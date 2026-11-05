@@ -1,53 +1,31 @@
-<header class="entete">
+<header class="entete" [class.entete-personnel]="sections().length > 0">
   <div class="entete-ligne">
-    <a class="marque" routerLink="/">
-      <img src="assets/logo/logo_couleurs.svg" alt="Restaurants du SAES" class="logo logo-complet" />
+    <a class="marque" [routerLink]="accueil()">
+      <img
+        src="assets/logo/logo_couleurs.svg"
+        alt="Restaurants du SAES"
+        class="logo logo-complet"
+      />
       <img src="assets/logo/icon.svg" alt="Restaurants du SAES" class="logo logo-icone" />
     </a>
 
     <nav class="nav-desktop">
-      <a routerLink="/menus" routerLinkActive="actif">Menus</a>
+      @if (ongletsClient()) {
+        <a routerLink="/menus" routerLinkActive="actif">Menus</a>
+      }
       @if (auth.aLeRole('CLIENT')) {
         <a routerLink="/mes-commandes" routerLinkActive="actif">Mes commandes</a>
         <a routerLink="/mes-reservations" routerLinkActive="actif">Mes réservations</a>
-      }
-      @if (auth.aLeRole('SERVEUR')) {
-        <span class="separateur">·</span>
-        <a routerLink="/serveur/prendre-commande" routerLinkActive="actif">Prendre une commande</a>
-        <a routerLink="/serveur/occupation" routerLinkActive="actif">Occupation des tables</a>
-      }
-      @if (auth.aLeRole('CUISINIER')) {
-        <span class="separateur">·</span>
-        <a routerLink="/cuisine" routerLinkActive="actif">Cuisine</a>
-      }
-      @if (auth.aLeRole('CAISSIER')) {
-        <span class="separateur">·</span>
-        <a routerLink="/caissier/caisse" routerLinkActive="actif">Caisse</a>
-      }
-      @if (auth.aLeRole('GERANT')) {
-        <span class="separateur">·</span>
-        <a routerLink="/gerant/commandes" routerLinkActive="actif">Commandes</a>
-        <a routerLink="/gerant/plats" routerLinkActive="actif">Plats</a>
-        <a routerLink="/gerant/menus" routerLinkActive="actif">Gérer les menus</a>
-        <a routerLink="/gerant/stocks" routerLinkActive="actif">Stocks</a>
-        <a routerLink="/gerant/recommandations" routerLinkActive="actif">Recommandations</a>
-        <a routerLink="/gerant/rapports-financiers" routerLinkActive="actif">Rapports</a>
-        <a routerLink="/gerant/statistiques-ventes" routerLinkActive="actif">Statistiques</a>
-      }
-      @if (estAdministrateur()) {
-        <span class="separateur">·</span>
-        <a routerLink="/admin" routerLinkActive="actif">Administration</a>
       }
     </nav>
 
     <div class="compte">
       @if (auth.estConnecte()) {
         <button type="button" class="bouton-compte" (click)="basculerMenu()">
-          {{ auth.utilisateur()?.prenom }} {{ auth.utilisateur()?.nom }}
-          @if (rolePersonnel(); as role) {
-            <span class="role">({{ role }})</span>
-          }
-          <span class="chevron">▾</span>
+          {{ nom() }}
+          <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
         </button>
         @if (menuOuvert()) {
           <div class="menu-deroulant">
@@ -56,50 +34,76 @@
           </div>
         }
       } @else {
-        <a routerLink="/connexion" class="btn btn-secondaire btn-petit">Connexion</a>
-        <a routerLink="/inscription" class="btn btn-primaire btn-petit">S'inscrire</a>
+        <a
+          routerLink="/connexion"
+          [queryParams]="{ retour: retour() }"
+          class="btn btn-secondaire btn-petit"
+        >
+          Connexion
+        </a>
+        <a
+          routerLink="/inscription"
+          [queryParams]="{ retour: retour() }"
+          class="btn btn-primaire btn-petit"
+        >
+          S'inscrire
+        </a>
       }
     </div>
 
-    <button type="button" class="bouton-burger" (click)="basculerMenuMobile()" aria-label="Menu">☰</button>
+    <button type="button" class="bouton-burger" (click)="basculerMenuMobile()" aria-label="Menu">
+      ☰
+    </button>
   </div>
 
   @if (menuMobileOuvert()) {
     <nav class="nav-mobile">
-      <a routerLink="/menus" (click)="basculerMenuMobile()">Menus</a>
+      @if (auth.estConnecte()) {
+        <p class="nav-mobile-nom">{{ nom() }}</p>
+      }
+      @if (ongletsClient()) {
+        <a routerLink="/menus" (click)="basculerMenuMobile()">Menus</a>
+      }
       @if (auth.aLeRole('CLIENT')) {
         <a routerLink="/mes-commandes" (click)="basculerMenuMobile()">Mes commandes</a>
         <a routerLink="/mes-reservations" (click)="basculerMenuMobile()">Mes réservations</a>
       }
-      @if (auth.aLeRole('SERVEUR')) {
-        <a routerLink="/serveur/prendre-commande" (click)="basculerMenuMobile()">Prendre une commande</a>
-        <a routerLink="/serveur/occupation" (click)="basculerMenuMobile()">Occupation des tables</a>
-      }
-      @if (auth.aLeRole('CUISINIER')) {
-        <a routerLink="/cuisine" (click)="basculerMenuMobile()">Cuisine</a>
-      }
-      @if (auth.aLeRole('CAISSIER')) {
-        <a routerLink="/caissier/caisse" (click)="basculerMenuMobile()">Caisse</a>
-      }
-      @if (auth.aLeRole('GERANT')) {
-        <a routerLink="/gerant/commandes" (click)="basculerMenuMobile()">Commandes</a>
-        <a routerLink="/gerant/plats" (click)="basculerMenuMobile()">Plats</a>
-        <a routerLink="/gerant/menus" (click)="basculerMenuMobile()">Gérer les menus</a>
-        <a routerLink="/gerant/stocks" (click)="basculerMenuMobile()">Stocks</a>
-        <a routerLink="/gerant/recommandations" (click)="basculerMenuMobile()">Recommandations</a>
-        <a routerLink="/gerant/rapports-financiers" (click)="basculerMenuMobile()">Rapports</a>
-        <a routerLink="/gerant/statistiques-ventes" (click)="basculerMenuMobile()">Statistiques</a>
-      }
-      @if (estAdministrateur()) {
-        <a routerLink="/admin" (click)="basculerMenuMobile()">Administration</a>
+      @for (section of sections(); track section.role) {
+        <p class="nav-mobile-intitule">{{ section.intitule }}</p>
+        @for (fonction of section.fonctions; track fonction.lien) {
+          <a [routerLink]="fonction.lien" routerLinkActive="actif" (click)="basculerMenuMobile()">
+            {{ fonction.libelle }}
+          </a>
+        }
       }
       @if (auth.estConnecte()) {
-        <a routerLink="/mon-compte" (click)="basculerMenuMobile()">Mon compte</a>
+        <a routerLink="/mon-compte" class="nav-mobile-compte" (click)="basculerMenuMobile()">
+          Mon compte
+        </a>
         <button type="button" (click)="seDeconnecter()">Se déconnecter</button>
       } @else {
-        <a routerLink="/connexion" (click)="basculerMenuMobile()">Connexion</a>
-        <a routerLink="/inscription" (click)="basculerMenuMobile()">S'inscrire</a>
+        <a
+          routerLink="/connexion"
+          [queryParams]="{ retour: retour() }"
+          (click)="basculerMenuMobile()"
+        >
+          Connexion
+        </a>
+        <a
+          routerLink="/inscription"
+          [queryParams]="{ retour: retour() }"
+          (click)="basculerMenuMobile()"
+        >
+          S'inscrire
+        </a>
       }
     </nav>
   }
 </header>
+
+@if (restaurantDuBandeau(); as restaurant) {
+  <div class="bandeau">
+    <strong class="bandeau-restaurant">{{ restaurant }}</strong>
+    <span class="bandeau-date">{{ aujourdHui | date: 'fullDate' }}</span>
+  </div>
+}

@@ -29,6 +29,9 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class CompteService {
 
+    /** Domaine de l'adresse donnee a un compte client supprime par son titulaire. */
+    static final String DOMAINE_COMPTE_SUPPRIME = "@saes.invalid";
+
     private final UtilisateurRepository utilisateurRepository;
     private final ReservationRepository reservationRepository;
     private final PasswordEncoder passwordEncoder;
@@ -82,10 +85,15 @@ public class CompteService {
 
         utilisateur.setNom("supprimé");
         utilisateur.setPrenom("Compte");
-        utilisateur.setEmail("supprime-" + utilisateurId + "@saes.invalid");
+        utilisateur.setEmail("supprime-" + utilisateurId + DOMAINE_COMPTE_SUPPRIME);
         utilisateur.setTelephone(null);
         utilisateur.setMotDePasse(passwordEncoder.encode(UUID.randomUUID().toString()));
         utilisateur.setEstActif(false);
+    }
+
+    /** Un compte supprime par son titulaire se reconnait a son adresse anonymisee. */
+    static boolean estSupprime(Utilisateur utilisateur) {
+        return utilisateur.getEmail().endsWith(DOMAINE_COMPTE_SUPPRIME);
     }
 
     private Utilisateur trouver(Long id) {

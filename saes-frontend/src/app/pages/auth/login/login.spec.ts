@@ -65,7 +65,38 @@ describe('Page de connexion', () => {
     requete.flush({ token: 'jeton', utilisateur: { id: 1, roles: ['CLIENT'] } });
     await fixture.whenStable();
 
-    expect(navigation).toHaveBeenCalledWith(['/']);
+    // L'accueil du client : les menus.
+    expect(navigation).toHaveBeenCalledWith(['/menus']);
+  });
+
+  it('le personnel arrive sur sa premiere fonction', async () => {
+    const navigation = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    await saisir('#email', 'fallou@test.sn');
+    await saisir('#motDePasse', 'motdepasse123');
+    await envoyer();
+
+    serveur
+      .expectOne('/api/auth/login')
+      .flush({ token: 'jeton', utilisateur: { id: 2, roles: ['CUISINIER'] } });
+    await fixture.whenStable();
+
+    expect(navigation).toHaveBeenCalledWith(['/cuisine/preparation']);
+  });
+
+  it('apres la connexion, on revient a la page demandee avant (bouton Reserver des menus)', async () => {
+    const routeur = TestBed.inject(Router);
+    await routeur.navigateByUrl('/?retour=%2Fmes-reservations%3Frestaurant%3D1');
+    const retour = vi.spyOn(routeur, 'navigateByUrl').mockResolvedValue(true);
+    await saisir('#email', 'awa@test.sn');
+    await saisir('#motDePasse', 'motdepasse123');
+    await envoyer();
+
+    serveur
+      .expectOne('/api/auth/login')
+      .flush({ token: 'jeton', utilisateur: { id: 1, roles: ['CLIENT'] } });
+    await fixture.whenStable();
+
+    expect(retour).toHaveBeenCalledWith('/mes-reservations?restaurant=1');
   });
 
   it('un refus du serveur affiche son motif', async () => {
@@ -75,10 +106,15 @@ describe('Page de connexion', () => {
 
     serveur
       .expectOne('/api/auth/login')
-      .flush({ motif: 'Adresse e-mail ou mot de passe incorrect' }, { status: 401, statusText: 'Unauthorized' });
+      .flush(
+        { motif: 'Adresse e-mail ou mot de passe incorrect' },
+        { status: 401, statusText: 'Unauthorized' },
+      );
     await fixture.whenStable();
 
-    expect(page.querySelector('[role="alert"]')?.textContent).toContain('Adresse e-mail ou mot de passe incorrect');
+    expect(page.querySelector('[role="alert"]')?.textContent).toContain(
+      'Adresse e-mail ou mot de passe incorrect',
+    );
   });
 
   it('le mot de passe peut etre affiche puis masque', async () => {

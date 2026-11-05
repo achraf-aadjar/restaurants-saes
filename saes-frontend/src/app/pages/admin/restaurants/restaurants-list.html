@@ -1,15 +1,14 @@
-<h1>Restaurants</h1>
+<div class="titre-page">
+  <h1>Restaurants</h1>
+  <button type="button" class="btn btn-primaire" (click)="ouvrirCreation()">+ Nouveau restaurant</button>
+</div>
 
 @if (erreur(); as e) {
   <p class="message-refus">{{ e }}</p>
 }
 
-<section class="carte">
-  <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert() ? formulaireOuvert.set(false) : ouvrirCreation()">
-    {{ formulaireOuvert() ? 'Annuler' : 'Créer un restaurant' }}
-  </button>
-
-  @if (formulaireOuvert()) {
+@if (formulaireOuvert()) {
+  <section class="carte">
     <form (ngSubmit)="enregistrer()" #f="ngForm" class="formulaire-creation formulaire-large">
       <h2>{{ idEnEdition ? 'Modifier le restaurant' : 'Nouveau restaurant' }}</h2>
 
@@ -19,15 +18,29 @@
 
       <div class="champ">
         <label for="nomR">Nom</label>
-        <input id="nomR" name="nomR" type="text" required [(ngModel)]="nom" />
+        <input id="nomR" name="nomR" type="text" required pattern=".*\S.*" [(ngModel)]="nom" />
       </div>
       <div class="champ">
         <label for="adresseR">Adresse</label>
-        <input id="adresseR" name="adresseR" type="text" required [(ngModel)]="adresse" />
+        <input
+          id="adresseR"
+          name="adresseR"
+          type="text"
+          required
+          pattern=".*\S.*"
+          [(ngModel)]="adresse"
+        />
       </div>
       <div class="champ">
         <label for="telephoneR">Téléphone</label>
-        <input id="telephoneR" name="telephoneR" type="tel" [(ngModel)]="telephone" />
+        <input
+          id="telephoneR"
+          name="telephoneR"
+          type="tel"
+          required
+          pattern=".*\S.*"
+          [(ngModel)]="telephone"
+        />
       </div>
       <div class="champ">
         <label for="dureeR">Durée de réservation (minutes)</label>
@@ -72,7 +85,7 @@
             <label>Jour</label>
             <select [(ngModel)]="horaire.jour" [name]="'jour' + $index" required>
               @for (j of jours; track j) {
-                <option [ngValue]="j">{{ j }}</option>
+                <option [ngValue]="j">{{ libellesJours[j] }}</option>
               }
             </select>
           </div>
@@ -93,14 +106,17 @@
         + Ajouter une plage
       </button>
 
-      <div style="margin-top: 1.25rem">
+      <div class="actions-colonne" style="margin-top: 1.25rem">
         <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enregistrementEnCours()">
           {{ enregistrementEnCours() ? 'Enregistrement…' : 'Enregistrer' }}
         </button>
+        <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert.set(false)">
+          Annuler
+        </button>
       </div>
     </form>
-  }
-</section>
+  </section>
+}
 
 <section class="carte" style="margin-top: 1rem">
   @if (chargement()) {

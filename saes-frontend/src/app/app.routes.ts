@@ -4,13 +4,15 @@ import { Routes } from '@angular/router';
 import { AuthService } from './core/auth.service';
 
 import { authGuard, roleGuard } from './core/auth.guard';
+import { accueilDe } from './core/navigation';
 
 export const routes: Routes = [
-  // L'administrateur arrive sur son espace ; tous les autres sur les menus.
+  // Chacun arrive sur sa page d'accueil : l'espace d'administration, la
+  // premiere fonction du personnel, les menus pour un client ou un visiteur.
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: () => (inject(AuthService).aLeRole('ADMINISTRATEUR') ? 'admin' : 'menus'),
+    redirectTo: () => accueilDe(inject(AuthService).utilisateur()),
   },
   {
     path: 'menus',
@@ -96,15 +98,26 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/serveur/prendre-commande').then((m) => m.PrendreCommande),
   },
   {
+    path: 'serveur/commandes',
+    canActivate: [roleGuard('SERVEUR')],
+    loadComponent: () =>
+      import('./pages/serveur/commandes-en-attente').then((m) => m.CommandesEnAttente),
+  },
+  {
     path: 'serveur/occupation',
     canActivate: [roleGuard('SERVEUR')],
     loadComponent: () =>
       import('./pages/serveur/occupation-tables').then((m) => m.OccupationTables),
   },
   {
-    path: 'cuisine',
+    path: 'cuisine/preparation',
     canActivate: [roleGuard('CUISINIER')],
     loadComponent: () => import('./pages/cuisine/cuisine').then((m) => m.Cuisine),
+  },
+  {
+    path: 'cuisine/rupture',
+    canActivate: [roleGuard('CUISINIER')],
+    loadComponent: () => import('./pages/cuisine/signaler-rupture').then((m) => m.SignalerRupture),
   },
   {
     path: 'gerant/commandes',
@@ -146,9 +159,20 @@ export const routes: Routes = [
       import('./pages/gerant/statistiques-ventes').then((m) => m.GerantStatistiquesVentes),
   },
   {
-    path: 'caissier/caisse',
+    path: 'caissier/ouvrir',
     canActivate: [roleGuard('CAISSIER')],
-    loadComponent: () => import('./pages/caissier/caisse').then((m) => m.Caisse),
+    loadComponent: () => import('./pages/caissier/ouvrir-caisse').then((m) => m.OuvrirCaisse),
+  },
+  {
+    path: 'caissier/encaisser',
+    canActivate: [roleGuard('CAISSIER')],
+    loadComponent: () =>
+      import('./pages/caissier/encaisser-commande').then((m) => m.EncaisserCommande),
+  },
+  {
+    path: 'caissier/cloturer',
+    canActivate: [roleGuard('CAISSIER')],
+    loadComponent: () => import('./pages/caissier/cloturer-caisse').then((m) => m.CloturerCaisse),
   },
   { path: '**', redirectTo: 'menus' },
 ];

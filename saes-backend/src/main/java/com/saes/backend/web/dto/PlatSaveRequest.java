@@ -8,7 +8,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Positive;
 
 /**
  * Gerer les plats (cahier des charges §4.2) : nom, description (facultative),
@@ -17,7 +17,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 public record PlatSaveRequest(
         @NotBlank String nom,
         String description,
-        @NotNull @PositiveOrZero Integer prix,
+        @NotNull @Positive Integer prix,
         @NotNull CategoriePlat categorie,
         @NotEmpty @Valid List<RecetteLigneDto> recette) {
 }

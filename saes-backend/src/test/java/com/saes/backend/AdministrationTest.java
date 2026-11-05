@@ -71,6 +71,17 @@ class AdministrationTest extends IntegrationTest {
                 .statut()).isEqualTo(200);
     }
 
+    @Test
+    void unCompteSupprimeParSonTitulaireNePeutPasEtreReactive() {
+        String jeton = monde.nouveauClient();
+        long clientId = api.get(jeton, "/api/me").entier("$.id");
+        assertThat(api.delete(jeton, "/api/me").statut()).isEqualTo(204);
+
+        Reponse reactivation = api.put(monde.jetonAdmin, "/api/admin/users/" + clientId + "/activer", null);
+
+        assertThat(reactivation.statut()).as(reactivation.toString()).isEqualTo(409);
+    }
+
     // Gerer les restaurants
 
     @Test
@@ -100,6 +111,17 @@ class AdministrationTest extends IntegrationTest {
 
         assertThat(api.post(monde.jetonAdmin, "/api/admin/restaurants", sansTable).statut()).isEqualTo(400);
         assertThat(api.post(monde.jetonAdmin, "/api/admin/restaurants", sansHoraire).statut()).isEqualTo(400);
+    }
+
+    @Test
+    void unRestaurantAUnTelephone() {
+        Map<String, Object> sansTelephone = Monde.requeteRestaurant("Sans telephone");
+        sansTelephone.remove("telephone");
+        Map<String, Object> telephoneVide = Monde.requeteRestaurant("Telephone vide");
+        telephoneVide.put("telephone", "   ");
+
+        assertThat(api.post(monde.jetonAdmin, "/api/admin/restaurants", sansTelephone).statut()).isEqualTo(400);
+        assertThat(api.post(monde.jetonAdmin, "/api/admin/restaurants", telephoneVide).statut()).isEqualTo(400);
     }
 
     @Test

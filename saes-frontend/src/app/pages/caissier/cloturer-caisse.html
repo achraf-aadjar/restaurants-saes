@@ -1,0 +1,42 @@
+<h1>Clôturer la caisse</h1>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+@if (resultatCloture(); as rc) {
+  <section class="carte message-ok">
+    <h2>Caisse clôturée</h2>
+    <p class="total-panier">Montant théorique : {{ rc.montantTheorique | montant }}</p>
+    <p class="total-panier">Montant compté : {{ rc.montantCompte | montant }}</p>
+    <p class="total-panier">Écart : {{ rc.ecart | montant }}</p>
+  </section>
+} @else if (chargement()) {
+  <p>Chargement…</p>
+} @else if (caisseOuverte(); as session) {
+  <app-ma-caisse [session]="session" [avecCloture]="false" />
+
+  <section class="carte" style="margin-top: 1rem">
+    <form (ngSubmit)="cloturer()" #fc="ngForm" class="formulaire-etroit">
+      <div class="champ">
+        <label for="montantCompte">Montant compté (FCFA)</label>
+        <input
+          id="montantCompte"
+          name="montantCompte"
+          type="number"
+          min="0"
+          required
+          [(ngModel)]="montantCompte"
+        />
+      </div>
+      <button type="submit" class="btn btn-primaire" [disabled]="fc.invalid || actionEnCours()">
+        {{ actionEnCours() ? 'Clôture…' : 'Valider la clôture' }}
+      </button>
+    </form>
+  </section>
+} @else {
+  <section class="carte">
+    <p>La caisse n'est pas ouverte.</p>
+    <a routerLink="/caissier/ouvrir" class="btn btn-primaire">Ouvrir la caisse</a>
+  </section>
+}
