@@ -1,0 +1,335 @@
+:host {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  --admin-fond: #f4f5f3;
+  --admin-nav: #0b2b27;
+  --admin-nav-texte: #c7d6d2;
+  --admin-nav-discret: #7f9c95;
+  --admin-ligne: #e4e6e1;
+}
+
+.admin {
+  display: flex;
+  min-height: 100vh;
+  background: var(--admin-fond);
+}
+
+// Barre laterale
+
+.admin-nav {
+  width: 248px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--admin-nav);
+  color: var(--admin-nav-texte);
+  padding: 1.1rem 0.85rem 1rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.admin-marque {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.2rem 0.45rem 1.2rem;
+  margin-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-decoration: none;
+
+  img {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: #fff;
+  }
+
+  span {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  strong {
+    color: #fff;
+    font-size: 0.95rem;
+  }
+
+  small {
+    color: var(--saes-jaune);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+}
+
+.admin-nav-liens {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.admin-nav-section {
+  margin: 1rem 0.6rem 0.35rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--admin-nav-discret);
+}
+
+.admin-nav-lien {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.58rem 0.7rem;
+  border-radius: 8px;
+  color: var(--admin-nav-texte);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.85;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+  }
+
+  &.actif {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -0.85rem;
+      top: 0.45rem;
+      bottom: 0.45rem;
+      width: 3px;
+      border-radius: 0 3px 3px 0;
+      background: var(--saes-jaune);
+    }
+
+    svg {
+      opacity: 1;
+      color: var(--saes-jaune);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--saes-jaune);
+    outline-offset: 1px;
+  }
+}
+
+.admin-nav-bas {
+  margin-top: 0.6rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.85rem;
+}
+
+// Zone principale
+
+.admin-principal {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-barre {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  height: 60px;
+  padding: 0 2rem;
+  background: #fff;
+  border-bottom: 1px solid var(--admin-ligne);
+}
+
+.admin-fil {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #7a817c;
+  min-width: 0;
+
+  strong {
+    color: var(--saes-vert);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.admin-compte {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.88rem;
+  flex-shrink: 0;
+}
+
+.admin-voir-site {
+  font-weight: 600;
+  color: var(--saes-vert);
+  text-decoration: none;
+  padding: 0.4rem 0.7rem;
+  border-radius: 7px;
+  border: 1px solid var(--admin-ligne);
+
+  &:hover {
+    background: var(--admin-fond);
+  }
+}
+
+.admin-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--saes-vert);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+}
+
+.admin-nom {
+  font-weight: 600;
+  color: var(--saes-vert);
+  white-space: nowrap;
+}
+
+.admin-deconnexion {
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--saes-rouge-fonce);
+  cursor: pointer;
+  padding: 0.4rem 0.5rem;
+  border-radius: 7px;
+
+  &:hover {
+    background: #fdeceb;
+  }
+}
+
+.admin-contenu {
+  flex: 1;
+  min-width: 0;
+  padding: 1.75rem 2rem 2.5rem;
+}
+
+.admin-pied {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  border-top: 1px solid var(--admin-ligne);
+  font-size: 0.8rem;
+  color: #7a817c;
+
+  a {
+    color: inherit;
+  }
+}
+
+// Tablettes et telephones : la barre laterale devient une barre d'onglets
+@media (max-width: 899px) {
+  .admin {
+    flex-direction: column;
+  }
+
+  .admin-nav {
+    width: 100%;
+    height: auto;
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    padding: 0.5rem;
+    overflow-x: auto;
+    gap: 0.25rem;
+  }
+
+  .admin-marque {
+    border: none;
+    padding: 0 0.4rem 0 0.2rem;
+    margin: 0;
+
+    span {
+      display: none;
+    }
+  }
+
+  .admin-nav-section {
+    display: none;
+  }
+
+  .admin-nav-liens {
+    flex-direction: row;
+    overflow: visible;
+    flex: none;
+  }
+
+  .admin-nav-lien.actif::before {
+    left: 0.6rem;
+    right: 0.6rem;
+    top: auto;
+    bottom: 0.1rem;
+    width: auto;
+    height: 3px;
+    border-radius: 3px;
+  }
+
+  .admin-nav-bas {
+    margin: 0;
+    border: none;
+    padding-top: 0.58rem;
+  }
+
+  .admin-barre {
+    padding: 0 1rem;
+    position: static;
+  }
+
+  .admin-nom,
+  .admin-fil > span {
+    display: none;
+  }
+
+  .admin-contenu {
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  .admin-pied {
+    padding: 1rem;
+  }
+}

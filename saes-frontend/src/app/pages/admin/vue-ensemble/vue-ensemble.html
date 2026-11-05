@@ -1,0 +1,160 @@
+<header class="admin-page-entete">
+  <div>
+    <h1>Vue d'ensemble</h1>
+    <p class="admin-page-soustitre">Tous les restaurants, en temps réel.</p>
+  </div>
+  <div class="periode" role="group" aria-label="Période">
+    @for (p of periodes; track p.jours) {
+      <button type="button" [class.actif]="jours() === p.jours" [attr.aria-pressed]="jours() === p.jours" (click)="choisir(p.jours)">
+        {{ p.libelle }}
+      </button>
+    }
+  </div>
+</header>
+
+@if (erreur(); as e) {
+  <p class="message-refus" role="alert">{{ e }}</p>
+}
+
+@if (donnees(); as d) {
+  <div class="tuiles" [style.opacity]="chargement() ? 0.6 : 1">
+    <div class="tuile">
+      <span class="tuile-libelle">Chiffre d'affaires</span>
+      <span class="tuile-valeur">{{ d.finances.chiffreAffaires | number: '1.0-0' }} FCFA</span>
+      <span class="tuile-note">sur {{ jours() }} jours</span>
+    </div>
+    <div class="tuile">
+      <span class="tuile-libelle">Commandes payées</span>
+      <span class="tuile-valeur">{{ d.finances.commandesPayees }}</span>
+      <span class="tuile-note">panier moyen {{ d.finances.panierMoyen | number: '1.0-0' }} FCFA</span>
+    </div>
+    <div class="tuile" [class.tuile-alerte]="d.finances.montantAbandonne > 0">
+      <span class="tuile-libelle">Commandes abandonnées</span>
+      <span class="tuile-valeur">{{ d.finances.montantAbandonne | number: '1.0-0' }} FCFA</span>
+      <span class="tuile-note">non payées sur la période</span>
+    </div>
+    <div class="tuile">
+      <span class="tuile-libelle">Restaurants</span>
+      <span class="tuile-valeur">{{ d.indicateurs.restaurantsActifs }}</span>
+      <span class="tuile-note">actifs · {{ d.indicateurs.restaurantsDesactives }} désactivé(s)</span>
+    </div>
+  </div>
+
+  <div class="tuiles">
+    <div class="tuile">
+      <span class="tuile-libelle">Commandes en cours</span>
+      <span class="tuile-valeur">{{ totalEnCours() }}</span>
+      <span class="tuile-note">
+        @for (s of statutsEnCours; track s; let dernier = $last) {
+          {{ d.indicateurs.commandesEnCours[s] ?? 0 }} {{ libellesStatuts[s] | lowercase }}{{ dernier ? '' : ' · ' }}
+        }
+      </span>
+    </div>
+    <div class="tuile">
+      <span class="tuile-libelle">Caisses ouvertes</span>
+      <span class="tuile-valeur">{{ d.indicateurs.caissesOuvertes }}</span>
+      <span class="tuile-note"><a routerLink="/admin/caisses">Voir les caisses</a></span>
+    </div>
+    <div class="tuile">
+      <span class="tuile-libelle">Réservations du jour</span>
+      <span class="tuile-valeur">{{ d.indicateurs.reservationsAujourdhui }}</span>
+      <span class="tuile-note"><a routerLink="/admin/reservations">Voir les réservations</a></span>
+    </div>
+    <div class="tuile" [class.tuile-alerte]="d.indicateurs.ingredientsEnAlerte > 0">
+      <span class="tuile-libelle">Stocks en alerte</span>
+      <span class="tuile-valeur">{{ d.indicateurs.ingredientsEnAlerte }}</span>
+      <span class="tuile-note"><a routerLink="/admin/stocks">Voir les stocks</a></span>
+    </div>
+  </div>
+
+  <div class="panneaux">
+    <section class="panneau panneau-large">
+      <div class="panneau-entete">
+        <h2>Encaissements par jour</h2>
+        <a routerLink="/admin/finances">Détail des finances</a>
+      </div>
+      <app-graphique-barres [points]="points()" [series]="series" />
+    </section>
+
+    <section class="panneau">
+      <div class="panneau-entete"><h2>Chiffre d'affaires par restaurant</h2></div>
+      @if (d.finances.parRestaurant.length === 0) {
+        <p class="vide">Aucun restaurant.</p>
+      } @else {
+        <ul class="barres-h">
+          @for (r of d.finances.parRestaurant; track r.restaurantId) {
+            <li class="barre-h">
+              <span class="barre-h-nom" [title]="r.restaurant">{{ r.restaurant }}</span>
+              <span class="barre-h-piste"><span class="barre-h-remplie" [style.width.%]="(r.chiffreAffaires / maxRestaurant()) * 100"></span></span>
+              <span class="barre-h-valeur">{{ r.chiffreAffaires | number: '1.0-0' }} FCFA</span>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <section class="panneau">
+      <div class="panneau-entete"><h2>Plats les plus vendus</h2></div>
+      @if (d.meilleursPlats.length === 0) {
+        <p class="vide">Aucune vente sur la période.</p>
+      } @else {
+        <table class="table-simple">
+          <thead>
+            <tr><th>Plat</th><th>Restaurant</th><th>Quantité</th><th>Montant</th></tr>
+          </thead>
+          <tbody>
+            @for (p of d.meilleursPlats; track p.plat + p.restaurant) {
+              <tr>
+                <td>{{ p.plat }}</td>
+                <td>{{ p.restaurant }}</td>
+                <td>{{ p.quantite }}</td>
+                <td class="montant">{{ p.montant | number: '1.0-0' }} FCFA</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </section>
+
+    <section class="panneau">
+      <div class="panneau-entete">
+        <h2>Comptes</h2>
+        <a routerLink="/admin/utilisateurs">Gérer les comptes</a>
+      </div>
+      <ul class="barres-h">
+        @for (r of roles; track r) {
+          <li class="barre-h">
+            <span class="barre-h-nom">{{ libellesRoles[r] }}</span>
+            <span class="barre-h-piste"><span class="barre-h-remplie" [style.width.%]="(d.indicateurs.comptesParRole[r] / maxRole()) * 100"></span></span>
+            <span class="barre-h-valeur">{{ d.indicateurs.comptesParRole[r] }}</span>
+          </li>
+        }
+      </ul>
+      <p class="tuile-note" style="margin-top: 0.9rem">
+        {{ d.indicateurs.comptesActifs }} compte(s) actif(s) · {{ d.indicateurs.comptesDesactives }} désactivé(s)
+      </p>
+    </section>
+
+    <section class="panneau">
+      <div class="panneau-entete">
+        <h2>Activité récente</h2>
+        <a routerLink="/admin/journal">Tout l'historique</a>
+      </div>
+      @if (d.activiteRecente.length === 0) {
+        <p class="vide">Aucune opération enregistrée.</p>
+      } @else {
+        <ul class="activite">
+          @for (a of d.activiteRecente; track a.id) {
+            <li>
+              <span class="activite-action">{{ libellesActions[a.action] }}</span>
+              <span class="activite-detail">{{ a.details }}</span>
+              <span class="activite-meta">{{ a.acteur ?? 'Système' }} · {{ a.dateHeure | date: 'dd/MM HH:mm' }}</span>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  </div>
+} @else if (chargement()) {
+  <p class="vide">Chargement du tableau de bord…</p>
+}

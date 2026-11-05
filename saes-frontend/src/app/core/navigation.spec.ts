@@ -37,6 +37,8 @@ describe('Navigation par role', () => {
     expect(sectionsDe(utilisateur('ADMINISTRATEUR')).map((s) => s.intitule)).toEqual([
       'Administration',
     ]);
+    // Il arrive directement sur la console d'administration.
+    expect(accueilDe(utilisateur('ADMINISTRATEUR'))).toBe('/admin');
   });
 
   it('le nom (initiale du prenom) est suivi des roles en francais', () => {

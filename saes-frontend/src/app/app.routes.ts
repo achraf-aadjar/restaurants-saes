@@ -1,9 +1,19 @@
+import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
 
+import { AuthService } from './core/auth.service';
+
 import { authGuard, roleGuard } from './core/auth.guard';
+import { accueilDe } from './core/navigation';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'menus' },
+  // Chacun arrive sur sa page d'accueil : l'espace d'administration, la
+  // premiere fonction du personnel, les menus pour un client ou un visiteur.
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: () => accueilDe(inject(AuthService).utilisateur()),
+  },
   {
     path: 'menus',
     loadComponent: () => import('./pages/menus/menu-consultation').then((m) => m.MenuConsultation),
@@ -37,20 +47,50 @@ export const routes: Routes = [
       import('./pages/mes-reservations/mes-reservations').then((m) => m.MesReservations),
   },
   {
-    path: 'admin/utilisateurs',
+    path: 'admin',
     canActivate: [roleGuard('ADMINISTRATEUR')],
-    loadComponent: () => import('./pages/admin/users/users-list').then((m) => m.UsersList),
-  },
-  {
-    path: 'admin/journal',
-    canActivate: [roleGuard('ADMINISTRATEUR')],
-    loadComponent: () => import('./pages/admin/journal/journal').then((m) => m.Journal),
-  },
-  {
-    path: 'admin/restaurants',
-    canActivate: [roleGuard('ADMINISTRATEUR')],
-    loadComponent: () =>
-      import('./pages/admin/restaurants/restaurants-list').then((m) => m.RestaurantsList),
+    loadComponent: () => import('./pages/admin/espace/espace-admin').then((m) => m.EspaceAdmin),
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        loadComponent: () => import('./pages/admin/vue-ensemble/vue-ensemble').then((m) => m.VueEnsemble),
+      },
+      {
+        path: 'finances',
+        loadComponent: () => import('./pages/admin/finances/finances').then((m) => m.AdminFinances),
+      },
+      {
+        path: 'commandes',
+        loadComponent: () => import('./pages/admin/commandes/admin-commandes').then((m) => m.AdminCommandes),
+      },
+      {
+        path: 'reservations',
+        loadComponent: () =>
+          import('./pages/admin/reservations/admin-reservations').then((m) => m.AdminReservations),
+      },
+      {
+        path: 'caisses',
+        loadComponent: () => import('./pages/admin/caisses/admin-caisses').then((m) => m.AdminCaisses),
+      },
+      {
+        path: 'stocks',
+        loadComponent: () => import('./pages/admin/stocks/admin-stocks').then((m) => m.AdminStocks),
+      },
+      {
+        path: 'restaurants',
+        loadComponent: () =>
+          import('./pages/admin/restaurants/restaurants-list').then((m) => m.RestaurantsList),
+      },
+      {
+        path: 'utilisateurs',
+        loadComponent: () => import('./pages/admin/users/users-list').then((m) => m.UsersList),
+      },
+      {
+        path: 'journal',
+        loadComponent: () => import('./pages/admin/journal/journal').then((m) => m.Journal),
+      },
+    ],
   },
   {
     path: 'serveur/prendre-commande',

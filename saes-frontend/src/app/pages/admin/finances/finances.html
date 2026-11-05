@@ -1,0 +1,104 @@
+<header class="admin-page-entete">
+  <div>
+    <h1>Finances</h1>
+    <p class="admin-page-soustitre">Encaissements de tous les restaurants (commandes payées).</p>
+  </div>
+  <form class="filtres" (ngSubmit)="charger()">
+    <div class="champ">
+      <label for="debutF">Du</label>
+      <input id="debutF" name="debutF" type="date" [(ngModel)]="debut" />
+    </div>
+    <div class="champ">
+      <label for="finF">Au</label>
+      <input id="finF" name="finF" type="date" [(ngModel)]="fin" />
+    </div>
+    <button type="submit" class="btn btn-primaire" [disabled]="chargement()">Afficher</button>
+  </form>
+</header>
+
+@if (erreur(); as e) {
+  <p class="message-refus" role="alert">{{ e }}</p>
+}
+
+@if (donnees(); as d) {
+  <div class="tuiles tuiles-5" [style.opacity]="chargement() ? 0.6 : 1">
+    <div class="tuile">
+      <span class="tuile-libelle">Chiffre d'affaires</span>
+      <span class="tuile-valeur">{{ d.finances.chiffreAffaires | number: '1.0-0' }} FCFA</span>
+      <span class="tuile-note">{{ d.finances.commandesPayees }} commande(s) payée(s)</span>
+    </div>
+    <div class="tuile">
+      <span class="tuile-libelle">Espèces</span>
+      <span class="tuile-valeur">{{ d.finances.encaisseEspeces | number: '1.0-0' }} FCFA</span>
+      <span class="tuile-note">{{ partEspeces() }} % du total</span>
+    </div>
+    <div class="tuile">
+      <span class="tuile-libelle">Mobile Money</span>
+      <span class="tuile-valeur">{{ d.finances.encaisseMobileMoney | number: '1.0-0' }} FCFA</span>
+      <span class="tuile-note">{{ d.finances.chiffreAffaires > 0 ? 100 - partEspeces() : 0 }} % du total</span>
+    </div>
+    <div class="tuile">
+      <span class="tuile-libelle">Panier moyen</span>
+      <span class="tuile-valeur">{{ d.finances.panierMoyen | number: '1.0-0' }} FCFA</span>
+      <span class="tuile-note">par commande payée</span>
+    </div>
+    <div class="tuile" [class.tuile-alerte]="d.finances.montantAbandonne > 0">
+      <span class="tuile-libelle">Abandonné</span>
+      <span class="tuile-valeur">{{ d.finances.montantAbandonne | number: '1.0-0' }} FCFA</span>
+      <span class="tuile-note">commandes non payées</span>
+    </div>
+  </div>
+
+  <div class="panneaux">
+    <section class="panneau panneau-large">
+      <div class="panneau-entete"><h2>Encaissements par jour</h2></div>
+      <app-graphique-barres [points]="points()" [series]="series" />
+    </section>
+
+    <section class="panneau">
+      <div class="panneau-entete"><h2>Par restaurant</h2></div>
+      <table class="table-simple">
+        <thead>
+          <tr><th>Restaurant</th><th>Chiffre d'affaires</th><th>Commandes</th><th>Panier moyen</th></tr>
+        </thead>
+        <tbody>
+          @for (r of d.finances.parRestaurant; track r.restaurantId) {
+            <tr>
+              <td>{{ r.restaurant }}</td>
+              <td class="montant">{{ r.chiffreAffaires | number: '1.0-0' }} FCFA</td>
+              <td>{{ r.commandesPayees }}</td>
+              <td class="montant">
+                {{ r.commandesPayees > 0 ? (r.chiffreAffaires / r.commandesPayees | number: '1.0-0') + ' FCFA' : '—' }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+
+    <section class="panneau">
+      <div class="panneau-entete"><h2>Détail par jour</h2></div>
+      @if (joursAvecEncaissement().length === 0) {
+        <p class="vide">Aucun encaissement sur cette période.</p>
+      } @else {
+        <table class="table-simple">
+          <thead>
+            <tr><th>Jour</th><th>Espèces</th><th>Mobile Money</th><th>Total</th></tr>
+          </thead>
+          <tbody>
+            @for (j of joursAvecEncaissement(); track j.jour) {
+              <tr>
+                <td>{{ j.jour | date: 'EEE dd/MM' }}</td>
+                <td class="montant">{{ j.montantEspeces | number: '1.0-0' }}</td>
+                <td class="montant">{{ j.montantMobileMoney | number: '1.0-0' }}</td>
+                <td class="montant"><strong>{{ j.montantEspeces + j.montantMobileMoney | number: '1.0-0' }} FCFA</strong></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </section>
+  </div>
+} @else if (chargement()) {
+  <p class="vide">Chargement…</p>
+}

@@ -26,6 +26,8 @@ class DroitsAccesTest extends IntegrationTest {
         ESPACES.put("/api/admin/users", Role.ADMINISTRATEUR);
         ESPACES.put("/api/admin/restaurants", Role.ADMINISTRATEUR);
         ESPACES.put("/api/admin/journal", Role.ADMINISTRATEUR);
+        ESPACES.put("/api/admin/supervision/tableau-de-bord", Role.ADMINISTRATEUR);
+        ESPACES.put("/api/admin/supervision/caisses", Role.ADMINISTRATEUR);
         ESPACES.put("/api/commandes", Role.CLIENT);
         ESPACES.put("/api/reservations", Role.CLIENT);
         ESPACES.put("/api/serveur/commandes", Role.SERVEUR);

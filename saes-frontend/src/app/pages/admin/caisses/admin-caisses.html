@@ -1,0 +1,64 @@
+<header class="admin-page-entete">
+  <div>
+    <h1>Caisses</h1>
+    <p class="admin-page-soustitre">Les 100 dernières sessions de caisse de tous les restaurants.</p>
+  </div>
+</header>
+
+@if (erreur(); as e) {
+  <p class="message-refus" role="alert">{{ e }}</p>
+}
+
+<div class="tuiles">
+  <div class="tuile">
+    <span class="tuile-libelle">Caisses ouvertes</span>
+    <span class="tuile-valeur">{{ ouvertes().length }}</span>
+    <span class="tuile-note">en ce moment</span>
+  </div>
+  <div class="tuile" [class.tuile-alerte]="avecEcart() > 0">
+    <span class="tuile-libelle">Clôtures avec écart</span>
+    <span class="tuile-valeur">{{ avecEcart() }}</span>
+    <span class="tuile-note">écart cumulé {{ ecartTotal() | number: '1.0-0' }} FCFA</span>
+  </div>
+</div>
+
+<section class="panneau">
+  @if (chargement()) {
+    <p class="vide">Chargement…</p>
+  } @else if (caisses().length === 0) {
+    <p class="vide">Aucune caisse ouverte pour l'instant.</p>
+  } @else {
+    <table class="table-simple">
+      <thead>
+        <tr>
+          <th>Restaurant</th><th>Caissier</th><th>Ouverture</th><th>Clôture</th><th>Fond</th>
+          <th>Espèces</th><th>Mobile Money</th><th>Théorique</th><th>Compté</th><th>Écart</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (c of caisses(); track c.id) {
+          <tr>
+            <td>{{ c.restaurant ?? '—' }}</td>
+            <td>{{ c.caissier }}</td>
+            <td>{{ c.ouverture | date: 'dd/MM HH:mm' }}</td>
+            <td>
+              @if (c.cloture) {
+                {{ c.cloture | date: 'dd/MM HH:mm' }}
+              } @else {
+                <span class="badge badge-attente">Ouverte</span>
+              }
+            </td>
+            <td class="montant">{{ c.fondDeCaisse | number: '1.0-0' }}</td>
+            <td class="montant">{{ c.encaisseEspeces | number: '1.0-0' }}</td>
+            <td class="montant">{{ c.encaisseMobileMoney | number: '1.0-0' }}</td>
+            <td class="montant">{{ c.montantTheorique | number: '1.0-0' }}</td>
+            <td class="montant">{{ c.montantCompte !== null ? (c.montantCompte | number: '1.0-0') : '—' }}</td>
+            <td class="montant" [class.ecart-negatif]="(c.ecart ?? 0) < 0" [class.ecart-positif]="(c.ecart ?? 0) > 0">
+              {{ c.ecart !== null ? (c.ecart | number: '1.0-0') + ' FCFA' : '—' }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>
