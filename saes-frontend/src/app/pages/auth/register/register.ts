@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../core/auth.service';
 import { motifErreur } from '../../../core/erreur.util';
+import { allerApresConnexion } from '../../../core/navigation';
 import { GoogleSignInButton } from '../../../shared/google-sign-in-button';
 import { RefusVisible } from '../../../shared/refus-visible';
 
@@ -41,9 +42,9 @@ export class Register {
         telephone: this.telephone || undefined,
       })
       .subscribe({
-        next: () => {
+        next: (reponse) => {
           this.enCours.set(false);
-          this.router.navigate(['/menus']);
+          allerApresConnexion(this.router, reponse.utilisateur);
         },
         error: (err) => {
           this.enCours.set(false);
@@ -56,9 +57,9 @@ export class Register {
     this.erreur.set(null);
     this.enCours.set(true);
     this.auth.authentifierAvecGoogle({ idToken }).subscribe({
-      next: () => {
+      next: (reponse) => {
         this.enCours.set(false);
-        this.router.navigate(['/menus']);
+        allerApresConnexion(this.router, reponse.utilisateur);
       },
       error: (err) => {
         this.enCours.set(false);

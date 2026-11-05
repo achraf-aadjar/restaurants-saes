@@ -4,13 +4,14 @@ import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../core/auth.service';
 import { motifErreur } from '../../../core/erreur.util';
-import { accueilDe } from '../../../core/navigation';
+import { allerApresConnexion } from '../../../core/navigation';
 import { GoogleSignInButton } from '../../../shared/google-sign-in-button';
 import { RefusVisible } from '../../../shared/refus-visible';
 
 /**
  * S'authentifier (cahier des charges §4.1), avec en plus la connexion
- * Google. Le personnel arrive sur sa premiere fonction, le client sur les menus.
+ * Google. Le personnel arrive sur sa premiere fonction, le client sur les menus,
+ * sauf s'il venait d'une page qui demandait un compte : il y retourne.
  */
 @Component({
   selector: 'app-login',
@@ -34,7 +35,7 @@ export class Login {
     this.auth.authentifier({ email: this.email, motDePasse: this.motDePasse }).subscribe({
       next: (reponse) => {
         this.enCours.set(false);
-        this.router.navigate([accueilDe(reponse.utilisateur)]);
+        allerApresConnexion(this.router, reponse.utilisateur);
       },
       error: (err) => {
         this.enCours.set(false);
@@ -49,7 +50,7 @@ export class Login {
     this.auth.authentifierAvecGoogle({ idToken }).subscribe({
       next: (reponse) => {
         this.enCours.set(false);
-        this.router.navigate([accueilDe(reponse.utilisateur)]);
+        allerApresConnexion(this.router, reponse.utilisateur);
       },
       error: (err) => {
         this.enCours.set(false);

@@ -1,3 +1,5 @@
+import { Router } from '@angular/router';
+
 import { LIBELLES_ROLES } from './libelles';
 import { ROLES_PERSONNEL, Role, Utilisateur } from './models';
 
@@ -86,6 +88,21 @@ export function sectionsDe(utilisateur: Utilisateur | null): Section[] {
 /** Page ouverte apres la connexion : la premiere fonction du personnel, les menus sinon. */
 export function accueilDe(utilisateur: Utilisateur | null): string {
   return sectionsDe(utilisateur)[0]?.accueil ?? '/menus';
+}
+
+/**
+ * Apres la connexion ou l'inscription : la page retenue par la garde
+ * (?retour=, par exemple le formulaire ouvert par « Reserver »), sinon
+ * l'accueil du role. Si la page retenue n'est pas pour son role, la garde le
+ * renvoie a son accueil.
+ */
+export function allerApresConnexion(router: Router, utilisateur: Utilisateur | null): void {
+  const retour = router.routerState.snapshot.root.queryParamMap.get('retour');
+  if (retour?.startsWith('/') && !retour.startsWith('/connexion')) {
+    router.navigateByUrl(retour);
+  } else {
+    router.navigate([accueilDe(utilisateur)]);
+  }
 }
 
 /** Personnel, rattache a un restaurant (cahier des charges §3) ; l'administrateur n'en est pas. */

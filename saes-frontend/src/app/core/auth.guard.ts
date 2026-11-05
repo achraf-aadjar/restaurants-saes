@@ -1,14 +1,23 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { CanActivateFn, Router, UrlTree } from '@angular/router';
 
 import { AuthService } from './auth.service';
 import { Role } from './models';
 import { accueilDe } from './navigation';
 
-export const authGuard: CanActivateFn = () => {
+/**
+ * Sans compte, on part vers la connexion en retenant la page demandee : la
+ * connexion y ramene ensuite (par exemple le formulaire de reservation ouvert
+ * depuis le bouton « Reserver » des menus).
+ */
+function versLaConnexion(router: Router, pageDemandee: string | undefined): UrlTree {
+  return router.createUrlTree(['/connexion'], { queryParams: { retour: pageDemandee } });
+}
+
+export const authGuard: CanActivateFn = (_route, state) => {
   const auth = inject(AuthService);
   const router = inject(Router);
-  return auth.estConnecte() ? true : router.createUrlTree(['/connexion']);
+  return auth.estConnecte() ? true : versLaConnexion(router, state.url);
 };
 
 /**
@@ -16,11 +25,11 @@ export const authGuard: CanActivateFn = () => {
  * connexion : le personnel sur sa premiere fonction, le client sur les menus.
  */
 export function roleGuard(role: Role): CanActivateFn {
-  return () => {
+  return (_route, state) => {
     const auth = inject(AuthService);
     const router = inject(Router);
     if (!auth.estConnecte()) {
-      return router.createUrlTree(['/connexion']);
+      return versLaConnexion(router, state.url);
     }
     return auth.aLeRole(role) ? true : router.createUrlTree([accueilDe(auth.utilisateur())]);
   };

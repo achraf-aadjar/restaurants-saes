@@ -1,6 +1,12 @@
 import { provideHttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree, provideRouter } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  Router,
+  RouterStateSnapshot,
+  UrlTree,
+  provideRouter,
+} from '@angular/router';
 
 import { authGuard, roleGuard } from './auth.guard';
 import { Role, Utilisateur } from './models';
@@ -21,9 +27,9 @@ function connecter(roles: Role[]): void {
   localStorage.setItem('saes_user', JSON.stringify(utilisateur));
 }
 
-function executer(garde: typeof authGuard): boolean | UrlTree {
+function executer(garde: typeof authGuard, pageDemandee?: string): boolean | UrlTree {
   return TestBed.runInInjectionContext(() =>
-    garde({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot),
+    garde({} as ActivatedRouteSnapshot, { url: pageDemandee } as RouterStateSnapshot),
   ) as boolean | UrlTree;
 }
 
@@ -40,6 +46,12 @@ describe('Gardes de navigation (droits d acces, qualite attendue 1)', () => {
   it('une page reservee renvoie vers la connexion sans compte', () => {
     expect(cheminDe(executer(authGuard))).toBe('/connexion');
     expect(cheminDe(executer(roleGuard('GERANT')))).toBe('/connexion');
+  });
+
+  it('la connexion retient la page demandee, pour y revenir ensuite', () => {
+    expect(cheminDe(executer(roleGuard('CLIENT'), '/mes-reservations?restaurant=1'))).toBe(
+      '/connexion?retour=%2Fmes-reservations%3Frestaurant%3D1',
+    );
   });
 
   it("un utilisateur connecte accede aux pages qui n'exigent pas de role", () => {
