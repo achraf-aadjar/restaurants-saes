@@ -1,6 +1,6 @@
 <header class="entete">
   <div class="entete-ligne">
-    <a class="marque" routerLink="/menus">
+    <a class="marque" routerLink="/">
       <img src="assets/logo/logo_couleurs.svg" alt="Restaurants du SAES" class="logo logo-complet" />
       <img src="assets/logo/icon.svg" alt="Restaurants du SAES" class="logo logo-icone" />
     </a>
@@ -36,9 +36,7 @@
       }
       @if (estAdministrateur()) {
         <span class="separateur">·</span>
-        <a routerLink="/admin/restaurants" routerLinkActive="actif">Restaurants</a>
-        <a routerLink="/admin/utilisateurs" routerLinkActive="actif">Comptes</a>
-        <a routerLink="/admin/journal" routerLinkActive="actif">Historique</a>
+        <a routerLink="/admin" routerLinkActive="actif">Administration</a>
       }
     </nav>
 
@@ -93,9 +91,7 @@
         <a routerLink="/gerant/statistiques-ventes" (click)="basculerMenuMobile()">Statistiques</a>
       }
       @if (estAdministrateur()) {
-        <a routerLink="/admin/restaurants" (click)="basculerMenuMobile()">Restaurants</a>
-        <a routerLink="/admin/utilisateurs" (click)="basculerMenuMobile()">Comptes</a>
-        <a routerLink="/admin/journal" (click)="basculerMenuMobile()">Historique</a>
+        <a routerLink="/admin" (click)="basculerMenuMobile()">Administration</a>
       }
       @if (auth.estConnecte()) {
         <a routerLink="/mon-compte" (click)="basculerMenuMobile()">Mon compte</a>

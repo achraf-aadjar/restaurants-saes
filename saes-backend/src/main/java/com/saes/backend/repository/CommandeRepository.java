@@ -35,4 +35,8 @@ public interface CommandeRepository extends JpaRepository<Commande, Long> {
             @Param("statutsOccupation") List<StatutCommande> statutsOccupation);
 
     boolean existsByTableId(Long tableId);
+
+    List<Commande> findByDateHeureBetweenOrderByDateHeureDesc(Instant debut, Instant fin);
+
+    List<Commande> findByStatutInOrderByDateHeureAsc(List<StatutCommande> statuts);
 }

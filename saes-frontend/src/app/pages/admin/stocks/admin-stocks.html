@@ -1,0 +1,63 @@
+<header class="admin-page-entete">
+  <div>
+    <h1>Stocks</h1>
+    <p class="admin-page-soustitre">Ingrédients de tous les restaurants ; ceux en alerte apparaissent en premier.</p>
+  </div>
+</header>
+
+@if (erreur(); as e) {
+  <p class="message-refus" role="alert">{{ e }}</p>
+}
+
+<div class="tuiles">
+  <div class="tuile">
+    <span class="tuile-libelle">Ingrédients suivis</span>
+    <span class="tuile-valeur">{{ stocks().length }}</span>
+  </div>
+  <div class="tuile" [class.tuile-alerte]="enAlerte() > 0">
+    <span class="tuile-libelle">En alerte</span>
+    <span class="tuile-valeur">{{ enAlerte() }}</span>
+    <span class="tuile-note">stock au seuil ou en dessous</span>
+  </div>
+  <div class="tuile">
+    <span class="tuile-libelle">À réapprovisionner</span>
+    <span class="tuile-valeur">{{ aCommander() }}</span>
+    <span class="tuile-note">sous leur niveau cible</span>
+  </div>
+</div>
+
+<section class="panneau">
+  <label class="case-role" style="margin-bottom: 1rem">
+    <input type="checkbox" [ngModel]="alertesSeulement()" (ngModelChange)="alertesSeulement.set($event)" />
+    Afficher seulement les alertes
+  </label>
+
+  @if (chargement()) {
+    <p class="vide">Chargement…</p>
+  } @else if (affiches().length === 0) {
+    <p class="vide">Aucun ingrédient à afficher.</p>
+  } @else {
+    <table class="table-simple">
+      <thead>
+        <tr><th>Restaurant</th><th>Ingrédient</th><th>Stock</th><th>Seuil</th><th>Cible</th><th>À réapprovisionner</th><th>État</th></tr>
+      </thead>
+      <tbody>
+        @for (s of affiches(); track s.ingredientId) {
+          <tr>
+            <td>{{ s.restaurant }}</td>
+            <td>{{ s.ingredient }}</td>
+            <td class="montant">{{ s.stock | number: '1.0-3' }} {{ s.unite | lowercase }}</td>
+            <td class="montant">{{ s.seuilAlerte | number: '1.0-3' }}</td>
+            <td class="montant">{{ s.niveauCible | number: '1.0-3' }}</td>
+            <td class="montant">{{ s.aReapprovisionner > 0 ? (s.aReapprovisionner | number: '1.0-3') : '—' }}</td>
+            <td>
+              <span class="badge" [class.badge-inactif]="s.alerte" [class.badge-actif]="!s.alerte">
+                {{ s.alerte ? 'Alerte' : 'Normal' }}
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

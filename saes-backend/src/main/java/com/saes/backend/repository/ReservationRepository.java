@@ -19,4 +19,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             Long clientId, StatutReservation statut, LocalDateTime date);
 
     boolean existsByTablesTableId(Long tableId);
+
+    List<Reservation> findByDateHeureBetweenOrderByDateHeureAsc(LocalDateTime debut, LocalDateTime fin);
 }

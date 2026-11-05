@@ -1,0 +1,58 @@
+<div class="admin">
+  <aside class="admin-nav" aria-label="Navigation de l'administration">
+    <a class="admin-marque" routerLink="/admin">
+      <img src="assets/logo/icon.svg" alt="" />
+      <span>
+        <strong>Restaurants du SAES</strong>
+        <small>Administration</small>
+      </span>
+    </a>
+
+    <nav class="admin-nav-liens">
+      @for (section of sections; track section.titre) {
+        <p class="admin-nav-section">{{ section.titre }}</p>
+        @for (lien of section.liens; track lien.chemin) {
+          <a
+            class="admin-nav-lien"
+            [routerLink]="lien.chemin"
+            routerLinkActive="actif"
+            [routerLinkActiveOptions]="{ exact: lien.exact ?? false }"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="icones[lien.icone]" /></svg>
+            {{ lien.libelle }}
+          </a>
+        }
+      }
+    </nav>
+
+    <a class="admin-nav-lien admin-nav-bas" [routerLink]="historique.chemin" routerLinkActive="actif">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="icones[historique.icone]" /></svg>
+      {{ historique.libelle }}
+    </a>
+  </aside>
+
+  <div class="admin-principal">
+    <header class="admin-barre">
+      <div class="admin-fil">
+        <span>Administration</span>
+        <span aria-hidden="true">/</span>
+        <strong>{{ titrePage() }}</strong>
+      </div>
+      <div class="admin-compte">
+        <a class="admin-voir-site" routerLink="/menus">Voir le site</a>
+        <span class="admin-avatar" aria-hidden="true">{{ initiales() }}</span>
+        <span class="admin-nom">{{ auth.utilisateur()?.prenom }} {{ auth.utilisateur()?.nom }}</span>
+        <button type="button" class="admin-deconnexion" (click)="seDeconnecter()">Se déconnecter</button>
+      </div>
+    </header>
+
+    <section class="admin-contenu">
+      <router-outlet />
+    </section>
+
+    <footer class="admin-pied">
+      <span>© {{ annee }} Restaurants du SAES</span>
+      <a routerLink="/confidentialite">Confidentialité</a>
+    </footer>
+  </div>
+</div>
