@@ -45,8 +45,33 @@
 
 .grille-plats {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
   gap: 1rem;
+}
+
+/* Photo a gauche, texte a droite, comme sur l'ecran de reference 1b. */
+.plat {
+  display: grid;
+  grid-template-columns: 45% 1fr;
+  gap: 0.9rem;
+  padding: 0.6rem;
+}
+
+.contenu-plat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.3rem 0.2rem 0.2rem 0;
+
+  .btn,
+  .selecteur-quantite {
+    margin-top: auto;
+    align-self: flex-end;
+  }
+
+  .prix {
+    margin-bottom: 0.6rem;
+  }
 }
 
 .plat h3,
@@ -64,4 +89,15 @@
   font-weight: 700;
   color: var(--saes-rouge);
   margin: 0;
+}
+
+.liste-panier li {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.vignette {
+  border-radius: 6px;
 }

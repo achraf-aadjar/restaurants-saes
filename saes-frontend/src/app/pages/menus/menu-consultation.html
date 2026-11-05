@@ -61,29 +61,44 @@
               <div class="grille-plats">
                 @for (plat of groupe.plats; track plat.id) {
                   <article class="carte plat">
-                    <h4>{{ plat.nom }}</h4>
-                    @if (plat.description) {
-                      <p class="description">{{ plat.description }}</p>
-                    }
-                    <p class="prix">{{ plat.prix | montant }}</p>
-
-                    @if (auth.aLeRole('CLIENT')) {
-                      @if (quantiteDans(plat) === 0) {
-                        <button type="button" class="btn btn-secondaire btn-petit" (click)="ajouter(plat)">
-                          Ajouter
-                        </button>
-                      } @else {
-                        <div class="selecteur-quantite">
-                          <button type="button" class="btn btn-secondaire btn-petit" (click)="retirer(plat)">
-                            −
-                          </button>
-                          <span>{{ quantiteDans(plat) }}</span>
-                          <button type="button" class="btn btn-secondaire btn-petit" (click)="ajouter(plat)">
-                            +
-                          </button>
-                        </div>
+                    <app-photo-plat [nom]="plat.nom" [categorie]="plat.categorie" />
+                    <div class="contenu-plat">
+                      <h4>{{ plat.nom }}</h4>
+                      @if (plat.description) {
+                        <p class="description">{{ plat.description }}</p>
                       }
-                    }
+                      <p class="prix">{{ plat.prix | montant }}</p>
+
+                      @if (auth.aLeRole('CLIENT')) {
+                        @if (quantiteDans(plat) === 0) {
+                          <button
+                            type="button"
+                            class="btn btn-secondaire btn-petit"
+                            (click)="ajouter(plat)"
+                          >
+                            Ajouter
+                          </button>
+                        } @else {
+                          <div class="selecteur-quantite">
+                            <button
+                              type="button"
+                              class="btn btn-secondaire btn-petit"
+                              (click)="retirer(plat)"
+                            >
+                              −
+                            </button>
+                            <span>{{ quantiteDans(plat) }}</span>
+                            <button
+                              type="button"
+                              class="btn btn-secondaire btn-petit"
+                              (click)="ajouter(plat)"
+                            >
+                              +
+                            </button>
+                          </div>
+                        }
+                      }
+                    </div>
                   </article>
                 }
               </div>
@@ -103,13 +118,21 @@
 
         @if (commandeConfirmee()) {
           <p class="message-ok">Commande enregistrée, en attente !</p>
-          <button type="button" class="btn btn-secondaire" (click)="voirMesCommandes()">Voir mes commandes</button>
+          <button type="button" class="btn btn-secondaire" (click)="voirMesCommandes()">
+            Voir mes commandes
+          </button>
         } @else if (lignesPanier().length === 0) {
           <p class="panier-vide">Ajoutez des plats pour commander à emporter.</p>
         } @else {
           <ul class="liste-panier">
             @for (ligne of lignesPanier(); track ligne.plat.id) {
               <li>
+                <app-photo-plat
+                  class="vignette"
+                  [nom]="ligne.plat.nom"
+                  [categorie]="ligne.plat.categorie"
+                  taille="48px"
+                />
                 <span>{{ ligne.quantite }} × {{ ligne.plat.nom }}</span>
                 <span>{{ ligne.plat.prix * ligne.quantite | montant }}</span>
               </li>

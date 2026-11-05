@@ -8,6 +8,7 @@ import { motifErreur } from '../../core/erreur.util';
 import { CategoriePlat, MenuDto, PlatResume, RestaurantSummary } from '../../core/models';
 import { MenuService } from '../../core/menu.service';
 import { MontantPipe } from '../../shared/montant.pipe';
+import { PhotoPlat } from '../../shared/photo-plat';
 import { RefusVisible } from '../../shared/refus-visible';
 
 const ORDRE_CATEGORIES: CategoriePlat[] = ['ENTREE', 'PLAT_PRINCIPAL', 'DESSERT', 'BOISSON'];
@@ -51,7 +52,7 @@ function grouperParCategorie(plats: PlatResume[]): GroupeCategorie[] {
  */
 @Component({
   selector: 'app-menu-consultation',
-  imports: [MontantPipe, RefusVisible],
+  imports: [MontantPipe, PhotoPlat, RefusVisible],
   templateUrl: './menu-consultation.html',
   styleUrl: './menu-consultation.scss',
 })
@@ -169,7 +170,7 @@ export class MenuConsultation {
         },
         error: (err) => {
           this.envoiEnCours.set(false);
-          this.erreur.set(motifErreur(err, 'La commande n\'a pas pu être enregistrée'));
+          this.erreur.set(motifErreur(err, "La commande n'a pas pu être enregistrée"));
         },
       });
   }
