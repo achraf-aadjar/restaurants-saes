@@ -23,7 +23,9 @@
       @if (auth.estConnecte()) {
         <button type="button" class="bouton-compte" (click)="basculerMenu()">
           {{ nom() }}
-          <span class="chevron">▾</span>
+          <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
         </button>
         @if (menuOuvert()) {
           <div class="menu-deroulant">
@@ -32,8 +34,20 @@
           </div>
         }
       } @else {
-        <a routerLink="/connexion" class="btn btn-secondaire btn-petit">Connexion</a>
-        <a routerLink="/inscription" class="btn btn-primaire btn-petit">S'inscrire</a>
+        <a
+          routerLink="/connexion"
+          [queryParams]="{ retour: retour() }"
+          class="btn btn-secondaire btn-petit"
+        >
+          Connexion
+        </a>
+        <a
+          routerLink="/inscription"
+          [queryParams]="{ retour: retour() }"
+          class="btn btn-primaire btn-petit"
+        >
+          S'inscrire
+        </a>
       }
     </div>
 
@@ -68,8 +82,20 @@
         </a>
         <button type="button" (click)="seDeconnecter()">Se déconnecter</button>
       } @else {
-        <a routerLink="/connexion" (click)="basculerMenuMobile()">Connexion</a>
-        <a routerLink="/inscription" (click)="basculerMenuMobile()">S'inscrire</a>
+        <a
+          routerLink="/connexion"
+          [queryParams]="{ retour: retour() }"
+          (click)="basculerMenuMobile()"
+        >
+          Connexion
+        </a>
+        <a
+          routerLink="/inscription"
+          [queryParams]="{ retour: retour() }"
+          (click)="basculerMenuMobile()"
+        >
+          S'inscrire
+        </a>
       }
     </nav>
   }

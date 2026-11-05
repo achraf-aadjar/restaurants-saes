@@ -1,5 +1,5 @@
 import { Component, computed, inject, LOCALE_ID, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../core/auth.service';
 import { CommandeClientService } from '../../core/commande-client.service';
@@ -7,6 +7,7 @@ import { heureEnLettres, periodeEnLettres } from '../../core/date.util';
 import { motifErreur } from '../../core/erreur.util';
 import { CategoriePlat, MenuDto, PlatResume, RestaurantSummary } from '../../core/models';
 import { MenuService } from '../../core/menu.service';
+import { photoDuRestaurant } from '../../core/photos-restaurants';
 import { MontantPipe } from '../../shared/montant.pipe';
 import { PhotoPlat } from '../../shared/photo-plat';
 import { RefusVisible } from '../../shared/refus-visible';
@@ -52,7 +53,7 @@ function grouperParCategorie(plats: PlatResume[]): GroupeCategorie[] {
  */
 @Component({
   selector: 'app-menu-consultation',
-  imports: [MontantPipe, PhotoPlat, RefusVisible],
+  imports: [MontantPipe, PhotoPlat, RefusVisible, RouterLink],
   templateUrl: './menu-consultation.html',
   styleUrl: './menu-consultation.scss',
 })
@@ -81,10 +82,33 @@ export class MenuConsultation {
     })),
   );
 
-  /** « 11 h 30 – 15 h · 19 h – 21 h 30 », comme sur l'ecran de reference 1 ; vide si ferme. */
+  /**
+   * L'ecran de reference 1 est celui du client (et du visiteur) : bandeau
+   * pleine largeur, decor et bouton « Reserver ». Le personnel, qui a deja son
+   * bandeau et sa barre laterale, voit le bandeau dans un cadre.
+   */
+  protected readonly vueClient = computed(
+    () => !this.auth.estConnecte() || this.auth.aLeRole('CLIENT'),
+  );
+
+  protected readonly photoRestaurant = computed(() => {
+    const restaurant = this.restaurantSelectionne();
+    return restaurant ? photoDuRestaurant(restaurant.nom) : null;
+  });
+
+  /**
+   * « 11 h 30 – 15 h · 19 h – 21 h 30 », comme sur l'ecran de reference 1 ; vide
+   * si ferme. Espaces insecables dans chaque plage : une ligne ne se coupe
+   * qu'entre deux plages, jamais dans « 8 h – 21 h ».
+   */
   protected readonly horairesDuJour = computed(() =>
     (this.restaurantSelectionne()?.horairesDuJour ?? [])
-      .map((h) => `${heureEnLettres(h.heureOuverture)} – ${heureEnLettres(h.heureFermeture)}`)
+      .map((h) =>
+        `${heureEnLettres(h.heureOuverture)} – ${heureEnLettres(h.heureFermeture)}`.replace(
+          / /g,
+          ' ',
+        ),
+      )
       .join(' · '),
   );
 

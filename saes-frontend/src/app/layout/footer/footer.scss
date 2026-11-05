@@ -6,9 +6,9 @@
 
 // Meme largeur que le contenu de l'en-tete, pour que tout soit aligne.
 .pied-conteneur {
-  max-width: 1100px;
+  max-width: var(--saes-largeur-page);
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 var(--saes-gouttiere);
 }
 
 // Soulignes, comme sur les ecrans de reference.

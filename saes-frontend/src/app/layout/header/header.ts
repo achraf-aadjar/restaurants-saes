@@ -1,6 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { filter, map } from 'rxjs';
 
 import { AuthService } from '../../core/auth.service';
 import { accueilDe, estPersonnel, nomAffiche, sectionsDe } from '../../core/navigation';
@@ -23,6 +25,17 @@ export class Header {
   protected readonly menuOuvert = signal(false);
   protected readonly menuMobileOuvert = signal(false);
   protected readonly aujourdHui = new Date();
+
+  /**
+   * Page demandee avant la connexion (?retour=, mis par la garde) : les liens
+   * Connexion et S'inscrire la gardent, pour que le visiteur y revienne.
+   */
+  protected readonly retour = toSignal(
+    this.router.events.pipe(
+      filter((e) => e instanceof NavigationEnd),
+      map(() => this.router.routerState.snapshot.root.queryParamMap.get('retour') ?? undefined),
+    ),
+  );
 
   protected readonly sections = computed(() => sectionsDe(this.auth.utilisateur()));
   protected readonly accueil = computed(() => accueilDe(this.auth.utilisateur()));

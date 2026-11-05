@@ -18,6 +18,12 @@
   --saes-ombre: 0 2px 8px rgba(8, 49, 45, 0.08);
 
   --saes-font: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Mise en page des ecrans de reference (1536 px de large) : le contenu prend
+     toute la largeur avec 36 px de marge ; la marge suit la fenetre (16 px sur
+     telephone). Au-dela de 1536 px, le contenu reste a sa largeur, centre. */
+  --saes-gouttiere: clamp(1rem, 2.35vw, 2.25rem);
+  --saes-largeur-page: 1536px;
 }
 
 * {
@@ -46,6 +52,11 @@ h3 {
 
 a {
   color: var(--saes-vert);
+}
+
+/* Sous l'en-tete, le bandeau jaune des menus suit sans trait (ecran 1). */
+.page:has(.bandeau-restaurant.pleine-largeur) .entete {
+  border-bottom-color: transparent;
 }
 
 button {
@@ -434,8 +445,9 @@ button {
     align-items: flex-start;
   }
 
+  /* 480 px sur l'ecran de reference 1, a 1536 px. */
   .colonne-panier {
-    width: 300px;
+    width: clamp(300px, 31.25vw, 480px);
     flex-shrink: 0;
     position: sticky;
     top: 1rem;
