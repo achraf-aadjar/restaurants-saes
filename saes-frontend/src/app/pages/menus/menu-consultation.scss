@@ -285,42 +285,122 @@
   }
 }
 
+/*
+ * Menu, mesure sur l'ecran de reference 1 (1536 px) : titre de 46 px tres
+ * gras, dates foncees de 19 px, titres de categorie de 25 px avec icone rouge
+ * et trait fin, cartes photo a gauche (48 %), nom de 18 px, prix rouge de
+ * 20 px, « Ajouter » rouge plein. Les tailles suivent la fenetre jusqu'a ces
+ * valeurs.
+ */
 .menu {
   margin-bottom: 2.5rem;
 
   h2 {
     margin-bottom: 0.2rem;
+    font-size: clamp(1.75rem, 3vw, 2.875rem);
+    font-weight: 800;
+    line-height: 1.15;
   }
 }
 
 .dates-menu {
-  margin: 0 0 1.25rem;
-  color: var(--saes-vert-attenue);
+  margin: 0 0 1.5rem;
+  font-size: clamp(1rem, 1.25vw, 1.2rem);
+  color: var(--saes-vert);
+}
+
+/*
+ * Les categories se partagent les colonnes, comme sur l'ecran : chacune prend
+ * autant de colonnes que de plats (Desserts et Boissons sur la meme rangee).
+ * Le nombre de colonnes suit la largeur de la colonne du menu ; les cartes
+ * suivent la grille commune (subgrid), donc toutes ont la meme largeur.
+ */
+.colonne-menu {
+  container-type: inline-size;
+}
+
+.groupes {
+  --colonnes: 1;
+  display: grid;
+  grid-template-columns: repeat(var(--colonnes), minmax(0, 1fr));
+  column-gap: 1rem;
+  row-gap: 1.75rem;
+}
+
+@container (min-width: 560px) {
+  .groupes {
+    --colonnes: 2;
+  }
+}
+
+@container (min-width: 900px) {
+  .groupes {
+    --colonnes: 3;
+  }
+}
+
+@container (min-width: 1300px) {
+  .groupes {
+    --colonnes: 4;
+  }
 }
 
 .groupe-categorie {
-  margin-bottom: 1.75rem;
+  grid-column: span min(var(--n), var(--colonnes));
+  display: grid;
+  grid-template-columns: subgrid;
+  /* Titre puis cartes, qui prennent toute la hauteur de la rangee : les
+     cartes d'une meme rangee ont la meme hauteur, comme sur l'ecran. */
+  grid-template-rows: auto 1fr;
+
+  h3 {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.25rem, 1.63vw, 1.55rem);
+    font-weight: 800;
+
+    /* Trait fin jusqu'au bout du groupe. */
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      margin-left: 0.4em;
+      background: rgb(8 49 45 / 10%);
+    }
+  }
+}
+
+.icone-titre {
+  flex: none;
+  width: 1.15em;
+  height: 1.15em;
+  color: var(--saes-rouge);
+  --epaisseur: 2.2;
 }
 
 .grille-plats {
+  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-  gap: 1rem;
+  grid-template-columns: subgrid;
+  row-gap: 1rem;
 }
 
-/* Photo a gauche, texte a droite, comme sur l'ecran de reference 1b. */
+/* Photo a gauche, texte a droite, comme sur les ecrans de reference 1 et 1b. */
 .plat {
   display: grid;
-  grid-template-columns: 45% 1fr;
+  grid-template-columns: 48% 1fr;
   gap: 0.9rem;
-  padding: 0.6rem;
+  padding: 0.5rem;
 }
 
 .contenu-plat {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0.3rem 0.2rem 0.2rem 0;
+  padding: 0.5rem 0.25rem 0.25rem 0;
 
   .btn,
   .selecteur-quantite {
@@ -329,34 +409,302 @@
   }
 
   .prix {
+    margin-top: auto;
     margin-bottom: 0.6rem;
+  }
+
+  .prix + .btn,
+  .prix + .selecteur-quantite {
+    margin-top: 0;
   }
 }
 
 .plat h3,
 .plat h4 {
-  margin: 0 0 0.3rem;
+  margin: 0 0 0.45rem;
+  font-size: clamp(1rem, 1.17vw, 1.125rem);
+  font-weight: 700;
 }
 
 .plat .description {
-  color: var(--saes-vert-attenue);
-  font-size: 0.85rem;
+  color: var(--saes-vert-clair);
+  font-size: 0.875rem;
+  line-height: 1.45;
   margin: 0 0 0.6rem;
 }
 
 .plat .prix {
-  font-weight: 700;
+  font-size: clamp(1.05rem, 1.3vw, 1.25rem);
+  font-weight: 800;
   color: var(--saes-rouge);
-  margin: 0;
 }
 
-.liste-panier li {
-  display: grid;
-  grid-template-columns: 48px 1fr auto;
+/* « Ajouter ⊕ » rouge plein, le plus dans un rond blanc. */
+.btn-ajouter {
+  gap: 0.5em;
+  padding: 0.5em 0.85em 0.5em 1em;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  svg {
+    width: 1.2em;
+    height: 1.2em;
+
+    circle {
+      fill: currentColor;
+    }
+
+    path {
+      fill: none;
+      stroke: var(--saes-rouge);
+      stroke-width: 2.6;
+      stroke-linecap: round;
+    }
+  }
+}
+
+/*
+ * Commande, mesuree sur l'ecran de reference 1 (1536 px) : icone de chariot
+ * rouge, titre de 28 px tres gras, pastille « N articles » sur fond rose ;
+ * par plat : vignette de 96 px, nom, prix unitaire rouge, quantite − + dans
+ * une pilule, total de la ligne, corbeille ; total dans un cadre rose ; gros
+ * bouton « Passer la commande ».
+ */
+.panier {
+  padding: clamp(1.1rem, 1.5vw, 1.5rem);
+}
+
+.panier-entete {
+  display: flex;
   align-items: center;
-  gap: 0.6rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid rgb(8 49 45 / 10%);
+
+  /* Le titre reste sur une ligne ; si la carte est etroite, c'est la pastille
+     qui passe dessous. */
+  h2 {
+    flex: 1;
+    margin: 0;
+    white-space: nowrap;
+    font-size: clamp(1.35rem, 1.82vw, 1.75rem);
+    font-weight: 800;
+  }
+}
+
+.icone-panier {
+  flex: none;
+  width: clamp(1.75rem, 2.4vw, 2.3rem);
+  height: auto;
+  fill: none;
+  stroke: var(--saes-rouge);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pastille-articles {
+  flex: none;
+  padding: 0.3em 0.7em;
+  border-radius: 8px;
+  background: var(--saes-rose);
+  color: var(--saes-rouge);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.panier-vide {
+  margin: 1rem 0 0;
+}
+
+.lignes-commande {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: grid;
+    grid-template-columns: clamp(64px, 6.25vw, 96px) minmax(0, 1fr) auto;
+    /* Comme sur l'ecran : le total de la ligne va jusqu'au bord droit,
+       sous la corbeille. */
+    grid-template-areas:
+      'vignette detail corbeille'
+      'vignette bas bas';
+    gap: 0 1.1rem;
+    align-items: start;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid rgb(8 49 45 / 10%);
+  }
 }
 
 .vignette {
+  grid-area: vignette;
   border-radius: 6px;
+}
+
+.ligne-detail {
+  grid-area: detail;
+}
+
+.ligne-detail p {
+  margin: 0;
+}
+
+.ligne-nom {
+  font-size: clamp(1rem, 1.1vw, 1.06rem);
+  font-weight: 700;
+}
+
+.ligne-detail .ligne-prix {
+  margin-top: 0.2rem;
+  color: var(--saes-rouge);
+  font-weight: 700;
+}
+
+.ligne-bas {
+  grid-area: bas;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+/* − 2 + dans une pilule, comme sur l'ecran. */
+.quantite {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgb(8 49 45 / 14%);
+  border-radius: 999px;
+  background: #fff;
+
+  button {
+    width: 2.2em;
+    height: 2.2em;
+    border: none;
+    background: none;
+    color: var(--saes-vert);
+    font-size: 1.05rem;
+    cursor: pointer;
+    border-radius: 999px;
+
+    &:hover {
+      background: var(--saes-creme);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--saes-vert);
+      outline-offset: -2px;
+    }
+  }
+
+  span {
+    min-width: 1.6em;
+    text-align: center;
+    font-weight: 600;
+  }
+}
+
+.ligne-total {
+  margin-left: auto;
+  font-weight: 700;
+}
+
+.corbeille {
+  grid-area: corbeille;
+  padding: 0.2rem;
+  border: none;
+  background: none;
+  color: #5a5f61;
+  cursor: pointer;
+  border-radius: 6px;
+  line-height: 0;
+
+  svg {
+    width: 1.3rem;
+    height: 1.3rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:hover {
+    color: var(--saes-rouge);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--saes-vert);
+  }
+}
+
+.total-commande {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1.25rem 0 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  background: var(--saes-rose);
+
+  span {
+    font-size: clamp(1.25rem, 1.7vw, 1.6rem);
+    font-weight: 800;
+  }
+
+  strong {
+    color: var(--saes-rouge);
+    font-size: clamp(1.4rem, 2vw, 1.9rem);
+    font-weight: 800;
+  }
+}
+
+.info-retrait {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0 0 1.25rem;
+  padding: 0 0.25rem;
+  color: var(--saes-vert);
+  font-size: 0.95rem;
+  line-height: 1.5;
+
+  svg {
+    flex: none;
+    width: 1.35rem;
+    height: 1.35rem;
+    fill: none;
+    stroke: var(--saes-vert-attenue);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+  }
+}
+
+.btn-commander {
+  width: 100%;
+  gap: 0.75em;
+  padding: 0.8em 1em;
+  border-radius: 14px;
+  font-size: clamp(1.1rem, 1.56vw, 1.5rem);
+  font-weight: 800;
+
+  svg {
+    width: 1.3em;
+    height: 1.3em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* Le chariot est plus grand que la fleche, comme sur l'ecran. */
+  svg:first-child {
+    width: 1.6em;
+    height: 1.6em;
+  }
 }

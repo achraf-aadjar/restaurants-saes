@@ -8,6 +8,7 @@ import { motifErreur } from '../../core/erreur.util';
 import { CategoriePlat, MenuDto, PlatResume, RestaurantSummary } from '../../core/models';
 import { MenuService } from '../../core/menu.service';
 import { photoDuRestaurant } from '../../core/photos-restaurants';
+import { IconeCategorie } from '../../shared/icone-categorie';
 import { MontantPipe } from '../../shared/montant.pipe';
 import { PhotoPlat } from '../../shared/photo-plat';
 import { RefusVisible } from '../../shared/refus-visible';
@@ -53,7 +54,7 @@ function grouperParCategorie(plats: PlatResume[]): GroupeCategorie[] {
  */
 @Component({
   selector: 'app-menu-consultation',
-  imports: [MontantPipe, PhotoPlat, RefusVisible, RouterLink],
+  imports: [IconeCategorie, MontantPipe, PhotoPlat, RefusVisible, RouterLink],
   templateUrl: './menu-consultation.html',
   styleUrl: './menu-consultation.scss',
 })
@@ -116,6 +117,10 @@ export class MenuConsultation {
   protected readonly totalPanier = computed(() =>
     this.lignesPanier().reduce((total, l) => total + l.plat.prix * l.quantite, 0),
   );
+  /** « 4 articles » : la somme des quantites, comme sur l'ecran de reference 1. */
+  protected readonly nombreArticles = computed(() =>
+    this.lignesPanier().reduce((total, l) => total + l.quantite, 0),
+  );
 
   constructor() {
     this.chargement.set(true);
@@ -152,10 +157,6 @@ export class MenuConsultation {
     });
   }
 
-  protected quantiteDans(plat: PlatResume): number {
-    return this.panier().get(plat.id)?.quantite ?? 0;
-  }
-
   protected ajouter(plat: PlatResume): void {
     const copie = new Map(this.panier());
     const existant = copie.get(plat.id);
@@ -172,6 +173,13 @@ export class MenuConsultation {
     } else {
       copie.set(plat.id, { plat, quantite: existant.quantite - 1 });
     }
+    this.panier.set(copie);
+  }
+
+  /** La corbeille d'une ligne : le plat sort de la commande. */
+  protected enlever(plat: PlatResume): void {
+    const copie = new Map(this.panier());
+    copie.delete(plat.id);
     this.panier.set(copie);
   }
 
