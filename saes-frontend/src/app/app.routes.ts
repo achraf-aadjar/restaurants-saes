@@ -4,13 +4,15 @@ import { Routes } from '@angular/router';
 import { AuthService } from './core/auth.service';
 
 import { authGuard, roleGuard } from './core/auth.guard';
+import { accueilDe } from './core/navigation';
 
 export const routes: Routes = [
-  // L'administrateur arrive sur son espace ; tous les autres sur les menus.
+  // Chacun arrive sur sa page d'accueil : l'espace d'administration, la
+  // premiere fonction du personnel, les menus pour un client ou un visiteur.
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: () => (inject(AuthService).aLeRole('ADMINISTRATEUR') ? 'admin' : 'menus'),
+    redirectTo: () => accueilDe(inject(AuthService).utilisateur()),
   },
   {
     path: 'menus',
