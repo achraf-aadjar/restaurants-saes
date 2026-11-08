@@ -32,6 +32,7 @@
   h1 {
     margin: 0 0 0.35rem;
     font-weight: 800;
+    line-height: 1.2;
     text-wrap: balance;
   }
 
@@ -95,16 +96,21 @@
   align-items: center;
   gap: 0.45rem;
   font-size: var(--texte);
+  font-weight: 500;
   /* Une adresse trop longue passe sur deux lignes equilibrees. */
   text-wrap: balance;
 
+  & + & {
+    margin-top: 0.5rem;
+  }
+
   svg {
     flex: none;
-    width: 1.15em;
-    height: 1.15em;
+    width: 1.3em;
+    height: 1.3em;
     fill: none;
     stroke: currentColor;
-    stroke-width: 1.8;
+    stroke-width: 2.1;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
@@ -127,9 +133,9 @@
   align-items: flex-start;
   gap: 0.5rem;
 
-  /* Sous le texte des horaires, pas sous l'horloge : icone (1,15 em) + ecart. */
+  /* Sous le texte des horaires, pas sous l'horloge : icone (1,3 em) + ecart. */
   .badge {
-    margin-left: calc(1.15 * var(--texte) + 0.45rem);
+    margin-left: calc(1.3 * var(--texte) + 0.45rem);
   }
 }
 
@@ -204,10 +210,16 @@
     }
   }
 
+  /* Le plat est coupe par le bord de la fenetre. L'image est agrandie de moitie
+     et cadree en haut a gauche (feuilles, piment, bord du plat) : le citron et
+     les grains du bas sortent du bandeau, ce qui aere la composition. */
   .decor-bandeau {
     top: 0;
     bottom: auto;
-    object-position: right top;
+    width: calc(0.78 * var(--decor));
+    height: calc(1.5 * var(--decor));
+    object-fit: cover;
+    object-position: left top;
   }
 
   .bandeau-interieur {
@@ -221,10 +233,11 @@
     row-gap: 0.6rem;
   }
 
-  /* Place du decor : le bouton s'arrete au quart gauche du decor (ses
-     feuilles). (100vw - 100 %) / 2 est ce qui separe le bandeau du bord. */
+  /* Place du decor : le bouton s'arrete avant le decor, avec un vide d'environ
+     12 % de sa taille (les feuilles sont l'element le plus a gauche a hauteur
+     du bouton). (100vw - 100 %) / 2 est ce qui separe le bandeau du bord. */
   .pleine-largeur .bandeau-interieur {
-    padding-right: max(0px, calc(0.75 * var(--decor) - (100vw - 100%) / 2));
+    padding-right: max(0px, calc(0.9 * var(--decor) - (100vw - 100%) / 2));
   }
 
   .photo-restaurant {
@@ -270,6 +283,11 @@
     align-self: center;
   }
 
+  /* Sur l'ecran, un espace de plus separe les horaires du bouton. */
+  .btn-reserver {
+    margin-left: var(--ecart);
+  }
+
   .horaires-du-jour {
     align-self: center;
     flex-direction: column;
@@ -277,10 +295,10 @@
     align-items: flex-start;
     min-height: clamp(4rem, 5.47vw, 5.25rem);
     padding-left: var(--ecart);
-    border-left: 1px solid rgb(8 49 45 / 25%);
+    border-left: 1px solid rgb(8 49 45 / 45%);
 
     .badge {
-      margin-left: calc(1.15 * var(--texte) + 0.45rem);
+      margin-left: calc(1.3 * var(--texte) + 0.45rem);
     }
   }
 }

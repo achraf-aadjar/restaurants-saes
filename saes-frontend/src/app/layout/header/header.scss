@@ -231,6 +231,8 @@
 @media (min-width: 860px) {
   .entete-ligne {
     display: grid;
+    /* Onglets centres dans la page : leur place ne depend ni du logo ni de la
+       longueur du nom du compte. */
     grid-template-columns: 1fr auto 1fr;
     min-height: 72px;
     padding-block: 0.5rem;

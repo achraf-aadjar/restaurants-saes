@@ -102,6 +102,21 @@ export class MenuConsultation {
    * si ferme. Espaces insecables dans chaque plage : une ligne ne se coupe
    * qu'entre deux plages, jamais dans « 8 h – 21 h ».
    */
+  /**
+   * Adresse en deux lignes : la ville et le pays (epingle), puis l'etablissement
+   * (batiment), sans repeter la ville. Il faut au moins trois elements separes
+   * par des virgules ; sinon, une seule ligne.
+   */
+  protected readonly adresse = computed(() => {
+    const parties = (this.restaurantSelectionne()?.adresse ?? '')
+      .split(',')
+      .map((p) => p.trim())
+      .filter(Boolean);
+    return parties.length >= 3
+      ? { lieu: parties.slice(-2).join(', '), etablissement: parties.slice(0, -2).join(', ') }
+      : { lieu: parties.join(', '), etablissement: '' };
+  });
+
   protected readonly horairesDuJour = computed(() =>
     (this.restaurantSelectionne()?.horairesDuJour ?? [])
       .map((h) =>
