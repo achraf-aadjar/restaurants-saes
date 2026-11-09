@@ -55,6 +55,13 @@ a {
   color: var(--saes-vert);
 }
 
+/* Le focus au clavier se voit partout : liens, boutons, choix, lignes
+   selectionnables. Il n'apparait pas au clic de souris (:focus-visible). */
+:focus-visible {
+  outline: 3px solid var(--saes-vert);
+  outline-offset: 2px;
+}
+
 /* Titre d'une page du personnel : la meme echelle que le titre de la page des
    menus, et sa phrase d'introduction plus lisible. Le titre du bandeau du
    restaurant (.identite) garde sa taille. */
@@ -183,6 +190,26 @@ button {
 .formulaire-etroit {
   max-width: 420px;
   margin: 1rem auto;
+}
+
+/* Ouvrir et cloturer la caisse : le formulaire est a gauche de sa carte, comme le
+   reste de la page, avec des champs et un bouton a taille de caisse. */
+.formulaire-caisse {
+  margin: 0;
+}
+
+.formulaire-caisse .champ label {
+  font-size: 1.05rem;
+}
+
+.formulaire-caisse .champ input {
+  font-size: 1.2rem;
+  padding: 0.65em 0.8em;
+}
+
+.formulaire-caisse .btn {
+  min-height: 3rem;
+  font-size: 1.1rem;
 }
 
 /* Pages Connexion / Inscription (pages/auth/auth.scss) : la zone de contenu

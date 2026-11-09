@@ -1,10 +1,12 @@
-import { Component, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { CaisseService } from '../../core/caisse.service';
+import { classeBadgeStatut, LIBELLES_STATUT_COMMANDE } from '../../core/commande.util';
+import { estAujourdhui } from '../../core/date.util';
 import { motifErreur } from '../../core/erreur.util';
 import { CommandeDto, ModePaiement, SessionCaisseDto } from '../../core/models';
-import { CommandeEntete } from '../../shared/commande-entete';
 import { MontantPipe } from '../../shared/montant.pipe';
 import { RefusVisible } from '../../shared/refus-visible';
 import { MaCaisse } from './ma-caisse';
@@ -12,8 +14,9 @@ import { MaCaisse } from './ma-caisse';
 /** Encaisser une commande (cahier des charges §4.5), cote caissier. */
 @Component({
   selector: 'app-encaisser-commande',
-  imports: [RouterLink, CommandeEntete, MaCaisse, MontantPipe, RefusVisible],
+  imports: [RouterLink, DatePipe, MaCaisse, MontantPipe, RefusVisible],
   templateUrl: './encaisser-commande.html',
+  styleUrl: './encaisser-commande.scss',
 })
 export class EncaisserCommande {
   private readonly caisseService = inject(CaisseService);
@@ -23,6 +26,15 @@ export class EncaisserCommande {
   protected readonly chargement = signal(true);
   protected readonly erreur = signal<string | null>(null);
   protected readonly actionEnCours = signal(false);
+  protected readonly libelles = LIBELLES_STATUT_COMMANDE;
+  protected readonly classeBadge = classeBadgeStatut;
+  protected readonly estAujourdhui = estAujourdhui;
+
+  /** La commande dont le paiement est prepare ; par defaut, la plus ancienne. */
+  private readonly choix = signal<number | null>(null);
+  protected readonly commandeChoisie = computed(
+    () => this.commandes().find((c) => c.id === this.choix()) ?? this.commandes()[0] ?? null,
+  );
 
   protected modePaiementParCommande = new Map<number, ModePaiement>();
   protected readonly confirmationEncaissement = signal<number | null>(null);
@@ -55,6 +67,19 @@ export class EncaisserCommande {
       },
       error: (err) => this.erreur.set(motifErreur(err, 'Impossible de charger les commandes')),
     });
+  }
+
+  protected choisir(commandeId: number): void {
+    this.choix.set(commandeId);
+    this.confirmationEncaissement.set(null);
+    // Sous 1100 px, le detail est sous la liste : on l'amene a l'ecran.
+    if (window.matchMedia('(max-width: 1099px)').matches) {
+      setTimeout(() =>
+        document
+          .querySelector('.detail-encaissement')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+      );
+    }
   }
 
   protected modePaiementDe(commandeId: number): ModePaiement {

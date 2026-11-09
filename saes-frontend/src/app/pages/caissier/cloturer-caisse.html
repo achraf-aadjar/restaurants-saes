@@ -17,7 +17,7 @@
   <app-ma-caisse [session]="session" [avecCloture]="false" />
 
   <section class="carte" style="margin-top: 1rem">
-    <form (ngSubmit)="cloturer()" #fc="ngForm" class="formulaire-etroit">
+    <form (ngSubmit)="cloturer()" #fc="ngForm" class="formulaire-etroit formulaire-caisse">
       <div class="champ">
         <label for="montantCompte">Montant compté (FCFA)</label>
         <input

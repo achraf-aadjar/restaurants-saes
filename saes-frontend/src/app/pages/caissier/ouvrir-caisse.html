@@ -10,7 +10,7 @@
   <app-ma-caisse [session]="session" />
 } @else {
   <section class="carte">
-    <form (ngSubmit)="ouvrir()" #f="ngForm" class="formulaire-etroit">
+    <form (ngSubmit)="ouvrir()" #f="ngForm" class="formulaire-etroit formulaire-caisse">
       <div class="champ">
         <label for="fondDeCaisse">Fond de caisse (FCFA)</label>
         <input

@@ -31,6 +31,17 @@ import { MontantPipe } from '../../shared/montant.pipe';
       }
     </section>
   `,
+  styles: `
+    h2 {
+      font-size: clamp(1.4rem, 2vw, 1.9rem);
+      font-weight: 800;
+    }
+
+    .commande-meta {
+      font-size: clamp(1rem, 1.25vw, 1.15rem);
+      color: var(--saes-vert);
+    }
+  `,
 })
 export class MaCaisse {
   readonly session = input.required<SessionCaisseDto>();
