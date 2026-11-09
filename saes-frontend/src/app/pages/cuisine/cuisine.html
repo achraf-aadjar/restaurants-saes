@@ -12,19 +12,20 @@
 } @else {
   <div class="liste-commandes">
     @for (c of commandes(); track c.id) {
-      <article class="carte commande">
-        <app-commande-entete [commande]="c" />
-        <ul class="liste-panier">
+      <article class="carte commande commande-cuisine">
+        <app-commande-entete [commande]="c" affichage="grand" />
+        <ul class="liste-lignes">
           @for (ligne of c.lignes; track ligne.platId) {
-            <li>
-              <span>{{ ligne.quantite }} × {{ ligne.platNom }}</span>
-            </li>
+            <li>{{ ligne.quantite }} × {{ ligne.platNom }}</li>
           }
         </ul>
+        <span class="badge statut-cuisine" [class]="classeBadge(c.statut)">
+          {{ libelles[c.statut] }}
+        </span>
         @if (c.statut === 'EN_ATTENTE') {
           <button
             type="button"
-            class="btn btn-primaire btn-petit"
+            class="btn btn-primaire btn-cuisine"
             [disabled]="actionEnCours() === c.id"
             (click)="demarrer(c)"
           >
@@ -33,7 +34,7 @@
         } @else if (c.statut === 'EN_PREPARATION') {
           <button
             type="button"
-            class="btn btn-primaire btn-petit"
+            class="btn btn-primaire btn-cuisine"
             [disabled]="actionEnCours() === c.id"
             (click)="terminer(c)"
           >

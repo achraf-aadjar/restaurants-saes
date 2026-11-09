@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 
+import { classeBadgeStatut, LIBELLES_STATUT_COMMANDE } from '../../core/commande.util';
 import { CuisineService } from '../../core/cuisine.service';
 import { motifErreur } from '../../core/erreur.util';
 import { CommandeDto } from '../../core/models';
@@ -11,10 +12,13 @@ import { RefusVisible } from '../../shared/refus-visible';
   selector: 'app-cuisine',
   imports: [CommandeEntete, RefusVisible],
   templateUrl: './cuisine.html',
+  styleUrl: './cuisine.scss',
 })
 export class Cuisine {
   private readonly cuisineService = inject(CuisineService);
 
+  protected readonly libelles = LIBELLES_STATUT_COMMANDE;
+  protected readonly classeBadge = classeBadgeStatut;
   protected readonly commandes = signal<CommandeDto[]>([]);
   protected readonly chargement = signal(true);
   protected readonly erreur = signal<string | null>(null);

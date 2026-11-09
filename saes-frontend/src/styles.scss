@@ -55,6 +55,22 @@ a {
   color: var(--saes-vert);
 }
 
+/* Titre d'une page du personnel : la meme echelle que le titre de la page des
+   menus, et sa phrase d'introduction plus lisible. Le titre du bandeau du
+   restaurant (.identite) garde sa taille. */
+.corps:has(app-barre-laterale.visible) .contenu h1:not(.identite h1) {
+  margin-bottom: 0.2rem;
+  font-size: clamp(1.75rem, 3vw, 2.875rem);
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.corps:has(app-barre-laterale.visible) .contenu h1 + .commande-meta {
+  margin-bottom: 1rem;
+  font-size: clamp(1rem, 1.25vw, 1.2rem);
+  color: var(--saes-vert);
+}
+
 /* Sous l'en-tete, le bandeau jaune des menus suit sans trait (ecran 1). */
 .page:has(.bandeau-restaurant.pleine-largeur) .entete {
   border-bottom-color: transparent;
@@ -231,8 +247,27 @@ button {
 }
 
 .badge-attente {
-  background: #fff6d9;
-  color: #7a5900;
+  background: #fff1b8;
+  color: #6b4d00;
+}
+
+/* En attente : un gris-bleu, pour ne pas confondre avec « En preparation ». */
+.badge-neutre {
+  background: #e3eaec;
+  color: #2c4a50;
+}
+
+/* Un point devant chaque statut, comme sur les ecrans de reference. La
+   pastille « Ouvert » du bandeau a le sien (.badge-point). */
+.badge:not(.badge-point)::before {
+  content: '';
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  margin-right: 0.45em;
+  border-radius: 50%;
+  background: currentColor;
+  vertical-align: 0.03em;
 }
 
 .liste-commandes {
