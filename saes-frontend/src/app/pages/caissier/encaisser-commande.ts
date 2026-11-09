@@ -73,7 +73,7 @@ export class EncaisserCommande {
     this.choix.set(commandeId);
     this.confirmationEncaissement.set(null);
     // Sous 1100 px, le detail est sous la liste : on l'amene a l'ecran.
-    if (window.matchMedia('(max-width: 1099px)').matches) {
+    if (window.matchMedia('(width < 68.75rem)').matches) {
       setTimeout(() =>
         document
           .querySelector('.detail-encaissement')

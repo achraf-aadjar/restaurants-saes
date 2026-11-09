@@ -11,9 +11,9 @@
   align-items: start;
 }
 
-@media (min-width: 1100px) {
+@media (min-width: 68.75rem) {
   .gestion.avec-panneau {
-    grid-template-columns: minmax(0, 1fr) clamp(360px, 30vw, 480px);
+    grid-template-columns: minmax(0, 1fr) clamp(22.5rem, 30vw, 30rem);
     gap: clamp(1rem, 1.3vw, 1.5rem);
   }
 }
@@ -106,6 +106,7 @@
 }
 
 .nom-plat {
+  overflow-wrap: anywhere;
   padding: 0;
   border: none;
   background: none;
@@ -118,11 +119,11 @@
 
 /* Liste large : les lignes grandissent avec la fenêtre, comme sur l'écran de
    référence (87 px de haut à 1536 px de large, environ 73 px à 1280 px). */
-@container liste (min-width: 540px) {
+@container liste (min-width: 33.75rem) {
   .tableau-plats {
     th,
     td {
-      padding-block: clamp(0.6rem, calc(2.73vw - 20px), 1.5rem);
+      padding-block: clamp(0.6rem, calc(2.73vw - 1.25rem), 1.5rem);
     }
 
     .badge {
@@ -152,7 +153,7 @@
    tableau, sur trois colonnes. La catégorie passe sous le nom et le statut sous
    le prix ; leurs en-têtes restent lus par les lecteurs d'écran. Les lignes
    gardent leurs colonnes alignées grâce à la sous-grille. */
-@container liste (400px <= width < 540px) {
+@container liste (25rem <= width < 33.75rem) {
   .tableau-plats {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto auto;
@@ -262,7 +263,7 @@
 
 /* Liste étroite (téléphone) : chaque plat tient sur deux lignes, le nom et le
    prix, puis la catégorie, le statut et le bouton. Rien n'est caché. */
-@container liste (width < 400px) {
+@container liste (width < 25rem) {
   .tableau-plats {
     thead {
       position: absolute;
@@ -331,7 +332,7 @@
 }
 
 /* Très étroite (petit téléphone) : le bouton passe dessous, sur toute la largeur. */
-@container liste (max-width: 340px) {
+@container liste (max-width: 21.25rem) {
   .tableau-plats tbody tr {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
@@ -548,7 +549,7 @@
    l'ingrédient prend toute la première ligne, la quantité et « Retirer » passent
    dessous, le tout dans un cadre, pour que le nom reste lisible et qu'on voie
    quelle quantité et quel « Retirer » vont avec lui. */
-@container fiche (max-width: 400px) {
+@container fiche (max-width: 25rem) {
   .ligne-recette {
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 0.5rem;
@@ -577,13 +578,13 @@
   }
 }
 
-@container fiche (max-width: 330px) {
+@container fiche (max-width: 20.625rem) {
   .deux-champs {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
-@container fiche (max-width: 300px) {
+@container fiche (max-width: 18.75rem) {
   .actions-formulaire {
     grid-template-columns: 1fr;
   }

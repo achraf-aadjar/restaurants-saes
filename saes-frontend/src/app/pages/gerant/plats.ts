@@ -107,7 +107,7 @@ export class GerantPlats {
     setTimeout(() => {
       const fiche = document.querySelector('.panneau-plat');
       if (!fiche) return;
-      const sousLaListe = window.matchMedia('(max-width: 1099px)').matches;
+      const sousLaListe = window.matchMedia('(width < 68.75rem)').matches;
       if (sousLaListe || fiche.getBoundingClientRect().top < 0) {
         fiche.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }

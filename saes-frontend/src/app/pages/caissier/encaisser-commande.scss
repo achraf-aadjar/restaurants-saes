@@ -11,9 +11,9 @@
   align-items: start;
 }
 
-@media (min-width: 1100px) {
+@media (min-width: 68.75rem) {
   .encaissement {
-    grid-template-columns: minmax(0, 1fr) clamp(340px, 31vw, 480px);
+    grid-template-columns: minmax(0, 1fr) clamp(21.25rem, 31vw, 30rem);
     gap: clamp(1rem, 1.6vw, 1.5rem);
   }
 
@@ -26,7 +26,7 @@
 /* Le détail reste à l'écran quand on descend dans la liste, mais seulement si
    la fenêtre est assez haute pour le montrer en entier : sinon il défile avec
    la page, et « Encaisser » reste atteignable sans défilement à part. */
-@media (min-width: 1100px) and (max-height: 699px) {
+@media (min-width: 68.75rem) and (height < 43.75rem) {
   .detail-encaissement {
     position: static;
   }
@@ -65,7 +65,7 @@
   /* Petit ecran : chaque commande devient une ligne a deux etages (numero et
      montant, puis lieu, heure et statut). Rien n'est cache : les en-tetes sont
      remplaces par les mots devant chaque valeur. */
-  @media (max-width: 699px) {
+  @media (width < 43.75rem) {
     thead {
       position: absolute;
       width: 1px;

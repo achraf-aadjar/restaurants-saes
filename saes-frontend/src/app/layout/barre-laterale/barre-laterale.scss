@@ -5,7 +5,7 @@
 @media (min-width: 860px) {
   :host(.visible) {
     display: block;
-    width: clamp(250px, 19vw, 300px);
+    width: clamp(15.625rem, 19vw, 18.75rem);
     flex-shrink: 0;
     border-right: 1px solid var(--saes-bordure);
     padding: 1rem 0.5rem 2rem;
