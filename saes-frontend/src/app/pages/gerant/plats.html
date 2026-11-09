@@ -1,128 +1,174 @@
-<div class="titre-page">
-  <h1>Plats</h1>
-  <button type="button" class="btn btn-primaire" (click)="ouvrirCreation()">+ Nouveau plat</button>
-</div>
+<div class="gestion" [class.avec-panneau]="formulaireOuvert()">
+  <div class="colonne-liste">
+    <div class="titre-page">
+      <h1>Plats</h1>
+      <button type="button" class="btn btn-primaire btn-nouveau" (click)="ouvrirCreation()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+        Nouveau plat
+      </button>
+    </div>
 
-@if (erreur(); as e) {
-  <p class="message-refus">{{ e }}</p>
-}
+    @if (erreur(); as e) {
+      <p class="message-refus">{{ e }}</p>
+    }
 
-@if (formulaireOuvert()) {
-  <section class="carte">
-    <form (ngSubmit)="enregistrer()" #f="ngForm" class="formulaire-creation formulaire-large">
-      <h2>{{ idEnEdition ? 'Modifier le plat' : 'Nouveau plat' }}</h2>
-
-      @if (erreurFormulaire(); as e) {
-        <p class="message-refus">{{ e }}</p>
+    <section class="carte liste-plats">
+      @if (chargement()) {
+        <p>Chargement…</p>
+      } @else if (plats().length === 0) {
+        <p>{{ erreur() ? 'Réessayez en rechargeant la page.' : 'Aucun plat pour le moment.' }}</p>
+      } @else {
+        <table class="table-simple tableau-plats">
+          <thead>
+            <tr>
+              <th>Plat</th>
+              <th>Catégorie</th>
+              <th>Prix</th>
+              <th>Statut</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of plats(); track p.id) {
+              <tr [class.choisie]="estChoisi(p)" (click)="ouvrirEdition(p)">
+                <td>
+                  <button
+                    type="button"
+                    class="nom-plat"
+                    [attr.aria-pressed]="estChoisi(p)"
+                    [attr.aria-label]="'Modifier ' + p.nom"
+                    (click)="ouvrirEdition(p); $event.stopPropagation()"
+                  >
+                    {{ p.nom }}
+                  </button>
+                </td>
+                <td>{{ libellesCategories[p.categorie] }}</td>
+                <td>{{ p.prix | montant }}</td>
+                <td>
+                  <span
+                    class="badge"
+                    [class.badge-actif]="p.estActif"
+                    [class.badge-neutre]="!p.estActif"
+                  >
+                    {{ p.estActif ? 'Actif' : 'Inactif' }}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn btn-secondaire btn-petit btn-activation"
+                    (click)="changerActivation(p); $event.stopPropagation()"
+                  >
+                    {{ p.estActif ? 'Désactiver' : 'Réactiver' }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
       }
+    </section>
+  </div>
 
-      <div class="champ">
-        <label for="nomP">Nom</label>
-        <input id="nomP" name="nomP" type="text" required pattern=".*\S.*" [(ngModel)]="nom" />
-      </div>
-      <div class="champ">
-        <label for="descriptionP">Description (facultative)</label>
-        <textarea id="descriptionP" name="descriptionP" [(ngModel)]="description"></textarea>
-      </div>
-      <div class="champ">
-        <label for="prixP">Prix (FCFA)</label>
-        <input id="prixP" name="prixP" type="number" min="1" required [(ngModel)]="prix" />
-      </div>
-      <div class="champ">
-        <label for="categorieP">Catégorie</label>
-        <select id="categorieP" name="categorieP" required [(ngModel)]="categorie">
-          @for (c of categories; track c) {
-            <option [ngValue]="c">{{ libellesCategories[c] }}</option>
-          }
-        </select>
-      </div>
+  @if (formulaireOuvert()) {
+    <aside class="carte panneau-plat" aria-label="Fiche du plat">
+      <form (ngSubmit)="enregistrer()" #f="ngForm">
+        <h2>{{ idEnEdition ? 'Modifier : ' + nom : 'Nouveau plat' }}</h2>
 
-      <h3>Recette (au moins un ingrédient)</h3>
-      @for (ligne of recette; track $index) {
-        <div class="ligne-dynamique">
-          <div class="champ champ-inline champ-etire">
-            <label>Ingrédient</label>
-            <select [(ngModel)]="ligne.ingredientId" [name]="'ingredient' + $index" required>
-              @for (i of ingredients(); track i.id) {
-                <option [ngValue]="i.id">{{ i.nom }}</option>
+        @if (erreurFormulaire(); as e) {
+          <p class="message-refus">{{ e }}</p>
+        }
+
+        <div class="champ">
+          <label for="nomP">Nom</label>
+          <input id="nomP" name="nomP" type="text" required pattern=".*\S.*" [(ngModel)]="nom" />
+        </div>
+        <div class="champ">
+          <label for="descriptionP"
+            >Description <span class="facultatif">(facultative)</span></label
+          >
+          <textarea
+            id="descriptionP"
+            name="descriptionP"
+            rows="2"
+            [(ngModel)]="description"
+          ></textarea>
+        </div>
+        <div class="deux-champs">
+          <div class="champ">
+            <label for="prixP">Prix (FCFA)</label>
+            <input id="prixP" name="prixP" type="number" min="1" required [(ngModel)]="prix" />
+          </div>
+          <div class="champ">
+            <label for="categorieP">Catégorie</label>
+            <select id="categorieP" name="categorieP" required [(ngModel)]="categorie">
+              @for (c of categories; track c) {
+                <option [ngValue]="c">{{ libellesCategories[c] }}</option>
               }
             </select>
           </div>
-          <div class="champ champ-inline">
-            <label>Quantité ({{ symboleUnite(ligne.ingredientId) }})</label>
-            <input
-              type="number"
-              min="0.001"
-              step="0.001"
-              required
-              [(ngModel)]="ligne.quantiteNecessaire"
-              [name]="'quantite' + $index"
-            />
+        </div>
+
+        <h3>Recette, pour un plat <span class="facultatif">(au moins un ingrédient)</span></h3>
+        @for (ligne of recette; track $index) {
+          <div class="ligne-recette">
+            <div class="ingredient-carte">
+              <select
+                class="ingredient"
+                aria-label="Ingrédient"
+                [(ngModel)]="ligne.ingredientId"
+                [name]="'ingredient' + $index"
+                required
+              >
+                @for (i of ingredients(); track i.id) {
+                  <option [ngValue]="i.id">{{ i.nom }}</option>
+                }
+              </select>
+              <label class="quantite-unite">
+                <input
+                  type="number"
+                  min="0.001"
+                  step="0.001"
+                  required
+                  aria-label="Quantité"
+                  [style.width.ch]="largeurQuantite(ligne.quantiteNecessaire)"
+                  [(ngModel)]="ligne.quantiteNecessaire"
+                  [name]="'quantite' + $index"
+                />
+                <span class="unite">{{ symboleUnite(ligne.ingredientId) }}</span>
+              </label>
+            </div>
+            <button
+              type="button"
+              class="btn btn-secondaire btn-retirer"
+              [attr.aria-label]="'Retirer ' + nomIngredient(ligne.ingredientId) + ' de la recette'"
+              (click)="retirerLigneRecette($index)"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
+              </svg>
+              Retirer
+            </button>
           </div>
-          <button type="button" class="btn btn-secondaire btn-petit" (click)="retirerLigneRecette($index)">
-            Retirer
+        }
+        <button type="button" class="btn btn-secondaire btn-ajout" (click)="ajouterLigneRecette()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+          Ajouter un ingrédient
+        </button>
+
+        <div class="actions-formulaire">
+          <button
+            type="submit"
+            class="btn btn-primaire btn-grand"
+            [disabled]="f.invalid || enregistrementEnCours()"
+          >
+            {{ enregistrementEnCours() ? 'Enregistrement…' : 'Enregistrer' }}
+          </button>
+          <button type="button" class="btn btn-secondaire btn-grand" (click)="fermer()">
+            Annuler
           </button>
         </div>
-      }
-      <button type="button" class="btn btn-secondaire btn-petit" (click)="ajouterLigneRecette()">
-        + Ajouter un ingrédient
-      </button>
-
-      <div class="actions-colonne" style="margin-top: 1.25rem">
-        <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enregistrementEnCours()">
-          {{ enregistrementEnCours() ? 'Enregistrement…' : 'Enregistrer' }}
-        </button>
-        <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert.set(false)">
-          Annuler
-        </button>
-      </div>
-    </form>
-  </section>
-}
-
-<section class="carte" style="margin-top: 1rem">
-  @if (chargement()) {
-    <p>Chargement…</p>
-  } @else {
-    <table class="table-simple">
-      <thead>
-        <tr>
-          <th>Nom</th>
-          <th>Catégorie</th>
-          <th>Prix</th>
-          <th>Recette</th>
-          <th>Statut</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (p of plats(); track p.id) {
-          <tr>
-            <td>{{ p.nom }}</td>
-            <td>{{ libellesCategories[p.categorie] }}</td>
-            <td>{{ p.prix | montant }}</td>
-            <td>
-              @for (l of p.recette; track l.ingredientId) {
-                {{ l.ingredientNom ?? nomIngredient(l.ingredientId) }}
-                ({{ l.quantiteNecessaire | quantite: l.unite! }}){{ $last ? '' : ', ' }}
-              }
-            </td>
-            <td>
-              <span class="badge" [class.badge-actif]="p.estActif" [class.badge-inactif]="!p.estActif">
-                {{ p.estActif ? 'Actif' : 'Désactivé' }}
-              </span>
-            </td>
-            <td class="actions-colonne">
-              <button type="button" class="btn btn-secondaire btn-petit" (click)="ouvrirEdition(p)">
-                Modifier
-              </button>
-              <button type="button" class="btn btn-secondaire btn-petit" (click)="changerActivation(p)">
-                {{ p.estActif ? 'Désactiver' : 'Réactiver' }}
-              </button>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+      </form>
+    </aside>
   }
-</section>
+</div>

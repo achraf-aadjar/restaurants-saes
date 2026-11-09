@@ -5,9 +5,14 @@ import { motifErreur } from '../../core/erreur.util';
 import { GerantPlatService } from '../../core/gerant-plat.service';
 import { GerantStockService } from '../../core/gerant-stock.service';
 import { LIBELLES_CATEGORIES, SYMBOLES_UNITES } from '../../core/libelles';
-import { CategoriePlat, IngredientDto, PlatGerantDto, PlatSaveRequest, RecetteLigneDto } from '../../core/models';
+import {
+  CategoriePlat,
+  IngredientDto,
+  PlatGerantDto,
+  PlatSaveRequest,
+  RecetteLigneDto,
+} from '../../core/models';
 import { MontantPipe } from '../../shared/montant.pipe';
-import { QuantitePipe } from '../../shared/quantite.pipe';
 import { RefusVisible } from '../../shared/refus-visible';
 
 const CATEGORIES: CategoriePlat[] = ['ENTREE', 'PLAT_PRINCIPAL', 'DESSERT', 'BOISSON'];
@@ -19,8 +24,9 @@ const CATEGORIES: CategoriePlat[] = ['ENTREE', 'PLAT_PRINCIPAL', 'DESSERT', 'BOI
  */
 @Component({
   selector: 'app-gerant-plats',
-  imports: [FormsModule, MontantPipe, QuantitePipe, RefusVisible],
+  imports: [FormsModule, MontantPipe, RefusVisible],
   templateUrl: './plats.html',
+  styleUrl: './plats.scss',
 })
 export class GerantPlats {
   private readonly gerantPlatService = inject(GerantPlatService);
@@ -53,7 +59,9 @@ export class GerantPlats {
     this.chargement.set(true);
     this.gerantPlatService.lister().subscribe({
       next: (plats) => {
-        this.plats.set(plats);
+        // L'API ne garantit pas l'ordre (il change apres une modification) : la
+        // liste reste dans l'ordre de creation des plats.
+        this.plats.set([...plats].sort((a, b) => a.id - b.id));
         this.chargement.set(false);
       },
       error: (err) => {
@@ -61,7 +69,9 @@ export class GerantPlats {
         this.erreur.set(motifErreur(err, 'Impossible de charger les plats'));
       },
     });
-    this.gerantStockService.lister().subscribe({ next: (ingredients) => this.ingredients.set(ingredients) });
+    this.gerantStockService
+      .lister()
+      .subscribe({ next: (ingredients) => this.ingredients.set(ingredients) });
   }
 
   protected ouvrirCreation(): void {
@@ -70,9 +80,38 @@ export class GerantPlats {
     this.description = '';
     this.prix = 0;
     this.categorie = 'PLAT_PRINCIPAL';
-    this.recette = this.ingredients().length ? [{ ingredientId: this.ingredients()[0].id, quantiteNecessaire: 1 }] : [];
+    this.recette = this.ingredients().length
+      ? [{ ingredientId: this.ingredients()[0].id, quantiteNecessaire: 1 }]
+      : [];
     this.erreurFormulaire.set(null);
     this.formulaireOuvert.set(true);
+    this.amenerLaFiche();
+  }
+
+  /** Le plat dont la fiche est ouverte (ligne surlignee dans la liste). */
+  protected estChoisi(plat: PlatGerantDto): boolean {
+    return this.formulaireOuvert() && this.idEnEdition === plat.id;
+  }
+
+  protected fermer(): void {
+    this.formulaireOuvert.set(false);
+  }
+
+  /**
+   * La fiche defile avec la page (pas de defilement a part). On l'amene a
+   * l'ecran quand elle n'y est pas : sous 1100 px, elle est sous la liste ; au-
+   * dessus, elle est en haut a cote de la liste, hors de vue si l'on a clique un
+   * plat bas dans une longue liste.
+   */
+  private amenerLaFiche(): void {
+    setTimeout(() => {
+      const fiche = document.querySelector('.panneau-plat');
+      if (!fiche) return;
+      const sousLaListe = window.matchMedia('(max-width: 1099px)').matches;
+      if (sousLaListe || fiche.getBoundingClientRect().top < 0) {
+        fiche.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
   }
 
   protected ouvrirEdition(plat: PlatGerantDto): void {
@@ -84,11 +123,15 @@ export class GerantPlats {
     this.recette = plat.recette.map((l) => ({ ...l }));
     this.erreurFormulaire.set(null);
     this.formulaireOuvert.set(true);
+    this.amenerLaFiche();
   }
 
   protected ajouterLigneRecette(): void {
     if (this.ingredients().length === 0) return;
-    this.recette = [...this.recette, { ingredientId: this.ingredients()[0].id, quantiteNecessaire: 1 }];
+    this.recette = [
+      ...this.recette,
+      { ingredientId: this.ingredients()[0].id, quantiteNecessaire: 1 },
+    ];
   }
 
   protected retirerLigneRecette(index: number): void {
@@ -107,7 +150,10 @@ export class GerantPlats {
       description: this.description || undefined,
       prix: this.prix,
       categorie: this.categorie,
-      recette: this.recette.map((l) => ({ ingredientId: l.ingredientId, quantiteNecessaire: l.quantiteNecessaire })),
+      recette: this.recette.map((l) => ({
+        ingredientId: l.ingredientId,
+        quantiteNecessaire: l.quantiteNecessaire,
+      })),
     };
 
     this.enregistrementEnCours.set(true);
@@ -146,5 +192,14 @@ export class GerantPlats {
   protected symboleUnite(id: number): string {
     const unite = this.ingredients().find((i) => i.id === id)?.unite;
     return unite ? this.symbolesUnites[unite] : '';
+  }
+
+  /**
+   * Largeur (en chiffres) de la case de quantité : ce qui est écrit plus un
+   * demi-chiffre, pour que l'unité reste contre le nombre (« 150 g »). Un champ de
+   * nombre ne s'ajuste pas tout seul à son contenu.
+   */
+  protected largeurQuantite(quantite: number | string | null | undefined): number {
+    return Math.min(12, Math.max(2.5, String(quantite ?? '').length + 0.4));
   }
 }
