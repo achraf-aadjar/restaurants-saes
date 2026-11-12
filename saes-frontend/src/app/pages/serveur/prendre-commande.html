@@ -40,7 +40,7 @@
           <select id="table" [(ngModel)]="tableId" name="table">
             <option [ngValue]="null">— Choisir —</option>
             @for (t of tables(); track t.id) {
-              <option [ngValue]="t.id" [disabled]="t.occupee">
+              <option [ngValue]="t.id">
                 Table {{ t.numero }} · {{ t.capacite }} place{{ t.capacite > 1 ? 's' : '' }}
                 {{ t.occupee ? '— occupée' : '' }}
               </option>
