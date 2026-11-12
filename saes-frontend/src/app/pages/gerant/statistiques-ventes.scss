@@ -16,75 +16,6 @@
   white-space: nowrap;
 }
 
-/* ---------- En-tête : période ---------- */
-
-.choix-periode {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem clamp(0.75rem, 1.4vw, 1.5rem);
-}
-
-.choix-periode-texte {
-  display: flex;
-  align-items: center;
-  gap: 0.6em;
-  margin: 0;
-  font-size: clamp(1rem, 1.2vw, 1.15rem);
-
-  svg {
-    flex: none;
-    width: 1.5em;
-    height: 1.5em;
-  }
-}
-
-.choix-periode svg {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.btn-periode {
-  gap: 0.6em;
-  min-height: clamp(2.75rem, 3.25vw, 3.1rem);
-  padding-inline: 1.1em;
-  border: 2px solid var(--saes-vert-clair);
-  font-size: clamp(1rem, 1.15vw, 1.15rem);
-  font-weight: 700;
-
-  svg {
-    width: 1.4em;
-    height: 1.4em;
-  }
-}
-
-.panneau-periode {
-  margin-bottom: 1rem;
-}
-
-.formulaire-periode {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 0.75rem 1rem;
-
-  .champ {
-    margin: 0;
-    min-width: 0;
-  }
-
-  .champ input {
-    min-height: 2.75rem;
-  }
-
-  .btn {
-    min-height: 2.75rem;
-  }
-}
-
 /* ---------- Chiffres clés ---------- */
 
 .chiffres,
@@ -96,58 +27,6 @@
 .chiffres {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
   margin-bottom: clamp(1rem, 1.3vw, 1.5rem);
-}
-
-.kpi {
-  container: kpi / inline-size;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  grid-template-areas:
-    'icone nombre'
-    '. libelle';
-  align-items: center;
-  column-gap: clamp(0.75rem, 1.2vw, 1.25rem);
-  padding: clamp(1rem, 1.6vw, 1.5rem);
-
-  p {
-    margin: 0;
-  }
-}
-
-.kpi-icone {
-  grid-area: icone;
-  display: grid;
-  place-items: center;
-  width: clamp(3rem, 12cqi, 4.5rem);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: var(--saes-vert-pale);
-  color: var(--saes-vert);
-
-  svg {
-    width: 50%;
-    height: 50%;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.9;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-}
-
-.kpi-nombre {
-  grid-area: nombre;
-  font-size: clamp(1.75rem, 12.5cqi, 4.4rem);
-  font-weight: 800;
-  line-height: 1.05;
-  overflow-wrap: anywhere;
-}
-
-.kpi-libelle {
-  grid-area: libelle;
-  font-size: clamp(1.05rem, 4.6cqi, 1.6rem);
-  font-weight: 700;
-  line-height: 1.25;
 }
 
 /* ---------- Deux colonnes : par catégorie, par plat ---------- */
@@ -263,6 +142,8 @@
 .cadre-tableau {
   border: 1px solid var(--saes-bordure);
   border-radius: 10px;
+  /* Filet de sécurité : un tableau plus large que sa carte défile dans son cadre. */
+  overflow-x: auto;
 }
 
 .plats {

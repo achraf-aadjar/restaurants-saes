@@ -1,0 +1,253 @@
+/*
+ * Rapports financiers : même présentation que les statistiques de ventes (la
+ * période et son bouton, deux chiffres clés, des cartes). Les tableaux suivent
+ * la largeur de leur carte : complets quand elle est large, une carte par ligne
+ * quand elle est étroite (chaque valeur garde son nom devant elle).
+ */
+
+.chiffres,
+.sections {
+  display: grid;
+  gap: clamp(1rem, 1.3vw, 1.5rem);
+}
+
+.chiffres {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  margin-bottom: clamp(1rem, 1.3vw, 1.5rem);
+}
+
+.sections {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.bloc {
+  container: bloc / inline-size;
+  padding: clamp(1rem, 1.6vw, 1.5rem);
+
+  h2 {
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.45rem, 2.2vw, 2.1rem);
+    font-weight: 800;
+    line-height: 1.2;
+  }
+}
+
+.cadre-tableau {
+  border: 1px solid var(--saes-bordure);
+  border-radius: 10px;
+  /* Filet de sécurité : un tableau plus large que sa carte défile dans son cadre. */
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: clamp(0.95rem, 1.25vw, 1.15rem);
+
+  th,
+  td {
+    padding: 0.75rem clamp(0.4rem, 0.9vw, 0.9rem);
+    border-bottom: 1px solid var(--saes-bordure);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  th {
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  th:first-child,
+  td:first-child {
+    padding-left: clamp(0.75rem, 1.3vw, 1.2rem);
+  }
+
+  th:last-child,
+  td:last-child {
+    padding-right: clamp(0.75rem, 1.3vw, 1.2rem);
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .montant,
+  .date {
+    white-space: nowrap;
+  }
+
+  .montant {
+    text-align: right;
+  }
+
+  .jour,
+  .caissier,
+  .total {
+    font-weight: 700;
+  }
+
+  .caissier {
+    overflow-wrap: anywhere;
+  }
+
+  .ecart .badge {
+    display: inline-block;
+    padding: 0.3em 0.8em;
+    font-size: 0.95em;
+    white-space: nowrap;
+  }
+}
+
+/* Les en-têtes des colonnes de montants sont alignés sur les montants. */
+.jours th:not(:first-child),
+.ecarts th:nth-child(n + 4):not(:last-child) {
+  text-align: right;
+}
+
+/* ---------- Cartes étroites : une carte par ligne ---------- */
+
+/* Encaissements par jour : le jour et le total, puis espèces, puis Mobile Money. */
+@container bloc (max-width: 30rem) {
+  .jours {
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    tbody tr {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-areas:
+        'jour total'
+        'especes especes'
+        'mobile mobile';
+      gap: 0.3rem 0.75rem;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--saes-bordure);
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    td,
+    td:first-child,
+    td:last-child {
+      padding: 0;
+      border: none;
+    }
+
+    .jour {
+      grid-area: jour;
+    }
+
+    .total {
+      grid-area: total;
+      text-align: right;
+    }
+
+    .montant {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    td[data-label='Espèces'] {
+      grid-area: especes;
+      text-align: left;
+    }
+
+    td[data-label='Mobile Money'] {
+      grid-area: mobile;
+    }
+
+    td[data-label]::before {
+      content: attr(data-label) ' : ';
+      color: var(--saes-vert-attenue);
+      font-weight: 400;
+    }
+  }
+}
+
+/* Écarts de caisse : le caissier et l'écart, puis chaque valeur sous son nom. */
+@container bloc (max-width: 48rem) {
+  .ecarts {
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    tbody tr {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-areas:
+        'caissier ecart'
+        'ouverture cloture'
+        'fond theorique'
+        'compte .';
+      gap: 0.6rem 0.75rem;
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--saes-bordure);
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    td,
+    td:first-child,
+    td:last-child {
+      padding: 0;
+      border: none;
+      text-align: left;
+    }
+
+    .montant,
+    .date {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .caissier {
+      grid-area: caissier;
+    }
+
+    .ecart {
+      grid-area: ecart;
+      justify-self: end;
+    }
+
+    td[data-label='Ouverture'] {
+      grid-area: ouverture;
+    }
+
+    td[data-label='Clôture'] {
+      grid-area: cloture;
+    }
+
+    td[data-label='Fond de caisse'] {
+      grid-area: fond;
+    }
+
+    td[data-label='Montant théorique'] {
+      grid-area: theorique;
+    }
+
+    td[data-label='Montant compté'] {
+      grid-area: compte;
+    }
+
+    td[data-label]::before {
+      content: attr(data-label);
+      display: block;
+      color: var(--saes-vert-attenue);
+      font-size: 0.85em;
+      font-weight: 400;
+    }
+  }
+}

@@ -1,0 +1,79 @@
+/*
+ * Le composant n'ajoute pas de boîte : ses éléments se placent directement dans
+ * le `.titre-page` de la page (le titre à gauche, la période et son bouton à
+ * droite, le panneau des dates sur toute la largeur en dessous).
+ */
+:host {
+  display: contents;
+}
+
+.choix-periode {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem clamp(0.75rem, 1.4vw, 1.5rem);
+}
+
+.choix-periode-texte {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  margin: 0;
+  font-size: clamp(1rem, 1.2vw, 1.15rem);
+
+  svg {
+    flex: none;
+    width: 1.5em;
+    height: 1.5em;
+  }
+}
+
+.choix-periode svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.btn-periode {
+  gap: 0.6em;
+  min-height: clamp(2.75rem, 3.25vw, 3.1rem);
+  padding-inline: 1.1em;
+  border: 2px solid var(--saes-vert-clair);
+  font-size: clamp(1rem, 1.15vw, 1.15rem);
+  font-weight: 700;
+
+  svg {
+    width: 1.4em;
+    height: 1.4em;
+  }
+}
+
+.panneau-periode {
+  flex: 1 0 100%;
+}
+
+.formulaire-periode {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem 1rem;
+
+  .champ {
+    margin: 0;
+    min-width: 0;
+  }
+
+  .champ input {
+    min-height: 2.75rem;
+  }
+
+  .btn {
+    min-height: 2.75rem;
+  }
+}
+
+.panneau-periode .message-refus {
+  margin: 0.75rem 0 0;
+}
