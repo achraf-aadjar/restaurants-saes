@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 
 import { motifErreur } from '../../core/erreur.util';
 import { GerantStatistiquesService } from '../../core/gerant-statistiques.service';
-import { LIBELLES_CATEGORIES } from '../../core/libelles';
-import { CategoriePlat, StatistiquesVentesDto } from '../../core/models';
+import { LIBELLES_CATEGORIES, LIBELLES_CATEGORIES_PLURIEL } from '../../core/libelles';
+import { StatistiquesVentesDto } from '../../core/models';
 import { MontantPipe } from '../../shared/montant.pipe';
 import { RefusVisible } from '../../shared/refus-visible';
 
@@ -14,14 +14,6 @@ function ilYA(jours: number): string {
   date.setDate(date.getDate() - jours);
   return date.toISOString().slice(0, 10);
 }
-
-/** Les catégories au pluriel, comme titres des lignes de « Par catégorie ». */
-const LIBELLES_CATEGORIES_PLURIEL: Record<CategoriePlat, string> = {
-  ENTREE: 'Entrées',
-  PLAT_PRINCIPAL: 'Plats principaux',
-  DESSERT: 'Desserts',
-  BOISSON: 'Boissons',
-};
 
 /**
  * Consulter les statistiques de ventes (cahier des charges §4.6), reserve

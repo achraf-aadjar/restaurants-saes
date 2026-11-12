@@ -121,7 +121,7 @@
   width: clamp(3rem, 12cqi, 4.5rem);
   aspect-ratio: 1;
   border-radius: 50%;
-  background: #e6f3ec;
+  background: var(--saes-vert-pale);
   color: var(--saes-vert);
 
   svg {

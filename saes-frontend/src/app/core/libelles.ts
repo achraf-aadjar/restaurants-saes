@@ -9,6 +9,17 @@ export const LIBELLES_CATEGORIES: Record<CategoriePlat, string> = {
   BOISSON: 'Boisson',
 };
 
+/** Les catégories au pluriel, comme titres de groupes de plats. */
+export const LIBELLES_CATEGORIES_PLURIEL: Record<CategoriePlat, string> = {
+  ENTREE: 'Entrées',
+  PLAT_PRINCIPAL: 'Plats principaux',
+  DESSERT: 'Desserts',
+  BOISSON: 'Boissons',
+};
+
+/** Ordre d'affichage des catégories : de l'entrée à la boisson. */
+export const ORDRE_CATEGORIES: CategoriePlat[] = ['ENTREE', 'PLAT_PRINCIPAL', 'DESSERT', 'BOISSON'];
+
 export const LIBELLES_ROLES: Record<Role, string> = {
   CLIENT: 'Client',
   SERVEUR: 'Serveur',

@@ -7,82 +7,111 @@
 @if (chargement()) {
   <p>Chargement…</p>
 } @else {
-  <div class="mise-en-page">
-    <div class="colonne-menu">
-      <section class="carte" style="margin-bottom: 1rem">
-        <div class="choix-groupe" role="group" aria-label="Type de commande">
-          <button
-            type="button"
-            class="choix"
-            [attr.aria-pressed]="type === 'SUR_PLACE'"
-            (click)="type = 'SUR_PLACE'"
-          >
-            Sur place
-          </button>
-          <button
-            type="button"
-            class="choix"
-            [attr.aria-pressed]="type === 'A_EMPORTER'"
-            (click)="type = 'A_EMPORTER'"
-          >
-            À emporter
-          </button>
-        </div>
-        @if (type === 'SUR_PLACE') {
-          <div class="champ champ-inline champ-etire">
-            <label for="table">Table</label>
-            <select id="table" [(ngModel)]="tableId" name="table">
-              <option [ngValue]="null">— Choisir —</option>
-              @for (t of tables(); track t.id) {
-                <option [ngValue]="t.id" [disabled]="t.occupee">
-                  Table {{ t.numero }} · {{ t.capacite }} place{{ t.capacite > 1 ? 's' : '' }}
-                  {{ t.occupee ? '— occupée' : '' }}
-                </option>
-              }
-            </select>
-          </div>
-        }
-      </section>
-
-      <div class="grille-plats">
-        @for (plat of plats(); track plat.id) {
-          <article class="carte plat">
-            <h3>{{ plat.nom }}</h3>
-            <p class="prix">{{ plat.prix | montant }}</p>
-            @if (quantiteDe(plat) === 0) {
-              <button type="button" class="btn btn-secondaire btn-petit" (click)="ajouter(plat)">Ajouter</button>
-            } @else {
-              <div class="selecteur-quantite">
-                <button type="button" class="btn btn-secondaire btn-petit" (click)="retirer(plat)">−</button>
-                <span>{{ quantiteDe(plat) }}</span>
-                <button type="button" class="btn btn-secondaire btn-petit" (click)="ajouter(plat)">+</button>
-              </div>
-            }
-          </article>
-        }
+  <div class="saisie">
+    <div class="saisie-menu">
+      <div class="choix-groupe type-commande" role="group" aria-label="Type de commande">
+        <button
+          type="button"
+          class="choix"
+          [attr.aria-pressed]="type === 'SUR_PLACE'"
+          (click)="type = 'SUR_PLACE'"
+        >
+          <svg class="coche" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m5 12.5 4.5 4.5L19 7" />
+          </svg>
+          Sur place
+        </button>
+        <button
+          type="button"
+          class="choix"
+          [attr.aria-pressed]="type === 'A_EMPORTER'"
+          (click)="type = 'A_EMPORTER'"
+        >
+          <svg class="coche" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m5 12.5 4.5 4.5L19 7" />
+          </svg>
+          À emporter
+        </button>
       </div>
-    </div>
 
-    <aside class="colonne-panier">
-      <div class="carte panier">
-        <h2>Commande</h2>
-        @if (lignesListe().length === 0) {
-          <p class="panier-vide">Ajoutez des plats.</p>
-        } @else {
-          <ul class="liste-panier">
-            @for (ligne of lignesListe(); track ligne.plat.id) {
+      @if (type === 'SUR_PLACE') {
+        <div class="champ-table">
+          <label for="table">Table</label>
+          <select id="table" [(ngModel)]="tableId" name="table">
+            <option [ngValue]="null">— Choisir —</option>
+            @for (t of tables(); track t.id) {
+              <option [ngValue]="t.id" [disabled]="t.occupee">
+                Table {{ t.numero }} · {{ t.capacite }} place{{ t.capacite > 1 ? 's' : '' }}
+                {{ t.occupee ? '— occupée' : '' }}
+              </option>
+            }
+          </select>
+        </div>
+      }
+
+      @for (groupe of groupes(); track groupe.categorie) {
+        <section class="groupe-plats" [attr.aria-labelledby]="'categorie-' + groupe.categorie">
+          <h2 [id]="'categorie-' + groupe.categorie">
+            {{ libellesCategoriesPluriel[groupe.categorie] }}
+          </h2>
+          <ul class="plats-saisie">
+            @for (plat of groupe.plats; track plat.id) {
               <li>
-                <span>{{ ligne.quantite }} × {{ ligne.plat.nom }}</span>
-                <span>{{ ligne.plat.prix * ligne.quantite | montant }}</span>
+                <span class="nom">{{ plat.nom }}</span>
+                <span class="prix">{{ plat.prix | montant }}</span>
+                <div class="compteur" role="group" [attr.aria-label]="'Quantité de ' + plat.nom">
+                  <button
+                    type="button"
+                    class="pas"
+                    [disabled]="quantiteDe(plat) === 0"
+                    [attr.aria-label]="'Retirer un ' + plat.nom"
+                    (click)="retirer(plat)"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /></svg>
+                  </button>
+                  <span class="quantite" aria-live="polite">{{ quantiteDe(plat) }}</span>
+                  <button
+                    type="button"
+                    class="pas"
+                    [attr.aria-label]="'Ajouter un ' + plat.nom"
+                    (click)="ajouter(plat)"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+                  </button>
+                </div>
               </li>
             }
           </ul>
-          <p class="total-panier">Total : {{ total() | montant }}</p>
-          <button type="button" class="btn btn-primaire" [disabled]="envoiEnCours()" (click)="enregistrer()">
-            {{ envoiEnCours() ? 'Enregistrement…' : 'Enregistrer la commande' }}
-          </button>
-        }
-      </div>
+        </section>
+      }
+    </div>
+
+    <aside class="saisie-total" aria-label="Récapitulatif de la commande">
+      <h2 class="titre-recap">Commande</h2>
+      @if (lignesListe().length === 0) {
+        <p class="recap-vide">Ajoutez des plats.</p>
+      } @else {
+        <ul class="recap">
+          @for (ligne of lignesListe(); track ligne.plat.id) {
+            <li>
+              <span>{{ ligne.quantite }} × {{ ligne.plat.nom }}</span>
+              <span>{{ ligne.plat.prix * ligne.quantite | montant }}</span>
+            </li>
+          }
+        </ul>
+      }
+      <p class="total">
+        <span>Total :</span>
+        <strong>{{ total() | montant }}</strong>
+      </p>
+      <button
+        type="button"
+        class="btn btn-primaire btn-enregistrer"
+        [disabled]="envoiEnCours()"
+        (click)="enregistrer()"
+      >
+        {{ envoiEnCours() ? 'Enregistrement…' : 'Enregistrer la commande' }}
+      </button>
     </aside>
   </div>
 }

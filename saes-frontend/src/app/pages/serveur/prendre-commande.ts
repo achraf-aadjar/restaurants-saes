@@ -6,6 +6,7 @@ import { AuthService } from '../../core/auth.service';
 import { CommandeServeurService } from '../../core/commande-serveur.service';
 import { motifErreur } from '../../core/erreur.util';
 import { MenuService } from '../../core/menu.service';
+import { LIBELLES_CATEGORIES_PLURIEL, ORDRE_CATEGORIES } from '../../core/libelles';
 import { PlatResume, TableOccupationDto, TypeCommande } from '../../core/models';
 import { MontantPipe } from '../../shared/montant.pipe';
 import { RefusVisible } from '../../shared/refus-visible';
@@ -20,6 +21,7 @@ interface LigneSaisie {
   selector: 'app-prendre-commande',
   imports: [FormsModule, MontantPipe, RefusVisible],
   templateUrl: './prendre-commande.html',
+  styleUrl: './prendre-commande.scss',
 })
 export class PrendreCommande {
   private readonly menuService = inject(MenuService);
@@ -33,9 +35,24 @@ export class PrendreCommande {
   protected readonly erreur = signal<string | null>(null);
   protected readonly envoiEnCours = signal(false);
 
+  protected readonly libellesCategoriesPluriel = LIBELLES_CATEGORIES_PLURIEL;
+
   protected type: TypeCommande = 'SUR_PLACE';
   protected tableId: number | null = null;
   protected readonly lignes = signal<Map<number, LigneSaisie>>(new Map());
+
+  /**
+   * Les plats regroupés par catégorie, dans l'ordre du repas, puis par nom : l'ordre ne change
+   * pas d'un chargement à l'autre, le serveur retrouve ses plats à la même place.
+   */
+  protected readonly groupes = computed(() =>
+    ORDRE_CATEGORIES.map((categorie) => ({
+      categorie,
+      plats: this.plats()
+        .filter((p) => p.categorie === categorie)
+        .sort((x, y) => x.nom.localeCompare(y.nom, 'fr', { numeric: true })),
+    })).filter((g) => g.plats.length > 0),
+  );
 
   protected readonly lignesListe = computed(() => Array.from(this.lignes().values()));
   protected readonly total = computed(() =>
@@ -45,7 +62,7 @@ export class PrendreCommande {
   constructor() {
     const restaurantId = this.auth.utilisateur()?.restaurantId;
     if (!restaurantId) {
-      this.erreur.set('Votre compte n\'est rattaché à aucun restaurant');
+      this.erreur.set("Votre compte n'est rattaché à aucun restaurant");
       this.chargement.set(false);
       return;
     }
@@ -115,7 +132,7 @@ export class PrendreCommande {
         },
         error: (err) => {
           this.envoiEnCours.set(false);
-          this.refuser(motifErreur(err, 'La commande n\'a pas pu être enregistrée'));
+          this.refuser(motifErreur(err, "La commande n'a pas pu être enregistrée"));
         },
       });
   }

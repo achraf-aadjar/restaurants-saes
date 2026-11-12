@@ -1,0 +1,333 @@
+/*
+ * Prendre une commande (écran de référence 6, un téléphone) : le type de
+ * commande, la table, les plats par catégorie avec un compteur « − 2 + », et en
+ * bas de l'écran le total et « Enregistrer la commande ». À partir de 1100 px
+ * (avec la barre latérale), le récapitulatif passe à droite, sous forme de carte.
+ * Les boutons du compteur font 44 px, plus que sur la maquette (environ 31 px),
+ * pour que le doigt les atteigne sans erreur.
+ */
+
+.saisie {
+  display: flex;
+  flex-direction: column;
+}
+
+.saisie-menu {
+  min-width: 0;
+  padding-bottom: 1rem;
+}
+
+/* ---------- Type de commande ---------- */
+
+.type-commande {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.type-commande .choix {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  min-height: 3rem;
+  padding: 0.5em 0.75em;
+  border: 1px solid var(--saes-bordure);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+/* Le choix retenu : fond vert pâle et trait vert, avec une coche (écran de référence 6). */
+.type-commande .choix[aria-pressed='true'] {
+  border: 2px solid var(--saes-vert-clair);
+  background: var(--saes-vert-pale);
+  box-shadow: none;
+}
+
+.type-commande .choix::before,
+.type-commande .choix[aria-pressed='true']::before {
+  content: none;
+}
+
+.coche {
+  flex: none;
+  width: 1.2em;
+  height: 1.2em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.choix[aria-pressed='false'] .coche {
+  display: none;
+}
+
+/* ---------- Table ---------- */
+
+.champ-table {
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--saes-bordure);
+  border-radius: 8px;
+  background: #fff;
+
+  label {
+    display: block;
+    padding: 0.4rem 0.9rem 0;
+    color: var(--saes-vert-attenue);
+    font-size: 0.95rem;
+  }
+
+  select {
+    display: block;
+    width: 100%;
+    min-height: 2rem;
+    padding: 0 2.6rem 0.45rem 0.9rem;
+    border: none;
+    background: transparent
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2308312d' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+      no-repeat right 0.9rem center / 1.1rem;
+    color: var(--saes-vert);
+    font: inherit;
+    font-size: 1.2rem;
+    font-weight: 600;
+    appearance: none;
+    cursor: pointer;
+  }
+
+  &:focus-within {
+    outline: 3px solid var(--saes-vert);
+    outline-offset: 2px;
+  }
+
+  select:focus-visible {
+    outline: none;
+  }
+}
+
+/* ---------- Plats par catégorie ---------- */
+
+.groupe-plats {
+  container: groupe / inline-size;
+  margin-bottom: 1.25rem;
+
+  h2 {
+    margin: 0 0 0.6rem;
+    font-size: clamp(1.5rem, calc(1.4vw + 1rem), 2rem);
+    font-weight: 800;
+    line-height: 1.2;
+  }
+}
+
+.plats-saisie {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--saes-bordure);
+  border-radius: 8px;
+  background: #fff;
+
+  li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 0.2rem 0.9rem;
+    min-height: 3.4rem;
+    padding: 0.3rem 0.9rem;
+    border-top: 1px solid var(--saes-bordure);
+  }
+
+  li:first-child {
+    border-top: none;
+  }
+}
+
+.nom {
+  font-size: 1.2rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.prix {
+  font-size: 1.1rem;
+  white-space: nowrap;
+}
+
+/* Carte étroite : le prix passe sous le nom, le compteur reste à droite. */
+@container groupe (max-width: 26rem) {
+  .plats-saisie li {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'nom pas'
+      'prix pas';
+  }
+
+  .nom {
+    grid-area: nom;
+  }
+
+  .prix {
+    grid-area: prix;
+  }
+
+  .compteur {
+    grid-area: pas;
+  }
+}
+
+.compteur {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.pas {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1.5px solid var(--saes-bordure);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--saes-vert);
+  cursor: pointer;
+
+  svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--saes-vert-pale);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+.quantite {
+  min-width: 2.4rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: var(--saes-vert-pale);
+  font-size: 1.2rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+/* ---------- Total : barre en bas de l'écran ---------- */
+
+.saisie-total {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  margin-inline: calc(-1 * var(--saes-gouttiere));
+  padding: 0.75rem var(--saes-gouttiere) 1rem;
+  border-top: 1px solid var(--saes-bordure);
+  background: var(--saes-creme);
+}
+
+.titre-recap,
+.recap,
+.recap-vide {
+  display: none;
+}
+
+.total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.6rem;
+  font-size: clamp(1.4rem, 5.5vw, 1.7rem);
+  font-weight: 800;
+
+  strong {
+    color: var(--saes-rouge);
+    overflow-wrap: anywhere;
+  }
+}
+
+.btn-enregistrer {
+  width: 100%;
+  min-height: 3rem;
+  padding-block: 0.4em;
+  border-radius: 8px;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+/* ---------- Grand écran : le récapitulatif à droite ---------- */
+
+@media (min-width: 68.75rem) {
+  .saisie {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: clamp(1rem, 1.6vw, 1.5rem);
+  }
+
+  .saisie-menu {
+    flex: 1;
+  }
+
+  .saisie-total {
+    position: sticky;
+    top: 1rem;
+    bottom: auto;
+    flex: none;
+    width: clamp(18.75rem, 31.25vw, 30rem);
+    margin: 0;
+    padding: clamp(1rem, 1.6vw, 1.5rem);
+    border: 1px solid var(--saes-bordure);
+    border-radius: var(--saes-rayon);
+    background: #fff;
+    box-shadow: var(--saes-ombre);
+  }
+
+  .titre-recap {
+    display: block;
+    margin: 0 0 0.8rem;
+    font-size: clamp(1.35rem, 1.9vw, 1.8rem);
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .recap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin: 0 0 0.9rem;
+    padding: 0;
+    list-style: none;
+    font-size: clamp(1rem, 1.2vw, 1.15rem);
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+  }
+
+  .recap-vide {
+    display: block;
+    margin: 0 0 0.9rem;
+    color: var(--saes-vert-attenue);
+  }
+
+  .total {
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--saes-bordure);
+  }
+}
