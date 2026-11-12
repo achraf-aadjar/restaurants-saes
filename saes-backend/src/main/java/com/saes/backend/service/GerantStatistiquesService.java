@@ -20,6 +20,7 @@ import com.saes.backend.repository.CommandeRepository;
 import com.saes.backend.web.dto.StatistiquesVentesDto;
 import com.saes.backend.web.dto.VenteParCategorieDto;
 import com.saes.backend.web.dto.VenteParPlatDto;
+import com.saes.backend.web.error.ApiException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,6 +40,9 @@ public class GerantStatistiquesService {
     private final PersonnelRestaurantResolver personnelRestaurantResolver;
 
     public StatistiquesVentesDto consulter(Long gerantId, LocalDate debut, LocalDate fin) {
+        if (fin.isBefore(debut)) {
+            throw ApiException.badRequest("La date de fin ne peut pas être avant la date de début");
+        }
         Restaurant restaurant = personnelRestaurantResolver.restaurantDe(gerantId);
         Instant debutInstant = debut.atStartOfDay(ZONE).toInstant();
         Instant finInstant = fin.plusDays(1).atStartOfDay(ZONE).toInstant();

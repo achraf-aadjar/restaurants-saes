@@ -208,6 +208,19 @@ class FinancesTest extends IntegrationTest {
         assertThat(stats.liste("$.parCategorie[?(@.categorie == 'BOISSON')].montant")).containsExactly(1_000);
     }
 
+    @Test
+    void regle18UnePeriodeDontLaFinPrecedeLeDebutEstRefusee() {
+        String debut = LocalDate.now().toString();
+        String fin = LocalDate.now().minusDays(1).toString();
+
+        for (String chemin : List.of("/api/gerant/rapports-financiers", "/api/gerant/statistiques-ventes")) {
+            Reponse refus = api.get(monde.jetonGerant, chemin + "?debut=" + debut + "&fin=" + fin);
+
+            assertThat(refus.statut()).isEqualTo(400);
+            assertThat(refus.<String>lire("$.motif")).isEqualTo("La date de fin ne peut pas être avant la date de début");
+        }
+    }
+
     private int paiements(long commande) {
         return jdbc.queryForObject("select count(*) from paiement where commande_id = ?", Integer.class, commande);
     }
