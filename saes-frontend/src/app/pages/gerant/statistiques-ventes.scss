@@ -57,8 +57,10 @@
   }
 }
 
+/* Pas de « overflow-wrap: anywhere » : dans un tableau, il laisse la colonne
+   devenir plus étroite qu'un mot et coupait « Thieboudienne » en deux. Un nom
+   plus large que la carte ferait défiler son cadre (filet de sécurité). */
 .nom-ligne {
-  overflow-wrap: anywhere;
   font-weight: 700;
 }
 
