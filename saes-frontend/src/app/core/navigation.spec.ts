@@ -31,6 +31,10 @@ describe('Navigation par role', () => {
     expect(accueilDe(utilisateur('CAISSIER'))).toBe('/caissier/encaisser');
   });
 
+  it('le gérant arrive sur ses stocks, où les alertes lui sont signalées (cahier §4.6)', () => {
+    expect(accueilDe(utilisateur('GERANT'))).toBe('/gerant/stocks');
+  });
+
   it("l'administrateur n'est pas du personnel (cahier des charges §3)", () => {
     expect(estPersonnel(utilisateur('ADMINISTRATEUR'))).toBe(false);
     expect(estPersonnel(utilisateur('SERVEUR'))).toBe(true);

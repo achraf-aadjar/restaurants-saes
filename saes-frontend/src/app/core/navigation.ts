@@ -125,7 +125,9 @@ export const SECTIONS: Section[] = [
   {
     role: 'GERANT',
     intitule: 'Gestion',
-    accueil: '/gerant/plats',
+    // Les stocks plutot que les plats : c'est la tache de tous les jours, et la
+    // page ou un ingredient sous son seuil d'alerte est signale au gerant.
+    accueil: '/gerant/stocks',
     fonctions: [
       { libelle: 'Gérer les plats', lien: '/gerant/plats', icone: ICONES.plats },
       { libelle: 'Gérer les menus', lien: '/gerant/menus', icone: ICONES.menus },
@@ -174,7 +176,7 @@ export function sectionsDe(utilisateur: Utilisateur | null): Section[] {
   return SECTIONS.filter((section) => utilisateur?.roles.includes(section.role));
 }
 
-/** Page ouverte apres la connexion : la premiere fonction du personnel, les menus sinon. */
+/** Page ouverte apres la connexion : la tache principale du role, les menus sinon. */
 export function accueilDe(utilisateur: Utilisateur | null): string {
   return sectionsDe(utilisateur)[0]?.accueil ?? '/menus';
 }
