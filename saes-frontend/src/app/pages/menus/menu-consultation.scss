@@ -637,6 +637,13 @@
       outline: 2px solid var(--saes-vert);
       outline-offset: -2px;
     }
+
+    /* Au doigt, 44 px, comme le compteur du serveur ; a la souris, la taille
+       de l'ecran (37 px). */
+    @media (pointer: coarse) {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
   }
 
   span {
