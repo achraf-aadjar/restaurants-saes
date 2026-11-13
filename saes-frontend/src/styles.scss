@@ -446,10 +446,20 @@ button {
   margin: 0 0 0.5rem;
 }
 
+/* Sur telephone, les plats d'abord, puis la commande : le client voit le menu
+   des le premier ecran (une barre en bas de l'ecran resume sa commande, voir
+   menu-consultation). A partir de 860 px, la commande passe a droite. */
 .mise-en-page {
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   gap: 1.5rem;
+}
+
+/* Un element qui recoit le focus au clavier ne passe pas sous cette barre. */
+@media (max-width: 859.98px) {
+  html:has(.barre-panier) {
+    scroll-padding-bottom: 6rem;
+  }
 }
 
 .colonne-menu {

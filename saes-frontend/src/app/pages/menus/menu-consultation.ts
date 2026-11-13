@@ -1,4 +1,13 @@
-import { Component, computed, inject, LOCALE_ID, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  LOCALE_ID,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../core/auth.service';
@@ -75,6 +84,11 @@ export class MenuConsultation {
   protected readonly envoiEnCours = signal(false);
   protected readonly commandeConfirmee = signal(false);
 
+  private readonly colonnePanier = viewChild<ElementRef<HTMLElement>>('colonnePanier');
+  private readonly titrePanier = viewChild<ElementRef<HTMLElement>>('titrePanier');
+  /** Vrai quand une partie de la commande est a l'ecran. */
+  private readonly panierEnVue = signal(false);
+
   protected readonly menusAffiches = computed<MenuAffiche[]>(() =>
     this.menus().map((menu) => ({
       menu,
@@ -137,7 +151,26 @@ export class MenuConsultation {
     this.lignesPanier().reduce((total, l) => total + l.quantite, 0),
   );
 
+  /**
+   * Sur telephone, la commande vient apres les plats : une barre en bas de
+   * l'ecran la resume des le premier plat ajoute, et s'efface quand la commande
+   * elle-meme est en vue (la feuille de style la cache a partir de 860 px).
+   */
+  protected readonly afficherBarrePanier = computed(
+    () => this.nombreArticles() > 0 && !this.commandeConfirmee() && !this.panierEnVue(),
+  );
+
   constructor() {
+    effect((nettoyer) => {
+      const colonne = this.colonnePanier()?.nativeElement;
+      if (!colonne || typeof IntersectionObserver === 'undefined') return;
+      const observateur = new IntersectionObserver(([entree]) =>
+        this.panierEnVue.set(entree.isIntersecting),
+      );
+      observateur.observe(colonne);
+      nettoyer(() => observateur.disconnect());
+    });
+
     this.chargement.set(true);
     this.menuService.restaurants().subscribe({
       next: (restaurants) => {
@@ -196,6 +229,16 @@ export class MenuConsultation {
     const copie = new Map(this.panier());
     copie.delete(plat.id);
     this.panier.set(copie);
+  }
+
+  /** « Voir ma commande » : descend jusqu'a la commande et y place le focus. */
+  protected voirLaCommande(): void {
+    const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.colonnePanier()?.nativeElement.scrollIntoView({
+      behavior: reduit ? 'auto' : 'smooth',
+      block: 'start',
+    });
+    this.titrePanier()?.nativeElement.focus({ preventScroll: true });
   }
 
   protected passerCommande(): void {
