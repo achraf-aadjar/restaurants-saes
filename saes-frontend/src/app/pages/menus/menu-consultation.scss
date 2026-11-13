@@ -451,10 +451,12 @@
   margin: 0 0 0.6rem;
 }
 
+/* Prix en vert, comme sur les écrans 4 et 6 : c'est une information ; le rouge
+   de la carte reste à l'action, « Ajouter ». Seul le total du panier est rouge. */
 .plat .prix {
   font-size: clamp(1.05rem, 1.3vw, 1.25rem);
   font-weight: 800;
-  color: var(--saes-rouge);
+  color: var(--saes-vert);
 }
 
 /* « Ajouter ⊕ » en contour rouge : il se répète sur chaque plat, le rouge plein
@@ -503,7 +505,7 @@
 /*
  * Commande, mesuree sur l'ecran de reference 1 (1536 px) : icone de chariot
  * rouge, titre de 28 px tres gras, pastille « N articles » sur fond rose ;
- * par plat : vignette de 96 px, nom, prix unitaire rouge, quantite − + dans
+ * par plat : vignette de 96 px, nom, prix unitaire (vert, voir .plat .prix), quantite − + dans
  * une pilule, total de la ligne, corbeille ; total dans un cadre rose ; gros
  * bouton « Passer la commande ».
  */
@@ -595,7 +597,7 @@
 
 .ligne-detail .ligne-prix {
   margin-top: 0.2rem;
-  color: var(--saes-rouge);
+  color: var(--saes-vert);
   font-weight: 700;
 }
 
