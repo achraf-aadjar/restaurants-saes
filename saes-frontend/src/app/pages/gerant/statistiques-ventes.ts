@@ -15,6 +15,12 @@ function ilYA(jours: number): string {
   return date.toISOString().slice(0, 10);
 }
 
+/** Le 1er du mois en cours (AAAA-MM-JJ). */
+function premierDuMois(): string {
+  const date = new Date();
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-01`;
+}
+
 /**
  * Consulter les statistiques de ventes (cahier des charges §4.6), reserve
  * au gerant : nombre de commandes payees et montant moyen, quantites
@@ -33,8 +39,11 @@ export class GerantStatistiquesVentes {
   protected readonly libellesCategories = LIBELLES_CATEGORIES;
   protected readonly libellesCategoriesPluriel = LIBELLES_CATEGORIES_PLURIEL;
 
-  /** Période des chiffres affichés (AAAA-MM-JJ). */
-  protected readonly periode = signal<Periode>({ debut: ilYA(30), fin: ilYA(0) });
+  /**
+   * Période des chiffres affichés (AAAA-MM-JJ). Au départ, le mois en cours,
+   * du 1er à aujourd'hui, comme sur l'écran de référence 5.
+   */
+  protected readonly periode = signal<Periode>({ debut: premierDuMois(), fin: ilYA(0) });
 
   protected readonly statistiques = signal<StatistiquesVentesDto | null>(null);
   protected readonly chargement = signal(true);

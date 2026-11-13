@@ -15,6 +15,12 @@ function ilYA(jours: number): string {
   return date.toISOString().slice(0, 10);
 }
 
+/** Le 1er du mois en cours (AAAA-MM-JJ). */
+function premierDuMois(): string {
+  const date = new Date();
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-01`;
+}
+
 /**
  * Consulter les rapports financiers (cahier des charges §4.5), reserve au
  * gerant : montants encaisses par jour et par mode de paiement, ecarts de
@@ -30,8 +36,11 @@ function ilYA(jours: number): string {
 export class GerantRapportsFinanciers {
   private readonly gerantRapportService = inject(GerantRapportService);
 
-  /** Période des montants affichés (AAAA-MM-JJ). */
-  protected readonly periode = signal<Periode>({ debut: ilYA(30), fin: ilYA(0) });
+  /**
+   * Période des montants affichés (AAAA-MM-JJ). Au départ, le mois en cours,
+   * du 1er à aujourd'hui, comme sur l'écran de référence 5.
+   */
+  protected readonly periode = signal<Periode>({ debut: premierDuMois(), fin: ilYA(0) });
 
   protected readonly rapport = signal<RapportFinancierDto | null>(null);
   protected readonly chargement = signal(true);
