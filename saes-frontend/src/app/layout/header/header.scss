@@ -180,7 +180,12 @@
   color: var(--saes-vert);
 }
 
+/* Le menu sur téléphone. La page ouverte y a le même repère que dans la barre
+   latérale : trait rouge à gauche et fond clair. Chaque lien garde la place du
+   trait, pour que tous les textes restent alignés. */
 .nav-mobile {
+  --retrait: calc(0.75rem + 4px);
+
   display: flex;
   flex-direction: column;
   padding: 0.5rem 1rem 1rem;
@@ -189,9 +194,11 @@
   a,
   button {
     text-align: left;
-    padding: 0.6em 0;
+    padding: 0.6em 0.75rem;
     background: none;
     border: none;
+    border-left: 4px solid transparent;
+    border-radius: 0 var(--saes-rayon) var(--saes-rayon) 0;
     color: var(--saes-vert);
     font-weight: 600;
     text-decoration: none;
@@ -200,27 +207,44 @@
   }
 
   a.actif {
-    color: var(--saes-rouge);
+    border-left-color: var(--saes-rouge);
+    background: rgba(254, 198, 8, 0.14);
+  }
+
+  /* En contraste élevé, un trait « transparent » devient visible : on
+     l'efface sur les autres liens et on le montre sur la page ouverte. */
+  @media (forced-colors: active) {
+    a,
+    button {
+      border-left-color: Canvas;
+    }
+
+    a.actif {
+      border-left-color: Highlight;
+    }
   }
 }
 
 .nav-mobile-nom {
   margin: 0.4rem 0;
+  padding-left: var(--retrait);
   font-weight: 700;
 }
 
 .nav-mobile-intitule {
   margin: 0.9rem 0 0.2rem;
+  padding-left: var(--retrait);
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.nav-mobile .nav-mobile-compte {
-  margin-top: 0.6rem;
+.nav-mobile-separateur {
+  width: 100%;
+  margin: 0.6rem 0 0.3rem;
+  border: none;
   border-top: 1px solid var(--saes-bordure);
-  padding-top: 0.9em;
 }
 
 /*

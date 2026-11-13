@@ -11,11 +11,15 @@
 
     <nav class="nav-desktop">
       @if (ongletsClient()) {
-        <a routerLink="/menus" routerLinkActive="actif">Menus</a>
+        <a routerLink="/menus" routerLinkActive="actif" ariaCurrentWhenActive="page">Menus</a>
       }
       @if (auth.aLeRole('CLIENT')) {
-        <a routerLink="/mes-commandes" routerLinkActive="actif">Mes commandes</a>
-        <a routerLink="/mes-reservations" routerLinkActive="actif">Mes réservations</a>
+        <a routerLink="/mes-commandes" routerLinkActive="actif" ariaCurrentWhenActive="page"
+          >Mes commandes</a
+        >
+        <a routerLink="/mes-reservations" routerLinkActive="actif" ariaCurrentWhenActive="page"
+          >Mes réservations</a
+        >
       }
     </nav>
 
@@ -62,22 +66,53 @@
         <p class="nav-mobile-nom">{{ nom() }}</p>
       }
       @if (ongletsClient()) {
-        <a routerLink="/menus" (click)="basculerMenuMobile()">Menus</a>
+        <a
+          routerLink="/menus"
+          routerLinkActive="actif"
+          ariaCurrentWhenActive="page"
+          (click)="basculerMenuMobile()"
+          >Menus</a
+        >
       }
       @if (auth.aLeRole('CLIENT')) {
-        <a routerLink="/mes-commandes" (click)="basculerMenuMobile()">Mes commandes</a>
-        <a routerLink="/mes-reservations" (click)="basculerMenuMobile()">Mes réservations</a>
+        <a
+          routerLink="/mes-commandes"
+          routerLinkActive="actif"
+          ariaCurrentWhenActive="page"
+          (click)="basculerMenuMobile()"
+        >
+          Mes commandes
+        </a>
+        <a
+          routerLink="/mes-reservations"
+          routerLinkActive="actif"
+          ariaCurrentWhenActive="page"
+          (click)="basculerMenuMobile()"
+        >
+          Mes réservations
+        </a>
       }
       @for (section of sections(); track section.role) {
         <p class="nav-mobile-intitule">{{ section.intitule }}</p>
         @for (fonction of section.fonctions; track fonction.lien) {
-          <a [routerLink]="fonction.lien" routerLinkActive="actif" (click)="basculerMenuMobile()">
+          <a
+            [routerLink]="fonction.lien"
+            routerLinkActive="actif"
+            ariaCurrentWhenActive="page"
+            (click)="basculerMenuMobile()"
+          >
             {{ fonction.libelle }}
           </a>
         }
       }
       @if (auth.estConnecte()) {
-        <a routerLink="/mon-compte" class="nav-mobile-compte" (click)="basculerMenuMobile()">
+        <hr class="nav-mobile-separateur" />
+        <a
+          routerLink="/mon-compte"
+          routerLinkActive="actif"
+          ariaCurrentWhenActive="page"
+          (click)="basculerMenuMobile()"
+        >
           Mon compte
         </a>
         <button type="button" (click)="seDeconnecter()">Se déconnecter</button>

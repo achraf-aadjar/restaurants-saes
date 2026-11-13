@@ -62,3 +62,15 @@ a.actif {
   background: rgba(254, 198, 8, 0.14);
   font-weight: 600;
 }
+
+/* En contraste élevé, un trait « transparent » devient visible : on
+     l'efface sur les autres liens et on le montre sur la page ouverte. */
+@media (forced-colors: active) {
+  a {
+    border-left-color: Canvas;
+  }
+
+  a.actif {
+    border-left-color: Highlight;
+  }
+}
