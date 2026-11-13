@@ -685,6 +685,16 @@
   &:focus-visible {
     outline: 2px solid var(--saes-vert);
   }
+
+  /* Au doigt, 44 px comme les boutons − et + ; la marge negative garde
+     l'icone a sa place (27 px a la souris). */
+  @media (pointer: coarse) {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin: calc((1.7rem - 2.75rem) / 2);
+  }
 }
 
 .total-commande {
