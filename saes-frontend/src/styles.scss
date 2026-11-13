@@ -386,7 +386,8 @@ button {
 }
 
 /* Choix parmi deux ou trois options (mode de paiement, sur place ou a emporter).
-   Le choix retenu est entoure de rouge, la couleur de la selection (charte, Design). */
+   Le choix retenu : fond vert pâle, trait vert et coche, comme sur les écrans de
+   référence 3 et 6. Le rouge reste à l'action (« Encaisser ») et à « où je suis ». */
 .choix-groupe {
   display: flex;
   flex-wrap: wrap;
@@ -411,13 +412,14 @@ button {
 }
 
 .choix[aria-pressed='true'] {
-  border-color: var(--saes-rouge);
-  box-shadow: inset 0 0 0 1px var(--saes-rouge);
+  border-color: var(--saes-vert-clair);
+  box-shadow: inset 0 0 0 1px var(--saes-vert-clair); /* trait de 2 px, même taille */
+  background: var(--saes-vert-pale);
 }
 
 .choix[aria-pressed='true']::before {
   content: '✓ ';
-  color: var(--saes-rouge);
+  color: var(--saes-vert);
 }
 
 /* Mise en page "menu + panier", partagee entre la consultation des menus
