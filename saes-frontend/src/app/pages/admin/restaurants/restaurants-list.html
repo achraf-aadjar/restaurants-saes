@@ -139,7 +139,7 @@
             <td>{{ r.adresse }}</td>
             <td>{{ r.tables.length }}</td>
             <td>
-              <span class="badge" [class.badge-actif]="r.estActif" [class.badge-inactif]="!r.estActif">
+              <span class="badge" [class.badge-actif]="r.estActif" [class.badge-neutre]="!r.estActif">
                 {{ r.estActif ? 'Actif' : 'Désactivé' }}
               </span>
             </td>
