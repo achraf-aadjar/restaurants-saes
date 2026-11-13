@@ -40,11 +40,13 @@ export class GerantStatistiquesVentes {
   protected readonly chargement = signal(true);
   protected readonly erreur = signal<string | null>(null);
 
-  /** Les catégories de la plus vendue à la moins vendue (les barres se lisent de haut en bas). */
+  /**
+   * Les catégories de la plus rentable à la moins rentable, comme les plats.
+   * La barre mesure le montant, pas la quantité : un jus et un plat n'ont pas
+   * le même prix, et des quantités de catégories différentes ne se comparent pas.
+   */
   protected readonly categories = computed(() =>
-    [...(this.statistiques()?.parCategorie ?? [])].sort(
-      (a, b) => b.quantiteVendue - a.quantiteVendue,
-    ),
+    [...(this.statistiques()?.parCategorie ?? [])].sort((a, b) => b.montant - a.montant),
   );
 
   /** Les plats du plus rentable au moins rentable. */
@@ -52,18 +54,18 @@ export class GerantStatistiquesVentes {
     [...(this.statistiques()?.parPlat ?? [])].sort((a, b) => b.montant - a.montant),
   );
 
-  /** Plus grande quantité par catégorie : la barre la plus longue la remplit. */
-  private readonly quantiteMaximale = computed(() =>
-    Math.max(1, ...(this.statistiques()?.parCategorie.map((v) => v.quantiteVendue) ?? [])),
+  /** Plus grand montant par catégorie : la barre la plus longue la remplit. */
+  private readonly montantMaximal = computed(() =>
+    Math.max(1, ...(this.statistiques()?.parCategorie.map((v) => v.montant) ?? [])),
   );
 
   constructor() {
     this.charger(this.periode());
   }
 
-  /** Largeur de la barre d'une catégorie, en pourcentage de la plus grande. */
-  protected largeurBarre(quantite: number): number {
-    return quantite > 0 ? Math.max(4, (quantite / this.quantiteMaximale()) * 100) : 0;
+  /** Largeur de la barre d'une catégorie, en pourcentage du plus grand montant. */
+  protected largeurBarre(montant: number): number {
+    return montant > 0 ? Math.max(4, (montant / this.montantMaximal()) * 100) : 0;
   }
 
   /** Charge les statistiques d'une période ; la période affichée change quand elles arrivent. */
