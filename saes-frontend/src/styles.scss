@@ -545,10 +545,22 @@ button {
   margin-top: 1rem;
 }
 
+/* Confirmation dans une carte : une question courte, puis deux boutons à leur
+   taille, côte à côte ; l'un sous l'autre seulement si la place manque, sans
+   jamais couper leur texte. Discrète pour ne pas trop allonger la carte. */
+.confirmation-carte p {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
 .actions-danger {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.6rem;
-  margin-top: 0.75rem;
+
+  .btn {
+    white-space: nowrap;
+  }
 }
 
 .btn-petit {

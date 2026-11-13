@@ -7,12 +7,13 @@ import { motifErreur } from '../../core/erreur.util';
 import { MenuService } from '../../core/menu.service';
 import { ReservationDto, RestaurantSummary } from '../../core/models';
 import { ReservationService } from '../../core/reservation.service';
+import { FocusAuRendu } from '../../shared/focus-au-rendu';
 import { RefusVisible } from '../../shared/refus-visible';
 
 /** Faire une reservation, Gerer ses reservations (cahier des charges §4.4). */
 @Component({
   selector: 'app-mes-reservations',
-  imports: [FormsModule, DatePipe, RefusVisible],
+  imports: [FormsModule, DatePipe, FocusAuRendu, RefusVisible],
   templateUrl: './mes-reservations.html',
 })
 export class MesReservations {
@@ -28,6 +29,11 @@ export class MesReservations {
   protected readonly erreurFormulaire = signal<string | null>(null);
   protected readonly envoiEnCours = signal(false);
   protected readonly annulationEnCours = signal<number | null>(null);
+
+  /** Carte dont l'action attend la confirmation : le statut obtenu est définitif (règle 1). */
+  protected readonly aConfirmer = signal<number | null>(null);
+  /** Carte où l'on vient de renoncer : son bouton reprend le focus du clavier. */
+  protected readonly retourFocus = signal<number | null>(null);
 
   protected restaurantId: number | null = null;
   protected date = '';
@@ -104,12 +110,19 @@ export class MesReservations {
     this.reservationService.annuler(reservation.id).subscribe({
       next: () => {
         this.annulationEnCours.set(null);
+        this.aConfirmer.set(null);
         this.charger();
       },
       error: (err) => {
         this.annulationEnCours.set(null);
+        this.aConfirmer.set(null);
         this.erreur.set(motifErreur(err, 'Annulation impossible'));
       },
     });
+  }
+
+  protected garder(id: number): void {
+    this.aConfirmer.set(null);
+    this.retourFocus.set(id);
   }
 }

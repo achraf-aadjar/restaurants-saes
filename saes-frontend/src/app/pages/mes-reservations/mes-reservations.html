@@ -1,6 +1,8 @@
 <div class="titre-page">
   <h1>Mes réservations</h1>
-  <button type="button" class="btn btn-primaire" (click)="formulaireOuvert.set(true)">Réserver une table</button>
+  <button type="button" class="btn btn-primaire" (click)="formulaireOuvert.set(true)">
+    Réserver une table
+  </button>
 </div>
 
 @if (erreur(); as e) {
@@ -34,7 +36,14 @@
       </div>
       <div class="champ">
         <label for="couverts">Nombre de couverts</label>
-        <input id="couverts" name="couverts" type="number" min="1" required [(ngModel)]="nombreCouverts" />
+        <input
+          id="couverts"
+          name="couverts"
+          type="number"
+          min="1"
+          required
+          [(ngModel)]="nombreCouverts"
+        />
       </div>
 
       <div class="actions-colonne">
@@ -59,7 +68,11 @@
       @for (r of reservations(); track r.id) {
         <article class="carte commande">
           <div class="commande-entete">
-            <span class="badge" [class.badge-actif]="r.statut === 'CONFIRMEE'" [class.badge-inactif]="r.statut === 'ANNULEE'">
+            <span
+              class="badge"
+              [class.badge-actif]="r.statut === 'CONFIRMEE'"
+              [class.badge-inactif]="r.statut === 'ANNULEE'"
+            >
               {{ r.statut === 'CONFIRMEE' ? 'Confirmée' : 'Annulée' }}
             </span>
           </div>
@@ -72,14 +85,43 @@
             }
           </p>
           @if (r.statut === 'CONFIRMEE') {
-            <button
-              type="button"
-              class="btn btn-secondaire btn-petit"
-              [disabled]="annulationEnCours() === r.id"
-              (click)="annuler(r)"
-            >
-              Annuler
-            </button>
+            @if (aConfirmer() === r.id) {
+              <div
+                class="confirmation-carte"
+                role="group"
+                [attr.aria-labelledby]="'question-' + r.id"
+                (keydown.escape)="garder(r.id)"
+              >
+                <p [id]="'question-' + r.id">Annuler cette réservation ? C'est définitif.</p>
+                <div class="actions-danger">
+                  <button
+                    type="button"
+                    class="btn btn-primaire btn-petit"
+                    [disabled]="annulationEnCours() === r.id"
+                    (click)="annuler(r)"
+                  >
+                    Oui, annuler
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-secondaire btn-petit"
+                    appFocusAuRendu
+                    (click)="garder(r.id)"
+                  >
+                    Non, garder
+                  </button>
+                </div>
+              </div>
+            } @else {
+              <button
+                type="button"
+                class="btn btn-secondaire btn-petit"
+                [appFocusAuRendu]="retourFocus() === r.id"
+                (click)="aConfirmer.set(r.id)"
+              >
+                Annuler ma réservation
+              </button>
+            }
           }
         </article>
       }

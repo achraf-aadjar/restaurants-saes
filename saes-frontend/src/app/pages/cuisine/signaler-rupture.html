@@ -18,7 +18,7 @@
           id="ingredientRupture"
           style="width: 100%"
           [(ngModel)]="ingredientSelectionne"
-          (ngModelChange)="confirmationRupture.set(false)"
+          (ngModelChange)="changerIngredient()"
           name="ingredientRupture"
         >
           @for (i of ingredients(); track i.id) {
@@ -29,31 +29,41 @@
         </select>
       </div>
       @if (!confirmationRupture()) {
-        <button type="submit" class="btn btn-primaire btn-petit">Signaler la rupture</button>
+        <button type="submit" class="btn btn-primaire btn-petit" [appFocusAuRendu]="retourFocus()">
+          Signaler la rupture
+        </button>
       }
     </form>
 
     @if (confirmationRupture()) {
-      <p>
-        Confirmer la rupture de « {{ nomIngredientSelectionne() }} » ? Les plats qui en contiennent
-        seront désactivés et son stock ramené à zéro.
-      </p>
-      <div class="actions-danger">
-        <button
-          type="button"
-          class="btn btn-primaire btn-petit"
-          [disabled]="ruptureEnCours() !== null"
-          (click)="signalerRupture()"
-        >
-          Oui, signaler la rupture
-        </button>
-        <button
-          type="button"
-          class="btn btn-secondaire btn-petit"
-          (click)="confirmationRupture.set(false)"
-        >
-          Annuler
-        </button>
+      <div
+        class="confirmation-carte"
+        role="group"
+        aria-labelledby="question-rupture"
+        (keydown.escape)="nePasSignaler()"
+      >
+        <p id="question-rupture">
+          Signaler la rupture de « {{ nomIngredientSelectionne() }} » ? Les plats qui en contiennent
+          seront désactivés et son stock ramené à zéro.
+        </p>
+        <div class="actions-danger">
+          <button
+            type="button"
+            class="btn btn-primaire btn-petit"
+            [disabled]="ruptureEnCours() !== null"
+            (click)="signalerRupture()"
+          >
+            Signaler la rupture
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondaire btn-petit"
+            appFocusAuRendu
+            (click)="nePasSignaler()"
+          >
+            Ne pas signaler
+          </button>
+        </div>
       </div>
     }
   }

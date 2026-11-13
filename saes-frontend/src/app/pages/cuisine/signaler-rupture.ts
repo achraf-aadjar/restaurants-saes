@@ -4,13 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { motifErreur } from '../../core/erreur.util';
 import { IngredientDto } from '../../core/models';
 import { RuptureService } from '../../core/rupture.service';
+import { FocusAuRendu } from '../../shared/focus-au-rendu';
 import { QuantitePipe } from '../../shared/quantite.pipe';
 import { RefusVisible } from '../../shared/refus-visible';
 
 /** Signaler une rupture (cahier des charges §4.6), cote cuisinier. */
 @Component({
   selector: 'app-signaler-rupture',
-  imports: [FormsModule, QuantitePipe, RefusVisible],
+  imports: [FocusAuRendu, FormsModule, QuantitePipe, RefusVisible],
   templateUrl: './signaler-rupture.html',
 })
 export class SignalerRupture {
@@ -21,6 +22,8 @@ export class SignalerRupture {
   protected readonly ruptureEnCours = signal<number | null>(null);
   protected readonly ruptureConfirmee = signal<number | null>(null);
   protected readonly confirmationRupture = signal(false);
+  /** Vrai quand on vient de renoncer : « Signaler la rupture » reprend le focus du clavier. */
+  protected readonly retourFocus = signal(false);
   protected ingredientSelectionne: number | null = null;
 
   protected nomIngredientSelectionne(): string {
@@ -59,5 +62,16 @@ export class SignalerRupture {
         this.erreur.set(motifErreur(err, 'Action impossible'));
       },
     });
+  }
+
+  protected nePasSignaler(): void {
+    this.confirmationRupture.set(false);
+    this.retourFocus.set(true);
+  }
+
+  /** Changer d'ingrédient referme la question ; le focus reste sur la liste. */
+  protected changerIngredient(): void {
+    this.confirmationRupture.set(false);
+    this.retourFocus.set(false);
   }
 }

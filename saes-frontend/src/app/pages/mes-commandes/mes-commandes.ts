@@ -5,13 +5,14 @@ import { CommandeClientService } from '../../core/commande-client.service';
 import { classeBadgeStatut, LIBELLES_STATUT_COMMANDE } from '../../core/commande.util';
 import { motifErreur } from '../../core/erreur.util';
 import { CommandeDto } from '../../core/models';
+import { FocusAuRendu } from '../../shared/focus-au-rendu';
 import { MontantPipe } from '../../shared/montant.pipe';
 import { RefusVisible } from '../../shared/refus-visible';
 
 /** Suivre sa commande, Annuler sa commande (cahier des charges §4.3). */
 @Component({
   selector: 'app-mes-commandes',
-  imports: [DatePipe, MontantPipe, RefusVisible],
+  imports: [DatePipe, FocusAuRendu, MontantPipe, RefusVisible],
   templateUrl: './mes-commandes.html',
 })
 export class MesCommandes {
@@ -24,6 +25,11 @@ export class MesCommandes {
   protected readonly chargement = signal(true);
   protected readonly erreur = signal<string | null>(null);
   protected readonly annulationEnCours = signal<number | null>(null);
+
+  /** Carte dont l'action attend la confirmation : le statut obtenu est définitif (règle 1). */
+  protected readonly aConfirmer = signal<number | null>(null);
+  /** Carte où l'on vient de renoncer : son bouton reprend le focus du clavier. */
+  protected readonly retourFocus = signal<number | null>(null);
 
   constructor() {
     this.charger();
@@ -49,13 +55,20 @@ export class MesCommandes {
     this.commandeClientService.annuler(commande.id, { version: commande.version }).subscribe({
       next: () => {
         this.annulationEnCours.set(null);
+        this.aConfirmer.set(null);
         this.charger();
       },
       error: (err) => {
         this.annulationEnCours.set(null);
+        this.aConfirmer.set(null);
         this.erreur.set(motifErreur(err, 'Annulation impossible'));
         this.charger();
       },
     });
+  }
+
+  protected garder(id: number): void {
+    this.aConfirmer.set(null);
+    this.retourFocus.set(id);
   }
 }

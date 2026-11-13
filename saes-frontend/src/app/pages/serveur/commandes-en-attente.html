@@ -22,14 +22,43 @@
           }
         </ul>
         <p class="total-panier">Total : {{ c.montantTotal | montant }}</p>
-        <button
-          type="button"
-          class="btn btn-secondaire btn-petit"
-          [disabled]="actionEnCours() === c.id"
-          (click)="annuler(c)"
-        >
-          Annuler
-        </button>
+        @if (aConfirmer() === c.id) {
+          <div
+            class="confirmation-carte"
+            role="group"
+            [attr.aria-labelledby]="'question-' + c.id"
+            (keydown.escape)="garder(c.id)"
+          >
+            <p [id]="'question-' + c.id">Annuler la commande {{ c.id }} ? C'est définitif.</p>
+            <div class="actions-danger">
+              <button
+                type="button"
+                class="btn btn-primaire btn-petit"
+                [disabled]="actionEnCours() === c.id"
+                (click)="annuler(c)"
+              >
+                Oui, annuler
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondaire btn-petit"
+                appFocusAuRendu
+                (click)="garder(c.id)"
+              >
+                Non, garder
+              </button>
+            </div>
+          </div>
+        } @else {
+          <button
+            type="button"
+            class="btn btn-secondaire btn-petit"
+            [appFocusAuRendu]="retourFocus() === c.id"
+            (click)="aConfirmer.set(c.id)"
+          >
+            Annuler la commande
+          </button>
+        }
       </article>
     }
   </div>

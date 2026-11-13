@@ -63,27 +63,35 @@
   <section class="carte formulaire-etroit zone-danger">
     <h2>Supprimer mon compte</h2>
     @if (!confirmationSuppression()) {
-      <button type="button" class="btn btn-secondaire" (click)="confirmationSuppression.set(true)">
+      <button
+        type="button"
+        class="btn btn-secondaire"
+        [appFocusAuRendu]="retourFocus()"
+        (click)="confirmationSuppression.set(true)"
+      >
         Supprimer mon compte
       </button>
     } @else {
-      <p>Cette action est définitive. Confirmez-vous la suppression de votre compte ?</p>
-      <div class="actions-danger">
-        <button
-          type="button"
-          class="btn btn-primaire"
-          [disabled]="enCours()"
-          (click)="supprimerCompte()"
-        >
-          Oui, supprimer
-        </button>
-        <button
-          type="button"
-          class="btn btn-secondaire"
-          (click)="confirmationSuppression.set(false)"
-        >
-          Annuler
-        </button>
+      <div
+        class="confirmation-carte"
+        role="group"
+        aria-labelledby="question-suppression"
+        (keydown.escape)="garderCompte()"
+      >
+        <p id="question-suppression">Supprimer votre compte ? C'est définitif.</p>
+        <div class="actions-danger">
+          <button
+            type="button"
+            class="btn btn-primaire"
+            [disabled]="enCours()"
+            (click)="supprimerCompte()"
+          >
+            Supprimer mon compte
+          </button>
+          <button type="button" class="btn btn-secondaire" appFocusAuRendu (click)="garderCompte()">
+            Garder mon compte
+          </button>
+        </div>
       </div>
     }
   </section>
