@@ -168,15 +168,37 @@ button {
   outline-offset: 1px;
 }
 
+/* Refus comme sur l'écran de référence 2 : fond rose pâle, « ! » dans un rond
+   rouge, sans cadre ni trait (la barre rouge à gauche veut dire « choisi »).
+   Le texte reste rouge foncé (contraste 6,1 sur le rose). Le bord transparent
+   devient visible en contraste élevé. */
 .message-refus {
+  position: relative;
   background: #fdeceb;
   color: var(--saes-rouge-fonce);
-  border: 1px solid var(--saes-rouge);
+  border: 1px solid transparent;
   border-radius: var(--saes-rayon);
-  padding: 0.75em 1em;
+  padding: 0.75em 1em 0.75em 2.75em;
   font-weight: 600;
   margin-bottom: 1rem;
   scroll-margin-top: 1rem; /* marge gardee quand la page defile jusqu'au refus */
+}
+
+.message-refus::before {
+  content: '!' / ''; /* décoratif : le lecteur d'écran lit seulement le message */
+  position: absolute;
+  left: 0.9em;
+  top: calc(0.75em + 0.5lh - 0.65em); /* centré sur la première ligne */
+  display: grid;
+  place-items: center;
+  width: 1.3em;
+  height: 1.3em;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: var(--saes-rouge);
+  color: var(--saes-texte-clair);
+  font-weight: 800;
+  line-height: 1;
 }
 
 .message-ok {

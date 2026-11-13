@@ -307,7 +307,7 @@
  * Menu, mesure sur l'ecran de reference 1 (1536 px) : titre de 46 px tres
  * gras, dates foncees de 19 px, titres de categorie de 25 px avec icone rouge
  * et trait fin, cartes photo a gauche (48 %), nom de 18 px, prix rouge de
- * 20 px, « Ajouter » rouge plein. Les tailles suivent la fenetre jusqu'a ces
+ * 20 px, « Ajouter » en contour rouge. Les tailles suivent la fenetre jusqu'a ces
  * valeurs.
  */
 .menu {
@@ -457,7 +457,19 @@
   color: var(--saes-rouge);
 }
 
-/* « Ajouter ⊕ » rouge plein, le plus dans un rond blanc. */
+/* « Ajouter ⊕ » en contour rouge : il se répète sur chaque plat, le rouge plein
+   reste à l'action qui conclut, « Passer la commande ». */
+.btn-ajouter.btn-primaire {
+  background: #fff;
+  color: var(--saes-rouge-fonce);
+  border-color: var(--saes-rouge);
+  box-shadow: inset 0 0 0 1px var(--saes-rouge); /* trait de 2 px, même taille qu'avant */
+}
+
+.btn-ajouter.btn-primaire:hover:not(:disabled) {
+  background: var(--saes-rose);
+}
+
 .btn-ajouter {
   gap: 0.5em;
   padding: 0.5em 0.85em 0.5em 1em;
@@ -475,9 +487,15 @@
 
     path {
       fill: none;
-      stroke: var(--saes-rouge);
+      stroke: #fff;
       stroke-width: 2.6;
       stroke-linecap: round;
+
+      /* Contraste élevé (Windows) : le rond prend la couleur du texte ; le « + »
+         prend celle du fond, sinon les deux sont blancs et le « + » disparaît. */
+      @media (forced-colors: active) {
+        stroke: Canvas;
+      }
     }
   }
 }
