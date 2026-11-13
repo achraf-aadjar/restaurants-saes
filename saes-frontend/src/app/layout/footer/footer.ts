@@ -8,8 +8,8 @@ import { RestaurantSummary } from '../../core/models';
 /**
  * Pied de page (organisation_travail_sujet17.pdf, Design). Client ou visiteur :
  * le nom, l'adresse et le telephone du restaurant, « Confidentialite » et le
- * copyright, sur un fond clair different de la page. Personnel et
- * administrateur : une seule ligne discrete.
+ * copyright. Personnel : une seule ligne discrete. Pour tous, un fond clair
+ * different de la page.
  */
 @Component({
   selector: 'app-footer',
