@@ -331,6 +331,13 @@ button {
   flex-direction: column;
 }
 
+/* Les cartes d'une rangee ont la meme hauteur : le total (et l'action qui le
+   suit) descend en bas de la carte, aligne d'une carte a l'autre, comme le
+   bouton des cartes de la cuisine et des plats. */
+.commande .total-panier {
+  margin-top: auto;
+}
+
 .commande-entete {
   display: flex;
   justify-content: space-between;
