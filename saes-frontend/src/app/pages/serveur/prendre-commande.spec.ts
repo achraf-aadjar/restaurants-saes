@@ -13,9 +13,23 @@ import { PrendreCommande } from './prendre-commande';
  * et les quantités, le type et la table restent ceux de la commande.
  */
 describe('PrendreCommande en modification', () => {
-  async function ouvrir(lignes = [{ platId: 1, platNom: 'Yassa poulet', quantite: 2, prixUnitaire: 2000 }]) {
-    const yassa = { id: 1, nom: 'Yassa poulet', description: null, prix: 2000, categorie: 'PLAT_PRINCIPAL' };
-    const bissap = { id: 2, nom: 'Jus de bissap', description: null, prix: 500, categorie: 'BOISSON' };
+  async function ouvrir(
+    lignes = [{ platId: 1, platNom: 'Yassa poulet', quantite: 2, prixUnitaire: 2000 }],
+  ) {
+    const yassa = {
+      id: 1,
+      nom: 'Yassa poulet',
+      description: null,
+      prix: 2000,
+      categorie: 'PLAT_PRINCIPAL',
+    };
+    const bissap = {
+      id: 2,
+      nom: 'Jus de bissap',
+      description: null,
+      prix: 500,
+      categorie: 'BOISSON',
+    };
     const commande = {
       id: 44,
       version: 3,
@@ -41,7 +55,9 @@ describe('PrendreCommande en modification', () => {
         { provide: CommandeServeurService, useValue: service },
         {
           provide: MenuService,
-          useValue: { menusEnVigueur: () => of([{ plats: [yassa, bissap] } as unknown as MenuDto]) },
+          useValue: {
+            menusEnVigueur: () => of([{ plats: [yassa, bissap] } as unknown as MenuDto]),
+          },
         },
         { provide: AuthService, useValue: { utilisateur: () => ({ restaurantId: 1 }) } },
         {
@@ -66,7 +82,9 @@ describe('PrendreCommande en modification', () => {
     const { service, racine, cliquer } = await ouvrir();
 
     expect(racine.querySelector('h1')?.textContent).toContain('Modifier la commande 44');
-    expect(racine.querySelector('[aria-label="Quantité de Yassa poulet"] .quantite')?.textContent).toBe('2');
+    expect(
+      racine.querySelector('[aria-label="Quantité de Yassa poulet"] .quantite')?.textContent,
+    ).toBe('2');
 
     await cliquer('[aria-label="Retirer un Yassa poulet"]');
     await cliquer('[aria-label="Ajouter un Jus de bissap"]');
@@ -90,7 +108,9 @@ describe('PrendreCommande en modification', () => {
     ]);
 
     expect(racine.textContent).toContain('Plus disponibles');
-    expect(racine.querySelector<HTMLButtonElement>('[aria-label="Ajouter un Jus de bouye"]')!.disabled).toBe(true);
+    expect(
+      racine.querySelector<HTMLButtonElement>('[aria-label="Ajouter un Jus de bouye"]')!.disabled,
+    ).toBe(true);
 
     await cliquer('[aria-label="Retirer un Jus de bouye"]');
     await cliquer('.btn-enregistrer');
