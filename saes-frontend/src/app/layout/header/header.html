@@ -23,9 +23,15 @@
       }
     </nav>
 
-    <div class="compte">
+    <div class="compte" #compte>
       @if (auth.estConnecte()) {
-        <button type="button" class="bouton-compte" (click)="basculerMenu()">
+        <button
+          #boutonCompte
+          type="button"
+          class="bouton-compte"
+          [attr.aria-expanded]="menuOuvert()"
+          (click)="basculerMenu()"
+        >
           {{ nom() }}
           <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true">
             <path d="m6 9 6 6 6-6" />
@@ -55,13 +61,20 @@
       }
     </div>
 
-    <button type="button" class="bouton-burger" (click)="basculerMenuMobile()" aria-label="Menu">
+    <button
+      #burger
+      type="button"
+      class="bouton-burger"
+      aria-label="Menu"
+      [attr.aria-expanded]="menuMobileOuvert()"
+      (click)="basculerMenuMobile()"
+    >
       ☰
     </button>
   </div>
 
   @if (menuMobileOuvert()) {
-    <nav class="nav-mobile">
+    <nav class="nav-mobile" #navMobile>
       @if (auth.estConnecte()) {
         <p class="nav-mobile-nom">{{ nom() }}</p>
       }

@@ -4,9 +4,16 @@ import { FormsModule } from '@angular/forms';
 import { motifErreur } from '../../core/erreur.util';
 import { GerantStockService } from '../../core/gerant-stock.service';
 import { LIBELLES_UNITES, SYMBOLES_UNITES } from '../../core/libelles';
-import { IngredientDto, IngredientSaveRequest, TypeMouvement, UNITES, Unite } from '../../core/models';
+import {
+  IngredientDto,
+  IngredientSaveRequest,
+  TypeMouvement,
+  UNITES,
+  Unite,
+} from '../../core/models';
 import { QuantitePipe } from '../../shared/quantite.pipe';
 import { RefusVisible } from '../../shared/refus-visible';
+import { SuiviFormulaire, amenerALEcran, focusDans } from '../../shared/suivi-formulaire';
 
 /**
  * Gerer les stocks (cahier des charges §4.6), reserve au gerant : creer et
@@ -17,6 +24,7 @@ import { RefusVisible } from '../../shared/refus-visible';
   selector: 'app-gerant-stocks',
   imports: [FormsModule, QuantitePipe, RefusVisible],
   templateUrl: './stocks.html',
+  host: { '(document:keydown.escape)': 'echap($event)' },
 })
 export class GerantStocks {
   private readonly gerantStockService = inject(GerantStockService);
@@ -42,6 +50,9 @@ export class GerantStocks {
   protected typeMouvement: TypeMouvement = 'ENTREE';
   protected quantiteMouvement = 0;
 
+  private readonly suivi = new SuiviFormulaire();
+  private readonly suiviMouvement = new SuiviFormulaire();
+
   constructor() {
     this.charger();
   }
@@ -61,6 +72,11 @@ export class GerantStocks {
   }
 
   protected ouvrirCreation(): void {
+    if (this.formulaireOuvert() && this.idEnEdition === null) {
+      this.fermer();
+      return;
+    }
+    if (this.formulaireOuvert() && !this.suivi.peutFermer(this.etat())) return;
     this.idEnEdition = null;
     this.nom = '';
     this.unite = 'KILOGRAMME';
@@ -68,9 +84,16 @@ export class GerantStocks {
     this.niveauCible = 0;
     this.erreurFormulaire.set(null);
     this.formulaireOuvert.set(true);
+    this.suivi.ouvert(this.etat());
+    amenerALEcran('.formulaire-ingredient');
   }
 
   protected ouvrirEdition(ingredient: IngredientDto): void {
+    if (this.formulaireOuvert() && this.idEnEdition === ingredient.id) {
+      this.fermer();
+      return;
+    }
+    if (this.formulaireOuvert() && !this.suivi.peutFermer(this.etat())) return;
     this.idEnEdition = ingredient.id;
     this.nom = ingredient.nom;
     this.unite = ingredient.unite;
@@ -78,6 +101,55 @@ export class GerantStocks {
     this.niveauCible = ingredient.niveauCible;
     this.erreurFormulaire.set(null);
     this.formulaireOuvert.set(true);
+    this.suivi.ouvert(this.etat());
+    amenerALEcran('.formulaire-ingredient');
+  }
+
+  /** Valeurs du formulaire : pour savoir s'il a été modifié avant de le fermer. */
+  private etat(): unknown {
+    return [this.idEnEdition, this.nom, this.unite, this.seuilAlerte, this.niveauCible];
+  }
+
+  private etatMouvement(): unknown {
+    return [this.mouvementIngredientId(), this.typeMouvement, this.quantiteMouvement];
+  }
+
+  protected annulerMouvement(): void {
+    this.mouvementIngredientId.set(null);
+    this.suiviMouvement.rendreFocus();
+  }
+
+  private fermerMouvement(): void {
+    if (this.mouvementIngredientId() === null) return;
+    if (!this.suiviMouvement.peutFermer(this.etatMouvement())) return;
+    this.annulerMouvement();
+  }
+
+  /** « Annuler » : on renonce, sans question. */
+  protected annuler(): void {
+    this.formulaireOuvert.set(false);
+    this.suivi.rendreFocus();
+  }
+
+  /** Échap ou second clic : confirmation si le formulaire a été modifié. */
+  protected fermer(): void {
+    if (!this.formulaireOuvert() || !this.suivi.peutFermer(this.etat())) return;
+    this.annuler();
+  }
+
+  /**
+   * Échap ferme le formulaire où l'on se trouve ; ailleurs dans la page, le
+   * mouvement d'abord (il est dans sa ligne), puis l'ingrédient.
+   */
+  protected echap(event: Event): void {
+    if (event.defaultPrevented) return;
+    if (this.formulaireOuvert() && focusDans('.formulaire-ingredient')) {
+      this.fermer();
+    } else if (this.mouvementIngredientId() !== null) {
+      this.fermerMouvement();
+    } else {
+      this.fermer();
+    }
   }
 
   protected enregistrer(): void {
@@ -108,10 +180,18 @@ export class GerantStocks {
   }
 
   protected ouvrirMouvement(ingredient: IngredientDto): void {
+    if (this.mouvementIngredientId() === ingredient.id) {
+      this.fermerMouvement();
+      return;
+    }
+    if (this.mouvementIngredientId() !== null) {
+      if (!this.suiviMouvement.peutFermer(this.etatMouvement())) return;
+    }
     this.mouvementIngredientId.set(ingredient.id);
     this.typeMouvement = 'ENTREE';
     this.quantiteMouvement = 0;
     this.erreurFormulaire.set(null);
+    this.suiviMouvement.ouvert(this.etatMouvement());
   }
 
   protected enregistrerMouvement(): void {

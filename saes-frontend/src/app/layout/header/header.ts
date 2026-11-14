@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map } from 'rxjs';
@@ -10,13 +10,19 @@ import { accueilDe, estPersonnel, nomAffiche, sectionsDe } from '../../core/navi
 /**
  * En-tete (organisation_travail_sujet17.pdf, Design) : le client a trois
  * onglets ; le personnel a un bandeau jaune avec son restaurant et la date.
- * Sur telephone, le nom et les fonctions passent sous le bouton menu.
+ * Sur telephone, le nom et les fonctions passent sous le bouton menu. Les deux
+ * menus se ferment par Echap (le focus revient a leur bouton), par un clic
+ * ailleurs dans la page, ou par leur bouton.
  */
 @Component({
   selector: 'app-header',
   imports: [DatePipe, RouterLink, RouterLinkActive],
   templateUrl: './header.html',
   styleUrl: './header.scss',
+  host: {
+    '(document:click)': 'clicAilleurs($event)',
+    '(document:keydown.escape)': 'echap($event)',
+  },
 })
 export class Header {
   protected readonly auth = inject(AuthService);
@@ -25,6 +31,11 @@ export class Header {
   protected readonly menuOuvert = signal(false);
   protected readonly menuMobileOuvert = signal(false);
   protected readonly aujourdHui = new Date();
+
+  private readonly compte = viewChild<ElementRef<HTMLElement>>('compte');
+  private readonly boutonCompte = viewChild<ElementRef<HTMLButtonElement>>('boutonCompte');
+  private readonly burger = viewChild<ElementRef<HTMLButtonElement>>('burger');
+  private readonly navMobile = viewChild<ElementRef<HTMLElement>>('navMobile');
 
   /**
    * Page demandee avant la connexion (?retour=, mis par la garde) : les liens
@@ -62,6 +73,32 @@ export class Header {
 
   protected basculerMenuMobile(): void {
     this.menuMobileOuvert.update((v) => !v);
+  }
+
+  /** Un clic hors d'un menu ouvert le ferme. */
+  protected clicAilleurs(event: Event): void {
+    const cible = event.target as Node;
+    const dans = (element?: ElementRef<HTMLElement>) => !!element?.nativeElement.contains(cible);
+    if (this.menuOuvert() && !dans(this.compte())) {
+      this.menuOuvert.set(false);
+    }
+    if (this.menuMobileOuvert() && !dans(this.burger()) && !dans(this.navMobile())) {
+      this.menuMobileOuvert.set(false);
+    }
+  }
+
+  /** Echap ferme le menu ouvert et rend le focus a son bouton ; la page ne la recoit pas. */
+  protected echap(event: Event): void {
+    if (this.menuOuvert()) {
+      this.menuOuvert.set(false);
+      this.boutonCompte()?.nativeElement.focus();
+      event.preventDefault();
+    }
+    if (this.menuMobileOuvert()) {
+      this.menuMobileOuvert.set(false);
+      this.burger()?.nativeElement.focus();
+      event.preventDefault();
+    }
   }
 
   protected seDeconnecter(): void {

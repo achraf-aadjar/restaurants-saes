@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, ElementRef, input, output, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, inject, input, output, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { RefusVisible } from './refus-visible';
@@ -13,13 +13,18 @@ export interface Periode {
  * Période d'un rapport : affichée en texte (« Du 10/10/2026 au 09/11/2026 »),
  * avec « Changer la période » qui ouvre les deux dates. Une période incomplète ou
  * inversée est refusée avec un message, sans interroger le serveur. Échap referme
- * le panneau et rend le focus au bouton. À placer dans un `.titre-page`, à côté du titre.
+ * le panneau et rend le focus au bouton ; un clic ailleurs dans la page le referme
+ * aussi. À placer dans un `.titre-page`, à côté du titre.
  */
 @Component({
   selector: 'app-choix-periode',
   imports: [DatePipe, FormsModule, RefusVisible],
   templateUrl: './choix-periode.html',
   styleUrl: './choix-periode.scss',
+  host: {
+    '(document:click)': 'clicAilleurs($event)',
+    '(document:keydown.escape)': 'echap($event)',
+  },
 })
 export class ChoixPeriode {
   /** Période affichée (dates au format AAAA-MM-JJ). */
@@ -36,6 +41,7 @@ export class ChoixPeriode {
   protected finSaisie = '';
 
   private readonly bouton = viewChild<ElementRef<HTMLButtonElement>>('bouton');
+  private readonly hote = inject<ElementRef<HTMLElement>>(ElementRef);
 
   protected basculer(): void {
     if (this.ouvert()) {
@@ -50,10 +56,24 @@ export class ChoixPeriode {
     setTimeout(() => document.getElementById('periode-debut')?.focus());
   }
 
-  protected fermer(): void {
+  protected fermer(rendreFocus = true): void {
     this.ouvert.set(false);
     this.erreur.set(null);
-    this.bouton()?.nativeElement.focus();
+    if (rendreFocus) this.bouton()?.nativeElement.focus();
+  }
+
+  /** Un clic hors du composant ferme le panneau, sans déplacer le focus. */
+  protected clicAilleurs(event: Event): void {
+    if (this.ouvert() && !this.hote.nativeElement.contains(event.target as Node)) {
+      this.fermer(false);
+    }
+  }
+
+  protected echap(event: Event): void {
+    if (this.ouvert() && !event.defaultPrevented) {
+      this.fermer();
+      event.preventDefault();
+    }
   }
 
   protected valider(): void {

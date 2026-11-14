@@ -10,7 +10,7 @@
 }
 
 @if (formulaireOuvert()) {
-  <section class="carte">
+  <section class="carte formulaire-ingredient">
     <form (ngSubmit)="enregistrer()" #f="ngForm" class="formulaire-creation">
       <h2>{{ idEnEdition ? "Modifier l'ingrédient" : 'Nouvel ingrédient' }}</h2>
 
@@ -32,11 +32,27 @@
       </div>
       <div class="champ">
         <label for="seuilI">Seuil d'alerte ({{ symbolesUnites[unite] }})</label>
-        <input id="seuilI" name="seuilI" type="number" min="0" step="0.001" required [(ngModel)]="seuilAlerte" />
+        <input
+          id="seuilI"
+          name="seuilI"
+          type="number"
+          min="0"
+          step="0.001"
+          required
+          [(ngModel)]="seuilAlerte"
+        />
       </div>
       <div class="champ">
         <label for="cibleI">Niveau cible ({{ symbolesUnites[unite] }})</label>
-        <input id="cibleI" name="cibleI" type="number" min="0" step="0.001" required [(ngModel)]="niveauCible" />
+        <input
+          id="cibleI"
+          name="cibleI"
+          type="number"
+          min="0"
+          step="0.001"
+          required
+          [(ngModel)]="niveauCible"
+        />
       </div>
 
       <div class="actions-colonne">
@@ -47,9 +63,7 @@
         >
           {{ enregistrementEnCours() ? 'Enregistrement…' : 'Enregistrer' }}
         </button>
-        <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert.set(false)">
-          Annuler
-        </button>
+        <button type="button" class="btn btn-secondaire" (click)="annuler()">Annuler</button>
       </div>
     </form>
   </section>
@@ -88,7 +102,11 @@
               <button type="button" class="btn btn-secondaire btn-petit" (click)="ouvrirEdition(i)">
                 Modifier
               </button>
-              <button type="button" class="btn btn-secondaire btn-petit" (click)="ouvrirMouvement(i)">
+              <button
+                type="button"
+                class="btn btn-secondaire btn-petit"
+                (click)="ouvrirMouvement(i)"
+              >
                 Mouvement
               </button>
             </td>
@@ -109,10 +127,18 @@
                     class="saisie-courte"
                   />
                   <span>{{ symbolesUnites[i.unite] }}</span>
-                  <button type="submit" class="btn btn-primaire btn-petit" [disabled]="enregistrementEnCours()">
+                  <button
+                    type="submit"
+                    class="btn btn-primaire btn-petit"
+                    [disabled]="enregistrementEnCours()"
+                  >
                     Valider
                   </button>
-                  <button type="button" class="btn btn-secondaire btn-petit" (click)="mouvementIngredientId.set(null)">
+                  <button
+                    type="button"
+                    class="btn btn-secondaire btn-petit"
+                    (click)="annulerMouvement()"
+                  >
                     Annuler
                   </button>
                 </form>

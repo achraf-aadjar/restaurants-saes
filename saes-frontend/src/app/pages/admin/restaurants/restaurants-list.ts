@@ -13,6 +13,7 @@ import {
   TableDto,
 } from '../../../core/models';
 import { RefusVisible } from '../../../shared/refus-visible';
+import { SuiviFormulaire, amenerALEcran } from '../../../shared/suivi-formulaire';
 
 /**
  * Gerer les restaurants (cahier des charges §4.7), reserve a
@@ -23,6 +24,7 @@ import { RefusVisible } from '../../../shared/refus-visible';
   selector: 'app-restaurants-list',
   imports: [FormsModule, RefusVisible],
   templateUrl: './restaurants-list.html',
+  host: { '(document:keydown.escape)': 'echap($event)' },
 })
 export class RestaurantsList {
   private readonly adminRestaurantService = inject(AdminRestaurantService);
@@ -44,6 +46,8 @@ export class RestaurantsList {
   protected tables: TableDto[] = [];
   protected horaires: HoraireDto[] = [];
 
+  private readonly suivi = new SuiviFormulaire();
+
   constructor() {
     this.charger();
   }
@@ -63,6 +67,11 @@ export class RestaurantsList {
   }
 
   protected ouvrirCreation(): void {
+    if (this.formulaireOuvert() && this.idEnEdition === null) {
+      this.fermer();
+      return;
+    }
+    if (this.formulaireOuvert() && !this.suivi.peutFermer(this.etat())) return;
     this.idEnEdition = null;
     this.nom = '';
     this.adresse = '';
@@ -72,9 +81,16 @@ export class RestaurantsList {
     this.horaires = [{ jour: 'LUNDI', heureOuverture: '08:00', heureFermeture: '21:00' }];
     this.erreurFormulaire.set(null);
     this.formulaireOuvert.set(true);
+    this.suivi.ouvert(this.etat());
+    amenerALEcran('.formulaire-restaurant');
   }
 
   protected ouvrirEdition(restaurant: RestaurantDto): void {
+    if (this.formulaireOuvert() && this.idEnEdition === restaurant.id) {
+      this.fermer();
+      return;
+    }
+    if (this.formulaireOuvert() && !this.suivi.peutFermer(this.etat())) return;
     this.idEnEdition = restaurant.id;
     this.nom = restaurant.nom;
     this.adresse = restaurant.adresse;
@@ -84,6 +100,37 @@ export class RestaurantsList {
     this.horaires = restaurant.horaires.map((h) => ({ ...h }));
     this.erreurFormulaire.set(null);
     this.formulaireOuvert.set(true);
+    this.suivi.ouvert(this.etat());
+    amenerALEcran('.formulaire-restaurant');
+  }
+
+  /** Valeurs du formulaire : pour savoir s'il a été modifié avant de le fermer. */
+  private etat(): unknown {
+    return [
+      this.idEnEdition,
+      this.nom,
+      this.adresse,
+      this.telephone,
+      this.dureeReservationMinutes,
+      this.tables,
+      this.horaires,
+    ];
+  }
+
+  /** « Annuler » : on renonce, sans question. */
+  protected annuler(): void {
+    this.formulaireOuvert.set(false);
+    this.suivi.rendreFocus();
+  }
+
+  /** Échap ou second clic : confirmation si le formulaire a été modifié. */
+  protected fermer(): void {
+    if (!this.formulaireOuvert() || !this.suivi.peutFermer(this.etat())) return;
+    this.annuler();
+  }
+
+  protected echap(event: Event): void {
+    if (!event.defaultPrevented) this.fermer();
   }
 
   protected ajouterTable(): void {
@@ -115,7 +162,7 @@ export class RestaurantsList {
       return;
     }
     if (this.horaires.length === 0) {
-      this.erreurFormulaire.set('Au moins une plage d\'ouverture est requise dans la semaine');
+      this.erreurFormulaire.set("Au moins une plage d'ouverture est requise dans la semaine");
       return;
     }
 

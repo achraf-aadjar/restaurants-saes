@@ -8,7 +8,7 @@
 }
 
 @if (formulaireOuvert()) {
-  <section class="carte">
+  <section class="carte formulaire-menu">
     <form (ngSubmit)="enregistrer()" #f="ngForm" class="formulaire-creation formulaire-large">
       <h2>{{ idEnEdition ? 'Modifier le menu' : 'Nouveau menu' }}</h2>
 
@@ -44,12 +44,14 @@
       </div>
 
       <div class="actions-colonne actions-sous-formulaire">
-        <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enregistrementEnCours()">
+        <button
+          type="submit"
+          class="btn btn-primaire"
+          [disabled]="f.invalid || enregistrementEnCours()"
+        >
           {{ enregistrementEnCours() ? 'Enregistrement…' : 'Enregistrer' }}
         </button>
-        <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert.set(false)">
-          Annuler
-        </button>
+        <button type="button" class="btn btn-secondaire" (click)="annuler()">Annuler</button>
       </div>
     </form>
   </section>

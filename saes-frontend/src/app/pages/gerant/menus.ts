@@ -7,12 +7,14 @@ import { GerantMenuService } from '../../core/gerant-menu.service';
 import { GerantPlatService } from '../../core/gerant-plat.service';
 import { MenuGerantDto, MenuSaveRequest, PlatGerantDto } from '../../core/models';
 import { RefusVisible } from '../../shared/refus-visible';
+import { SuiviFormulaire, amenerALEcran } from '../../shared/suivi-formulaire';
 
 /** Gerer les menus (cahier des charges §4.2), reserve au gerant. */
 @Component({
   selector: 'app-gerant-menus',
   imports: [FormsModule, DatePipe, RefusVisible],
   templateUrl: './menus.html',
+  host: { '(document:keydown.escape)': 'echap($event)' },
 })
 export class GerantMenus {
   private readonly gerantMenuService = inject(GerantMenuService);
@@ -31,6 +33,8 @@ export class GerantMenus {
   protected dateDebut = '';
   protected dateFin = '';
   protected platIdsSelectionnes = new Set<number>();
+
+  private readonly suivi = new SuiviFormulaire();
 
   constructor() {
     this.charger();
@@ -52,6 +56,11 @@ export class GerantMenus {
   }
 
   protected ouvrirCreation(): void {
+    if (this.formulaireOuvert() && this.idEnEdition === null) {
+      this.fermer();
+      return;
+    }
+    if (this.formulaireOuvert() && !this.suivi.peutFermer(this.etat())) return;
     this.idEnEdition = null;
     this.nom = '';
     this.dateDebut = new Date().toISOString().slice(0, 10);
@@ -59,9 +68,16 @@ export class GerantMenus {
     this.platIdsSelectionnes = new Set();
     this.erreurFormulaire.set(null);
     this.formulaireOuvert.set(true);
+    this.suivi.ouvert(this.etat());
+    amenerALEcran('.formulaire-menu');
   }
 
   protected ouvrirEdition(menu: MenuGerantDto): void {
+    if (this.formulaireOuvert() && this.idEnEdition === menu.id) {
+      this.fermer();
+      return;
+    }
+    if (this.formulaireOuvert() && !this.suivi.peutFermer(this.etat())) return;
     this.idEnEdition = menu.id;
     this.nom = menu.nom;
     this.dateDebut = menu.dateDebut;
@@ -69,6 +85,35 @@ export class GerantMenus {
     this.platIdsSelectionnes = new Set(menu.plats.map((p) => p.id));
     this.erreurFormulaire.set(null);
     this.formulaireOuvert.set(true);
+    this.suivi.ouvert(this.etat());
+    amenerALEcran('.formulaire-menu');
+  }
+
+  /** Valeurs du formulaire : pour savoir s'il a été modifié avant de le fermer. */
+  private etat(): unknown {
+    return [
+      this.idEnEdition,
+      this.nom,
+      this.dateDebut,
+      this.dateFin,
+      [...this.platIdsSelectionnes].sort(),
+    ];
+  }
+
+  /** « Annuler » : on renonce, sans question. */
+  protected annuler(): void {
+    this.formulaireOuvert.set(false);
+    this.suivi.rendreFocus();
+  }
+
+  /** Échap ou second clic : confirmation si le formulaire a été modifié. */
+  protected fermer(): void {
+    if (!this.formulaireOuvert() || !this.suivi.peutFermer(this.etat())) return;
+    this.annuler();
+  }
+
+  protected echap(event: Event): void {
+    if (!event.defaultPrevented) this.fermer();
   }
 
   protected basculerPlat(platId: number): void {
