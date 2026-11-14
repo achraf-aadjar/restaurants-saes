@@ -1,13 +1,14 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { forkJoin, of } from 'rxjs';
 
 import { AuthService } from '../../core/auth.service';
 import { CommandeServeurService } from '../../core/commande-serveur.service';
 import { motifErreur } from '../../core/erreur.util';
 import { MenuService } from '../../core/menu.service';
 import { LIBELLES_CATEGORIES_PLURIEL, ORDRE_CATEGORIES } from '../../core/libelles';
-import { PlatResume, TableOccupationDto, TypeCommande } from '../../core/models';
+import { CommandeDto, PlatResume, TableOccupationDto, TypeCommande } from '../../core/models';
 import { MontantPipe } from '../../shared/montant.pipe';
 import { RefusVisible } from '../../shared/refus-visible';
 
@@ -16,10 +17,14 @@ interface LigneSaisie {
   quantite: number;
 }
 
-/** Prendre une commande (cahier des charges §4.3), cote serveur. */
+/**
+ * Prendre une commande (cahier des charges §4.3), cote serveur. Le meme ecran modifie une
+ * commande en attente (/serveur/commandes/:id/modifier) : seuls les plats et les quantites
+ * changent, le type et la table restent ceux de la commande.
+ */
 @Component({
   selector: 'app-prendre-commande',
-  imports: [FormsModule, MontantPipe, RefusVisible],
+  imports: [FormsModule, MontantPipe, RefusVisible, RouterLink],
   templateUrl: './prendre-commande.html',
   styleUrl: './prendre-commande.scss',
 })
@@ -28,6 +33,13 @@ export class PrendreCommande {
   private readonly commandeServeurService = inject(CommandeServeurService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+
+  /** Numero de la commande modifiee ; null quand on prend une nouvelle commande. */
+  protected readonly idModifiee = Number(inject(ActivatedRoute).snapshot.paramMap.get('id')) || null;
+  /** La commande modifiee, telle qu'elle a ete chargee (sa version part avec la modification). */
+  private commandeModifiee: CommandeDto | null = null;
+  /** Faux tant que la commande a modifier n'est pas retrouvee parmi celles en attente. */
+  protected readonly commandeTrouvee = signal(false);
 
   protected readonly plats = signal<PlatResume[]>([]);
   protected readonly tables = signal<TableOccupationDto[]>([]);
@@ -67,8 +79,11 @@ export class PrendreCommande {
       this.chargement.set(false);
       return;
     }
-    this.menuService.menusEnVigueur(restaurantId).subscribe({
-      next: (menus) => {
+    forkJoin({
+      menus: this.menuService.menusEnVigueur(restaurantId),
+      commandes: this.idModifiee ? this.commandeServeurService.commandesEnAttente() : of([]),
+    }).subscribe({
+      next: ({ menus, commandes }) => {
         const parId = new Map<number, PlatResume>();
         for (const menu of menus) {
           for (const plat of menu.plats) {
@@ -76,6 +91,9 @@ export class PrendreCommande {
           }
         }
         this.plats.set(Array.from(parId.values()));
+        if (this.idModifiee) {
+          this.preremplir(commandes.find((c) => c.id === this.idModifiee), parId);
+        }
         this.chargement.set(false);
       },
       error: (err) => {
@@ -84,6 +102,33 @@ export class PrendreCommande {
       },
     });
     this.commandeServeurService.occupationTables().subscribe((occ) => this.tables.set(occ.tables));
+  }
+
+  /**
+   * Reprend le type, la table et les plats de la commande a modifier. Un plat qui n'est
+   * plus dans les menus en vigueur reste dans le recapitulatif, a son prix de la commande.
+   */
+  private preremplir(commande: CommandeDto | undefined, plats: Map<number, PlatResume>): void {
+    if (!commande) {
+      this.erreur.set(`La commande ${this.idModifiee} n'est plus en attente : elle ne peut plus être modifiée`);
+      return;
+    }
+    this.commandeModifiee = commande;
+    this.commandeTrouvee.set(true);
+    this.type = commande.type;
+    this.tableId = commande.tableId;
+    const lignes = new Map<number, LigneSaisie>();
+    for (const l of commande.lignes) {
+      const plat = plats.get(l.platId) ?? {
+        id: l.platId,
+        nom: l.platNom,
+        description: null,
+        prix: l.prixUnitaire,
+        categorie: 'PLAT_PRINCIPAL' as const,
+      };
+      lignes.set(l.platId, { plat, quantite: l.quantite });
+    }
+    this.lignes.set(lignes);
   }
 
   protected quantiteDe(plat: PlatResume): number {
@@ -120,22 +165,34 @@ export class PrendreCommande {
       return;
     }
     this.envoiEnCours.set(true);
-    this.commandeServeurService
-      .prendreCommande({
-        type: this.type,
-        tableId: this.type === 'SUR_PLACE' ? this.tableId : null,
-        lignes: this.lignesListe().map((l) => ({ platId: l.plat.id, quantite: l.quantite })),
-      })
-      .subscribe({
-        next: () => {
-          this.envoiEnCours.set(false);
-          this.router.navigate(['/serveur/commandes']);
-        },
-        error: (err) => {
-          this.envoiEnCours.set(false);
-          this.refuser(motifErreur(err, "La commande n'a pas pu être enregistrée"));
-        },
-      });
+    const lignes = this.lignesListe().map((l) => ({ platId: l.plat.id, quantite: l.quantite }));
+    const envoi = this.commandeModifiee
+      ? this.commandeServeurService.modifierCommande(this.commandeModifiee.id, {
+          lignes,
+          version: this.commandeModifiee.version,
+        })
+      : this.commandeServeurService.prendreCommande({
+          type: this.type,
+          tableId: this.type === 'SUR_PLACE' ? this.tableId : null,
+          lignes,
+        });
+    envoi.subscribe({
+      next: () => {
+        this.envoiEnCours.set(false);
+        this.router.navigate(['/serveur/commandes']);
+      },
+      error: (err) => {
+        this.envoiEnCours.set(false);
+        this.refuser(
+          motifErreur(
+            err,
+            this.commandeModifiee
+              ? "La modification n'a pas pu être enregistrée"
+              : "La commande n'a pas pu être enregistrée",
+          ),
+        );
+      },
+    });
   }
 
   /**

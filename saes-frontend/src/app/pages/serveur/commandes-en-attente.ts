@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { CommandeServeurService } from '../../core/commande-serveur.service';
 import { motifErreur } from '../../core/erreur.util';
@@ -11,8 +12,9 @@ import { RefusVisible } from '../../shared/refus-visible';
 /** Modifier ou annuler une commande (cahier des charges §4.3), cote serveur. */
 @Component({
   selector: 'app-commandes-en-attente',
-  imports: [CommandeEntete, FocusAuRendu, MontantPipe, RefusVisible],
+  imports: [CommandeEntete, FocusAuRendu, MontantPipe, RefusVisible, RouterLink],
   templateUrl: './commandes-en-attente.html',
+  styleUrl: './commandes-en-attente.scss',
 })
 export class CommandesEnAttente {
   private readonly commandeServeurService = inject(CommandeServeurService);

@@ -1,4 +1,9 @@
-<h1>Prendre une commande</h1>
+@if (idModifiee) {
+  <h1>Modifier la commande {{ idModifiee }}</h1>
+  <a class="lien-retour" routerLink="/serveur/commandes">← Revenir sans modifier</a>
+} @else {
+  <h1>Prendre une commande</h1>
+}
 
 @if (erreur(); as e) {
   <p class="message-refus">{{ e }}</p>
@@ -6,6 +11,8 @@
 
 @if (chargement()) {
   <p>Chargement…</p>
+} @else if (idModifiee && !commandeTrouvee()) {
+  <!-- La commande n'est plus en attente : le refus en haut suffit. -->
 } @else {
   <div class="saisie">
     <div class="saisie-menu">
@@ -14,6 +21,7 @@
           type="button"
           class="choix"
           [attr.aria-pressed]="type === 'SUR_PLACE'"
+          [disabled]="!!idModifiee"
           (click)="type = 'SUR_PLACE'"
         >
           <svg class="coche" viewBox="0 0 24 24" aria-hidden="true">
@@ -25,6 +33,7 @@
           type="button"
           class="choix"
           [attr.aria-pressed]="type === 'A_EMPORTER'"
+          [disabled]="!!idModifiee"
           (click)="type = 'A_EMPORTER'"
         >
           <svg class="coche" viewBox="0 0 24 24" aria-hidden="true">
@@ -37,12 +46,12 @@
       @if (type === 'SUR_PLACE') {
         <div class="champ-table">
           <label for="table">Table</label>
-          <select id="table" [(ngModel)]="tableId" name="table">
+          <select id="table" [(ngModel)]="tableId" name="table" [disabled]="!!idModifiee">
             <option [ngValue]="null">— Choisir —</option>
             @for (t of tables(); track t.id) {
               <option [ngValue]="t.id">
                 Table {{ t.numero }} · {{ t.capacite }} place{{ t.capacite > 1 ? 's' : '' }}
-                {{ t.occupee ? '— occupée' : '' }}
+                {{ t.occupee && !idModifiee ? '— occupée' : '' }}
               </option>
             }
           </select>
@@ -110,7 +119,13 @@
         [disabled]="envoiEnCours()"
         (click)="enregistrer()"
       >
-        {{ envoiEnCours() ? 'Enregistrement…' : 'Enregistrer la commande' }}
+        @if (envoiEnCours()) {
+          Enregistrement…
+        } @else if (idModifiee) {
+          Enregistrer les modifications
+        } @else {
+          Enregistrer la commande
+        }
       </button>
     </aside>
   </div>

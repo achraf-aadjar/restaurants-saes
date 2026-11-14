@@ -50,14 +50,19 @@
             </div>
           </div>
         } @else {
-          <button
-            type="button"
-            class="btn btn-secondaire btn-petit"
-            [appFocusAuRendu]="retourFocus() === c.id"
-            (click)="aConfirmer.set(c.id)"
-          >
-            Annuler la commande
-          </button>
+          <div class="actions-carte">
+            <a class="btn btn-secondaire btn-petit" [routerLink]="['/serveur/commandes', c.id, 'modifier']">
+              Modifier
+            </a>
+            <button
+              type="button"
+              class="btn btn-secondaire btn-petit"
+              [appFocusAuRendu]="retourFocus() === c.id"
+              (click)="aConfirmer.set(c.id)"
+            >
+              Annuler la commande
+            </button>
+          </div>
         }
       </article>
     }

@@ -17,6 +17,14 @@
   padding-bottom: 1rem;
 }
 
+/* Modifier une commande : le retour sans rien changer, sous le titre. */
+.lien-retour {
+  display: inline-block;
+  margin: 0 0 0.75rem;
+  color: var(--saes-vert);
+  font-weight: 600;
+}
+
 /* ---------- Type de commande ---------- */
 
 .type-commande {
@@ -45,6 +53,15 @@
   border: 2px solid var(--saes-vert-clair);
   background: var(--saes-vert-pale);
   box-shadow: none;
+}
+
+/* En modification, le type ne change pas : le choix retenu reste net, l'autre s'efface. */
+.type-commande .choix:disabled {
+  cursor: not-allowed;
+}
+
+.type-commande .choix:disabled:not([aria-pressed='true']) {
+  opacity: 0.45;
 }
 
 .type-commande .choix::before,

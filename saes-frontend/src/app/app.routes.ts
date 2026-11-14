@@ -98,6 +98,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/serveur/prendre-commande').then((m) => m.PrendreCommande),
   },
   {
+    path: 'serveur/commandes/:id/modifier',
+    canActivate: [roleGuard('SERVEUR')],
+    loadComponent: () => import('./pages/serveur/prendre-commande').then((m) => m.PrendreCommande),
+  },
+  {
     path: 'serveur/commandes',
     canActivate: [roleGuard('SERVEUR')],
     loadComponent: () =>
