@@ -58,6 +58,25 @@ class AdministrationTest extends IntegrationTest {
     }
 
     @Test
+    void unAdministrateurNePeutNiRetirerSonRoleNiDesactiverSonCompteMaisUnAutreLePeut() {
+        long adminId = api.get(monde.jetonAdmin, "/api/me").entier("$.id");
+        long gerantId = api.get(monde.jetonGerant, "/api/me").entier("$.id");
+
+        Reponse sansRole = api.put(monde.jetonAdmin, "/api/admin/users/" + adminId + "/roles",
+                Map.of("roles", List.of("CLIENT")));
+        assertThat(sansRole.statut()).as(sansRole.toString()).isEqualTo(409);
+        assertThat(api.put(monde.jetonAdmin, "/api/admin/users/" + adminId + "/desactiver", null).statut())
+                .isEqualTo(409);
+
+        // Un second administrateur peut le faire, et il reste en place.
+        ok(api.put(monde.jetonAdmin, "/api/admin/users/" + gerantId + "/roles",
+                Map.of("roles", List.of("GERANT", "ADMINISTRATEUR"))));
+        ok(api.put(monde.jetonGerant, "/api/admin/users/" + adminId + "/roles", Map.of("roles", List.of("CLIENT"))));
+        assertThat(api.put(monde.jetonAdmin, "/api/admin/users/" + gerantId + "/desactiver", null).statut())
+                .as("l'ancien administrateur n'a plus ce droit").isEqualTo(403);
+    }
+
+    @Test
     void unCompteDesactivePuisReactivePeutDeNouveauSeConnecter() {
         long serveurId = api.get(monde.jetonServeur, "/api/me").entier("$.id");
         String email = api.get(monde.jetonServeur, "/api/me").lire("$.email");

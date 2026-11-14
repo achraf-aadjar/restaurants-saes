@@ -2,14 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
+/** Operations du domaine de l'administrateur : comptes et restaurants. */
 export type ActionJournal =
-  | 'CAISSE_OUVERTE'
-  | 'COMMANDE_ENCAISSEE'
-  | 'CAISSE_CLOTUREE'
-  | 'COMMANDE_MODIFIEE'
-  | 'COMMANDE_ANNULEE'
-  | 'COMMANDE_ABANDONNEE'
-  | 'RUPTURE_SIGNALEE'
   | 'COMPTE_CREE'
   | 'ROLES_MODIFIES'
   | 'COMPTE_ACTIVE'
@@ -31,13 +25,6 @@ export interface JournalOperation {
 }
 
 export const LIBELLES_ACTIONS: Record<ActionJournal, string> = {
-  CAISSE_OUVERTE: 'Caisse ouverte',
-  COMMANDE_ENCAISSEE: 'Commande encaissée',
-  CAISSE_CLOTUREE: 'Caisse clôturée',
-  COMMANDE_MODIFIEE: 'Commande modifiée',
-  COMMANDE_ANNULEE: 'Commande annulée',
-  COMMANDE_ABANDONNEE: 'Commande abandonnée',
-  RUPTURE_SIGNALEE: 'Rupture signalée',
   COMPTE_CREE: 'Compte créé',
   ROLES_MODIFIES: 'Rôles modifiés',
   COMPTE_ACTIVE: 'Compte réactivé',
@@ -48,7 +35,7 @@ export const LIBELLES_ACTIONS: Record<ActionJournal, string> = {
   RESTAURANT_DESACTIVE: 'Restaurant désactivé',
 };
 
-/** Historique des operations sensibles, reserve a l'administrateur. */
+/** Historique des operations d'administration (comptes et restaurants). */
 @Injectable({ providedIn: 'root' })
 export class JournalService {
   private readonly http = inject(HttpClient);

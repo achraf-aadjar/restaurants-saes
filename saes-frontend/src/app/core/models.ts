@@ -91,6 +91,19 @@ export interface TableDto {
   capacite: number;
 }
 
+/** Reservation vue par le gerant : quand, combien, quelles tables, qui joindre. */
+export interface ReservationGerantDto {
+  id: number;
+  dateHeure: string;
+  dureeMinutes: number;
+  nombreCouverts: number;
+  tables: TableDto[];
+  clientNom: string;
+  clientPrenom: string;
+  clientEmail: string;
+  clientTelephone: string | null;
+}
+
 export interface HoraireDto {
   id?: number;
   jour: JourSemaine;

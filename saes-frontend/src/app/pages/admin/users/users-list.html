@@ -4,6 +4,11 @@
     + Nouveau compte du personnel
   </button>
 </div>
+<p class="commande-meta">
+  Pour nommer un administrateur, ouvrez les rôles d'un compte existant et cochez « Administrateur ».
+  Personne ne peut retirer son propre rôle d'administrateur ni désactiver son propre compte : un
+  autre administrateur doit le faire.
+</p>
 
 @if (erreur(); as e) {
   <p class="message-refus">{{ e }}</p>
@@ -90,7 +95,7 @@
 }
 
 @if (enEdition(); as u) {
-  <section class="carte" style="margin-top: 1rem">
+  <section class="carte bloc-suivant">
     <h2>Rôles de {{ u.prenom }} {{ u.nom }}</h2>
     @if (erreurEdition(); as e) {
       <p class="message-refus">{{ e }}</p>
@@ -133,7 +138,7 @@
   </section>
 }
 
-<section class="carte" style="margin-top: 1rem">
+<section class="carte bloc-suivant">
   @if (chargement()) {
     <p>Chargement…</p>
   } @else {

@@ -3,9 +3,14 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { motifErreur } from '../../../core/erreur.util';
-import { ActionJournal, JournalOperation, JournalService, LIBELLES_ACTIONS } from '../../../core/journal.service';
+import {
+  ActionJournal,
+  JournalOperation,
+  JournalService,
+  LIBELLES_ACTIONS,
+} from '../../../core/journal.service';
 
-/** Historique des operations sensibles (caisse, annulations, administration). */
+/** Historique des operations d'administration : qui a fait quoi sur les comptes et les restaurants. */
 @Component({
   selector: 'app-journal',
   imports: [DatePipe, FormsModule],
@@ -16,9 +21,6 @@ export class Journal {
 
   protected readonly libelles = LIBELLES_ACTIONS;
   protected readonly objets: Record<string, string> = {
-    COMMANDE: 'Commande',
-    SESSION_CAISSE: 'Caisse',
-    INGREDIENT: 'Ingrédient',
     UTILISATEUR: 'Compte',
     RESTAURANT: 'Restaurant',
   };

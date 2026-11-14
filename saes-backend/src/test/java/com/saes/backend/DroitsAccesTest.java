@@ -26,8 +26,6 @@ class DroitsAccesTest extends IntegrationTest {
         ESPACES.put("/api/admin/users", Role.ADMINISTRATEUR);
         ESPACES.put("/api/admin/restaurants", Role.ADMINISTRATEUR);
         ESPACES.put("/api/admin/journal", Role.ADMINISTRATEUR);
-        ESPACES.put("/api/admin/supervision/tableau-de-bord", Role.ADMINISTRATEUR);
-        ESPACES.put("/api/admin/supervision/caisses", Role.ADMINISTRATEUR);
         ESPACES.put("/api/commandes", Role.CLIENT);
         ESPACES.put("/api/reservations", Role.CLIENT);
         ESPACES.put("/api/serveur/commandes", Role.SERVEUR);
@@ -36,6 +34,7 @@ class DroitsAccesTest extends IntegrationTest {
         ESPACES.put("/api/cuisine/ingredients", Role.CUISINIER);
         ESPACES.put("/api/caissier/commandes", Role.CAISSIER);
         ESPACES.put("/api/gerant/commandes", Role.GERANT);
+        ESPACES.put("/api/gerant/reservations", Role.GERANT);
         ESPACES.put("/api/gerant/plats", Role.GERANT);
         ESPACES.put("/api/gerant/menus", Role.GERANT);
         ESPACES.put("/api/gerant/ingredients", Role.GERANT);

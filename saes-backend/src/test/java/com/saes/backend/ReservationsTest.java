@@ -214,6 +214,19 @@ class ReservationsTest extends IntegrationTest {
         assertThat(chevauchements).isZero();
     }
 
+    @Test
+    void leGerantVoitLesReservationsAVenirDeSonSeulRestaurantEtQuiJoindre() {
+        long confirmee = ok(reserver(monde.jetonClient, DEMAIN_MIDI, 3)).id();
+        long annulee = ok(reserver(monde.jetonClient, DEMAIN_MIDI.plusDays(1), 2)).id();
+        assertThat(api.delete(monde.jetonClient, "/api/reservations/" + annulee).statut()).isEqualTo(204);
+
+        // La base de test garde les reservations des autres restaurants : il ne voit que la sienne.
+        Reponse aVenir = ok(api.get(monde.jetonGerant, "/api/gerant/reservations"));
+        assertThat(aVenir.liste("$[*].id")).containsExactly((int) confirmee);
+        assertThat(aVenir.<String>lire("$[0].clientEmail"))
+                .isEqualTo(api.get(monde.jetonClient, "/api/me").<String>lire("$.email"));
+    }
+
     private List<Map<String, Object>> tablesExistantes() {
         return List.of(
                 Map.of("id", monde.tables.get(1), "numero", 1, "capacite", 2),

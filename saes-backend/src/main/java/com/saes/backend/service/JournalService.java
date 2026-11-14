@@ -50,7 +50,8 @@ public class JournalService {
 
     @Transactional(readOnly = true)
     public List<JournalOperationDto> plusRecentes(int nombre) {
-        return journalOperationRepository.plusRecentes(PageRequest.of(0, Math.clamp(nombre, 1, 500))).stream()
+        return journalOperationRepository
+                .plusRecentes(ActionJournal.ADMINISTRATION, PageRequest.of(0, Math.clamp(nombre, 1, 500))).stream()
                 .map(JournalOperationDto::from)
                 .toList();
     }
