@@ -58,11 +58,9 @@
         </div>
       }
 
-      @for (groupe of groupes(); track groupe.categorie) {
-        <section class="groupe-plats" [attr.aria-labelledby]="'categorie-' + groupe.categorie">
-          <h2 [id]="'categorie-' + groupe.categorie">
-            {{ libellesCategoriesPluriel[groupe.categorie] }}
-          </h2>
+      @for (groupe of groupes(); track groupe.cle) {
+        <section class="groupe-plats" [attr.aria-labelledby]="'categorie-' + groupe.cle">
+          <h2 [id]="'categorie-' + groupe.cle">{{ groupe.titre }}</h2>
           <ul class="plats-saisie">
             @for (plat of groupe.plats; track plat.id) {
               <li>
@@ -82,6 +80,7 @@
                   <button
                     type="button"
                     class="pas"
+                    [disabled]="groupe.indisponible"
                     [attr.aria-label]="'Ajouter un ' + plat.nom"
                     (click)="ajouter(plat)"
                   >

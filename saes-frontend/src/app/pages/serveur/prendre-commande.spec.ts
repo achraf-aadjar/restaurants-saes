@@ -13,7 +13,7 @@ import { PrendreCommande } from './prendre-commande';
  * et les quantités, le type et la table restent ceux de la commande.
  */
 describe('PrendreCommande en modification', () => {
-  async function ouvrir() {
+  async function ouvrir(lignes = [{ platId: 1, platNom: 'Yassa poulet', quantite: 2, prixUnitaire: 2000 }]) {
     const yassa = { id: 1, nom: 'Yassa poulet', description: null, prix: 2000, categorie: 'PLAT_PRINCIPAL' };
     const bissap = { id: 2, nom: 'Jus de bissap', description: null, prix: 500, categorie: 'BOISSON' };
     const commande = {
@@ -25,7 +25,7 @@ describe('PrendreCommande en modification', () => {
       statut: 'EN_ATTENTE',
       dateHeure: '2026-11-14T12:00:00',
       montantTotal: 4000,
-      lignes: [{ platId: 1, platNom: 'Yassa poulet', quantite: 2, prixUnitaire: 2000 }],
+      lignes,
     } as unknown as CommandeDto;
     const service = {
       commandesEnAttente: vi.fn(() => of([commande])),
@@ -78,6 +78,27 @@ describe('PrendreCommande en modification', () => {
       lignes: [
         { platId: 1, quantite: 1 },
         { platId: 2, quantite: 2 },
+      ],
+      version: 3,
+    });
+  });
+
+  it("garde un plat qui n'est plus proposé : on peut le diminuer, pas l'augmenter", async () => {
+    const { service, racine, cliquer } = await ouvrir([
+      { platId: 1, platNom: 'Yassa poulet', quantite: 1, prixUnitaire: 2000 },
+      { platId: 9, platNom: 'Jus de bouye', quantite: 2, prixUnitaire: 500 },
+    ]);
+
+    expect(racine.textContent).toContain('Plus disponibles');
+    expect(racine.querySelector<HTMLButtonElement>('[aria-label="Ajouter un Jus de bouye"]')!.disabled).toBe(true);
+
+    await cliquer('[aria-label="Retirer un Jus de bouye"]');
+    await cliquer('.btn-enregistrer');
+
+    expect(service.modifierCommande).toHaveBeenCalledWith(44, {
+      lignes: [
+        { platId: 1, quantite: 1 },
+        { platId: 9, quantite: 1 },
       ],
       version: 3,
     });

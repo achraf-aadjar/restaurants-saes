@@ -42,12 +42,12 @@ export class PrendreCommande {
   protected readonly commandeTrouvee = signal(false);
 
   protected readonly plats = signal<PlatResume[]>([]);
+  /** Plats de la commande modifiee qui ne sont plus proposes : on peut les diminuer, pas les augmenter (regle 2). */
+  protected readonly platsIndisponibles = signal<PlatResume[]>([]);
   protected readonly tables = signal<TableOccupationDto[]>([]);
   protected readonly chargement = signal(true);
   protected readonly erreur = signal<string | null>(null);
   protected readonly envoiEnCours = signal(false);
-
-  protected readonly libellesCategoriesPluriel = LIBELLES_CATEGORIES_PLURIEL;
 
   protected type: TypeCommande = 'SUR_PLACE';
   protected tableId: number | null = null;
@@ -58,14 +58,23 @@ export class PrendreCommande {
    * création, comme pour le client et le gérant : l'ordre ne change pas d'un chargement à
    * l'autre, le serveur retrouve ses plats à la même place.
    */
-  protected readonly groupes = computed(() =>
-    ORDRE_CATEGORIES.map((categorie) => ({
-      categorie,
+  protected readonly groupes = computed(() => {
+    const groupes = ORDRE_CATEGORIES.map((categorie) => ({
+      cle: categorie as string,
+      titre: LIBELLES_CATEGORIES_PLURIEL[categorie],
+      indisponible: false,
       plats: this.plats()
         .filter((p) => p.categorie === categorie)
         .sort((x, y) => x.id - y.id),
-    })).filter((g) => g.plats.length > 0),
-  );
+    }));
+    groupes.push({
+      cle: 'indisponibles',
+      titre: 'Plus disponibles',
+      indisponible: true,
+      plats: this.platsIndisponibles(),
+    });
+    return groupes.filter((g) => g.plats.length > 0);
+  });
 
   protected readonly lignesListe = computed(() => Array.from(this.lignes().values()));
   protected readonly total = computed(() =>
@@ -106,7 +115,7 @@ export class PrendreCommande {
 
   /**
    * Reprend le type, la table et les plats de la commande a modifier. Un plat qui n'est
-   * plus dans les menus en vigueur reste dans le recapitulatif, a son prix de la commande.
+   * plus propose reste dans la commande, a son prix de la commande, sous « Plus disponibles ».
    */
   private preremplir(commande: CommandeDto | undefined, plats: Map<number, PlatResume>): void {
     if (!commande) {
@@ -118,16 +127,16 @@ export class PrendreCommande {
     this.type = commande.type;
     this.tableId = commande.tableId;
     const lignes = new Map<number, LigneSaisie>();
+    const indisponibles: PlatResume[] = [];
     for (const l of commande.lignes) {
-      const plat = plats.get(l.platId) ?? {
-        id: l.platId,
-        nom: l.platNom,
-        description: null,
-        prix: l.prixUnitaire,
-        categorie: 'PLAT_PRINCIPAL' as const,
-      };
+      let plat = plats.get(l.platId);
+      if (!plat) {
+        plat = { id: l.platId, nom: l.platNom, description: null, prix: l.prixUnitaire, categorie: 'PLAT_PRINCIPAL' };
+        indisponibles.push(plat);
+      }
       lignes.set(l.platId, { plat, quantite: l.quantite });
     }
+    this.platsIndisponibles.set(indisponibles);
     this.lignes.set(lignes);
   }
 

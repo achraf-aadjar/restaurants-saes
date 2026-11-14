@@ -156,6 +156,36 @@ class CommandesTest extends IntegrationTest {
     }
 
     @Test
+    void regle4ModifierUneCommandeGardeLePrixDesPlatsQuiYSontDeja() {
+        long id = ok(api.post(monde.jetonServeur, "/api/serveur/commandes",
+                Map.of("type", "A_EMPORTER", "lignes", List.of(lignes(monde.platId, 2))))).id();
+        ok(api.put(monde.jetonGerant, "/api/gerant/plats/" + monde.platId, Map.of(
+                "nom", "Thieboudienne", "prix", 5000, "categorie", "PLAT_PRINCIPAL",
+                "recette", List.of(Map.of("ingredientId", monde.rizId, "quantiteNecessaire", 0.5)))));
+
+        Reponse modifiee = ok(api.put(monde.jetonServeur, "/api/serveur/commandes/" + id, Map.of(
+                "version", monde.version(id),
+                "lignes", List.of(lignes(monde.platId, 3), lignes(monde.boissonId, 1)))));
+
+        assertThat(modifiee.entier("$.montantTotal")).isEqualTo(3L * Monde.PRIX_PLAT + Monde.PRIX_BOISSON);
+    }
+
+    @Test
+    void regle2UnPlatDevenuInactifResteDansLaCommandeMaisNAugmentePas() {
+        long id = ok(api.post(monde.jetonServeur, "/api/serveur/commandes", Map.of("type", "A_EMPORTER",
+                "lignes", List.of(lignes(monde.platId, 1), lignes(monde.boissonId, 2))))).id();
+        ok(api.put(monde.jetonGerant, "/api/gerant/plats/" + monde.boissonId + "/desactiver", null));
+        String url = "/api/serveur/commandes/" + id;
+
+        assertThat(api.put(monde.jetonServeur, url, Map.of("version", monde.version(id),
+                "lignes", List.of(lignes(monde.platId, 2), lignes(monde.boissonId, 2)))).statut()).isEqualTo(200);
+        assertThat(api.put(monde.jetonServeur, url, Map.of("version", monde.version(id),
+                "lignes", List.of(lignes(monde.platId, 2), lignes(monde.boissonId, 1)))).statut()).isEqualTo(200);
+        assertThat(api.put(monde.jetonServeur, url, Map.of("version", monde.version(id),
+                "lignes", List.of(lignes(monde.platId, 2), lignes(monde.boissonId, 3)))).statut()).isEqualTo(409);
+    }
+
+    @Test
     void modifierOuAnnulerEstRefuseQuandLaCommandeNEstPlusEnAttente() {
         long id = ok(monde.passerCommande(monde.jetonClient, monde.platId, 1)).id();
         ok(monde.demarrer(id));
