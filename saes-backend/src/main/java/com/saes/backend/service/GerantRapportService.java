@@ -59,7 +59,7 @@ public class GerantRapportService {
         for (Paiement paiement : paiements) {
             LocalDate jour = paiement.getDateHeure().atZone(ZONE).toLocalDate();
             int[] montants = parJour.computeIfAbsent(jour, j -> new int[2]);
-            int montantCommande = montant(paiement.getCommande());
+            int montantCommande = paiement.getCommande().getMontantTotal();
             if (paiement.getModePaiement() == ModePaiement.ESPECES) {
                 montants[0] += montantCommande;
             } else {
@@ -80,7 +80,7 @@ public class GerantRapportService {
                 .map(session -> {
                     int totalEspeces = paiementRepository.findBySessionCaisse_Id(session.getId()).stream()
                             .filter(p -> p.getModePaiement() == ModePaiement.ESPECES)
-                            .mapToInt(p -> montant(p.getCommande()))
+                            .mapToInt(p -> p.getCommande().getMontantTotal())
                             .sum();
                     return EcartCaisseDto.from(session, session.getFondDeCaisse() + totalEspeces);
                 })
@@ -90,13 +90,9 @@ public class GerantRapportService {
                 .findByRestaurantIdAndStatutAndDateHeureBetween(
                         restaurant.getId(), StatutCommande.ABANDONNEE, debutInstant, finInstant)
                 .stream()
-                .mapToInt(this::montant)
+                .mapToInt(Commande::getMontantTotal)
                 .sum();
 
         return new RapportFinancierDto(encaissementsParJour, ecartsCaisse, montantCommandesAbandonnees);
-    }
-
-    private int montant(Commande commande) {
-        return commande.getLignes().stream().mapToInt(l -> l.getPrixUnitaire() * l.getQuantite()).sum();
     }
 }

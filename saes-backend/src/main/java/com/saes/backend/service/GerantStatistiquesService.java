@@ -51,7 +51,7 @@ public class GerantStatistiquesService {
                 restaurant.getId(), StatutCommande.PAYEE, debutInstant, finInstant);
 
         int nombreCommandesPayees = commandesPayees.size();
-        int montantTotal = commandesPayees.stream().mapToInt(this::montant).sum();
+        int montantTotal = commandesPayees.stream().mapToInt(Commande::getMontantTotal).sum();
         double montantMoyen = nombreCommandesPayees == 0 ? 0 : (double) montantTotal / nombreCommandesPayees;
 
         record Agregat(String nom, CategoriePlat categorie, int quantite, int montant) {
@@ -64,7 +64,7 @@ public class GerantStatistiquesService {
         for (Commande commande : commandesPayees) {
             for (LigneCommande ligne : commande.getLignes()) {
                 Plat plat = ligne.getPlat();
-                int montantLigne = ligne.getPrixUnitaire() * ligne.getQuantite();
+                int montantLigne = ligne.getMontant();
                 parPlat.merge(
                         plat.getId(),
                         new Agregat(plat.getNom(), plat.getCategorie(), ligne.getQuantite(), montantLigne),
@@ -88,9 +88,5 @@ public class GerantStatistiquesService {
                 .toList();
 
         return new StatistiquesVentesDto(nombreCommandesPayees, montantMoyen, ventesParPlat, ventesParCategorie);
-    }
-
-    private int montant(Commande commande) {
-        return commande.getLignes().stream().mapToInt(l -> l.getPrixUnitaire() * l.getQuantite()).sum();
     }
 }

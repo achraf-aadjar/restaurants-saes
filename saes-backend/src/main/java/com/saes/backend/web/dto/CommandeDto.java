@@ -24,7 +24,7 @@ public record CommandeDto(
         List<LigneCommandeDto> lignes) {
 
     public static CommandeDto from(Commande c) {
-        int montant = c.getLignes().stream().mapToInt(l -> l.getPrixUnitaire() * l.getQuantite()).sum();
+        int montant = c.getMontantTotal();
         return new CommandeDto(
                 c.getId(),
                 c.getRestaurant().getId(),

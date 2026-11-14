@@ -114,9 +114,7 @@ public class CaisseService {
 
         int totalEspeces = paiementRepository.findBySessionCaisse_Id(session.getId()).stream()
                 .filter(p -> p.getModePaiement() == ModePaiement.ESPECES)
-                .mapToInt(p -> p.getCommande().getLignes().stream()
-                        .mapToInt(l -> l.getPrixUnitaire() * l.getQuantite())
-                        .sum())
+                .mapToInt(p -> p.getCommande().getMontantTotal())
                 .sum();
         int montantTheorique = session.getFondDeCaisse() + totalEspeces;
         int ecart = request.montantCompte() - montantTheorique;
