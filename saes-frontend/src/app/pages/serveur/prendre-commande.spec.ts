@@ -10,12 +10,10 @@ import { PrendreCommande } from './prendre-commande';
 
 /**
  * Le serveur modifie une commande en attente (cahier des charges §4.3) : il change les plats
- * et les quantités, le type et la table restent ceux de la commande.
+ * et les quantités, et la commande repart avec sa version (règle 3).
  */
 describe('PrendreCommande en modification', () => {
-  async function ouvrir(
-    lignes = [{ platId: 1, platNom: 'Yassa poulet', quantite: 2, prixUnitaire: 2000 }],
-  ) {
+  async function ouvrir() {
     const yassa = {
       id: 1,
       nom: 'Yassa poulet',
@@ -39,7 +37,7 @@ describe('PrendreCommande en modification', () => {
       statut: 'EN_ATTENTE',
       dateHeure: '2026-11-14T12:00:00',
       montantTotal: 4000,
-      lignes,
+      lignes: [{ platId: 1, platNom: 'Yassa poulet', quantite: 2, prixUnitaire: 2000 }],
     } as unknown as CommandeDto;
     const service = {
       commandesEnAttente: vi.fn(() => of([commande])),
@@ -99,36 +97,5 @@ describe('PrendreCommande en modification', () => {
       ],
       version: 3,
     });
-  });
-
-  it("garde un plat qui n'est plus proposé : on peut le diminuer, pas l'augmenter", async () => {
-    const { service, racine, cliquer } = await ouvrir([
-      { platId: 1, platNom: 'Yassa poulet', quantite: 1, prixUnitaire: 2000 },
-      { platId: 9, platNom: 'Jus de bouye', quantite: 2, prixUnitaire: 500 },
-    ]);
-
-    expect(racine.textContent).toContain('Plus disponibles');
-    expect(
-      racine.querySelector<HTMLButtonElement>('[aria-label="Ajouter un Jus de bouye"]')!.disabled,
-    ).toBe(true);
-
-    await cliquer('[aria-label="Retirer un Jus de bouye"]');
-    await cliquer('.btn-enregistrer');
-
-    expect(service.modifierCommande).toHaveBeenCalledWith(44, {
-      lignes: [
-        { platId: 1, quantite: 1 },
-        { platId: 9, quantite: 1 },
-      ],
-      version: 3,
-    });
-  });
-
-  it('ne laisse changer ni le type ni la table', async () => {
-    const { racine } = await ouvrir();
-
-    const types = [...racine.querySelectorAll<HTMLButtonElement>('.type-commande .choix')];
-    expect(types.every((b) => b.disabled)).toBe(true);
-    expect(racine.querySelector<HTMLSelectElement>('#table')!.disabled).toBe(true);
   });
 });

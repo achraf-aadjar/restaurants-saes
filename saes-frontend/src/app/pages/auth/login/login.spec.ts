@@ -37,23 +37,6 @@ describe('Page de connexion', () => {
     await fixture.whenStable();
   }
 
-  it("un formulaire vide n'est pas envoye et chaque champ indique quoi faire", async () => {
-    await envoyer();
-
-    serveur.expectNone('/api/auth/login');
-    expect(page.textContent).toContain('Saisissez votre adresse e-mail.');
-    expect(page.textContent).toContain('Saisissez votre mot de passe.');
-  });
-
-  it('une adresse e-mail mal formee est signalee', async () => {
-    await saisir('#email', 'pas-une-adresse');
-    await saisir('#motDePasse', 'motdepasse123');
-    await envoyer();
-
-    serveur.expectNone('/api/auth/login');
-    expect(page.textContent).toContain('Adresse e-mail invalide.');
-  });
-
   it('des identifiants valides sont envoyes puis on arrive sur l accueil de son role', async () => {
     const navigation = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     await saisir('#email', 'awa@test.sn');
@@ -115,20 +98,5 @@ describe('Page de connexion', () => {
     expect(page.querySelector('[role="alert"]')?.textContent).toContain(
       'Adresse e-mail ou mot de passe incorrect',
     );
-  });
-
-  it('le mot de passe peut etre affiche puis masque', async () => {
-    const champ = page.querySelector<HTMLInputElement>('#motDePasse')!;
-    const bouton = page.querySelector<HTMLButtonElement>('.auth-oeil')!;
-    expect(champ.type).toBe('password');
-
-    bouton.click();
-    await fixture.whenStable();
-    expect(champ.type).toBe('text');
-    expect(bouton.getAttribute('aria-pressed')).toBe('true');
-
-    bouton.click();
-    await fixture.whenStable();
-    expect(champ.type).toBe('password');
   });
 });

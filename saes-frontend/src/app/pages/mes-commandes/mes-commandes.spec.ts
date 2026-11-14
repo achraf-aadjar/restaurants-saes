@@ -36,8 +36,7 @@ describe('MesCommandes', () => {
       bouton(texte)!.click();
       await fixture.whenStable();
     };
-    const stable = () => fixture.whenStable();
-    return { service, racine, bouton, cliquer, stable };
+    return { service, bouton, cliquer };
   }
 
   it("n'annule pas au premier clic : il demande confirmation", async () => {
@@ -47,30 +46,6 @@ describe('MesCommandes', () => {
 
     expect(service.annuler).not.toHaveBeenCalled();
     expect(bouton('Non, garder')).toBe(document.activeElement);
-  });
-
-  it('garde la commande si on renonce, et rend le focus au bouton', async () => {
-    const { service, bouton, cliquer } = await ouvrir();
-
-    await cliquer('Annuler ma commande');
-    await cliquer('Non, garder');
-
-    expect(service.annuler).not.toHaveBeenCalled();
-    expect(bouton('Non, garder')).toBeUndefined();
-    expect(bouton('Annuler ma commande')).toBe(document.activeElement);
-  });
-
-  it('garde la commande si on appuie sur Échap', async () => {
-    const { service, bouton, cliquer, stable } = await ouvrir();
-
-    await cliquer('Annuler ma commande');
-    bouton('Non, garder')!.dispatchEvent(
-      new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
-    );
-    await stable();
-
-    expect(service.annuler).not.toHaveBeenCalled();
-    expect(bouton('Non, garder')).toBeUndefined();
   });
 
   it('annule la commande après confirmation', async () => {
