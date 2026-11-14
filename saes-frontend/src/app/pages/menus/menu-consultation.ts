@@ -8,19 +8,19 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { AuthService } from '../../core/auth.service';
 import { CommandeClientService } from '../../core/commande-client.service';
-import { heureEnLettres, periodeEnLettres } from '../../core/date.util';
+import { periodeEnLettres } from '../../core/date.util';
 import { motifErreur } from '../../core/erreur.util';
 import { CategoriePlat, MenuDto, PlatResume, RestaurantSummary } from '../../core/models';
 import { MenuService } from '../../core/menu.service';
-import { photoDuRestaurant } from '../../core/photos-restaurants';
 import { IconeCategorie } from '../../shared/icone-categorie';
 import { MontantPipe } from '../../shared/montant.pipe';
 import { PhotoPlat } from '../../shared/photo-plat';
 import { RefusVisible } from '../../shared/refus-visible';
+import { BandeauRestaurant } from './bandeau-restaurant';
 
 const ORDRE_CATEGORIES: CategoriePlat[] = ['ENTREE', 'PLAT_PRINCIPAL', 'DESSERT', 'BOISSON'];
 const LIBELLES_CATEGORIES: Record<CategoriePlat, string> = {
@@ -63,7 +63,7 @@ function grouperParCategorie(plats: PlatResume[]): GroupeCategorie[] {
  */
 @Component({
   selector: 'app-menu-consultation',
-  imports: [IconeCategorie, MontantPipe, PhotoPlat, RefusVisible, RouterLink],
+  imports: [BandeauRestaurant, IconeCategorie, MontantPipe, PhotoPlat, RefusVisible],
   templateUrl: './menu-consultation.html',
   styleUrl: './menu-consultation.scss',
 })
@@ -104,42 +104,6 @@ export class MenuConsultation {
    */
   protected readonly vueClient = computed(
     () => !this.auth.estConnecte() || this.auth.aLeRole('CLIENT'),
-  );
-
-  protected readonly photoRestaurant = computed(() => {
-    const restaurant = this.restaurantSelectionne();
-    return restaurant ? photoDuRestaurant(restaurant.nom) : null;
-  });
-
-  /**
-   * « 11 h 30 – 15 h · 19 h – 21 h 30 », comme sur l'ecran de reference 1 ; vide
-   * si ferme. Espaces insecables dans chaque plage : une ligne ne se coupe
-   * qu'entre deux plages, jamais dans « 8 h – 21 h ».
-   */
-  /**
-   * Adresse en deux lignes : la ville et le pays (epingle), puis l'etablissement
-   * (batiment), sans repeter la ville. Il faut au moins trois elements separes
-   * par des virgules ; sinon, une seule ligne.
-   */
-  protected readonly adresse = computed(() => {
-    const parties = (this.restaurantSelectionne()?.adresse ?? '')
-      .split(',')
-      .map((p) => p.trim())
-      .filter(Boolean);
-    return parties.length >= 3
-      ? { lieu: parties.slice(-2).join(', '), etablissement: parties.slice(0, -2).join(', ') }
-      : { lieu: parties.join(', '), etablissement: '' };
-  });
-
-  protected readonly horairesDuJour = computed(() =>
-    (this.restaurantSelectionne()?.horairesDuJour ?? [])
-      .map((h) =>
-        `${heureEnLettres(h.heureOuverture)} – ${heureEnLettres(h.heureFermeture)}`.replace(
-          / /g,
-          ' ',
-        ),
-      )
-      .join(' · '),
   );
 
   protected readonly lignesPanier = computed(() => Array.from(this.panier().values()));

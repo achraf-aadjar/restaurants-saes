@@ -19,98 +19,11 @@
 }
 
 @if (restaurantSelectionne(); as restaurant) {
-  <section class="bandeau-restaurant" [class.pleine-largeur]="vueClient()">
-    @if (vueClient()) {
-      <img
-        class="decor-bandeau"
-        src="assets/decor/bandeau-plats-200.webp"
-        srcset="assets/decor/bandeau-plats-200.webp 1x, assets/decor/bandeau-plats-400.webp 2x"
-        width="199"
-        height="200"
-        alt=""
-        aria-hidden="true"
-      />
-    }
-    <div class="bandeau-interieur">
-      @if (photoRestaurant(); as photo) {
-        <img
-          class="photo-restaurant"
-          [src]="photo.src"
-          [srcset]="photo.srcset"
-          sizes="(max-width: 859px) 100vw, 210px"
-          width="400"
-          height="213"
-          alt=""
-          [title]="
-            photo.credit.description + ' · ' + photo.credit.auteur + ', ' + photo.credit.licence
-          "
-        />
-      }
-
-      <div class="identite">
-        <h1>{{ restaurant.nom }}</h1>
-        <p class="ligne-icone">
-          <svg class="icone-pleine" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"
-            />
-            <circle cx="12" cy="10" r="3" />
-          </svg>
-          {{ adresse().lieu }}
-        </p>
-        @if (adresse().etablissement) {
-          <p class="ligne-icone">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7" />
-              <path
-                d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"
-              />
-            </svg>
-            {{ adresse().etablissement }}
-          </p>
-        }
-      </div>
-
-      <div class="horaires-du-jour">
-        <p class="ligne-icone">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="9" />
-            <path d="M12 7v5l3 2" />
-          </svg>
-          @if (horairesDuJour()) {
-            Aujourd'hui : {{ horairesDuJour() }}
-          } @else {
-            Fermé aujourd'hui
-          }
-        </p>
-        @if (horairesDuJour()) {
-          <span
-            class="badge badge-point"
-            [class.badge-actif]="restaurant.ouvert"
-            [class.badge-inactif]="!restaurant.ouvert"
-          >
-            {{ restaurant.ouvert ? 'Ouvert' : 'Fermé' }}
-          </span>
-        }
-      </div>
-
-      @if (vueClient()) {
-        <a
-          class="btn btn-primaire btn-reserver"
-          routerLink="/mes-reservations"
-          [queryParams]="{ restaurant: restaurant.id }"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="3.5" y="5" width="17" height="15" rx="2" />
-            <path d="M3.5 10h17M8 3v4M16 3v4" />
-            <path class="points" d="M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01M16 17h.01" />
-          </svg>
-          Réserver
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-        </a>
-      }
-    </div>
-  </section>
+  <app-bandeau-restaurant
+    [restaurant]="restaurant"
+    [vueClient]="vueClient()"
+    [class.apres-selecteur]="restaurants().length > 1"
+  />
 }
 
 <div class="mise-en-page">
