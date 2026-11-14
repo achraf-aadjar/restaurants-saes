@@ -43,7 +43,7 @@
         }
       </div>
 
-      <div class="actions-colonne" style="margin-top: 1.25rem">
+      <div class="actions-colonne actions-sous-formulaire">
         <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enregistrementEnCours()">
           {{ enregistrementEnCours() ? 'Enregistrement…' : 'Enregistrer' }}
         </button>
@@ -55,7 +55,7 @@
   </section>
 }
 
-<section class="carte" style="margin-top: 1rem">
+<section class="carte bloc-suivant">
   @if (chargement()) {
     <p>Chargement…</p>
   } @else {

@@ -16,7 +16,7 @@
 } @else if (caisseOuverte(); as session) {
   <app-ma-caisse [session]="session" [avecCloture]="false" />
 
-  <section class="carte" style="margin-top: 1rem">
+  <section class="carte bloc-suivant">
     <form (ngSubmit)="cloturer()" #fc="ngForm" class="formulaire-etroit formulaire-caisse">
       <div class="champ">
         <label for="montantCompte">Montant compté (FCFA)</label>

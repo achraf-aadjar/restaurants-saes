@@ -666,6 +666,23 @@ button {
   gap: 0.5rem;
 }
 
+/* Espacements et largeurs ponctuels, plutot que des styles ecrits dans le HTML. */
+.bloc-suivant {
+  margin-top: 1rem;
+}
+
+.bloc-espace-bas {
+  margin-bottom: 1.5rem;
+}
+
+.actions-sous-formulaire {
+  margin-top: 1.25rem;
+}
+
+.saisie-courte {
+  width: 100px;
+}
+
 /* ---------- Espace d'administration (pages/admin) ---------- */
 
 /* L'espace d'administration occupe toute la largeur sous l'en-tete. */

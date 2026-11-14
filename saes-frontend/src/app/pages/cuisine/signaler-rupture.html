@@ -12,11 +12,10 @@
     <p>Aucun ingrédient.</p>
   } @else {
     <form (ngSubmit)="confirmationRupture.set(true)" class="ligne-dynamique">
-      <div class="champ champ-inline" style="flex: 1; max-width: 360px">
+      <div class="champ champ-inline champ-etire">
         <label for="ingredientRupture">Ingrédient</label>
         <select
           id="ingredientRupture"
-          style="width: 100%"
           [(ngModel)]="ingredientSelectionne"
           (ngModelChange)="changerIngredient()"
           name="ingredientRupture"

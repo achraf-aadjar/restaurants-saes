@@ -7,7 +7,7 @@
 @if (chargement()) {
   <p>Chargement…</p>
 } @else if (occupation(); as occ) {
-  <section class="carte" style="margin-bottom: 1.5rem">
+  <section class="carte bloc-espace-bas">
     <h2>Tables</h2>
     <div class="grille-tables">
       @for (t of occ.tables; track t.id) {
@@ -20,7 +20,7 @@
     </div>
   </section>
 
-  <section class="carte" style="margin-bottom: 1.5rem">
+  <section class="carte bloc-espace-bas">
     <h2>Réservations confirmées du jour</h2>
     @if (occ.reservationsDuJour.length === 0) {
       <p>Aucune réservation aujourd'hui.</p>

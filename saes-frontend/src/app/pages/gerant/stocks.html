@@ -55,7 +55,7 @@
   </section>
 }
 
-<section class="carte" style="margin-top: 1rem">
+<section class="carte bloc-suivant">
   @if (chargement()) {
     <p>Chargement…</p>
   } @else {
@@ -106,7 +106,7 @@
                     required
                     [(ngModel)]="quantiteMouvement"
                     name="quantiteMouvement"
-                    style="width: 100px"
+                    class="saisie-courte"
                   />
                   <span>{{ symbolesUnites[i.unite] }}</span>
                   <button type="submit" class="btn btn-primaire btn-petit" [disabled]="enregistrementEnCours()">
