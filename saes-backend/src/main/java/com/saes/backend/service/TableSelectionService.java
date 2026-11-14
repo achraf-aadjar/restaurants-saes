@@ -1,7 +1,7 @@
 package com.saes.backend.service;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -12,75 +12,63 @@ import com.saes.backend.domain.TableRestaurant;
  * Regle 7 du cahier des charges : la plateforme choisit les tables libres
  * qui laissent le moins de places inutilisees et, a egalite, le moins de
  * tables.
+ *
+ * <p>Calcul exact quel que soit le nombre de tables (programmation dynamique
+ * sur le nombre de places) : pour chaque total de places atteignable, on
+ * retient le plus petit nombre de tables qui l'atteint, puis on prend le plus
+ * petit total qui couvre les couverts. Cout : tables x places, au lieu de 2^tables.
  */
 @Component
 class TableSelectionService {
 
-    /** Au-dela, la recherche exhaustive (2^n) devient trop couteuse : repli glouton. */
-    private static final int LIMITE_RECHERCHE_EXHAUSTIVE = 22;
+    private static final int INATTEIGNABLE = Integer.MAX_VALUE;
 
     List<TableRestaurant> choisir(List<TableRestaurant> tablesLibres, int couverts) {
-        if (tablesLibres.isEmpty()) {
+        int n = tablesLibres.size();
+        if (n == 0) {
             return List.of();
         }
-        return tablesLibres.size() <= LIMITE_RECHERCHE_EXHAUSTIVE
-                ? choisirExhaustif(tablesLibres, couverts)
-                : choisirGlouton(tablesLibres, couverts);
-    }
+        // Un choix optimal depasse les couverts de moins que sa plus petite table
+        // (sinon on pourrait l'enlever) : inutile de regarder au-dela de cette borne.
+        int plusGrandeTable = tablesLibres.stream().mapToInt(TableRestaurant::getCapacite).max().orElse(0);
+        int totalLibre = tablesLibres.stream().mapToInt(TableRestaurant::getCapacite).sum();
+        int borne = Math.min(totalLibre, couverts + plusGrandeTable - 1);
+        if (borne < couverts) {
+            return List.of();
+        }
 
-    private List<TableRestaurant> choisirExhaustif(List<TableRestaurant> tables, int couverts) {
-        int n = tables.size();
-        long meilleurMasque = -1;
-        int meilleurPlacesInutilisees = Integer.MAX_VALUE;
-        int meilleurNombreTables = Integer.MAX_VALUE;
-
-        for (long masque = 1; masque < (1L << n); masque++) {
-            int somme = 0;
-            int nbTables = 0;
-            for (int i = 0; i < n; i++) {
-                if ((masque & (1L << i)) != 0) {
-                    somme += tables.get(i).getCapacite();
-                    nbTables++;
+        // minTables[s] : plus petit nombre de tables totalisant exactement s places.
+        int[] minTables = new int[borne + 1];
+        Arrays.fill(minTables, INATTEIGNABLE);
+        minTables[0] = 0;
+        // prise[i][s] : la table i fait partie du meilleur choix pour s avec les tables 0..i.
+        boolean[][] prise = new boolean[n][borne + 1];
+        for (int i = 0; i < n; i++) {
+            int capacite = tablesLibres.get(i).getCapacite();
+            for (int s = borne; s >= capacite; s--) {
+                int avant = minTables[s - capacite];
+                if (avant != INATTEIGNABLE && avant + 1 < minTables[s]) {
+                    minTables[s] = avant + 1;
+                    prise[i][s] = true;
                 }
             }
-            if (somme < couverts) {
-                continue;
-            }
-            int placesInutilisees = somme - couverts;
-            if (placesInutilisees < meilleurPlacesInutilisees
-                    || (placesInutilisees == meilleurPlacesInutilisees && nbTables < meilleurNombreTables)) {
-                meilleurPlacesInutilisees = placesInutilisees;
-                meilleurNombreTables = nbTables;
-                meilleurMasque = masque;
-            }
         }
 
-        if (meilleurMasque < 0) {
+        int total = couverts;
+        while (total <= borne && minTables[total] == INATTEIGNABLE) {
+            total++;
+        }
+        if (total > borne) {
             return List.of();
         }
+
         List<TableRestaurant> resultat = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            if ((meilleurMasque & (1L << i)) != 0) {
-                resultat.add(tables.get(i));
+        for (int i = n - 1; i >= 0 && total > 0; i--) {
+            if (prise[i][total]) {
+                resultat.add(tablesLibres.get(i));
+                total -= tablesLibres.get(i).getCapacite();
             }
         }
         return resultat;
-    }
-
-    /** Repli pour un tres grand nombre de tables : pas garanti optimal, mais evite l'explosion combinatoire. */
-    private List<TableRestaurant> choisirGlouton(List<TableRestaurant> tables, int couverts) {
-        List<TableRestaurant> triees = tables.stream()
-                .sorted(Comparator.comparingInt(TableRestaurant::getCapacite))
-                .toList();
-        List<TableRestaurant> resultat = new ArrayList<>();
-        int somme = 0;
-        for (TableRestaurant t : triees) {
-            if (somme >= couverts) {
-                break;
-            }
-            resultat.add(t);
-            somme += t.getCapacite();
-        }
-        return somme >= couverts ? resultat : List.of();
     }
 }
