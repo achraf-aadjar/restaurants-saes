@@ -109,6 +109,16 @@ class CommandesTest extends IntegrationTest {
         ok(api.put(monde.jetonAdmin, "/api/admin/restaurants/" + monde.restaurantId + "/desactiver", null));
 
         assertThat(monde.passerCommande(monde.jetonClient, monde.platId, 1).statut()).isEqualTo(404);
+        assertThat(api.post(monde.jetonServeur, "/api/serveur/commandes",
+                Map.of("type", "A_EMPORTER", "lignes", List.of(lignes(monde.platId, 1)))).statut()).isEqualTo(409);
+    }
+
+    @Test
+    void unPlatDemandeDeuxFoisNeFaitQuUneLigne() {
+        Reponse commande = ok(api.post(monde.jetonServeur, "/api/serveur/commandes", Map.of("type", "A_EMPORTER",
+                "lignes", List.of(lignes(monde.platId, 1), lignes(monde.platId, 2)))));
+
+        assertThat(commande.liste("$.lignes[*].quantite")).containsExactly(3);
     }
 
     @Test

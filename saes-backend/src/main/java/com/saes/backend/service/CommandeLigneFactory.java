@@ -2,7 +2,9 @@ package com.saes.backend.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
@@ -34,9 +36,11 @@ class CommandeLigneFactory {
         LocalDate aujourdHui = LocalDate.now();
         List<LigneCommande> lignes = new ArrayList<>();
 
-        for (LigneDemandeeDto demande : lignesDemandees) {
-            lignes.add(nouvelleLigne(restaurant, demande.platId(), demande.quantite(), aujourdHui));
-        }
+        // Une seule ligne par plat (LigneCommande est une classe-association) : un plat demande
+        // deux fois voit ses quantites additionnees.
+        Map<Long, Integer> parPlat = new LinkedHashMap<>();
+        lignesDemandees.forEach(d -> parPlat.merge(d.platId(), d.quantite(), Integer::sum));
+        parPlat.forEach((platId, quantite) -> lignes.add(nouvelleLigne(restaurant, platId, quantite, aujourdHui)));
 
         return lignes;
     }

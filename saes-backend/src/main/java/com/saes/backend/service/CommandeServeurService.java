@@ -79,6 +79,10 @@ public class CommandeServeurService {
     @Transactional
     public CommandeDto prendreCommande(Long serveurId, PrendreCommandeRequest request) {
         Restaurant restaurant = personnelRestaurantResolver.restaurantDe(serveurId);
+        if (!restaurant.isEstActif()) {
+            // Regle 13 : un restaurant desactive n'accepte plus de commande, ni du client ni du serveur.
+            throw ApiException.conflict("Ce restaurant est désactivé : il n'accepte plus de commande");
+        }
         Utilisateur serveur = utilisateurRepository.getReferenceById(serveurId);
 
         TableRestaurant table = null;
