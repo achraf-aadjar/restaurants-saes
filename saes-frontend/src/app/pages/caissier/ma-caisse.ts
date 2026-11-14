@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { estAujourdhui } from '../../core/date.util';
+import { estAujourdhui, FORMAT_HEURE } from '../../core/date.util';
 import { SessionCaisseDto } from '../../core/models';
 import { MontantPipe } from '../../shared/montant.pipe';
 
@@ -19,7 +19,7 @@ import { MontantPipe } from '../../shared/montant.pipe';
         <h2>Ma caisse</h2>
         <p class="commande-meta">
           @if (ouverteAujourdhui()) {
-            Ouverte depuis {{ session().dateHeureOuverture | date: "H 'h' mm" }}
+            Ouverte depuis {{ session().dateHeureOuverture | date: formatHeure }}
           } @else {
             Ouverte depuis le {{ session().dateHeureOuverture | date }}
           }
@@ -48,6 +48,7 @@ export class MaCaisse {
   /** Faux sur la page de cloture, qui a deja son formulaire. */
   readonly avecCloture = input(true);
 
+  protected readonly formatHeure = FORMAT_HEURE;
   protected readonly ouverteAujourdhui = computed(() =>
     estAujourdhui(this.session().dateHeureOuverture),
   );

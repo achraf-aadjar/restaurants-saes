@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 
 import { CommandeServeurService } from '../../core/commande-serveur.service';
+import { FORMAT_HEURE } from '../../core/date.util';
 import { motifErreur } from '../../core/erreur.util';
 import { OccupationRestaurantDto } from '../../core/models';
 import { RefusVisible } from '../../shared/refus-visible';
@@ -15,6 +16,7 @@ import { RefusVisible } from '../../shared/refus-visible';
 export class OccupationTables {
   private readonly commandeServeurService = inject(CommandeServeurService);
 
+  protected readonly formatHeure = FORMAT_HEURE;
   protected readonly occupation = signal<OccupationRestaurantDto | null>(null);
   protected readonly chargement = signal(true);
   protected readonly erreur = signal<string | null>(null);
@@ -27,7 +29,7 @@ export class OccupationTables {
       },
       error: (err) => {
         this.chargement.set(false);
-        this.erreur.set(motifErreur(err, 'Impossible de charger l\'occupation des tables'));
+        this.erreur.set(motifErreur(err, "Impossible de charger l'occupation des tables"));
       },
     });
   }

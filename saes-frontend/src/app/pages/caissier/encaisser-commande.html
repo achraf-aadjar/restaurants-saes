@@ -42,7 +42,7 @@
                   </td>
                   <td>
                     @if (estAujourdhui(c.dateHeure)) {
-                      {{ c.dateHeure | date: "H 'h' mm" }}
+                      {{ c.dateHeure | date: formatHeure }}
                     } @else {
                       {{ c.dateHeure | date }}
                     }

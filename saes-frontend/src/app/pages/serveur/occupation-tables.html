@@ -36,7 +36,7 @@
         <tbody>
           @for (r of occ.reservationsDuJour; track r.id) {
             <tr>
-              <td>{{ r.dateHeure | date: "H 'h' mm" }}</td>
+              <td>{{ r.dateHeure | date: formatHeure }}</td>
               <td>{{ r.nombreCouverts }}</td>
               <td>
                 @for (t of r.tables; track t.numero) {

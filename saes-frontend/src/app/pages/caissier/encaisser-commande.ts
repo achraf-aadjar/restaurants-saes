@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 
 import { CaisseService } from '../../core/caisse.service';
 import { classeBadgeStatut, LIBELLES_STATUT_COMMANDE } from '../../core/commande.util';
-import { estAujourdhui } from '../../core/date.util';
+import { estAujourdhui, FORMAT_HEURE } from '../../core/date.util';
 import { motifErreur } from '../../core/erreur.util';
 import { CommandeDto, ModePaiement, SessionCaisseDto } from '../../core/models';
 import { MontantPipe } from '../../shared/montant.pipe';
@@ -29,6 +29,7 @@ export class EncaisserCommande {
   protected readonly libelles = LIBELLES_STATUT_COMMANDE;
   protected readonly classeBadge = classeBadgeStatut;
   protected readonly estAujourdhui = estAujourdhui;
+  protected readonly formatHeure = FORMAT_HEURE;
 
   /** La commande dont le paiement est prepare ; par defaut, la plus ancienne. */
   private readonly choix = signal<number | null>(null);

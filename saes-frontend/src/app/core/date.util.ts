@@ -1,5 +1,14 @@
 import { formatDate } from '@angular/common';
 
+/**
+ * Heure pour le pipe date : « 0 h 38 », avec des espaces insecables, pour que
+ * l'heure ne se coupe jamais en fin de ligne (« 0 » puis « h 38 »).
+ */
+export const FORMAT_HEURE = "H\u00a0'h'\u00a0mm";
+
+/** Format par defaut du pipe date : « 03/11/2026 à 13 h 53 », heure insecable. */
+export const FORMAT_DATE_HEURE = "dd/MM/y 'à' " + FORMAT_HEURE;
+
 /** Jour en lettres ; le premier du mois s'ecrit « 1er », comme en francais. */
 function jourEnLettres(date: string, format: string, locale: string): string {
   return formatDate(date, format, locale).replace(/ 1( |$)/, ' 1er$1');

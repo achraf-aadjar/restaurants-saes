@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 
 import { classeBadgeStatut, LIBELLES_STATUT_COMMANDE } from '../core/commande.util';
-import { estAujourdhui } from '../core/date.util';
+import { estAujourdhui, FORMAT_HEURE } from '../core/date.util';
 import { CommandeDto } from '../core/models';
 
 /**
@@ -32,7 +32,7 @@ import { CommandeDto } from '../core/models';
         </svg>
       }
       @if (arriveeAujourdhui()) {
-        Arrivée à {{ commande().dateHeure | date: "H 'h' mm" }}
+        Arrivée à {{ commande().dateHeure | date: formatHeure }}
       } @else {
         Arrivée le {{ commande().dateHeure | date }}
       }
@@ -102,6 +102,7 @@ export class CommandeEntete {
 
   protected readonly grand = computed(() => this.affichage() === 'grand');
   protected readonly libelles = LIBELLES_STATUT_COMMANDE;
+  protected readonly formatHeure = FORMAT_HEURE;
   protected readonly classeBadge = classeBadgeStatut;
   protected readonly arriveeAujourdhui = computed(() => estAujourdhui(this.commande().dateHeure));
 }
