@@ -42,15 +42,16 @@ export class PrendreCommande {
   protected readonly lignes = signal<Map<number, LigneSaisie>>(new Map());
 
   /**
-   * Les plats regroupés par catégorie, dans l'ordre du repas, puis par nom : l'ordre ne change
-   * pas d'un chargement à l'autre, le serveur retrouve ses plats à la même place.
+   * Les plats regroupés par catégorie, dans l'ordre du repas, puis dans l'ordre de leur
+   * création, comme pour le client et le gérant : l'ordre ne change pas d'un chargement à
+   * l'autre, le serveur retrouve ses plats à la même place.
    */
   protected readonly groupes = computed(() =>
     ORDRE_CATEGORIES.map((categorie) => ({
       categorie,
       plats: this.plats()
         .filter((p) => p.categorie === categorie)
-        .sort((x, y) => x.nom.localeCompare(y.nom, 'fr', { numeric: true })),
+        .sort((x, y) => x.id - y.id),
     })).filter((g) => g.plats.length > 0),
   );
 
