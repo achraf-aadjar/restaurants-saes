@@ -1,0 +1,14 @@
+/* Deux parties : les commandes en cours, puis les commandes passées. */
+.titre-partie {
+  margin: 1.5rem 0 0.75rem;
+  font-size: clamp(1.35rem, 2vw, 1.75rem);
+  font-weight: 800;
+}
+
+section:first-of-type .titre-partie {
+  margin-top: 0;
+}
+
+.voir-precedentes {
+  margin-top: 1rem;
+}
