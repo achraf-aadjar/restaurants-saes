@@ -19,5 +19,5 @@ public record PlatSaveRequest(
         String description,
         @NotNull @Positive Integer prix,
         @NotNull CategoriePlat categorie,
-        @NotEmpty @Valid List<RecetteLigneDto> recette) {
+        @NotEmpty List<@Valid RecetteLigneDto> recette) {
 }

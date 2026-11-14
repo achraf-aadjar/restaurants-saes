@@ -7,6 +7,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public record ModifierCommandeRequest(
-        @NotEmpty @Valid List<LigneDemandeeDto> lignes,
+        @NotEmpty List<@Valid LigneDemandeeDto> lignes,
         @NotNull Long version) {
 }

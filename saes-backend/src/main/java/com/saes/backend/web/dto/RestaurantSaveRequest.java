@@ -18,6 +18,6 @@ public record RestaurantSaveRequest(
         @NotBlank String adresse,
         @NotBlank String telephone,
         @NotNull @Positive Integer dureeReservationMinutes,
-        @NotEmpty @Valid List<TableDto> tables,
-        @NotEmpty @Valid List<HoraireDto> horaires) {
+        @NotEmpty List<@Valid TableDto> tables,
+        @NotEmpty List<@Valid HoraireDto> horaires) {
 }
