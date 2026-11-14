@@ -7,6 +7,8 @@ import { routes } from './app.routes';
 
 describe('App', () => {
   beforeEach(async () => {
+    // Visiteur : aucune session laissee par un autre fichier de test (l'ordre varie).
+    localStorage.clear();
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [provideRouter(routes), provideHttpClient(), provideHttpClientTesting()],
