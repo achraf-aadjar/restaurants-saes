@@ -20,7 +20,7 @@ import { IconeCategorie } from './icone-categorie';
         width="360"
         height="400"
         alt=""
-        loading="lazy"
+        [attr.loading]="prioritaire() ? 'eager' : 'lazy'"
       />
     } @else {
       <app-icone-categorie [categorie]="categorie()" />
@@ -57,6 +57,12 @@ export class PhotoPlat {
   readonly categorie = input.required<CategoriePlat>();
   /** Largeur affichee, pour que le navigateur choisisse le fichier de 360 ou de 720 px. */
   readonly taille = input('160px');
+  /**
+   * Vrai pour les photos visibles des l'arrivee (la premiere categorie du menu) : sur
+   * ordinateur, l'une d'elles est la plus grande image de l'ecran, que le navigateur doit
+   * charger tout de suite et non en dernier (avertissement Angular NG0913).
+   */
+  readonly prioritaire = input(false);
 
   protected readonly photo = computed(() => photoDuPlat(this.nom()));
 }

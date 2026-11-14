@@ -122,12 +122,12 @@
     } @else if (menusAffiches().length === 0) {
       <p>Aucun menu en vigueur pour ce restaurant.</p>
     } @else {
-      @for (m of menusAffiches(); track m.menu.id) {
+      @for (m of menusAffiches(); track m.menu.id; let premierMenu = $first) {
         <section class="menu">
           <h2>{{ m.menu.nom }}</h2>
           <p class="dates-menu">{{ m.periode }}</p>
           <div class="groupes">
-            @for (groupe of m.groupes; track groupe.categorie) {
+            @for (groupe of m.groupes; track groupe.categorie; let premierGroupe = $first) {
               <section class="groupe-categorie" [style.--n]="groupe.plats.length">
                 <h3>
                   <app-icone-categorie class="icone-titre" [categorie]="groupe.categorie" />
@@ -136,7 +136,11 @@
                 <div class="grille-plats">
                   @for (plat of groupe.plats; track plat.id) {
                     <article class="carte plat">
-                      <app-photo-plat [nom]="plat.nom" [categorie]="plat.categorie" />
+                      <app-photo-plat
+                        [nom]="plat.nom"
+                        [categorie]="plat.categorie"
+                        [prioritaire]="premierMenu && premierGroupe"
+                      />
                       <div class="contenu-plat">
                         <h4>{{ plat.nom }}</h4>
                         @if (plat.description) {
