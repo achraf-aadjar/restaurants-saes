@@ -44,6 +44,9 @@ public class GerantStockService {
     public IngredientDto creer(Long gerantId, IngredientSaveRequest request) {
         Restaurant restaurant = personnelRestaurantResolver.restaurantDe(gerantId);
         valider(request);
+        if (ingredientRepository.existsByRestaurantIdAndNom(restaurant.getId(), request.nom())) {
+            throw nomDejaPris();
+        }
         Ingredient ingredient = new Ingredient();
         ingredient.setRestaurant(restaurant);
         appliquer(ingredient, request);
@@ -56,6 +59,9 @@ public class GerantStockService {
         Restaurant restaurant = personnelRestaurantResolver.restaurantDe(gerantId);
         valider(request);
         Ingredient ingredient = ingredientDuRestaurant(ingredientId, restaurant);
+        if (ingredientRepository.existsByRestaurantIdAndNomAndIdNot(restaurant.getId(), request.nom(), ingredientId)) {
+            throw nomDejaPris();
+        }
         appliquer(ingredient, request);
         return IngredientDto.from(ingredient, mouvementStockRepository.calculerStock(ingredient.getId()));
     }
@@ -79,6 +85,11 @@ public class GerantStockService {
         if (request.niveauCible().compareTo(request.seuilAlerte()) < 0) {
             throw ApiException.badRequest("Le niveau cible ne peut pas être inférieur au seuil d'alerte");
         }
+    }
+
+    /** Deux ingredients du meme nom se confondraient dans les recettes, le stock et les ruptures. */
+    private static ApiException nomDejaPris() {
+        return ApiException.conflict("Un ingrédient porte déjà ce nom dans votre restaurant");
     }
 
     private void appliquer(Ingredient ingredient, IngredientSaveRequest request) {
