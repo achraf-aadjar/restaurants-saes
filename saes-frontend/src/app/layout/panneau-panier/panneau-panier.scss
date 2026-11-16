@@ -1,0 +1,350 @@
+/*
+ * Panneau qui glisse depuis la droite, toute la hauteur de la fenetre ; sur
+ * telephone, toute la largeur. Le contenu reprend celui de l'ecran de
+ * reference 1 : chariot rouge, titre tres gras, pastille « N articles » sur
+ * fond rose ; par plat : vignette, nom, prix unitaire, quantite − + dans une
+ * pilule, total de la ligne, corbeille ; total dans un cadre rose ; gros bouton
+ * « Passer la commande ». Les plats defilent, le total et le bouton restent
+ * en bas.
+ */
+.panneau-panier {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(28rem, 100vw);
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: var(--saes-creme);
+  color: var(--saes-vert);
+  box-shadow: -8px 0 32px rgb(8 49 45 / 18%);
+
+  &[open] {
+    animation: glisser 0.22s ease-out;
+  }
+
+  &::backdrop {
+    background: rgb(8 49 45 / 45%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &[open] {
+      animation: none;
+    }
+  }
+}
+
+@keyframes glisser {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+.contenu {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.panier-entete {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  padding: 1rem 1rem 0.9rem 1.25rem;
+  border-bottom: 1px solid rgb(8 49 45 / 10%);
+  background: #fff;
+
+  h2 {
+    flex: 1;
+    margin: 0;
+    white-space: nowrap;
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+}
+
+.icone-panier {
+  flex: none;
+  width: 1.9rem;
+  height: auto;
+  fill: none;
+  stroke: var(--saes-rouge);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pastille-articles {
+  flex: none;
+  padding: 0.3em 0.7em;
+  border-radius: 8px;
+  background: var(--saes-rose);
+  color: var(--saes-rouge);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* × : 44 px, la taille minimale d'une cible au doigt. */
+.fermer {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--saes-vert);
+  cursor: pointer;
+
+  svg {
+    width: 1.4rem;
+    height: 1.4rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+  }
+
+  &:hover {
+    background: var(--saes-creme);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--saes-vert);
+    outline-offset: 2px;
+  }
+}
+
+/* La partie qui defile. */
+.corps {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.25rem 1.25rem;
+}
+
+.panier-vide {
+  padding-top: 1.25rem;
+  color: var(--saes-vert-attenue);
+}
+
+div.corps {
+  padding-top: 1.25rem;
+
+  .message-ok {
+    margin: 0 0 1rem;
+  }
+}
+
+.lignes-commande {
+  list-style: none;
+
+  li {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr) auto;
+    /* Le total de la ligne va jusqu'au bord droit, sous la corbeille. */
+    grid-template-areas:
+      'vignette detail corbeille'
+      'vignette bas bas';
+    gap: 0 1rem;
+    align-items: start;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgb(8 49 45 / 10%);
+  }
+
+  li:last-child {
+    border-bottom: none;
+  }
+}
+
+.vignette {
+  grid-area: vignette;
+  border-radius: 6px;
+}
+
+.ligne-detail {
+  grid-area: detail;
+
+  p {
+    margin: 0;
+  }
+}
+
+.ligne-nom {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.ligne-detail .ligne-prix {
+  margin-top: 0.2rem;
+  font-weight: 700;
+}
+
+.ligne-bas {
+  grid-area: bas;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.ligne-total {
+  margin-left: auto;
+  font-weight: 700;
+}
+
+.corbeille {
+  grid-area: corbeille;
+  padding: 0.2rem;
+  border: none;
+  background: none;
+  color: #5a5f61;
+  cursor: pointer;
+  border-radius: 6px;
+  line-height: 0;
+
+  svg {
+    width: 1.3rem;
+    height: 1.3rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:hover {
+    color: var(--saes-rouge);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--saes-vert);
+  }
+
+  /* Au doigt, 44 px comme les boutons − et + ; la marge negative garde
+     l'icone a sa place (27 px a la souris). */
+  @media (pointer: coarse) {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin: calc((1.7rem - 2.75rem) / 2);
+  }
+}
+
+/* Le bas du panneau reste en vue : total, informations, bouton. */
+.pied {
+  flex: none;
+  padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom));
+  border-top: 1px solid rgb(8 49 45 / 10%);
+  background: #fff;
+
+  .message-refus {
+    margin: 0 0 0.75rem;
+  }
+}
+
+.total-commande {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.9rem;
+  padding: 0.75rem 1.1rem;
+  border-radius: 8px;
+  background: var(--saes-rose);
+
+  span {
+    font-size: 1.35rem;
+    font-weight: 800;
+  }
+
+  strong {
+    color: var(--saes-rouge);
+    font-size: 1.6rem;
+    font-weight: 800;
+  }
+}
+
+.info-retrait {
+  display: flex;
+  gap: 0.65rem;
+  margin: 0 0 0.75rem;
+  padding: 0 0.25rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+
+  svg {
+    flex: none;
+    width: 1.3rem;
+    height: 1.3rem;
+    fill: none;
+    stroke: var(--saes-vert-attenue);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+  }
+}
+
+.btn-commander {
+  width: 100%;
+  gap: 0.75em;
+  padding: 0.75em 1em;
+  border-radius: 14px;
+  font-size: 1.25rem;
+  font-weight: 800;
+
+  svg {
+    width: 1.3em;
+    height: 1.3em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* Le chariot est plus grand que la fleche, comme sur l'ecran. */
+  svg:first-child {
+    width: 1.5em;
+    height: 1.5em;
+  }
+}
+
+/* Fenetre basse (telephone tenu en largeur) : le panneau entier
+   defile, pour que les plats ne soient pas ecrases par le bas. */
+@media (max-height: 34rem) {
+  .contenu {
+    height: auto;
+    min-height: 100%;
+  }
+
+  .corps {
+    flex: none;
+    overflow: visible;
+  }
+
+  .panneau-panier {
+    overflow-y: auto;
+  }
+}
+
+/* Hors de l'ecran, mais lu par les lecteurs d'ecran. Place en haut : sous
+   le contenu, il ferait deborder le panneau d'un pixel (barre de defilement). */
+.annonce {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

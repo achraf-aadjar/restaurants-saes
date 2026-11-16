@@ -453,38 +453,21 @@ button {
   margin: 0 0 0.5rem;
 }
 
-/* Sur telephone, les plats d'abord, puis la commande : le client voit le menu
-   des le premier ecran (une barre en bas de l'ecran resume sa commande, voir
-   menu-consultation). A partir de 860 px, la commande passe a droite. */
-.mise-en-page {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+/* Panier ouvert : la page derriere le voile ne defile pas. Une marge prend la
+   place de la barre de defilement (mesuree par PanneauPanier) : la page ne
+   bouge pas de cote. */
+html:has(.panneau-panier[open]) {
+  overflow: hidden;
+  padding-right: var(--largeur-barre-defilement, 0px);
 }
 
-/* Un element qui recoit le focus au clavier ne passe pas sous cette barre. */
-@media (max-width: 859.98px) {
-  html:has(.barre-panier) {
-    scroll-padding-bottom: 6rem;
+/* En-tete fixe sur telephone (header.scss) : un element qui recoit le focus
+   au clavier, ou vise par un lien, s'arrete sous l'en-tete et non dessous
+   (W3C, WCAG 2.4.11, technique C43). */
+@media (max-width: 859.98px) and (min-height: 30rem) {
+  html:has(app-header .bouton-panier) {
+    scroll-padding-top: 4.5rem;
   }
-}
-
-.colonne-menu {
-  flex: 1;
-  min-width: 0;
-}
-
-.colonne-panier {
-  width: 100%;
-}
-
-.panier h2 {
-  margin-top: 0;
-}
-
-.panier-vide {
-  color: var(--saes-vert-attenue);
-  font-size: 0.9rem;
 }
 
 .liste-panier {
@@ -542,21 +525,6 @@ button {
 .table-vignette.table-occupee {
   background: #fdeceb;
   color: var(--saes-rouge-fonce);
-}
-
-@media (min-width: 860px) {
-  .mise-en-page {
-    flex-direction: row;
-    align-items: flex-start;
-  }
-
-  /* 480 px sur l'ecran de reference 1, a 1536 px. */
-  .colonne-panier {
-    width: clamp(300px, 31.25vw, 480px);
-    flex-shrink: 0;
-    position: sticky;
-    top: 1rem;
-  }
 }
 
 .zone-danger {

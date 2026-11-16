@@ -23,41 +23,66 @@
       }
     </nav>
 
-    <div class="compte" #compte>
-      @if (auth.estConnecte()) {
-        <button
-          #boutonCompte
-          type="button"
-          class="bouton-compte"
-          [attr.aria-expanded]="menuOuvert()"
-          (click)="basculerMenu()"
-        >
-          {{ nom() }}
-          <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </button>
-        @if (menuOuvert()) {
-          <div class="menu-deroulant">
-            <a routerLink="/mon-compte" (click)="menuOuvert.set(false)">Mon compte</a>
-            <button type="button" (click)="seDeconnecter()">Se déconnecter</button>
-          </div>
+    <div class="actions">
+      <div class="compte" #compte>
+        @if (auth.estConnecte()) {
+          <button
+            #boutonCompte
+            type="button"
+            class="bouton-compte"
+            [attr.aria-expanded]="menuOuvert()"
+            (click)="basculerMenu()"
+          >
+            {{ nom() }}
+            <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
+          @if (menuOuvert()) {
+            <div class="menu-deroulant">
+              <a routerLink="/mon-compte" (click)="menuOuvert.set(false)">Mon compte</a>
+              <button type="button" (click)="seDeconnecter()">Se déconnecter</button>
+            </div>
+          }
+        } @else {
+          <a
+            routerLink="/connexion"
+            [queryParams]="{ retour: retour() }"
+            class="btn btn-secondaire btn-petit"
+          >
+            Connexion
+          </a>
+          <a
+            routerLink="/inscription"
+            [queryParams]="{ retour: retour() }"
+            class="btn btn-primaire btn-petit"
+          >
+            S'inscrire
+          </a>
         }
-      } @else {
-        <a
-          routerLink="/connexion"
-          [queryParams]="{ retour: retour() }"
-          class="btn btn-secondaire btn-petit"
+      </div>
+
+      @if (ongletsClient()) {
+        <button
+          type="button"
+          class="bouton-panier"
+          [attr.aria-label]="nomBoutonPanier()"
+          (click)="ouvrirPanier()"
         >
-          Connexion
-        </a>
-        <a
-          routerLink="/inscription"
-          [queryParams]="{ retour: retour() }"
-          class="btn btn-primaire btn-petit"
-        >
-          S'inscrire
-        </a>
+          <span class="icone-bouton-panier">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M2.5 3.5h2.6l2.4 11.2h10.6l2.1-7.7H6.2" />
+              <circle cx="9.5" cy="19.5" r="1.4" />
+              <circle cx="17" cy="19.5" r="1.4" />
+            </svg>
+            @if (panier.nombreArticles() > 0) {
+              <span class="pastille-panier" aria-hidden="true">{{ panier.nombreArticles() }}</span>
+            }
+          </span>
+          Panier
+        </button>
+        <!-- Lu par un lecteur d'ecran quand le nombre d'articles change. -->
+        <span class="annonce-panier" aria-live="polite">{{ annoncePanier() }}</span>
       }
     </div>
 
