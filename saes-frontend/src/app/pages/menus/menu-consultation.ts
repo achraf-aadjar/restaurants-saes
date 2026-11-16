@@ -1,9 +1,11 @@
 import {
+  afterNextRender,
   Component,
   computed,
   effect,
   ElementRef,
   inject,
+  Injector,
   LOCALE_ID,
   signal,
   viewChild,
@@ -41,6 +43,28 @@ interface LignePanier {
   quantite: number;
 }
 
+/**
+ * Commande d'un visiteur, gardee dans l'onglet le temps qu'il se connecte ou
+ * cree son compte (« Passer la commande » le demande, cahier des charges §4.1).
+ */
+const CLE_COMMANDE_VISITEUR = 'saes_commande_visiteur';
+
+interface CommandeGardee {
+  restaurantId: number;
+  lignes: { platId: number; quantite: number }[];
+}
+
+/** Lit la commande gardee et l'efface : elle ne sert qu'une fois. */
+function reprendreCommandeGardee(): CommandeGardee | null {
+  try {
+    const texte = sessionStorage.getItem(CLE_COMMANDE_VISITEUR);
+    sessionStorage.removeItem(CLE_COMMANDE_VISITEUR);
+    return texte ? (JSON.parse(texte) as CommandeGardee) : null;
+  } catch {
+    return null;
+  }
+}
+
 interface MenuAffiche {
   menu: MenuDto;
   periode: string;
@@ -59,7 +83,9 @@ function grouperParCategorie(plats: PlatResume[]): GroupeCategorie[] {
  * Consulter les menus (cahier des charges §4.2, accessible sans compte) et,
  * pour un client connecte, Passer une commande en ligne (§4.3). Chaque menu
  * en vigueur est affiche avec son nom, ses dates et ses plats actifs, ranges
- * par categorie.
+ * par categorie. Le visiteur compose aussi sa commande ; « Passer la commande »
+ * l'envoie se connecter ou creer son compte, puis le ramene ici, sa commande
+ * gardee : on ne demande le compte qu'au moment ou il sert.
  */
 @Component({
   selector: 'app-menu-consultation',
@@ -71,6 +97,7 @@ export class MenuConsultation {
   private readonly menuService = inject(MenuService);
   private readonly commandeClientService = inject(CommandeClientService);
   private readonly router = inject(Router);
+  private readonly injector = inject(Injector);
   private readonly locale = inject(LOCALE_ID);
   protected readonly auth = inject(AuthService);
 
@@ -139,7 +166,12 @@ export class MenuConsultation {
     this.menuService.restaurants().subscribe({
       next: (restaurants) => {
         this.restaurants.set(restaurants);
-        if (restaurants.length > 0) {
+        // Une commande gardee ne revient qu'a un visiteur ou a un client.
+        const gardee = reprendreCommandeGardee();
+        const restaurant = restaurants.find((r) => r.id === gardee?.restaurantId);
+        if (restaurant && gardee && this.vueClient()) {
+          this.selectionner(restaurant, gardee);
+        } else if (restaurants.length > 0) {
           this.selectionner(restaurants[0]);
         } else {
           this.chargement.set(false);
@@ -152,7 +184,7 @@ export class MenuConsultation {
     });
   }
 
-  protected selectionner(restaurant: RestaurantSummary): void {
+  protected selectionner(restaurant: RestaurantSummary, gardee?: CommandeGardee): void {
     this.restaurantSelectionne.set(restaurant);
     this.panier.set(new Map());
     this.chargement.set(true);
@@ -161,12 +193,29 @@ export class MenuConsultation {
       next: (menus) => {
         this.menus.set(menus);
         this.chargement.set(false);
+        if (gardee) this.retrouverCommande(gardee, menus);
       },
       error: (err) => {
         this.chargement.set(false);
         this.erreur.set(motifErreur(err, 'Impossible de charger les menus'));
       },
     });
+  }
+
+  /**
+   * Remet la commande gardee, avec les plats encore proposes, et la montre :
+   * il ne reste qu'a cliquer sur « Passer la commande ».
+   */
+  private retrouverCommande(gardee: CommandeGardee, menus: MenuDto[]): void {
+    const plats = new Map(menus.flatMap((m) => m.plats).map((p) => [p.id, p]));
+    const panier = new Map<number, LignePanier>();
+    for (const ligne of gardee.lignes) {
+      const plat = plats.get(ligne.platId);
+      if (plat && ligne.quantite > 0) panier.set(plat.id, { plat, quantite: ligne.quantite });
+    }
+    if (panier.size === 0) return;
+    this.panier.set(panier);
+    afterNextRender(() => this.voirLaCommande(), { injector: this.injector });
   }
 
   protected ajouter(plat: PlatResume): void {
@@ -208,6 +257,16 @@ export class MenuConsultation {
   protected passerCommande(): void {
     const restaurant = this.restaurantSelectionne();
     if (!restaurant || this.lignesPanier().length === 0) return;
+
+    if (!this.auth.estConnecte()) {
+      const gardee: CommandeGardee = {
+        restaurantId: restaurant.id,
+        lignes: this.lignesPanier().map((l) => ({ platId: l.plat.id, quantite: l.quantite })),
+      };
+      sessionStorage.setItem(CLE_COMMANDE_VISITEUR, JSON.stringify(gardee));
+      this.router.navigate(['/connexion'], { queryParams: { retour: '/menus' } });
+      return;
+    }
 
     this.erreur.set(null);
     this.envoiEnCours.set(true);

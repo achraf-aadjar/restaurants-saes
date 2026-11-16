@@ -61,7 +61,7 @@
                         }
                         <p class="prix">{{ plat.prix | montant }}</p>
 
-                        @if (auth.aLeRole('CLIENT')) {
+                        @if (vueClient()) {
                           <button
                             type="button"
                             class="btn btn-primaire btn-ajouter"
@@ -88,7 +88,7 @@
     }
   </div>
 
-  @if (auth.aLeRole('CLIENT')) {
+  @if (vueClient()) {
     <aside class="colonne-panier" #colonnePanier>
       <div class="carte panier">
         <div class="panier-entete">
@@ -166,6 +166,15 @@
             </svg>
             À emporter, à payer à la caisse au retrait, en espèces ou par Mobile Money.
           </p>
+          @if (!auth.estConnecte()) {
+            <p class="info-retrait">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />
+              </svg>
+              Pour l'envoyer, vous vous connecterez ou créerez votre compte : votre commande sera
+              gardée.
+            </p>
+          }
           <button
             type="button"
             class="btn btn-primaire btn-commander"
