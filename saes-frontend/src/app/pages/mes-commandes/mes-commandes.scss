@@ -12,3 +12,66 @@ section:first-of-type .titre-partie {
 .voir-precedentes {
   margin-top: 1rem;
 }
+
+/*
+ * Commandes passées : une ligne par commande (date, plats, total, état),
+ * dans une seule carte. Elles se lisent d'un coup d'œil sans peser autant
+ * que les commandes en cours. Sur une carte étroite, la date et l'état en
+ * haut, puis les plats, puis le total.
+ */
+.liste-passees {
+  container: passees / inline-size;
+  list-style: none;
+  margin: 0;
+  padding-block: 0.25rem;
+}
+
+.commande-passee {
+  display: grid;
+  grid-template-columns: 10.5rem minmax(0, 1fr) auto 6.5rem;
+  grid-template-areas: 'date plats total etat';
+  align-items: center;
+  gap: 0.3rem 1.25rem;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid var(--saes-bordure);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.passee-date {
+  grid-area: date;
+  color: var(--saes-vert-attenue);
+  font-size: 0.9rem;
+}
+
+.passee-plats {
+  grid-area: plats;
+}
+
+.passee-total {
+  grid-area: total;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.passee-etat {
+  grid-area: etat;
+  justify-self: end;
+}
+
+@container passees (max-width: 36rem) {
+  .commande-passee {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'date etat'
+      'plats plats'
+      'total total';
+  }
+
+  .passee-total {
+    text-align: left;
+  }
+}

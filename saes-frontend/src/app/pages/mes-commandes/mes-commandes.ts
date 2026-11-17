@@ -40,15 +40,18 @@ export class MesCommandes {
 
   /**
    * « En cours » puis « Passées », sans partie vide. `suivantes` : commandes
-   * que « Voir les précédentes » ajouterait (au plus dix).
+   * que « Voir les précédentes » ajouterait (au plus dix). `compacte` : une
+   * commande terminée tient sur une ligne (date, plats, total, état) ; tout
+   * reste visible, rien n'est replié derrière un clic.
    */
   protected readonly parties = computed(() => {
     const enCours = this.commandes().filter((c) => STATUTS_EN_COURS.includes(c.statut));
     const passees = this.commandes().filter((c) => !STATUTS_EN_COURS.includes(c.statut));
     return [
-      { titre: 'En cours', commandes: enCours, suivantes: 0 },
+      { titre: 'En cours', commandes: enCours, suivantes: 0, compacte: false },
       {
         titre: 'Passées',
+        compacte: true,
         commandes: passees.slice(0, this.nombrePassees()),
         suivantes: Math.min(PAR_PAGE, passees.length - this.nombrePassees()),
       },
