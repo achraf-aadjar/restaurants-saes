@@ -78,9 +78,12 @@
   }
 }
 
+/* Lien vers l'accueil : 44 px de côté au moins, la taille d'une cible au doigt. */
 .marque {
   display: flex;
   align-items: center;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
 }
 
 .logo {
@@ -152,7 +155,8 @@
 .bouton-panier {
   display: inline-flex;
   align-items: center;
-  gap: 0.45em;
+  /* Assez d'air pour que la pastille du nombre ne touche pas le mot « Panier ». */
+  gap: 0.65em;
   padding: 0.35em 0.55em;
   border: none;
   border-radius: var(--saes-rayon);
@@ -196,7 +200,7 @@
 .pastille-panier {
   position: absolute;
   top: -0.5em;
-  right: -0.65em;
+  right: -0.5em;
   display: grid;
   place-items: center;
   min-width: 1.45em;
@@ -291,9 +295,17 @@
   font-size: 0.85rem;
 }
 
+/* ☰ : 44 px de côté ; la marge négative garde le trait au même endroit. */
 .bouton-burger {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-right: -0.4rem;
+  padding: 0;
   background: none;
   border: none;
+  border-radius: var(--saes-rayon);
   font-size: 1.4rem;
   cursor: pointer;
   color: var(--saes-vert);

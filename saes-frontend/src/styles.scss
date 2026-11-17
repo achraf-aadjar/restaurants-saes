@@ -562,6 +562,17 @@ html:has(.panneau-panier[open]) {
   font-size: 0.82rem;
 }
 
+/* Au doigt (téléphone, tablette), un petit bouton de 29 px se rate et paraît
+   chétif : il passe à 44 px de haut (Apple, WCAG 2.5.5) avec un texte un peu
+   plus grand. À la souris, il reste compact pour les tableaux. */
+@media (pointer: coarse) {
+  .btn-petit {
+    min-height: 2.75rem;
+    padding-inline: 1em;
+    font-size: 0.9rem;
+  }
+}
+
 /* Titre d'un ecran et son action principale a droite, comme « + Nouveau plat »
    sur l'ecran de reference 4. */
 .titre-page {

@@ -58,12 +58,23 @@
   background: #fff;
 
   h2 {
-    flex: 1;
     margin: 0;
     white-space: nowrap;
     font-size: 1.5rem;
     font-weight: 800;
   }
+}
+
+/* Le titre et la pastille prennent la place laissée par le chariot et le × :
+   quand elle manque (petit téléphone, texte agrandi), la pastille passe sous
+   le titre et le × reste entier, à droite. */
+.titre-et-pastille {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.75rem;
 }
 
 .icone-panier {
@@ -242,6 +253,7 @@ div.corps {
 /* Le bas du panneau reste en vue : total, informations, bouton. */
 .pied {
   flex: none;
+  container: pied-panier / inline-size;
   padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom));
   border-top: 1px solid rgb(8 49 45 / 10%);
   background: #fff;
@@ -314,6 +326,18 @@ div.corps {
   svg:first-child {
     width: 1.5em;
     height: 1.5em;
+  }
+}
+
+/* Petit telephone : a 1,25rem, « Passer la commande » passait sur deux lignes
+   entre le chariot et la fleche. Un cran plus petit et un peu moins d'air sur
+   les cotes, il tient sur une ligne ; le texte agrandi peut encore passer a la
+   ligne, le bouton grandit alors en hauteur. */
+@container pied-panier (max-width: 19rem) {
+  .btn-commander {
+    gap: 0.5em;
+    padding-inline: 0.75em;
+    font-size: 1.125rem;
   }
 }
 
