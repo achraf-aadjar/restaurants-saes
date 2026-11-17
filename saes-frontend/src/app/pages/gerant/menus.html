@@ -57,27 +57,27 @@
   </section>
 }
 
-<section class="carte bloc-suivant">
+<section class="carte bloc-suivant liste-menus">
   @if (chargement()) {
     <p>Chargement…</p>
   } @else {
     <table class="table-simple">
       <thead>
         <tr>
-          <th>Nom</th>
-          <th>Début</th>
-          <th>Fin</th>
-          <th>Plats</th>
-          <th></th>
+          <th scope="col">Nom</th>
+          <th scope="col">Début</th>
+          <th scope="col">Fin</th>
+          <th scope="col">Plats</th>
+          <th scope="col"><span class="cache-visuel">Action</span></th>
         </tr>
       </thead>
       <tbody>
         @for (m of menus(); track m.id) {
           <tr>
-            <td>{{ m.nom }}</td>
-            <td>{{ m.dateDebut | date: 'shortDate' }}</td>
-            <td>{{ (m.dateFin | date: 'shortDate') ?? '—' }}</td>
-            <td>{{ m.plats.length }}</td>
+            <td class="nom">{{ m.nom }}</td>
+            <td class="debut" data-label="Début">{{ m.dateDebut | date: 'shortDate' }}</td>
+            <td class="fin" data-label="Fin">{{ (m.dateFin | date: 'shortDate') ?? '—' }}</td>
+            <td class="plats" data-label="Plats">{{ m.plats.length }}</td>
             <td class="actions-colonne">
               <button type="button" class="btn btn-secondaire btn-petit" (click)="ouvrirEdition(m)">
                 Modifier

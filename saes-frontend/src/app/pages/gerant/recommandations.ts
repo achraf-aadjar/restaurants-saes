@@ -14,6 +14,7 @@ import { RefusVisible } from '../../shared/refus-visible';
   selector: 'app-gerant-recommandations',
   imports: [QuantitePipe, RefusVisible],
   templateUrl: './recommandations.html',
+  styleUrl: './recommandations.scss',
 })
 export class GerantRecommandations {
   private readonly recommandationService = inject(RecommandationService);

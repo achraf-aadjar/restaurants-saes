@@ -1,0 +1,83 @@
+/*
+ * Recommandations : le tableau est complet quand sa carte est large. Quand
+ * elle est étroite (téléphone, fenêtre réduite, texte agrandi), chaque
+ * ingrédient devient une fiche, comme les écarts de caisse des rapports
+ * financiers : l'ingrédient et la quantité à réapprovisionner, ce que le
+ * gérant vient chercher, puis chaque autre valeur sous son nom. Rien n'est
+ * caché à droite, rien n'est à faire glisser.
+ */
+
+.liste-recommandations {
+  container: recommandations / inline-size;
+}
+
+@container recommandations (max-width: 34rem) {
+  table {
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    tbody tr {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-areas:
+        'nom commander'
+        'stock cible'
+        'conso conso';
+      gap: 0.6rem 0.75rem;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--saes-bordure);
+    }
+
+    tbody tr:first-child {
+      padding-top: 0;
+    }
+
+    tbody tr:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    td {
+      padding: 0;
+      border: none;
+      font-size: 1rem;
+      overflow-wrap: anywhere;
+    }
+
+    .nom {
+      grid-area: nom;
+      font-weight: 700;
+    }
+
+    .a-commander {
+      grid-area: commander;
+      justify-self: end;
+      text-align: right;
+    }
+
+    .stock {
+      grid-area: stock;
+    }
+
+    .cible {
+      grid-area: cible;
+    }
+
+    .conso {
+      grid-area: conso;
+    }
+
+    td[data-label]::before {
+      content: attr(data-label);
+      display: block;
+      color: var(--saes-vert-attenue);
+      font-size: 0.85em;
+      font-weight: 400;
+    }
+  }
+}

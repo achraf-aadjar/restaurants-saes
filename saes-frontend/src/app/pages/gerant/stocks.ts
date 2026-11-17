@@ -24,6 +24,7 @@ import { SuiviFormulaire, amenerALEcran, focusDans } from '../../shared/suivi-fo
   selector: 'app-gerant-stocks',
   imports: [FormsModule, QuantitePipe, RefusVisible],
   templateUrl: './stocks.html',
+  styleUrl: './stocks.scss',
   host: { '(document:keydown.escape)': 'echap($event)' },
 })
 export class GerantStocks {

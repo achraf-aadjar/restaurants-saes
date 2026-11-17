@@ -14,6 +14,7 @@ import { SuiviFormulaire, amenerALEcran } from '../../shared/suivi-formulaire';
   selector: 'app-gerant-menus',
   imports: [FormsModule, DatePipe, RefusVisible],
   templateUrl: './menus.html',
+  styleUrl: './menus.scss',
   host: { '(document:keydown.escape)': 'echap($event)' },
 })
 export class GerantMenus {
