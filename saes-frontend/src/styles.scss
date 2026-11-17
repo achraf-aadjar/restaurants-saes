@@ -461,12 +461,19 @@ html:has(.panneau-panier[open]) {
   padding-right: var(--largeur-barre-defilement, 0px);
 }
 
-/* En-tete fixe sur telephone (header.scss) : un element qui recoit le focus
-   au clavier, ou vise par un lien, s'arrete sous l'en-tete et non dessous
-   (W3C, WCAG 2.4.11, technique C43). */
-@media (max-width: 859.98px) and (min-height: 30rem) {
+/* En-tete fixe du client et du visiteur (header.scss) : un element qui recoit
+   le focus au clavier, ou vise par un lien, s'arrete sous l'en-tete et non
+   dessous (W3C, WCAG 2.4.11, technique C43). L'en-tete fait 56 px sur
+   telephone, 73 px a partir de 860 px. */
+@media (min-height: 30rem) {
   html:has(app-header .bouton-panier) {
     scroll-padding-top: 4.5rem;
+  }
+}
+
+@media (min-width: 860px) and (min-height: 30rem) {
+  html:has(app-header .bouton-panier) {
+    scroll-padding-top: 5.5rem;
   }
 }
 

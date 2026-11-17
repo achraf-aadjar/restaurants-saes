@@ -3,15 +3,17 @@
 }
 
 /*
- * Sur telephone, l'en-tete du client et du visiteur reste en haut de l'ecran :
- * le bouton « Panier » est toujours a portee, a la place ou on l'attend (en
- * haut a droite, Baymard), sans barre en double en bas (NN/g, « Sticky
- * Headers », 2021). Il occupe 7 a 10 % de l'ecran tenu droit. Fenetre basse
- * (telephone tenu en largeur, fort zoom) : il redevient normal, pour laisser
- * la place au contenu (W3C, technique C34 : 480 px de haut). Le personnel n'a
- * pas de panier : son en-tete ne change pas.
+ * L'en-tete du client et du visiteur reste en haut de l'ecran, sur telephone
+ * comme sur ordinateur : le bouton « Panier » est toujours a portee, a la
+ * place ou on l'attend (en haut a droite, Baymard), sans barre en double en
+ * bas (NN/g, « Sticky Headers », 2021). Sur ordinateur portable, un en-tete
+ * fixe s'est montre plus facile a utiliser (Murano et Kongshaug, ICEIS 2024).
+ * Il occupe 7 a 10 % de l'ecran d'un telephone tenu droit, 12 % a 1280×600.
+ * Fenetre basse (telephone tenu en largeur, fort zoom) : il redevient normal,
+ * pour laisser la place au contenu (W3C, technique C34 : 480 px de haut). Le
+ * personnel n'a pas de panier : son en-tete ne change pas.
  */
-@media (max-width: 859.98px) and (min-height: 30rem) {
+@media (min-height: 30rem) {
   :host:has(.bouton-panier) {
     position: sticky;
     top: 0;
