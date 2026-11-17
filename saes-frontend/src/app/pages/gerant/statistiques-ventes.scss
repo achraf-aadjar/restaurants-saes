@@ -1,0 +1,310 @@
+/*
+ * Statistiques de ventes : la période en texte avec « Changer la période »,
+ * deux chiffres clés, puis « Par catégorie » (barres) et « Par plat » (tableau).
+ * Les tailles suivent la largeur de la fenêtre (calées sur l'écran de référence
+ * à 1536 px) ; les chiffres clés et les tableaux suivent la largeur de leur
+ * carte, pour rester lisibles quand elle est étroite.
+ */
+
+/* Texte réservé aux lecteurs d'écran. */
+.sr-seul {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Chiffres clés ---------- */
+
+.chiffres,
+.colonnes {
+  display: grid;
+  gap: clamp(1rem, 1.3vw, 1.5rem);
+}
+
+.chiffres {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  margin-bottom: clamp(1rem, 1.3vw, 1.5rem);
+}
+
+/* ---------- Deux colonnes : par catégorie, par plat ---------- */
+
+.colonnes {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+/* Côte à côte dès 1240 px : le tableau des plats s'adapte à la largeur de sa
+   carte (texte et marges), et reste sur quatre colonnes. En dessous, l'une sous
+   l'autre, en pleine largeur. */
+@media (min-width: 77.5rem) {
+  .colonnes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.bloc {
+  container: bloc / inline-size;
+  padding: clamp(1rem, 1.6vw, 1.5rem);
+
+  h2 {
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.45rem, 2.2vw, 2.1rem);
+    font-weight: 800;
+    line-height: 1.2;
+  }
+}
+
+/* Pas de « overflow-wrap: anywhere » : dans un tableau, il laisse la colonne
+   devenir plus étroite qu'un mot et coupait « Thieboudienne » en deux. Un nom
+   plus large que la carte ferait défiler son cadre (filet de sécurité). */
+.nom-ligne {
+  font-weight: 700;
+}
+
+.vendus {
+  display: none;
+}
+
+/* ---------- Par catégorie : une barre par ligne ---------- */
+
+.categories {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: clamp(1rem, 1.3vw, 1.25rem);
+
+  th {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--saes-bordure);
+    color: var(--saes-vert-attenue);
+    font-size: clamp(0.95rem, 1.05vw, 1.05rem);
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  th:last-child {
+    text-align: right;
+  }
+
+  td {
+    padding: clamp(0.7rem, 1.1vw, 1rem) 0;
+    border-bottom: 1px solid var(--saes-bordure);
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .nom-ligne {
+    display: block;
+    font-size: clamp(1.05rem, 1.35vw, 1.3rem);
+  }
+
+  .qte,
+  .montant {
+    vertical-align: bottom;
+    line-height: 1;
+    padding-left: clamp(0.75rem, 1.5vw, 1.5rem);
+  }
+
+  .qte {
+    width: 1%;
+    text-align: center;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .montant {
+    width: 1%;
+    text-align: right;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+}
+
+.barre {
+  height: clamp(0.8rem, 1.2vw, 1.1rem);
+  margin-top: 0.5rem;
+  border-radius: 999px;
+  background: #e8eeee;
+
+  span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--saes-vert);
+  }
+}
+
+/* ---------- Par plat : tableau dans un cadre ---------- */
+
+.cadre-tableau {
+  border: 1px solid var(--saes-bordure);
+  border-radius: 10px;
+  /* Filet de sécurité : un tableau plus large que sa carte défile dans son cadre. */
+  overflow-x: auto;
+}
+
+.plats {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: clamp(0.9rem, 3.6cqi, 1.25rem);
+
+  th,
+  td {
+    padding: clamp(0.7rem, calc(2.4vw - 1rem), 1.4rem) clamp(0.45rem, 1.8cqi, 0.9rem);
+    border-bottom: 1px solid var(--saes-bordure);
+    text-align: left;
+  }
+
+  th {
+    font-size: clamp(0.9rem, 3.4cqi, 1.15rem);
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  th:first-child,
+  td:first-child {
+    padding-left: clamp(0.6rem, 2.4cqi, 1.2rem);
+  }
+
+  th:last-child,
+  td:last-child {
+    padding-right: clamp(0.6rem, 2.4cqi, 1.2rem);
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  th:nth-child(3),
+  td.qte {
+    text-align: center;
+  }
+
+  th:last-child,
+  td.montant {
+    text-align: right;
+  }
+
+  td.montant {
+    white-space: nowrap;
+  }
+}
+
+/* ---------- Cartes étroites (téléphone) ---------- */
+
+/* Par plat : chaque plat sur deux lignes, le nom et le montant, puis la
+   catégorie et la quantité. Rien n'est caché ; les en-têtes sont lus par les
+   lecteurs d'écran. */
+@container bloc (max-width: 25rem) {
+  .plats {
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    tbody tr {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        'nom montant'
+        'cat qte';
+      gap: 0.25rem 0.75rem;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--saes-bordure);
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    td,
+    td:first-child,
+    td:last-child {
+      padding: 0;
+      border: none;
+    }
+
+    td.nom-ligne {
+      grid-area: nom;
+    }
+
+    td.cat {
+      grid-area: cat;
+      color: var(--saes-vert-attenue);
+    }
+
+    td.qte {
+      grid-area: qte;
+      text-align: right;
+      color: var(--saes-vert-attenue);
+    }
+
+    td.montant {
+      grid-area: montant;
+      font-weight: 700;
+    }
+  }
+
+  .vendus {
+    display: inline;
+  }
+}
+
+/* Par catégorie : le nom et la barre sur toute la largeur, puis la quantité
+   et le montant. */
+@container bloc (max-width: 22.5rem) {
+  .categories {
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    tbody tr {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.3rem 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--saes-bordure);
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    td,
+    .qte,
+    .montant {
+      padding: 0;
+      border: none;
+    }
+
+    td:first-child {
+      grid-column: 1 / -1;
+    }
+
+    .qte {
+      width: auto;
+      text-align: left;
+      color: var(--saes-vert-attenue);
+    }
+
+    .montant {
+      width: auto;
+    }
+  }
+
+  .vendus {
+    display: inline;
+  }
+}

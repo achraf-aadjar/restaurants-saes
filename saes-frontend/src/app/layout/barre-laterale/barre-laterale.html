@@ -1,0 +1,15 @@
+<nav aria-label="Fonctions">
+  @for (section of sections(); track section.role) {
+    <p class="intitule">{{ section.intitule }}</p>
+    <ul>
+      @for (fonction of section.fonctions; track fonction.lien) {
+        <li>
+          <a [routerLink]="fonction.lien" routerLinkActive="actif" ariaCurrentWhenActive="page">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="fonction.icone" /></svg>
+            <span>{{ fonction.libelle }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</nav>

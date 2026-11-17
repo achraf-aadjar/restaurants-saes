@@ -24,6 +24,7 @@
             name="prenom"
             type="text"
             required
+            pattern=".*\S.*"
             autocomplete="given-name"
             [(ngModel)]="prenom"
             #prenomCtrl="ngModel"
@@ -42,6 +43,7 @@
             name="nom"
             type="text"
             required
+            pattern=".*\S.*"
             autocomplete="family-name"
             [(ngModel)]="nom"
             #nomCtrl="ngModel"
@@ -55,41 +57,45 @@
       </div>
 
       <div class="auth-ligne">
-      <div class="auth-champ">
-        <label for="email">Adresse e-mail</label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          inputmode="email"
-          placeholder="nom@exemple.com"
-          required
-          email
-          autocomplete="email"
-          [(ngModel)]="email"
-          #emailCtrl="ngModel"
-          [class.invalide]="emailCtrl.invalid && (emailCtrl.touched || f.submitted)"
-          [attr.aria-invalid]="emailCtrl.invalid && (emailCtrl.touched || f.submitted)"
-        />
-        @if (emailCtrl.invalid && (emailCtrl.touched || f.submitted)) {
-          <p class="auth-erreur-champ">
-            {{ emailCtrl.errors?.['required'] ? 'Saisissez votre adresse e-mail.' : 'Adresse e-mail invalide.' }}
-          </p>
-        }
-      </div>
+        <div class="auth-champ">
+          <label for="email">Adresse e-mail</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            inputmode="email"
+            placeholder="nom@exemple.com"
+            required
+            email
+            autocomplete="email"
+            [(ngModel)]="email"
+            #emailCtrl="ngModel"
+            [class.invalide]="emailCtrl.invalid && (emailCtrl.touched || f.submitted)"
+            [attr.aria-invalid]="emailCtrl.invalid && (emailCtrl.touched || f.submitted)"
+          />
+          @if (emailCtrl.invalid && (emailCtrl.touched || f.submitted)) {
+            <p class="auth-erreur-champ">
+              {{
+                emailCtrl.errors?.['required']
+                  ? 'Saisissez votre adresse e-mail.'
+                  : 'Adresse e-mail invalide.'
+              }}
+            </p>
+          }
+        </div>
 
-      <div class="auth-champ">
-        <label for="telephone">Téléphone <span class="auth-facultatif">(facultatif)</span></label>
-        <input
-          id="telephone"
-          name="telephone"
-          type="tel"
-          inputmode="tel"
-          placeholder="77 123 45 67"
-          autocomplete="tel"
-          [(ngModel)]="telephone"
-        />
-      </div>
+        <div class="auth-champ">
+          <label for="telephone">Téléphone <span class="auth-facultatif">(facultatif)</span></label>
+          <input
+            id="telephone"
+            name="telephone"
+            type="tel"
+            inputmode="tel"
+            placeholder="77 123 45 67"
+            autocomplete="tel"
+            [(ngModel)]="telephone"
+          />
+        </div>
       </div>
 
       <div class="auth-champ">
@@ -113,14 +119,20 @@
             class="auth-oeil"
             (click)="motDePasseVisible.set(!motDePasseVisible())"
             [attr.aria-pressed]="motDePasseVisible()"
-            [attr.aria-label]="motDePasseVisible() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+            [attr.aria-label]="
+              motDePasseVisible() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'
+            "
           >
             {{ motDePasseVisible() ? 'Masquer' : 'Afficher' }}
           </button>
         </div>
         @if (mdpCtrl.invalid && (mdpCtrl.touched || f.submitted)) {
           <p class="auth-erreur-champ" id="mdp-aide">
-            {{ mdpCtrl.errors?.['required'] ? 'Choisissez un mot de passe.' : 'Au moins 8 caractères.' }}
+            {{
+              mdpCtrl.errors?.['required']
+                ? 'Choisissez un mot de passe.'
+                : 'Au moins 8 caractères.'
+            }}
           </p>
         } @else {
           <p class="auth-aide" id="mdp-aide">Au moins 8 caractères.</p>
@@ -138,7 +150,7 @@
     </form>
 
     <footer class="auth-pied">
-      Déjà un compte ? <a routerLink="/connexion">Se connecter</a>
+      Déjà un compte ? <a queryParamsHandling="preserve" routerLink="/connexion">Se connecter</a>
     </footer>
   </section>
 </div>

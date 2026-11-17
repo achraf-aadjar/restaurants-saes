@@ -23,6 +23,7 @@ import com.saes.backend.repository.SessionCaisseRepository;
 import com.saes.backend.web.dto.EcartCaisseDto;
 import com.saes.backend.web.dto.EncaissementJourDto;
 import com.saes.backend.web.dto.RapportFinancierDto;
+import com.saes.backend.web.error.ApiException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,6 +45,9 @@ public class GerantRapportService {
     private final PersonnelRestaurantResolver personnelRestaurantResolver;
 
     public RapportFinancierDto consulter(Long gerantId, LocalDate debut, LocalDate fin) {
+        if (fin.isBefore(debut)) {
+            throw ApiException.badRequest("La date de fin ne peut pas être avant la date de début");
+        }
         Restaurant restaurant = personnelRestaurantResolver.restaurantDe(gerantId);
         Instant debutInstant = debut.atStartOfDay(ZONE).toInstant();
         Instant finInstant = fin.plusDays(1).atStartOfDay(ZONE).toInstant();
@@ -55,7 +59,7 @@ public class GerantRapportService {
         for (Paiement paiement : paiements) {
             LocalDate jour = paiement.getDateHeure().atZone(ZONE).toLocalDate();
             int[] montants = parJour.computeIfAbsent(jour, j -> new int[2]);
-            int montantCommande = montant(paiement.getCommande());
+            int montantCommande = paiement.getCommande().getMontantTotal();
             if (paiement.getModePaiement() == ModePaiement.ESPECES) {
                 montants[0] += montantCommande;
             } else {
@@ -76,7 +80,7 @@ public class GerantRapportService {
                 .map(session -> {
                     int totalEspeces = paiementRepository.findBySessionCaisse_Id(session.getId()).stream()
                             .filter(p -> p.getModePaiement() == ModePaiement.ESPECES)
-                            .mapToInt(p -> montant(p.getCommande()))
+                            .mapToInt(p -> p.getCommande().getMontantTotal())
                             .sum();
                     return EcartCaisseDto.from(session, session.getFondDeCaisse() + totalEspeces);
                 })
@@ -86,13 +90,9 @@ public class GerantRapportService {
                 .findByRestaurantIdAndStatutAndDateHeureBetween(
                         restaurant.getId(), StatutCommande.ABANDONNEE, debutInstant, finInstant)
                 .stream()
-                .mapToInt(this::montant)
+                .mapToInt(Commande::getMontantTotal)
                 .sum();
 
         return new RapportFinancierDto(encaissementsParJour, ecartsCaisse, montantCommandesAbandonnees);
-    }
-
-    private int montant(Commande commande) {
-        return commande.getLignes().stream().mapToInt(l -> l.getPrixUnitaire() * l.getQuantite()).sum();
     }
 }

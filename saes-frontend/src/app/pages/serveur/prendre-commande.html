@@ -1,4 +1,9 @@
-<h1>Prendre une commande</h1>
+@if (idModifiee) {
+  <h1>Modifier la commande {{ idModifiee }}</h1>
+  <a class="lien-retour" routerLink="/serveur/commandes">← Revenir sans modifier</a>
+} @else {
+  <h1>Prendre une commande</h1>
+}
 
 @if (erreur(); as e) {
   <p class="message-refus">{{ e }}</p>
@@ -6,71 +11,121 @@
 
 @if (chargement()) {
   <p>Chargement…</p>
+} @else if (idModifiee && !commandeTrouvee()) {
+  <!-- La commande n'est plus en attente : le refus en haut suffit. -->
 } @else {
-  <div class="mise-en-page">
-    <div class="colonne-menu">
-      <section class="carte" style="margin-bottom: 1rem">
-        <div class="champ champ-inline" style="display: inline-flex; margin-right: 1.5rem">
-          <label>Type</label>
-          <select [(ngModel)]="type" name="type">
-            <option value="SUR_PLACE">Sur place</option>
-            <option value="A_EMPORTER">À emporter</option>
+  <div class="saisie">
+    <div class="saisie-menu">
+      <div class="choix-groupe type-commande" role="group" aria-label="Type de commande">
+        <button
+          type="button"
+          class="choix"
+          [attr.aria-pressed]="type === 'SUR_PLACE'"
+          [disabled]="!!idModifiee"
+          (click)="type = 'SUR_PLACE'"
+        >
+          <svg class="coche" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m5 12.5 4.5 4.5L19 7" />
+          </svg>
+          Sur place
+        </button>
+        <button
+          type="button"
+          class="choix"
+          [attr.aria-pressed]="type === 'A_EMPORTER'"
+          [disabled]="!!idModifiee"
+          (click)="type = 'A_EMPORTER'"
+        >
+          <svg class="coche" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m5 12.5 4.5 4.5L19 7" />
+          </svg>
+          À emporter
+        </button>
+      </div>
+
+      @if (type === 'SUR_PLACE') {
+        <div class="champ-table">
+          <label for="table">Table</label>
+          <select id="table" [(ngModel)]="tableId" name="table" [disabled]="!!idModifiee">
+            <option [ngValue]="null">— Choisir —</option>
+            @for (t of tables(); track t.id) {
+              <option [ngValue]="t.id">
+                Table {{ t.numero }} · {{ t.capacite }} place{{ t.capacite > 1 ? 's' : '' }}
+                {{ t.occupee && !idModifiee ? '— occupée' : '' }}
+              </option>
+            }
           </select>
         </div>
-        @if (type === 'SUR_PLACE') {
-          <div class="champ champ-inline" style="display: inline-flex">
-            <label>Table</label>
-            <select [(ngModel)]="tableId" name="table">
-              <option [ngValue]="null">— Choisir —</option>
-              @for (t of tables(); track t.id) {
-                <option [ngValue]="t.id" [disabled]="t.occupee">
-                  n°{{ t.numero }} ({{ t.capacite }} pl.){{ t.occupee ? ' — occupée' : '' }}
-                </option>
-              }
-            </select>
-          </div>
-        }
-      </section>
+      }
 
-      <div class="grille-plats">
-        @for (plat of plats(); track plat.id) {
-          <article class="carte plat">
-            <h3>{{ plat.nom }}</h3>
-            <p class="prix">{{ plat.prix }} FCFA</p>
-            @if (quantiteDe(plat) === 0) {
-              <button type="button" class="btn btn-secondaire btn-petit" (click)="ajouter(plat)">Ajouter</button>
-            } @else {
-              <div class="selecteur-quantite">
-                <button type="button" class="btn btn-secondaire btn-petit" (click)="retirer(plat)">−</button>
-                <span>{{ quantiteDe(plat) }}</span>
-                <button type="button" class="btn btn-secondaire btn-petit" (click)="ajouter(plat)">+</button>
-              </div>
-            }
-          </article>
-        }
-      </div>
-    </div>
-
-    <aside class="colonne-panier">
-      <div class="carte panier">
-        <h2>Commande</h2>
-        @if (lignesListe().length === 0) {
-          <p class="panier-vide">Ajoutez des plats.</p>
-        } @else {
-          <ul class="liste-panier">
-            @for (ligne of lignesListe(); track ligne.plat.id) {
+      @for (groupe of groupes(); track groupe.cle) {
+        <section class="groupe-plats" [attr.aria-labelledby]="'categorie-' + groupe.cle">
+          <h2 [id]="'categorie-' + groupe.cle">{{ groupe.titre }}</h2>
+          <ul class="plats-saisie">
+            @for (plat of groupe.plats; track plat.id) {
               <li>
-                <span>{{ ligne.quantite }} × {{ ligne.plat.nom }}</span>
-                <span>{{ ligne.plat.prix * ligne.quantite }} FCFA</span>
+                <span class="nom">{{ plat.nom }}</span>
+                <span class="prix">{{ plat.prix | montant }}</span>
+                <div class="compteur" role="group" [attr.aria-label]="'Quantité de ' + plat.nom">
+                  <button
+                    type="button"
+                    class="pas"
+                    [disabled]="quantiteDe(plat) === 0"
+                    [attr.aria-label]="'Retirer un ' + plat.nom"
+                    (click)="retirer(plat)"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /></svg>
+                  </button>
+                  <span class="quantite" aria-live="polite">{{ quantiteDe(plat) }}</span>
+                  <button
+                    type="button"
+                    class="pas"
+                    [disabled]="groupe.indisponible"
+                    [attr.aria-label]="'Ajouter un ' + plat.nom"
+                    (click)="ajouter(plat)"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+                  </button>
+                </div>
               </li>
             }
           </ul>
-          <p class="total-panier">Total : {{ total() }} FCFA</p>
-          <button type="button" class="btn btn-primaire" [disabled]="envoiEnCours()" (click)="enregistrer()">
-            {{ envoiEnCours() ? 'Enregistrement…' : 'Enregistrer la commande' }}
-          </button>
+        </section>
+      }
+    </div>
+
+    <aside class="saisie-total" aria-label="Récapitulatif de la commande">
+      <h2 class="titre-recap">Commande</h2>
+      @if (lignesListe().length === 0) {
+        <p class="recap-vide">Ajoutez des plats.</p>
+      } @else {
+        <ul class="recap">
+          @for (ligne of lignesListe(); track ligne.plat.id) {
+            <li>
+              <span>{{ ligne.quantite }} × {{ ligne.plat.nom }}</span>
+              <span>{{ ligne.plat.prix * ligne.quantite | montant }}</span>
+            </li>
+          }
+        </ul>
+      }
+      <p class="total">
+        <span>Total :</span>
+        <strong>{{ total() | montant }}</strong>
+      </p>
+      <button
+        type="button"
+        class="btn btn-primaire btn-enregistrer"
+        [disabled]="envoiEnCours()"
+        (click)="enregistrer()"
+      >
+        @if (envoiEnCours()) {
+          Enregistrement…
+        } @else if (idModifiee) {
+          Enregistrer les modifications
+        } @else {
+          Enregistrer la commande
         }
-      </div>
+      </button>
     </aside>
   </div>
 }

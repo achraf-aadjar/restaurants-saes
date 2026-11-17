@@ -1,0 +1,50 @@
+<div class="choix-periode">
+  <p class="choix-periode-texte">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2ZM8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"
+      />
+    </svg>
+    Du {{ debut() | date: 'dd/MM/yyyy' }} au {{ fin() | date: 'dd/MM/yyyy' }}
+  </p>
+  <button
+    #bouton
+    type="button"
+    class="btn btn-secondaire btn-periode"
+    aria-controls="panneau-periode"
+    [attr.aria-expanded]="ouvert()"
+    (click)="basculer()"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2ZM8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"
+      />
+    </svg>
+    Changer la période
+  </button>
+</div>
+
+@if (ouvert()) {
+  <section
+    id="panneau-periode"
+    class="carte panneau-periode"
+    aria-label="Choisir la période"
+    (keydown.escape)="fermer()"
+  >
+    <form (ngSubmit)="valider()" class="formulaire-periode">
+      <div class="champ">
+        <label for="periode-debut">Du</label>
+        <input id="periode-debut" name="debut" type="date" [(ngModel)]="debutSaisi" />
+      </div>
+      <div class="champ">
+        <label for="periode-fin">Au</label>
+        <input id="periode-fin" name="fin" type="date" [(ngModel)]="finSaisie" />
+      </div>
+      <button type="submit" class="btn btn-primaire" [disabled]="occupe()">Afficher</button>
+      <button type="button" class="btn btn-secondaire" (click)="fermer()">Annuler</button>
+    </form>
+    @if (erreur(); as e) {
+      <p class="message-refus" role="alert">{{ e }}</p>
+    }
+  </section>
+}

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AdminRestaurantService } from '../../../core/admin-restaurant.service';
 import { AdminUserService } from '../../../core/admin-user.service';
 import { motifErreur } from '../../../core/erreur.util';
+import { LIBELLES_ROLES } from '../../../core/libelles';
 import {
   ROLES_PERSONNEL,
   RestaurantDto,
@@ -11,6 +12,7 @@ import {
   TOUS_LES_ROLES,
   Utilisateur,
 } from '../../../core/models';
+import { RefusVisible } from '../../../shared/refus-visible';
 
 /**
  * Gerer les comptes utilisateurs (cahier des charges §4.7), reserve a
@@ -19,7 +21,7 @@ import {
  */
 @Component({
   selector: 'app-users-list',
-  imports: [FormsModule],
+  imports: [FormsModule, RefusVisible],
   templateUrl: './users-list.html',
 })
 export class UsersList {
@@ -28,6 +30,7 @@ export class UsersList {
 
   protected readonly rolesPersonnel = ROLES_PERSONNEL;
   protected readonly tousLesRoles = TOUS_LES_ROLES;
+  protected readonly libellesRoles = LIBELLES_ROLES;
   protected readonly utilisateurs = signal<Utilisateur[]>([]);
   protected readonly restaurants = signal<RestaurantDto[]>([]);
   protected readonly chargement = signal(true);

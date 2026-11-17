@@ -1,12 +1,26 @@
-import { DatePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  LOCALE_ID,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../../core/auth.service';
 import { CommandeClientService } from '../../core/commande-client.service';
+import { periodeEnLettres } from '../../core/date.util';
 import { motifErreur } from '../../core/erreur.util';
 import { CategoriePlat, MenuDto, PlatResume, RestaurantSummary } from '../../core/models';
 import { MenuService } from '../../core/menu.service';
+import { IconeCategorie } from '../../shared/icone-categorie';
+import { MontantPipe } from '../../shared/montant.pipe';
+import { PhotoPlat } from '../../shared/photo-plat';
+import { RefusVisible } from '../../shared/refus-visible';
+import { BandeauRestaurant } from './bandeau-restaurant';
 
 const ORDRE_CATEGORIES: CategoriePlat[] = ['ENTREE', 'PLAT_PRINCIPAL', 'DESSERT', 'BOISSON'];
 const LIBELLES_CATEGORIES: Record<CategoriePlat, string> = {
@@ -29,6 +43,7 @@ interface LignePanier {
 
 interface MenuAffiche {
   menu: MenuDto;
+  periode: string;
   groupes: GroupeCategorie[];
 }
 
@@ -48,7 +63,7 @@ function grouperParCategorie(plats: PlatResume[]): GroupeCategorie[] {
  */
 @Component({
   selector: 'app-menu-consultation',
-  imports: [DatePipe],
+  imports: [BandeauRestaurant, IconeCategorie, MontantPipe, PhotoPlat, RefusVisible],
   templateUrl: './menu-consultation.html',
   styleUrl: './menu-consultation.scss',
 })
@@ -56,6 +71,7 @@ export class MenuConsultation {
   private readonly menuService = inject(MenuService);
   private readonly commandeClientService = inject(CommandeClientService);
   private readonly router = inject(Router);
+  private readonly locale = inject(LOCALE_ID);
   protected readonly auth = inject(AuthService);
 
   protected readonly restaurants = signal<RestaurantSummary[]>([]);
@@ -66,19 +82,59 @@ export class MenuConsultation {
 
   protected readonly panier = signal<Map<number, LignePanier>>(new Map());
   protected readonly envoiEnCours = signal(false);
-  protected readonly erreurCommande = signal<string | null>(null);
   protected readonly commandeConfirmee = signal(false);
 
+  private readonly colonnePanier = viewChild<ElementRef<HTMLElement>>('colonnePanier');
+  private readonly titrePanier = viewChild<ElementRef<HTMLElement>>('titrePanier');
+  /** Vrai quand une partie de la commande est a l'ecran. */
+  private readonly panierEnVue = signal(false);
+
   protected readonly menusAffiches = computed<MenuAffiche[]>(() =>
-    this.menus().map((menu) => ({ menu, groupes: grouperParCategorie(menu.plats) })),
+    this.menus().map((menu) => ({
+      menu,
+      periode: periodeEnLettres(menu.dateDebut, menu.dateFin, this.locale),
+      groupes: grouperParCategorie(menu.plats),
+    })),
+  );
+
+  /**
+   * L'ecran de reference 1 est celui du client (et du visiteur) : bandeau
+   * pleine largeur, decor et bouton « Reserver ». Le personnel, qui a deja son
+   * bandeau et sa barre laterale, voit le bandeau dans un cadre.
+   */
+  protected readonly vueClient = computed(
+    () => !this.auth.estConnecte() || this.auth.aLeRole('CLIENT'),
   );
 
   protected readonly lignesPanier = computed(() => Array.from(this.panier().values()));
   protected readonly totalPanier = computed(() =>
     this.lignesPanier().reduce((total, l) => total + l.plat.prix * l.quantite, 0),
   );
+  /** « 4 articles » : la somme des quantites, comme sur l'ecran de reference 1. */
+  protected readonly nombreArticles = computed(() =>
+    this.lignesPanier().reduce((total, l) => total + l.quantite, 0),
+  );
+
+  /**
+   * Sur telephone, la commande vient apres les plats : une barre en bas de
+   * l'ecran la resume des le premier plat ajoute, et s'efface quand la commande
+   * elle-meme est en vue (la feuille de style la cache a partir de 860 px).
+   */
+  protected readonly afficherBarrePanier = computed(
+    () => this.nombreArticles() > 0 && !this.commandeConfirmee() && !this.panierEnVue(),
+  );
 
   constructor() {
+    effect((nettoyer) => {
+      const colonne = this.colonnePanier()?.nativeElement;
+      if (!colonne || typeof IntersectionObserver === 'undefined') return;
+      const observateur = new IntersectionObserver(([entree]) =>
+        this.panierEnVue.set(entree.isIntersecting),
+      );
+      observateur.observe(colonne);
+      nettoyer(() => observateur.disconnect());
+    });
+
     this.chargement.set(true);
     this.menuService.restaurants().subscribe({
       next: (restaurants) => {
@@ -113,10 +169,6 @@ export class MenuConsultation {
     });
   }
 
-  protected quantiteDans(plat: PlatResume): number {
-    return this.panier().get(plat.id)?.quantite ?? 0;
-  }
-
   protected ajouter(plat: PlatResume): void {
     const copie = new Map(this.panier());
     const existant = copie.get(plat.id);
@@ -136,11 +188,28 @@ export class MenuConsultation {
     this.panier.set(copie);
   }
 
+  /** La corbeille d'une ligne : le plat sort de la commande. */
+  protected enlever(plat: PlatResume): void {
+    const copie = new Map(this.panier());
+    copie.delete(plat.id);
+    this.panier.set(copie);
+  }
+
+  /** « Voir ma commande » : descend jusqu'a la commande et y place le focus. */
+  protected voirLaCommande(): void {
+    const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.colonnePanier()?.nativeElement.scrollIntoView({
+      behavior: reduit ? 'auto' : 'smooth',
+      block: 'start',
+    });
+    this.titrePanier()?.nativeElement.focus({ preventScroll: true });
+  }
+
   protected passerCommande(): void {
     const restaurant = this.restaurantSelectionne();
     if (!restaurant || this.lignesPanier().length === 0) return;
 
-    this.erreurCommande.set(null);
+    this.erreur.set(null);
     this.envoiEnCours.set(true);
     this.commandeClientService
       .passerCommande({
@@ -155,7 +224,7 @@ export class MenuConsultation {
         },
         error: (err) => {
           this.envoiEnCours.set(false);
-          this.erreurCommande.set(motifErreur(err, 'La commande n\'a pas pu etre enregistree'));
+          this.erreur.set(motifErreur(err, "La commande n'a pas pu être enregistrée"));
         },
       });
   }

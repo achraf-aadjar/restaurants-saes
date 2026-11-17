@@ -42,4 +42,9 @@ public class LigneCommande {
 
     @Column(name = "prix_unitaire", nullable = false)
     private Integer prixUnitaire;
+
+    /** quantite × prixUnitaire, la part de la ligne dans /montantTotal. */
+    public int getMontant() {
+        return quantite * prixUnitaire;
+    }
 }

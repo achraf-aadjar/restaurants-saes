@@ -17,6 +17,8 @@ export function classeBadgeStatut(statut: StatutCommande): string {
     case 'ANNULEE':
     case 'ABANDONNEE':
       return 'badge-inactif';
+    case 'EN_ATTENTE':
+      return 'badge-neutre';
     default:
       return 'badge-attente';
   }

@@ -72,4 +72,9 @@ public class Commande {
 
     @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LigneCommande> lignes = new ArrayList<>();
+
+    /** Attribut derive /montantTotal de la conception : la somme des lignes, calculee ici seulement. */
+    public int getMontantTotal() {
+        return lignes.stream().mapToInt(LigneCommande::getMontant).sum();
+    }
 }

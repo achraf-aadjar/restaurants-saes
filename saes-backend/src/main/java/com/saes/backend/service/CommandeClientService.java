@@ -82,7 +82,7 @@ public class CommandeClientService {
         Commande commande = commandeRepository.findById(commandeId)
                 .orElseThrow(() -> ApiException.notFound("Commande introuvable"));
         if (commande.getClient() == null || !commande.getClient().getId().equals(clientId)) {
-            throw ApiException.forbidden("Cette commande n'est pas la votre");
+            throw ApiException.forbidden("Cette commande n'est pas la vôtre");
         }
         if (!commande.getVersion().equals(request.version())) {
             throw new ConflitCommandeException(CommandeDto.from(commande));

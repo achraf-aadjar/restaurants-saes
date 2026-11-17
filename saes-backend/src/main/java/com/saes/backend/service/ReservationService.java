@@ -48,7 +48,10 @@ public class ReservationService {
     public ReservationDto faireReservation(Long clientId, FaireReservationRequest request) {
         Utilisateur client = utilisateurRepository.findById(clientId)
                 .orElseThrow(() -> ApiException.notFound("Utilisateur introuvable"));
-        Restaurant restaurant = restaurantRepository.findById(request.restaurantId())
+        // Cadre « critical » de Faire une reservation : le restaurant reste verrouille
+        // jusqu'a l'enregistrement, donc deux reservations simultanees passent l'une
+        // apres l'autre et la seconde voit les tables prises par la premiere.
+        Restaurant restaurant = restaurantRepository.findVerrouille(request.restaurantId())
                 .orElseThrow(() -> ApiException.notFound("Restaurant introuvable"));
         if (!restaurant.isEstActif()) {
             throw ApiException.notFound("Restaurant introuvable");
@@ -58,7 +61,7 @@ public class ReservationService {
         LocalDateTime fin = debut.plusMinutes(restaurant.getDureeReservationMinutes());
 
         if (!horaireService.creneauDansHoraires(restaurant, debut, fin)) {
-            throw ApiException.conflict("Ce creneau n'est pas entierement dans les horaires d'ouverture");
+            throw ApiException.conflict("Ce créneau n'est pas entièrement dans les horaires d'ouverture");
         }
 
         List<Long> idsTablesReservees =
@@ -69,7 +72,7 @@ public class ReservationService {
 
         List<TableRestaurant> tablesChoisies = tableSelectionService.choisir(tablesLibres, request.nombreCouverts());
         if (tablesChoisies.isEmpty()) {
-            throw ApiException.conflict("Il n'y a pas assez de places disponibles sur ce creneau");
+            throw ApiException.conflict("Il n'y a pas assez de places disponibles sur ce créneau");
         }
 
         Reservation reservation = new Reservation();
@@ -93,10 +96,10 @@ public class ReservationService {
         try {
             reservation = reservationRepository.saveAndFlush(reservation);
         } catch (DataIntegrityViolationException e) {
-            // Contrainte d'exclusion PostgreSQL : une autre reservation a pris la
-            // meme table sur un creneau chevauchant entre notre lecture et notre
-            // ecriture (choix_techniques_architecture.pdf §3, "le premier l'emporte").
-            throw ApiException.conflict("Ce creneau vient d'etre reserve par quelqu'un d'autre, veuillez reessayer");
+            // Dernier filet, si une ecriture echappait au verrou : la contrainte
+            // d'exclusion PostgreSQL refuse une seconde reservation de la meme table
+            // sur un creneau chevauchant (choix_techniques_architecture.pdf §3).
+            throw ApiException.conflict("Ce créneau vient d'être réservé par quelqu'un d'autre, veuillez réessayer");
         }
 
         return ReservationDto.from(reservation);
@@ -105,12 +108,12 @@ public class ReservationService {
     @Transactional
     public void annulerReservation(Long clientId, Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> ApiException.notFound("Reservation introuvable"));
+                .orElseThrow(() -> ApiException.notFound("Réservation introuvable"));
         if (!reservation.getClient().getId().equals(clientId)) {
-            throw ApiException.forbidden("Cette reservation n'est pas la votre");
+            throw ApiException.forbidden("Cette réservation n'est pas la vôtre");
         }
         if (reservation.getStatut() != StatutReservation.CONFIRMEE) {
-            throw ApiException.conflict("Cette reservation est deja annulee");
+            throw ApiException.conflict("Cette réservation est déjà annulée");
         }
 
         reservation.setStatut(StatutReservation.ANNULEE);

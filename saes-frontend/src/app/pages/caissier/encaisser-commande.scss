@@ -1,0 +1,244 @@
+/*
+ * Encaisser : la liste des commandes prêtes à gauche, la commande choisie à
+ * droite (ses lignes, le montant, le mode de paiement et le bouton). Un seul
+ * paiement est préparé à la fois : le montant est grand, et les boutons ne sont
+ * pas répétés sur chaque commande. Sous 1100 px, le détail passe sous la liste.
+ */
+.encaissement {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (min-width: 68.75rem) {
+  .encaissement {
+    grid-template-columns: minmax(0, 1fr) clamp(21.25rem, 31vw, 30rem);
+    gap: clamp(1rem, 1.6vw, 1.5rem);
+  }
+
+  .detail-encaissement {
+    position: sticky;
+    top: 1rem;
+  }
+}
+
+/* Le détail reste à l'écran quand on descend dans la liste, mais seulement si
+   la fenêtre est assez haute pour le montrer en entier : sinon il défile avec
+   la page, et « Encaisser » reste atteignable sans défilement à part. */
+@media (min-width: 68.75rem) and (height < 43.75rem) {
+  .detail-encaissement {
+    position: static;
+  }
+}
+
+.encaissement-liste > * + * {
+  margin-top: 1rem;
+}
+
+.tableau-commandes {
+  th,
+  td {
+    padding: 0.8rem 0.9rem;
+    font-size: clamp(0.95rem, 1.15vw, 1.1rem);
+  }
+
+  th {
+    color: var(--saes-vert);
+    font-weight: 700;
+  }
+
+  .badge {
+    white-space: nowrap;
+    font-size: 0.9em;
+  }
+
+  td:nth-child(2) {
+    white-space: nowrap;
+  }
+
+  /* Cibles tactiles : une ligne fait au moins 48 px de haut. */
+  td {
+    padding-block: 0.95rem;
+  }
+
+  /* Petit ecran : chaque commande devient une ligne a deux etages (numero et
+     montant, puis lieu, heure et statut). Rien n'est cache : les en-tetes sont
+     remplaces par les mots devant chaque valeur. */
+  @media (width < 43.75rem) {
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    tbody tr {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        'numero montant'
+        'lieu statut'
+        'arrivee statut';
+      align-items: center;
+      gap: 0.15rem 0.75rem;
+      padding: 0.75rem 0.5rem;
+      border-bottom: 1px solid var(--saes-bordure);
+    }
+
+    td {
+      padding: 0;
+      border: none;
+      font-size: 1rem;
+    }
+
+    /* La barre de la commande choisie couvre toute la ligne. */
+    tbody tr.choisie {
+      box-shadow: inset 4px 0 0 var(--saes-rouge);
+    }
+
+    tbody tr.choisie td:first-child {
+      box-shadow: none;
+    }
+
+    td:nth-child(1) {
+      grid-area: numero;
+      font-weight: 700;
+    }
+
+    td:nth-child(1)::before {
+      content: 'Commande ';
+    }
+
+    td:nth-child(2) {
+      grid-area: arrivee;
+      color: var(--saes-vert-attenue);
+      font-size: 0.9rem;
+      white-space: normal;
+    }
+
+    td:nth-child(2)::before {
+      content: 'Arrivée ';
+    }
+
+    td:nth-child(3) {
+      grid-area: lieu;
+    }
+
+    td:nth-child(4) {
+      grid-area: montant;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    td:nth-child(5) {
+      grid-area: statut;
+      justify-self: end;
+    }
+  }
+
+  tbody tr {
+    cursor: pointer;
+  }
+
+  tbody tr:hover {
+    background: var(--saes-creme);
+  }
+
+  /* La commande choisie : fond chaud et barre rouge à gauche. */
+  tbody tr.choisie {
+    background: #fdf3e1;
+  }
+
+  tbody tr.choisie td:first-child {
+    box-shadow: inset 4px 0 0 var(--saes-rouge);
+  }
+}
+
+.ligne-choix {
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.detail-encaissement {
+  padding: clamp(1rem, 1.6vw, 1.5rem);
+
+  h2 {
+    margin-bottom: 0.8rem;
+    font-size: clamp(1.35rem, 1.9vw, 1.8rem);
+    font-weight: 800;
+    line-height: 1.2;
+  }
+}
+
+.detail-lieu {
+  font-size: 0.8em;
+}
+
+.detail-lignes {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  font-size: clamp(1.05rem, 1.35vw, 1.3rem);
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.7rem 0;
+    border-top: 1px solid rgb(8 49 45 / 12%);
+  }
+}
+
+.a-payer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  background: var(--saes-rose);
+  font-size: clamp(1.15rem, 1.5vw, 1.45rem);
+  font-weight: 700;
+
+  strong {
+    color: var(--saes-rouge);
+    font-size: clamp(1.5rem, 2.2vw, 2.1rem);
+    font-weight: 800;
+  }
+}
+
+.choix {
+  min-height: 3.6rem;
+  font-size: clamp(1.05rem, 1.35vw, 1.3rem);
+}
+
+.btn-encaisser {
+  width: 100%;
+  min-height: 3.6rem;
+  border-radius: 10px;
+  font-size: clamp(1.15rem, 1.6vw, 1.5rem);
+  font-weight: 800;
+}
+
+.actions-encaissement {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.confirmation-encaissement {
+  margin: 0 0 0.8rem;
+  font-size: clamp(1.05rem, 1.35vw, 1.3rem);
+  font-weight: 600;
+}
+
+.note-paiement {
+  margin: 0.9rem 0 0;
+  color: var(--saes-vert);
+}

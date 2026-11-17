@@ -236,6 +236,15 @@ class CuisineEtStocksTest extends IntegrationTest {
     }
 
     @Test
+    void unPlatGratuitEstRefuse() {
+        Reponse gratuit = api.post(monde.jetonGerant, "/api/gerant/plats", Map.of(
+                "nom", "Gratuit", "prix", 0, "categorie", "DESSERT",
+                "recette", List.of(Map.of("ingredientId", monde.rizId, "quantiteNecessaire", 1))));
+
+        assertThat(gratuit.statut()).as(gratuit.toString()).isEqualTo(400);
+    }
+
+    @Test
     void unMenuAUneDateDeFinQuiNEstPasAvantSaDateDeDebutEtAuMoinsUnPlat() {
         String aujourdHui = LocalDate.now().toString();
         String hier = LocalDate.now().minusDays(1).toString();

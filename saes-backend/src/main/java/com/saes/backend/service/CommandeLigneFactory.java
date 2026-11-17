@@ -2,7 +2,9 @@ package com.saes.backend.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
@@ -34,25 +36,36 @@ class CommandeLigneFactory {
         LocalDate aujourdHui = LocalDate.now();
         List<LigneCommande> lignes = new ArrayList<>();
 
-        for (LigneDemandeeDto demande : lignesDemandees) {
-            Plat plat = platRepository.findById(demande.platId())
-                    .orElseThrow(() -> ApiException.badRequest("Plat introuvable"));
-
-            if (!plat.getRestaurant().getId().equals(restaurant.getId())) {
-                throw ApiException.badRequest("Ce plat n'appartient pas a ce restaurant");
-            }
-            if (!menuRepository.estCommandable(restaurant.getId(), plat.getId(), aujourdHui)) {
-                throw ApiException.conflict(
-                        "Le plat \"" + plat.getNom() + "\" n'est pas actif ou n'est dans aucun menu en vigueur");
-            }
-
-            LigneCommande ligne = new LigneCommande();
-            ligne.setPlat(plat);
-            ligne.setQuantite(demande.quantite());
-            ligne.setPrixUnitaire(plat.getPrix());
-            lignes.add(ligne);
-        }
+        // Une seule ligne par plat (LigneCommande est une classe-association) : un plat demande
+        // deux fois voit ses quantites additionnees.
+        Map<Long, Integer> parPlat = new LinkedHashMap<>();
+        lignesDemandees.forEach(d -> parPlat.merge(d.platId(), d.quantite(), Integer::sum));
+        parPlat.forEach((platId, quantite) -> lignes.add(nouvelleLigne(restaurant, platId, quantite, aujourdHui)));
 
         return lignes;
+    }
+
+    /** Une ligne pour un plat ajoute maintenant : il doit etre commandable, a son prix du jour (regle 4). */
+    LigneCommande nouvelleLigne(Restaurant restaurant, Long platId, int quantite, LocalDate aujourdHui) {
+        Plat plat = platRepository.findById(platId)
+                .orElseThrow(() -> ApiException.badRequest("Plat introuvable"));
+        verifierCommandable(restaurant, plat, aujourdHui);
+
+        LigneCommande ligne = new LigneCommande();
+        ligne.setPlat(plat);
+        ligne.setQuantite(quantite);
+        ligne.setPrixUnitaire(plat.getPrix());
+        return ligne;
+    }
+
+    /** Regle 2 : le plat est actif, du restaurant, et dans un menu en vigueur. */
+    void verifierCommandable(Restaurant restaurant, Plat plat, LocalDate aujourdHui) {
+        if (!plat.getRestaurant().getId().equals(restaurant.getId())) {
+            throw ApiException.badRequest("Ce plat n'appartient pas à ce restaurant");
+        }
+        if (!menuRepository.estCommandable(restaurant.getId(), plat.getId(), aujourdHui)) {
+            throw ApiException.conflict(
+                    "Le plat \"" + plat.getNom() + "\" n'est pas actif ou n'est dans aucun menu en vigueur");
+        }
     }
 }

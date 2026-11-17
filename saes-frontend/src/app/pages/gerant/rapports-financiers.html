@@ -1,18 +1,12 @@
-<h1>Rapports financiers</h1>
-
-<section class="carte">
-  <form (ngSubmit)="charger()" class="ligne-dynamique">
-    <div class="champ champ-inline">
-      <label for="debutRF">Du</label>
-      <input id="debutRF" name="debutRF" type="date" [(ngModel)]="debut" />
-    </div>
-    <div class="champ champ-inline">
-      <label for="finRF">Au</label>
-      <input id="finRF" name="finRF" type="date" [(ngModel)]="fin" />
-    </div>
-    <button type="submit" class="btn btn-primaire btn-petit" [disabled]="chargement()">Afficher</button>
-  </form>
-</section>
+<div class="titre-page">
+  <h1>Rapports financiers</h1>
+  <app-choix-periode
+    [debut]="periode().debut"
+    [fin]="periode().fin"
+    [occupe]="chargement()"
+    (choisie)="charger($event)"
+  />
+</div>
 
 @if (erreur(); as e) {
   <p class="message-refus">{{ e }}</p>
@@ -21,70 +15,110 @@
 @if (chargement()) {
   <p>Chargement…</p>
 } @else if (rapport(); as r) {
-  <section class="carte" style="margin-top: 1rem">
-    <h2>Encaissements par jour</h2>
-    @if (r.encaissementsParJour.length === 0) {
-      <p>Aucun encaissement sur cette période.</p>
-    } @else {
-      <table class="table-simple">
-        <thead>
-          <tr>
-            <th>Jour</th>
-            <th>Espèces</th>
-            <th>Mobile Money</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (j of r.encaissementsParJour; track j.jour) {
-            <tr>
-              <td>{{ j.jour }}</td>
-              <td>{{ j.montantEspeces }} FCFA</td>
-              <td>{{ j.montantMobileMoney }} FCFA</td>
-              <td>{{ j.montantEspeces + j.montantMobileMoney }} FCFA</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    }
-  </section>
+  <div class="chiffres">
+    <app-chiffre-cle
+      icone="M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2ZM10 12a2 2 0 1 0 4 0a2 2 0 1 0-4 0M6 12h.01M18 12h.01"
+      [nombre]="totalEncaisse() | montant"
+      libelle="encaissés sur la période"
+    />
+    <app-chiffre-cle
+      icone="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3M12 9v4M12 17h.01"
+      [nombre]="r.montantCommandesAbandonnees | montant"
+      libelle="de commandes abandonnées"
+    />
+  </div>
 
-  <section class="carte" style="margin-top: 1rem">
-    <h2>Écarts de caisse</h2>
-    @if (r.ecartsCaisse.length === 0) {
-      <p>Aucune caisse clôturée sur cette période.</p>
-    } @else {
-      <table class="table-simple">
-        <thead>
-          <tr>
-            <th>Caissier</th>
-            <th>Ouverture</th>
-            <th>Clôture</th>
-            <th>Fond de caisse</th>
-            <th>Montant théorique</th>
-            <th>Montant compté</th>
-            <th>Écart</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (c of r.ecartsCaisse; track c.sessionId) {
-            <tr>
-              <td>{{ c.caissierNom }}</td>
-              <td>{{ c.dateHeureOuverture | date: 'short' }}</td>
-              <td>{{ c.dateHeureCloture | date: 'short' }}</td>
-              <td>{{ c.fondDeCaisse }} FCFA</td>
-              <td>{{ c.montantTheorique }} FCFA</td>
-              <td>{{ c.montantCompte }} FCFA</td>
-              <td [class.message-refus]="c.ecart !== 0">{{ c.ecart }} FCFA</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    }
-  </section>
+  <div class="sections">
+    <section class="carte bloc">
+      <h2>Encaissements par jour</h2>
+      @if (r.encaissementsParJour.length === 0) {
+        <p>Aucun encaissement sur cette période.</p>
+      } @else {
+        <div class="cadre-tableau">
+          <table class="jours">
+            <thead>
+              <tr>
+                <th scope="col">Jour</th>
+                <th scope="col">Espèces</th>
+                <th scope="col">Mobile Money</th>
+                <th scope="col">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (j of r.encaissementsParJour; track j.jour) {
+                <tr>
+                  <td class="jour">{{ j.jour | date: 'dd/MM/yyyy' }}</td>
+                  <td class="montant" data-label="Espèces">{{ j.montantEspeces | montant }}</td>
+                  <td class="montant" data-label="Mobile Money">
+                    {{ j.montantMobileMoney | montant }}
+                  </td>
+                  <td class="montant total">
+                    {{ j.montantEspeces + j.montantMobileMoney | montant }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
 
-  <section class="carte" style="margin-top: 1rem">
-    <h2>Commandes abandonnées</h2>
-    <p class="total-panier">Montant total : {{ r.montantCommandesAbandonnees }} FCFA</p>
-  </section>
+    <section class="carte bloc">
+      <h2>Écarts de caisse</h2>
+      @if (r.ecartsCaisse.length === 0) {
+        <p>Aucune caisse clôturée sur cette période.</p>
+      } @else {
+        <div class="cadre-tableau">
+          <table class="ecarts">
+            <thead>
+              <tr>
+                <th scope="col">Caissier</th>
+                <th scope="col">Ouverture</th>
+                <th scope="col">Clôture</th>
+                <th scope="col">Fond de caisse</th>
+                <th scope="col">Montant théorique</th>
+                <th scope="col">Montant compté</th>
+                <th scope="col">Écart</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (c of r.ecartsCaisse; track c.sessionId) {
+                <tr>
+                  <td class="caissier">{{ c.caissierNom }}</td>
+                  <td class="date" data-label="Ouverture">
+                    {{ c.dateHeureOuverture | date: 'dd/MM HH:mm' }}
+                  </td>
+                  <td class="date" data-label="Clôture">
+                    {{ c.dateHeureCloture | date: 'dd/MM HH:mm' }}
+                  </td>
+                  <td class="montant" data-label="Fond de caisse">
+                    {{ c.fondDeCaisse | montant }}
+                  </td>
+                  <td class="montant" data-label="Montant théorique">
+                    {{ c.montantTheorique | montant }}
+                  </td>
+                  <td class="montant" data-label="Montant compté">
+                    {{ c.montantCompte | montant }}
+                  </td>
+                  <td class="ecart">
+                    @if (c.ecart === 0) {
+                      <span class="badge badge-actif">Aucun écart</span>
+                    } @else if (c.ecart > 0) {
+                      <span class="badge badge-attente"
+                        >Excédent de {{ ecartAbsolu(c.ecart) | montant }}</span
+                      >
+                    } @else {
+                      <span class="badge badge-inactif"
+                        >Manque de {{ ecartAbsolu(c.ecart) | montant }}</span
+                      >
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  </div>
 }

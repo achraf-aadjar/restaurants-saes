@@ -1,0 +1,9 @@
+/* « Modifier » et « Annuler la commande », côte à côte et de même largeur. */
+.actions-carte {
+  display: flex;
+  gap: 0.5rem;
+
+  .btn {
+    flex: 1;
+  }
+}

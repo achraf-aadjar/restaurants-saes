@@ -1,0 +1,597 @@
+/*
+ * Plats : la liste à gauche, la fiche du plat choisi (ou d'un nouveau plat) à
+ * droite, à côté de la liste et non au-dessus : on voit toujours la ligne que
+ * l'on modifie. La fiche défile avec la page (jamais de défilement à part, qui
+ * cacherait « Enregistrer »). Sous 1100 px, elle passe sous la liste.
+ */
+.gestion {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (min-width: 68.75rem) {
+  .gestion.avec-panneau {
+    grid-template-columns: minmax(0, 1fr) clamp(22.5rem, 30vw, 30rem);
+    gap: clamp(1rem, 1.3vw, 1.5rem);
+  }
+}
+
+/* La colonne de la liste (titre, bouton, tableau) : la fiche est à sa droite, en
+   haut de page, à côté du titre. */
+.colonne-liste {
+  min-width: 0;
+}
+
+.btn-nouveau {
+  min-height: clamp(3rem, 3.25vw, 3.2rem);
+  padding-inline: 1.5em;
+  font-size: clamp(1.1rem, 1.2vw, 1.2rem);
+  font-weight: 700;
+
+  svg {
+    width: 1.2em;
+    height: 1.2em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+  }
+}
+
+/* ---------- Liste ---------- */
+
+/* La mise en forme de la liste suit la largeur de sa carte (et non celle de
+   l'ecran) : a cote de la barre laterale ou de la fiche, elle est plus etroite. */
+.liste-plats {
+  container: liste / inline-size;
+  /* Le tableau va jusqu'aux bords de la carte : le fond et la barre rouge du
+     plat choisi aussi. */
+  padding: 0;
+
+  > p {
+    padding: 1.25rem;
+  }
+}
+
+.tableau-plats {
+  th,
+  td {
+    padding: 0.7rem 0.55rem;
+    font-size: clamp(1rem, 1.2vw, 1.1rem);
+  }
+
+  th:first-child,
+  td:first-child {
+    padding-left: 1.25rem;
+  }
+
+  th:last-child,
+  td:last-child {
+    padding-right: 1.25rem;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  th {
+    color: var(--saes-vert);
+    font-weight: 700;
+  }
+
+  .badge {
+    padding: 0.3em 0.8em;
+    white-space: nowrap;
+    font-size: 0.95rem;
+  }
+
+  tbody tr {
+    cursor: pointer;
+  }
+
+  tbody tr:hover {
+    background: var(--saes-creme);
+  }
+
+  /* Le plat choisi : fond chaud et barre rouge à gauche. */
+  tbody tr.choisie {
+    background: #fdf3e1;
+  }
+
+  tbody tr.choisie td:first-child {
+    box-shadow: inset 4px 0 0 var(--saes-rouge);
+  }
+}
+
+.nom-plat {
+  overflow-wrap: anywhere;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Liste large : les lignes grandissent avec la fenêtre, comme sur l'écran de
+   référence (87 px de haut à 1536 px de large, environ 73 px à 1280 px). */
+@container liste (min-width: 33.75rem) {
+  .tableau-plats {
+    th,
+    td {
+      padding-block: clamp(0.6rem, calc(2.73vw - 1.25rem), 1.5rem);
+    }
+
+    .badge {
+      padding: 0.45em 0.9em;
+      font-size: clamp(0.95rem, 1.1vw, 1.1rem);
+    }
+
+    /* La colonne du bouton a la largeur du bouton : il est contre le bord droit
+       de la liste, et ce sont les autres colonnes qui se partagent la place. */
+    th:last-child,
+    td:last-child {
+      width: 1%;
+      white-space: nowrap;
+    }
+  }
+}
+
+/* « Désactiver » et « Réactiver » ont la même largeur : la colonne reste droite. */
+.btn-activation {
+  min-width: 6.5em;
+  min-height: 2.75rem;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+/* Liste moyenne (à côté de la fiche, sur un portable) : le tableau reste un
+   tableau, sur trois colonnes. La catégorie passe sous le nom et le statut sous
+   le prix ; leurs en-têtes restent lus par les lecteurs d'écran. Les lignes
+   gardent leurs colonnes alignées grâce à la sous-grille. */
+@container liste (25rem <= width < 33.75rem) {
+  .tableau-plats {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+
+    thead,
+    tbody {
+      display: contents;
+    }
+
+    tr {
+      display: grid;
+      grid-column: 1 / -1;
+      grid-template-columns: subgrid;
+      border-bottom: 1px solid var(--saes-bordure);
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    th,
+    td {
+      border: none;
+    }
+
+    th:nth-child(2),
+    th:nth-child(4) {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    th,
+    td {
+      padding-inline: 0.6rem;
+    }
+
+    td {
+      padding-block: 0.15rem;
+    }
+
+    th:first-child {
+      padding-left: 1.25rem;
+    }
+
+    th:last-child,
+    td:last-child {
+      padding-right: 1.25rem;
+    }
+
+    td:nth-child(1),
+    td:nth-child(3) {
+      grid-row: 1;
+      align-self: end;
+      padding-top: 0.65rem;
+    }
+
+    td:nth-child(2),
+    td:nth-child(4) {
+      grid-row: 2;
+      align-self: start;
+      padding-bottom: 0.65rem;
+    }
+
+    td:nth-child(1),
+    td:nth-child(2) {
+      grid-column: 1;
+      padding-left: 1.25rem;
+    }
+
+    td:nth-child(2) {
+      color: var(--saes-vert-attenue);
+    }
+
+    .badge {
+      padding: 0.12em 0.7em;
+      font-size: 0.9rem;
+    }
+
+    td:nth-child(3),
+    td:nth-child(4) {
+      grid-column: 2;
+      white-space: nowrap;
+    }
+
+    td:nth-child(3) {
+      font-weight: 700;
+    }
+
+    td:nth-child(5) {
+      grid-column: 3;
+      grid-row: 1 / span 2;
+      align-self: center;
+    }
+
+    tbody tr.choisie {
+      box-shadow: inset 4px 0 0 var(--saes-rouge);
+    }
+
+    tbody tr.choisie td:first-child {
+      box-shadow: none;
+    }
+  }
+}
+
+/* Liste étroite (téléphone) : chaque plat tient sur deux lignes, le nom et le
+   prix, puis la catégorie, le statut et le bouton. Rien n'est caché. */
+@container liste (width < 25rem) {
+  .tableau-plats {
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    tbody tr {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      grid-template-areas:
+        'nom nom prix'
+        'categorie statut action';
+      align-items: center;
+      gap: 0.4rem 0.75rem;
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--saes-bordure);
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    td,
+    td:first-child,
+    td:last-child {
+      padding: 0;
+      border: none;
+    }
+
+    td:nth-child(1) {
+      grid-area: nom;
+      font-size: 1.1rem;
+    }
+
+    td:nth-child(2) {
+      grid-area: categorie;
+      color: var(--saes-vert-attenue);
+    }
+
+    td:nth-child(3) {
+      grid-area: prix;
+      font-weight: 700;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    td:nth-child(4) {
+      grid-area: statut;
+    }
+
+    td:nth-child(5) {
+      grid-area: action;
+    }
+
+    tbody tr.choisie {
+      box-shadow: inset 4px 0 0 var(--saes-rouge);
+    }
+
+    tbody tr.choisie td:first-child {
+      box-shadow: none;
+    }
+  }
+}
+
+/* Très étroite (petit téléphone) : le bouton passe dessous, sur toute la largeur. */
+@container liste (max-width: 21.25rem) {
+  .tableau-plats tbody tr {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'nom prix'
+      'categorie statut'
+      'action action';
+  }
+
+  .tableau-plats td:nth-child(5) .btn-activation {
+    width: 100%;
+  }
+}
+
+/* ---------- Fiche du plat ---------- */
+
+.panneau-plat {
+  container: fiche / inline-size;
+  padding: clamp(1rem, 1.6vw, 1.5rem);
+
+  h2 {
+    margin-bottom: 0.75rem;
+    font-size: clamp(1.45rem, 2.2vw, 2.1rem);
+    font-weight: 800;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+
+  h3 {
+    margin: 1rem 0 0.5rem;
+    font-size: clamp(1.1rem, 1.25vw, 1.2rem);
+    font-weight: 700;
+  }
+
+  .champ {
+    margin-bottom: clamp(0.8rem, 1.5vw, 1.5rem);
+  }
+
+  .champ label {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .champ input,
+  .champ select,
+  .champ textarea,
+  .ligne-recette select,
+  .quantite-unite {
+    min-height: clamp(2.75rem, 3.3vw, 3.2rem);
+    font-size: 1.1rem;
+  }
+
+  .champ textarea {
+    min-height: clamp(4.5rem, 6vw, 6rem);
+  }
+
+  .champ input,
+  .champ select,
+  .champ textarea {
+    padding: 0.5em 0.8em;
+  }
+
+  /* Flèche des listes : épaisse et sombre, la même partout dans la fiche. */
+  select {
+    appearance: none;
+    padding-right: 2.4em;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2308312d' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8em center;
+    background-size: 1em;
+  }
+}
+
+.facultatif {
+  font-weight: 400;
+}
+
+/* Le prix est un nombre court, la catégorie un libellé plus long : côte à côte
+   tant que la fiche a la place, l'un sous l'autre sinon. */
+.deux-champs {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+  gap: 0 1rem;
+}
+
+/* Un ingrédient = une carte : le nom à gauche, la quantité à droite dans son
+   propre cadre (« 150 g »), « Retirer » à part. */
+.ligne-recette {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(0.5rem, 1vw, 0.95rem);
+  align-items: stretch;
+  margin-bottom: clamp(0.5rem, 0.9vw, 0.85rem);
+}
+
+.ingredient-carte {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  align-items: stretch;
+  min-height: clamp(2.75rem, 3.3vw, 3.2rem);
+  border: 1px solid var(--saes-bordure);
+  border-radius: 10px;
+  background: #fbf9f2;
+
+  select {
+    min-width: 0;
+    border: none;
+    background-color: transparent;
+    color: var(--saes-vert);
+    font: inherit;
+    font-size: 1.1rem;
+    padding: 0.5em 2.4em 0.5em 0.9em;
+  }
+}
+
+/* La quantité et son unité dans un même cadre, l'unité contre le nombre. */
+.quantite-unite {
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+  margin: -1px;
+  padding-inline: 0.9em;
+  border: 1px solid var(--saes-bordure);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--saes-vert);
+  font-size: 1.1rem;
+  cursor: text;
+
+  input {
+    flex: 0 1 auto;
+    /* Largeur donnée par le gabarit (largeurQuantite) : l'unité reste contre le
+       nombre. */
+    width: 4ch;
+    min-width: 2ch;
+    max-width: 100%;
+    align-self: stretch;
+    border: none;
+    background: none;
+    outline: none;
+    padding: 0.5em 0;
+    font: inherit;
+    color: inherit;
+    appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      appearance: none;
+      margin: 0;
+    }
+  }
+
+  &:focus-within {
+    outline: 3px solid var(--saes-vert);
+    outline-offset: 2px;
+  }
+}
+
+.unite {
+  color: var(--saes-vert-attenue);
+  white-space: nowrap;
+}
+
+/* « Retirer » et « Ajouter » : les deux boutons de la recette. */
+.btn-retirer,
+.btn-ajout {
+  gap: 0.5em;
+  min-height: 2.75rem;
+  font-size: 1.05rem;
+
+  svg {
+    width: 1.2em;
+    height: 1.2em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+/* Les gros boutons à contour (Ajouter, Annuler) ont un trait de 2 px. */
+.btn-ajout {
+  min-height: 3rem;
+  padding-inline: 1.4em;
+  border: 2px solid var(--saes-vert-clair);
+  font-size: clamp(1.05rem, 1.15vw, 1.15rem);
+  font-weight: 700;
+}
+
+.actions-formulaire .btn-secondaire {
+  border: 2px solid var(--saes-vert-clair);
+}
+
+.btn-retirer {
+  background: #fff;
+  color: var(--saes-rouge-fonce);
+  border-color: rgb(230 12 26 / 35%);
+}
+
+.actions-formulaire {
+  display: grid;
+  grid-template-columns: 1.85fr 1fr;
+  gap: clamp(0.75rem, 1.3vw, 1.25rem);
+  margin-top: 1.1rem;
+}
+
+.btn-grand {
+  min-height: clamp(3.25rem, 4vw, 3.9rem);
+  font-size: clamp(1.1rem, 1.4vw, 1.3rem);
+  font-weight: 800;
+}
+
+/* Fiche étroite (à côté de la liste, ou sur un petit écran) : le nom de
+   l'ingrédient prend toute la première ligne, la quantité et « Retirer » passent
+   dessous, le tout dans un cadre, pour que le nom reste lisible et qu'on voie
+   quelle quantité et quel « Retirer » vont avec lui. */
+@container fiche (max-width: 25rem) {
+  .ligne-recette {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem;
+    padding: 0.6rem;
+    border: 1px solid var(--saes-bordure);
+    border-radius: 10px;
+    background: #f9f6ec;
+    margin-bottom: 0.6rem;
+  }
+
+  .ingredient-carte {
+    display: contents;
+  }
+
+  .ingredient-carte select {
+    grid-column: 1 / -1;
+    min-height: 2.75rem;
+    border: 1px solid var(--saes-bordure);
+    border-radius: 10px;
+    background-color: #fff;
+  }
+
+  .quantite-unite {
+    margin: 0;
+    min-height: 2.75rem;
+  }
+}
+
+@container fiche (max-width: 20.625rem) {
+  .deux-champs {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@container fiche (max-width: 18.75rem) {
+  .actions-formulaire {
+    grid-template-columns: 1fr;
+  }
+
+  /* « Retirer » plus serré : la quantité garde la place d'un nombre comme 0,125. */
+  .btn-retirer {
+    padding-inline: 0.55em;
+    font-size: 1rem;
+  }
+}

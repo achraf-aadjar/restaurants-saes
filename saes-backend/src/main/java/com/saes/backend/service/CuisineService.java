@@ -83,7 +83,7 @@ public class CuisineService {
             throw new ConflitCommandeException(CommandeDto.from(commande));
         }
         if (commande.getStatut() != StatutCommande.EN_PREPARATION) {
-            throw ApiException.conflict("Cette commande n'est pas en preparation");
+            throw ApiException.conflict("Cette commande n'est pas en préparation");
         }
 
         commande.setStatut(StatutCommande.PRETE);

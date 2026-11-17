@@ -1,6 +1,9 @@
 package com.saes.backend.service;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -26,11 +29,16 @@ public class MenuConsultationService {
 
     private final RestaurantRepository restaurantRepository;
     private final MenuRepository menuRepository;
+    private final HoraireService horaireService;
 
+    /** « Ouvert » suit la meme regle que le refus de « Passer une commande ». */
     public List<RestaurantSummaryDto> listerRestaurantsActifs() {
+        LocalDateTime maintenant = LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault());
         return restaurantRepository.findAll().stream()
                 .filter(Restaurant::isEstActif)
-                .map(RestaurantSummaryDto::from)
+                .map(r -> RestaurantSummaryDto.from(r,
+                        horaireService.plagesDuJour(r, maintenant.toLocalDate()),
+                        horaireService.estOuvertA(r, maintenant)))
                 .toList();
     }
 

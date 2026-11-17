@@ -66,7 +66,15 @@ class CommandesTest extends IntegrationTest {
 
     @Test
     void passerUneCommandeEstRefuseSiLeRestaurantEstFerme() {
-        // Ouvert seulement demain : ferme en ce moment.
+        ouvrirSeulementDemain();
+
+        Reponse commande = monde.passerCommande(monde.jetonClient, monde.platId, 1);
+
+        assertThat(commande.statut()).isEqualTo(409);
+    }
+
+    /** Ouvert seulement demain : ferme en ce moment. */
+    private void ouvrirSeulementDemain() {
         Map<String, Object> restaurant = Monde.requeteRestaurant("Ferme aujourd'hui");
         String jourDemain = switch (LocalDate.now().plusDays(1).getDayOfWeek()) {
             case MONDAY -> "LUNDI";
@@ -80,10 +88,6 @@ class CommandesTest extends IntegrationTest {
         restaurant.put("horaires", List.of(
                 Map.of("jour", jourDemain, "heureOuverture", "08:00:00", "heureFermeture", "20:00:00")));
         ok(api.put(monde.jetonAdmin, "/api/admin/restaurants/" + monde.restaurantId, avecTables(restaurant)));
-
-        Reponse commande = monde.passerCommande(monde.jetonClient, monde.platId, 1);
-
-        assertThat(commande.statut()).isEqualTo(409);
     }
 
     @Test
@@ -91,6 +95,16 @@ class CommandesTest extends IntegrationTest {
         ok(api.put(monde.jetonAdmin, "/api/admin/restaurants/" + monde.restaurantId + "/desactiver", null));
 
         assertThat(monde.passerCommande(monde.jetonClient, monde.platId, 1).statut()).isEqualTo(404);
+        assertThat(api.post(monde.jetonServeur, "/api/serveur/commandes",
+                Map.of("type", "A_EMPORTER", "lignes", List.of(lignes(monde.platId, 1)))).statut()).isEqualTo(409);
+    }
+
+    @Test
+    void unPlatDemandeDeuxFoisNeFaitQuUneLigne() {
+        Reponse commande = ok(api.post(monde.jetonServeur, "/api/serveur/commandes", Map.of("type", "A_EMPORTER",
+                "lignes", List.of(lignes(monde.platId, 1), lignes(monde.platId, 2)))));
+
+        assertThat(commande.liste("$.lignes[*].quantite")).containsExactly(3);
     }
 
     @Test
@@ -135,6 +149,36 @@ class CommandesTest extends IntegrationTest {
         assertThat(modifiee.statut()).isEqualTo(200);
         assertThat(modifiee.<String>lire("$.statut")).isEqualTo("EN_ATTENTE");
         assertThat(modifiee.entier("$.montantTotal")).isEqualTo(Monde.PRIX_PLAT + 2L * Monde.PRIX_BOISSON);
+    }
+
+    @Test
+    void regle4ModifierUneCommandeGardeLePrixDesPlatsQuiYSontDeja() {
+        long id = ok(api.post(monde.jetonServeur, "/api/serveur/commandes",
+                Map.of("type", "A_EMPORTER", "lignes", List.of(lignes(monde.platId, 2))))).id();
+        ok(api.put(monde.jetonGerant, "/api/gerant/plats/" + monde.platId, Map.of(
+                "nom", "Thieboudienne", "prix", 5000, "categorie", "PLAT_PRINCIPAL",
+                "recette", List.of(Map.of("ingredientId", monde.rizId, "quantiteNecessaire", 0.5)))));
+
+        Reponse modifiee = ok(api.put(monde.jetonServeur, "/api/serveur/commandes/" + id, Map.of(
+                "version", monde.version(id),
+                "lignes", List.of(lignes(monde.platId, 3), lignes(monde.boissonId, 1)))));
+
+        assertThat(modifiee.entier("$.montantTotal")).isEqualTo(3L * Monde.PRIX_PLAT + Monde.PRIX_BOISSON);
+    }
+
+    @Test
+    void regle2UnPlatDevenuInactifResteDansLaCommandeMaisNAugmentePas() {
+        long id = ok(api.post(monde.jetonServeur, "/api/serveur/commandes", Map.of("type", "A_EMPORTER",
+                "lignes", List.of(lignes(monde.platId, 1), lignes(monde.boissonId, 2))))).id();
+        ok(api.put(monde.jetonGerant, "/api/gerant/plats/" + monde.boissonId + "/desactiver", null));
+        String url = "/api/serveur/commandes/" + id;
+
+        assertThat(api.put(monde.jetonServeur, url, Map.of("version", monde.version(id),
+                "lignes", List.of(lignes(monde.platId, 2), lignes(monde.boissonId, 2)))).statut()).isEqualTo(200);
+        assertThat(api.put(monde.jetonServeur, url, Map.of("version", monde.version(id),
+                "lignes", List.of(lignes(monde.platId, 2), lignes(monde.boissonId, 1)))).statut()).isEqualTo(200);
+        assertThat(api.put(monde.jetonServeur, url, Map.of("version", monde.version(id),
+                "lignes", List.of(lignes(monde.platId, 2), lignes(monde.boissonId, 3)))).statut()).isEqualTo(409);
     }
 
     @Test

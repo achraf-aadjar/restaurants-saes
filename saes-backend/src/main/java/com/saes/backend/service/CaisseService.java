@@ -63,7 +63,7 @@ public class CaisseService {
     @Transactional
     public SessionCaisseDto ouvrir(Long caissierId, OuvrirCaisseRequest request) {
         if (sessionCaisseRepository.findByCaissierIdAndDateHeureClotureIsNull(caissierId).isPresent()) {
-            throw ApiException.conflict("Vous avez deja une caisse ouverte");
+            throw ApiException.conflict("Vous avez déjà une caisse ouverte");
         }
         Utilisateur caissier = utilisateurRepository.getReferenceById(caissierId);
 
@@ -89,7 +89,7 @@ public class CaisseService {
             throw new ConflitCommandeException(CommandeDto.from(commande));
         }
         if (commande.getStatut() != StatutCommande.PRETE) {
-            throw ApiException.conflict("Cette commande n'est pas prete");
+            throw ApiException.conflict("Cette commande n'est pas prête");
         }
 
         commande.setStatut(StatutCommande.PAYEE);
@@ -114,9 +114,7 @@ public class CaisseService {
 
         int totalEspeces = paiementRepository.findBySessionCaisse_Id(session.getId()).stream()
                 .filter(p -> p.getModePaiement() == ModePaiement.ESPECES)
-                .mapToInt(p -> p.getCommande().getLignes().stream()
-                        .mapToInt(l -> l.getPrixUnitaire() * l.getQuantite())
-                        .sum())
+                .mapToInt(p -> p.getCommande().getMontantTotal())
                 .sum();
         int montantTheorique = session.getFondDeCaisse() + totalEspeces;
         int ecart = request.montantCompte() - montantTheorique;

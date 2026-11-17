@@ -1,18 +1,12 @@
-<h1>Statistiques de ventes</h1>
-
-<section class="carte">
-  <form (ngSubmit)="charger()" class="ligne-dynamique">
-    <div class="champ champ-inline">
-      <label for="debutSV">Du</label>
-      <input id="debutSV" name="debutSV" type="date" [(ngModel)]="debut" />
-    </div>
-    <div class="champ champ-inline">
-      <label for="finSV">Au</label>
-      <input id="finSV" name="finSV" type="date" [(ngModel)]="fin" />
-    </div>
-    <button type="submit" class="btn btn-primaire btn-petit" [disabled]="chargement()">Afficher</button>
-  </form>
-</section>
+<div class="titre-page">
+  <h1>Statistiques de ventes</h1>
+  <app-choix-periode
+    [debut]="periode().debut"
+    [fin]="periode().fin"
+    [occupe]="chargement()"
+    (choisie)="charger($event)"
+  />
+</div>
 
 @if (erreur(); as e) {
   <p class="message-refus">{{ e }}</p>
@@ -21,64 +15,85 @@
 @if (chargement()) {
   <p>Chargement…</p>
 } @else if (statistiques(); as s) {
-  <section class="carte" style="margin-top: 1rem">
-    <p class="total-panier">
-      {{ s.nombreCommandesPayees }} commande(s) payée(s) — montant moyen :
-      {{ s.montantMoyen | number: '1.0-0' }} FCFA
-    </p>
-  </section>
+  <div class="chiffres">
+    <app-chiffre-cle
+      icone="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7ZM14 2v4a2 2 0 0 0 2 2h4M10 9H8M16 13H8M16 17H8"
+      [nombre]="s.nombreCommandesPayees"
+      [libelle]="s.nombreCommandesPayees > 1 ? 'commandes payées' : 'commande payée'"
+    />
+    <app-chiffre-cle
+      icone="M2 8a6 6 0 1 0 12 0a6 6 0 1 0-12 0M18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"
+      [nombre]="s.montantMoyen | montant"
+      libelle="montant moyen d'une commande"
+    />
+  </div>
 
-  <section class="carte" style="margin-top: 1rem">
-    <h2>Ventes par plat</h2>
-    @if (s.parPlat.length === 0) {
-      <p>Aucune vente sur cette période.</p>
-    } @else {
-      <table class="table-simple">
-        <thead>
-          <tr>
-            <th>Plat</th>
-            <th>Catégorie</th>
-            <th>Quantité vendue</th>
-            <th>Montant</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (v of s.parPlat; track v.platId) {
+  <div class="colonnes">
+    <section class="carte bloc">
+      <h2>Par catégorie</h2>
+      @if (categories().length === 0) {
+        <p>Aucune vente sur cette période.</p>
+      } @else {
+        <table class="categories">
+          <thead>
             <tr>
-              <td>{{ v.nom }}</td>
-              <td>{{ v.categorie }}</td>
-              <td>{{ v.quantiteVendue }}</td>
-              <td>{{ v.montant }} FCFA</td>
+              <th scope="col"><span class="sr-seul">Catégorie</span></th>
+              <th scope="col">Quantité vendue</th>
+              <th scope="col">Montant</th>
             </tr>
-          }
-        </tbody>
-      </table>
-    }
-  </section>
+          </thead>
+          <tbody>
+            @for (v of categories(); track v.categorie) {
+              <tr>
+                <td>
+                  <span class="nom-ligne">{{ libellesCategoriesPluriel[v.categorie] }}</span>
+                  <div class="barre" aria-hidden="true">
+                    <span [style.width.%]="largeurBarre(v.montant)"></span>
+                  </div>
+                </td>
+                <td class="qte">
+                  {{ v.quantiteVendue }}
+                  <span class="vendus">{{ v.quantiteVendue > 1 ? 'vendus' : 'vendu' }}</span>
+                </td>
+                <td class="montant">{{ v.montant | montant }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </section>
 
-  <section class="carte" style="margin-top: 1rem">
-    <h2>Ventes par catégorie</h2>
-    @if (s.parCategorie.length === 0) {
-      <p>Aucune vente sur cette période.</p>
-    } @else {
-      <table class="table-simple">
-        <thead>
-          <tr>
-            <th>Catégorie</th>
-            <th>Quantité vendue</th>
-            <th>Montant</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (v of s.parCategorie; track v.categorie) {
-            <tr>
-              <td>{{ v.categorie }}</td>
-              <td>{{ v.quantiteVendue }}</td>
-              <td>{{ v.montant }} FCFA</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    }
-  </section>
+    <section class="carte bloc">
+      <h2>Par plat</h2>
+      @if (plats().length === 0) {
+        <p>Aucune vente sur cette période.</p>
+      } @else {
+        <div class="cadre-tableau">
+          <table class="plats">
+            <thead>
+              <tr>
+                <th scope="col">Plat</th>
+                <th scope="col">Catégorie</th>
+                <th scope="col">Quantité vendue</th>
+                <th scope="col">Montant</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (v of plats(); track v.platId) {
+                <tr>
+                  <td class="nom-ligne">{{ v.nom }}</td>
+                  <td class="cat">{{ libellesCategories[v.categorie] }}</td>
+                  <td class="qte">
+                    {{ v.quantiteVendue }}
+                    <span class="vendus">{{ v.quantiteVendue > 1 ? 'vendus' : 'vendu' }}</span>
+                  </td>
+                  <td class="montant">{{ v.montant | montant }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  </div>
 }

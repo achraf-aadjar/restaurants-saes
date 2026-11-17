@@ -9,14 +9,23 @@
   --saes-creme: #fcfbf7; /* fond */
 
   --saes-vert-clair: #0f4a43;
+  --saes-vert-attenue: #526f6c; /* textes secondaires : le vert eclairci, contraste 5,3 */
   --saes-rouge-fonce: #b50a15;
   --saes-bordure: #e4ddc9;
   --saes-texte-clair: #ffffff;
+  --saes-vert-pale: #e6f3ec; /* fonds verts pâles : pastille d'icône, choix retenu, quantité */
+  --saes-rose: #f9ece4; /* cadres roses de l'ecran 1 : total, pastille d'articles */
 
   --saes-rayon: 10px;
   --saes-ombre: 0 2px 8px rgba(8, 49, 45, 0.08);
 
   --saes-font: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Mise en page des ecrans de reference (1536 px de large) : le contenu prend
+     toute la largeur avec 36 px de marge ; la marge suit la fenetre (16 px sur
+     telephone). Au-dela de 1536 px, le contenu reste a sa largeur, centre. */
+  --saes-gouttiere: clamp(1rem, 2.35vw, 2.25rem);
+  --saes-largeur-page: 1536px;
 }
 
 * {
@@ -47,6 +56,34 @@ a {
   color: var(--saes-vert);
 }
 
+/* Le focus au clavier se voit partout : liens, boutons, choix, lignes
+   selectionnables. Il n'apparait pas au clic de souris (:focus-visible). */
+:focus-visible {
+  outline: 3px solid var(--saes-vert);
+  outline-offset: 2px;
+}
+
+/* Titre d'une page du personnel : la meme echelle que le titre de la page des
+   menus, et sa phrase d'introduction plus lisible. Le titre du bandeau du
+   restaurant (.identite) garde sa taille. */
+.corps:has(app-barre-laterale.visible) .contenu h1:not(.identite h1) {
+  margin-bottom: 0.2rem;
+  font-size: clamp(1.75rem, 3vw, 2.875rem);
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.corps:has(app-barre-laterale.visible) .contenu h1 + .commande-meta {
+  margin-bottom: 1rem;
+  font-size: clamp(1rem, 1.25vw, 1.2rem);
+  color: var(--saes-vert);
+}
+
+/* Sous l'en-tete, le bandeau jaune des menus suit sans trait (ecran 1). */
+.page:has(.bandeau-restaurant.pleine-largeur) .entete {
+  border-bottom-color: transparent;
+}
+
 button {
   font-family: inherit;
 }
@@ -61,6 +98,7 @@ button {
   border: 1px solid transparent;
   font-weight: 600;
   font-size: 0.95rem;
+  text-decoration: none; /* un lien presente comme un bouton (« Clôturer la caisse ») */
   cursor: pointer;
   transition:
     background-color 0.15s ease,
@@ -130,14 +168,37 @@ button {
   outline-offset: 1px;
 }
 
+/* Refus comme sur l'écran de référence 2 : fond rose pâle, « ! » dans un rond
+   rouge, sans cadre ni trait (la barre rouge à gauche veut dire « choisi »).
+   Le texte reste rouge foncé (contraste 6,1 sur le rose). Le bord transparent
+   devient visible en contraste élevé. */
 .message-refus {
+  position: relative;
   background: #fdeceb;
   color: var(--saes-rouge-fonce);
-  border: 1px solid var(--saes-rouge);
+  border: 1px solid transparent;
   border-radius: var(--saes-rayon);
-  padding: 0.75em 1em;
+  padding: 0.75em 1em 0.75em 2.75em;
   font-weight: 600;
   margin-bottom: 1rem;
+  scroll-margin-top: 1rem; /* marge gardee quand la page defile jusqu'au refus */
+}
+
+.message-refus::before {
+  content: '!' / ''; /* décoratif : le lecteur d'écran lit seulement le message */
+  position: absolute;
+  left: 0.9em;
+  top: calc(0.75em + 0.5lh - 0.65em); /* centré sur la première ligne */
+  display: grid;
+  place-items: center;
+  width: 1.3em;
+  height: 1.3em;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: var(--saes-rouge);
+  color: var(--saes-texte-clair);
+  font-weight: 800;
+  line-height: 1;
 }
 
 .message-ok {
@@ -152,6 +213,26 @@ button {
 .formulaire-etroit {
   max-width: 420px;
   margin: 1rem auto;
+}
+
+/* Ouvrir et cloturer la caisse : le formulaire est a gauche de sa carte, comme le
+   reste de la page, avec des champs et un bouton a taille de caisse. */
+.formulaire-caisse {
+  margin: 0;
+}
+
+.formulaire-caisse .champ label {
+  font-size: 1.05rem;
+}
+
+.formulaire-caisse .champ input {
+  font-size: 1.2rem;
+  padding: 0.65em 0.8em;
+}
+
+.formulaire-caisse .btn {
+  min-height: 3rem;
+  font-size: 1.1rem;
 }
 
 /* Pages Connexion / Inscription (pages/auth/auth.scss) : la zone de contenu
@@ -169,7 +250,7 @@ button {
 
 .mention-confidentialite {
   font-size: 0.8rem;
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
   margin: -0.4rem 0 1rem;
 }
 
@@ -192,7 +273,7 @@ button {
   }
 
   th {
-    color: #6b6b5f;
+    color: var(--saes-vert-attenue);
     font-weight: 600;
   }
 }
@@ -216,8 +297,27 @@ button {
 }
 
 .badge-attente {
-  background: #fff6d9;
-  color: #7a5900;
+  background: #fff1b8;
+  color: #6b4d00;
+}
+
+/* En attente : un gris-bleu, pour ne pas confondre avec « En preparation ». */
+.badge-neutre {
+  background: #e3eaec;
+  color: #2c4a50;
+}
+
+/* Un point devant chaque statut, comme sur les ecrans de reference. La
+   pastille « Ouvert » du bandeau a le sien (.badge-point). */
+.badge:not(.badge-point)::before {
+  content: '';
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  margin-right: 0.45em;
+  border-radius: 50%;
+  background: currentColor;
+  vertical-align: 0.03em;
 }
 
 .liste-commandes {
@@ -231,6 +331,13 @@ button {
   flex-direction: column;
 }
 
+/* Les cartes d'une rangee ont la meme hauteur : le total (et l'action qui le
+   suit) descend en bas de la carte, aligne d'une carte a l'autre, comme le
+   bouton des cartes de la cuisine et des plats. */
+.commande .total-panier {
+  margin-top: auto;
+}
+
 .commande-entete {
   display: flex;
   justify-content: space-between;
@@ -240,13 +347,86 @@ button {
 
 .commande-date {
   font-size: 0.8rem;
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
 }
 
 .commande-meta {
   font-size: 0.85rem;
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
   margin: 0 0 0.5rem;
+}
+
+/* Nombre a lire d'un coup d'oeil : numero d'une commande (ecran de reference 2),
+   chiffre cle d'un rapport (ecran de reference 5). */
+.grand-nombre {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.chiffres-cles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+
+  p {
+    margin: 0;
+  }
+}
+
+/* Carte « Ma caisse » : ses informations a gauche, « Clôturer la caisse » a droite. */
+.ma-caisse {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+
+  h2 {
+    margin-bottom: 0.3rem;
+  }
+
+  .commande-meta {
+    margin-bottom: 0.2rem;
+  }
+}
+
+/* Choix parmi deux ou trois options (mode de paiement, sur place ou a emporter).
+   Le choix retenu : fond vert pâle, trait vert et coche, comme sur les écrans de
+   référence 3 et 6. Le rouge reste à l'action (« Encaisser ») et à « où je suis ». */
+.choix-groupe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.choix-groupe:last-child {
+  margin-bottom: 0;
+}
+
+.choix {
+  flex: 1;
+  padding: 0.6em 1em;
+  border: 1px solid var(--saes-bordure);
+  border-radius: var(--saes-rayon);
+  background: #fff;
+  color: var(--saes-vert);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.choix[aria-pressed='true'] {
+  border-color: var(--saes-vert-clair);
+  box-shadow: inset 0 0 0 1px var(--saes-vert-clair); /* trait de 2 px, même taille */
+  background: var(--saes-vert-pale);
+}
+
+.choix[aria-pressed='true']::before {
+  content: '✓ ';
+  color: var(--saes-vert);
 }
 
 /* Mise en page "menu + panier", partagee entre la consultation des menus
@@ -262,7 +442,7 @@ button {
 }
 
 .plat .description {
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
   font-size: 0.85rem;
   margin: 0 0 0.6rem;
 }
@@ -273,10 +453,20 @@ button {
   margin: 0 0 0.5rem;
 }
 
+/* Sur telephone, les plats d'abord, puis la commande : le client voit le menu
+   des le premier ecran (une barre en bas de l'ecran resume sa commande, voir
+   menu-consultation). A partir de 860 px, la commande passe a droite. */
 .mise-en-page {
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   gap: 1.5rem;
+}
+
+/* Un element qui recoit le focus au clavier ne passe pas sous cette barre. */
+@media (max-width: 859.98px) {
+  html:has(.barre-panier) {
+    scroll-padding-bottom: 6rem;
+  }
 }
 
 .colonne-menu {
@@ -293,7 +483,7 @@ button {
 }
 
 .panier-vide {
-  color: #6b6b5f;
+  color: var(--saes-vert-attenue);
   font-size: 0.9rem;
 }
 
@@ -360,8 +550,9 @@ button {
     align-items: flex-start;
   }
 
+  /* 480 px sur l'ecran de reference 1, a 1536 px. */
   .colonne-panier {
-    width: 300px;
+    width: clamp(300px, 31.25vw, 480px);
     flex-shrink: 0;
     position: sticky;
     top: 1rem;
@@ -373,10 +564,22 @@ button {
   margin-top: 1rem;
 }
 
+/* Confirmation dans une carte : une question courte, puis deux boutons à leur
+   taille, côte à côte ; l'un sous l'autre seulement si la place manque, sans
+   jamais couper leur texte. Discrète pour ne pas trop allonger la carte. */
+.confirmation-carte p {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
 .actions-danger {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.6rem;
-  margin-top: 0.75rem;
+
+  .btn {
+    white-space: nowrap;
+  }
 }
 
 .btn-petit {
@@ -384,10 +587,22 @@ button {
   font-size: 0.82rem;
 }
 
+/* Titre d'un ecran et son action principale a droite, comme « + Nouveau plat »
+   sur l'ecran de reference 4. */
+.titre-page {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.titre-page h1 {
+  margin: 0;
+}
+
 .formulaire-creation {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--saes-bordure);
   max-width: 480px;
 }
 
@@ -431,9 +646,41 @@ button {
   width: 110px;
 }
 
+/* Une date ne tient pas dans 110 px : le champ garde sa largeur naturelle. */
+.champ-inline input[type='date'] {
+  width: auto;
+}
+
+/* Champ qui prend la place restante de sa ligne, comme l'ingredient d'une recette. */
+.champ-inline.champ-etire {
+  flex: 1;
+  max-width: 320px;
+}
+
+.champ-inline.champ-etire select {
+  width: 100%;
+}
+
 .actions-colonne {
   display: flex;
   gap: 0.5rem;
+}
+
+/* Espacements et largeurs ponctuels, plutot que des styles ecrits dans le HTML. */
+.bloc-suivant {
+  margin-top: 1rem;
+}
+
+.bloc-espace-bas {
+  margin-bottom: 1.5rem;
+}
+
+.actions-sous-formulaire {
+  margin-top: 1.25rem;
+}
+
+.saisie-courte {
+  width: 100px;
 }
 
 /* ---------- Espace d'administration (pages/admin) ---------- */

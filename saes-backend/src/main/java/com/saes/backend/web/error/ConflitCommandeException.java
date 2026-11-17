@@ -15,7 +15,7 @@ public class ConflitCommandeException extends RuntimeException {
     private final transient CommandeDto commandeActuelle;
 
     public ConflitCommandeException(CommandeDto commandeActuelle) {
-        super("La commande a change depuis que vous l'avez affichee");
+        super("La commande a changé depuis que vous l'avez affichée");
         this.commandeActuelle = commandeActuelle;
     }
 

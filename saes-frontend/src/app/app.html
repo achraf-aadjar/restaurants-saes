@@ -2,9 +2,14 @@
   @if (!espaceAdmin()) {
     <app-header />
   }
-  <main class="contenu">
-    <router-outlet />
-  </main>
+  <div class="corps">
+    @if (!espaceAdmin()) {
+      <app-barre-laterale />
+    }
+    <main class="contenu">
+      <router-outlet />
+    </main>
+  </div>
   @if (!espaceAdmin()) {
     <app-footer />
   }

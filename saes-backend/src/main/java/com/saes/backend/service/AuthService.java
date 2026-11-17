@@ -97,7 +97,7 @@ public class AuthService {
         GoogleIdToken.Payload payload = verifierJetonGoogle(request.idToken());
         String email = payload.getEmail();
         if (email == null || !Boolean.TRUE.equals(payload.getEmailVerified())) {
-            throw ApiException.badRequest("Ce compte Google n'a pas d'adresse e-mail verifiee");
+            throw ApiException.badRequest("Ce compte Google n'a pas d'adresse e-mail vérifiée");
         }
 
         Utilisateur utilisateur = utilisateurRepository.findByEmailIgnoreCase(email).orElseGet(() -> {

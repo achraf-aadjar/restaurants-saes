@@ -16,4 +16,15 @@
     pour les comptes du restaurant.
   </p>
   <p><em>Page provisoire : contenu complet à rédiger (voir issue #8 du tableau de tâches).</em></p>
+
+  <h2>Crédits photo</h2>
+  <ul>
+    @for (c of credits; track c.source) {
+      <li>
+        {{ c.description }} : photo de {{ c.auteur }},
+        <a [href]="c.source" target="_blank" rel="noopener">Wikimedia Commons</a>, licence
+        {{ c.licence }}.
+      </li>
+    }
+  </ul>
 </section>

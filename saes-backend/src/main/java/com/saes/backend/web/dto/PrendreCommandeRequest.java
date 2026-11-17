@@ -15,5 +15,5 @@ import jakarta.validation.constraints.NotNull;
 public record PrendreCommandeRequest(
         @NotNull TypeCommande type,
         Long tableId,
-        @NotEmpty @Valid List<LigneDemandeeDto> lignes) {
+        @NotEmpty List<@Valid LigneDemandeeDto> lignes) {
 }

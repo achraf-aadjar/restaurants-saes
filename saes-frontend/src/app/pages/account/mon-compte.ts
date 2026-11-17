@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 
 import { AuthService } from '../../core/auth.service';
 import { motifErreur } from '../../core/erreur.util';
+import { FocusAuRendu } from '../../shared/focus-au-rendu';
+import { RefusVisible } from '../../shared/refus-visible';
 
 /**
  * Gerer son compte (cahier des charges §4.1) : voir/modifier ses
@@ -11,7 +13,7 @@ import { motifErreur } from '../../core/erreur.util';
  */
 @Component({
   selector: 'app-mon-compte',
-  imports: [FormsModule],
+  imports: [FocusAuRendu, FormsModule, RefusVisible],
   templateUrl: './mon-compte.html',
 })
 export class MonCompte {
@@ -31,6 +33,8 @@ export class MonCompte {
   protected readonly erreur = signal<string | null>(null);
   protected readonly succes = signal<string | null>(null);
   protected readonly confirmationSuppression = signal(false);
+  /** Vrai quand on vient de renoncer : « Supprimer mon compte » reprend le focus du clavier. */
+  protected readonly retourFocus = signal(false);
 
   protected estClientSeul(): boolean {
     return this.auth.utilisateur()?.roles.length === 1 && this.auth.aLeRole('CLIENT');
@@ -71,8 +75,14 @@ export class MonCompte {
       },
       error: (err) => {
         this.enCours.set(false);
+        this.confirmationSuppression.set(false);
         this.erreur.set(motifErreur(err, 'Suppression impossible'));
       },
     });
+  }
+
+  protected garderCompte(): void {
+    this.confirmationSuppression.set(false);
+    this.retourFocus.set(true);
   }
 }

@@ -12,6 +12,6 @@ public record InscriptionRequest(
         @NotBlank String nom,
         @NotBlank String prenom,
         @NotBlank @Email String email,
-        @NotBlank @Size(min = 8, message = "doit contenir au moins 8 caracteres") String motDePasse,
+        @NotBlank @Size(min = 8, message = "doit contenir au moins 8 caractères") String motDePasse,
         String telephone) {
 }

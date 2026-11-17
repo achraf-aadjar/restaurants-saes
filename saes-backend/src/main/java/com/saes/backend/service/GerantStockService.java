@@ -44,6 +44,9 @@ public class GerantStockService {
     public IngredientDto creer(Long gerantId, IngredientSaveRequest request) {
         Restaurant restaurant = personnelRestaurantResolver.restaurantDe(gerantId);
         valider(request);
+        if (ingredientRepository.existsByRestaurantIdAndNom(restaurant.getId(), request.nom())) {
+            throw nomDejaPris();
+        }
         Ingredient ingredient = new Ingredient();
         ingredient.setRestaurant(restaurant);
         appliquer(ingredient, request);
@@ -56,6 +59,9 @@ public class GerantStockService {
         Restaurant restaurant = personnelRestaurantResolver.restaurantDe(gerantId);
         valider(request);
         Ingredient ingredient = ingredientDuRestaurant(ingredientId, restaurant);
+        if (ingredientRepository.existsByRestaurantIdAndNomAndIdNot(restaurant.getId(), request.nom(), ingredientId)) {
+            throw nomDejaPris();
+        }
         appliquer(ingredient, request);
         return IngredientDto.from(ingredient, mouvementStockRepository.calculerStock(ingredient.getId()));
     }
@@ -77,8 +83,13 @@ public class GerantStockService {
 
     private void valider(IngredientSaveRequest request) {
         if (request.niveauCible().compareTo(request.seuilAlerte()) < 0) {
-            throw ApiException.badRequest("Le niveau cible ne peut pas etre inferieur au seuil d'alerte");
+            throw ApiException.badRequest("Le niveau cible ne peut pas être inférieur au seuil d'alerte");
         }
+    }
+
+    /** Deux ingredients du meme nom se confondraient dans les recettes, le stock et les ruptures. */
+    private static ApiException nomDejaPris() {
+        return ApiException.conflict("Un ingrédient porte déjà ce nom dans votre restaurant");
     }
 
     private void appliquer(Ingredient ingredient, IngredientSaveRequest request) {
@@ -90,9 +101,9 @@ public class GerantStockService {
 
     private Ingredient ingredientDuRestaurant(Long ingredientId, Restaurant restaurant) {
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> ApiException.notFound("Ingredient introuvable"));
+                .orElseThrow(() -> ApiException.notFound("Ingrédient introuvable"));
         if (!ingredient.getRestaurant().getId().equals(restaurant.getId())) {
-            throw ApiException.forbidden("Cet ingredient n'appartient pas a votre restaurant");
+            throw ApiException.forbidden("Cet ingrédient n'appartient pas à votre restaurant");
         }
         return ingredient;
     }

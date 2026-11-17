@@ -1,0 +1,152 @@
+<h1>Encaisser une commande</h1>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+@if (chargement()) {
+  <p>Chargement…</p>
+} @else if (caisseOuverte(); as session) {
+  <div class="encaissement">
+    <div class="encaissement-liste">
+      <app-ma-caisse [session]="session" />
+
+      <section class="carte">
+        <h2>Commandes prêtes</h2>
+        @if (commandes().length === 0) {
+          <p>Aucune commande prête.</p>
+        } @else {
+          <table class="table-simple tableau-commandes">
+            <thead>
+              <tr>
+                <th>Commande</th>
+                <th>Arrivée</th>
+                <th>Sur place ou à emporter</th>
+                <th>Montant</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (c of commandes(); track c.id) {
+                <tr [class.choisie]="c.id === commandeChoisie()?.id" (click)="choisir(c.id)">
+                  <td>
+                    <button
+                      type="button"
+                      class="ligne-choix"
+                      [attr.aria-pressed]="c.id === commandeChoisie()?.id"
+                      [attr.aria-label]="'Choisir la commande ' + c.id"
+                      (click)="choisir(c.id); $event.stopPropagation()"
+                    >
+                      {{ c.id }}
+                    </button>
+                  </td>
+                  <td>
+                    @if (estAujourdhui(c.dateHeure)) {
+                      {{ c.dateHeure | date: formatHeure }}
+                    } @else {
+                      {{ c.dateHeure | date }}
+                    }
+                  </td>
+                  <td>{{ c.type === 'SUR_PLACE' ? 'Table ' + c.tableNumero : 'À emporter' }}</td>
+                  <td>{{ c.montantTotal | montant }}</td>
+                  <td>
+                    <span class="badge" [class]="classeBadge(c.statut)">{{
+                      libelles[c.statut]
+                    }}</span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </section>
+    </div>
+
+    @if (commandeChoisie(); as c) {
+      <aside class="carte detail-encaissement" aria-label="Commande à encaisser">
+        <h2>
+          Commande {{ c.id }}
+          <span class="detail-lieu"
+            >·
+            {{ c.type === 'SUR_PLACE' ? 'sur place, table ' + c.tableNumero : 'à emporter' }}</span
+          >
+        </h2>
+        <ul class="detail-lignes">
+          @for (ligne of c.lignes; track ligne.platId) {
+            <li>
+              <span>{{ ligne.quantite }} × {{ ligne.platNom }}</span>
+              <span>{{ ligne.quantite * ligne.prixUnitaire | montant }}</span>
+            </li>
+          }
+        </ul>
+
+        <p class="a-payer">
+          <span>À payer :</span>
+          <strong>{{ c.montantTotal | montant }}</strong>
+        </p>
+
+        <div class="choix-groupe" role="group" aria-label="Mode de paiement">
+          <button
+            type="button"
+            class="choix"
+            [attr.aria-pressed]="modePaiementDe(c.id) === 'ESPECES'"
+            (click)="changerModePaiement(c.id, 'ESPECES')"
+          >
+            Espèces
+          </button>
+          <button
+            type="button"
+            class="choix"
+            [attr.aria-pressed]="modePaiementDe(c.id) === 'MOBILE_MONEY'"
+            (click)="changerModePaiement(c.id, 'MOBILE_MONEY')"
+          >
+            Mobile Money
+          </button>
+        </div>
+
+        @if (confirmationEncaissement() === c.id) {
+          <p class="confirmation-encaissement">
+            Encaisser {{ c.montantTotal | montant }} en
+            {{ modePaiementDe(c.id) === 'ESPECES' ? 'espèces' : 'Mobile Money' }} ?
+          </p>
+          <div class="actions-encaissement">
+            <button
+              type="button"
+              class="btn btn-primaire btn-encaisser"
+              [disabled]="actionEnCours()"
+              (click)="encaisser(c)"
+            >
+              Oui, encaisser
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondaire btn-encaisser"
+              (click)="confirmationEncaissement.set(null)"
+            >
+              Annuler
+            </button>
+          </div>
+        } @else {
+          <button
+            type="button"
+            class="btn btn-primaire btn-encaisser"
+            [disabled]="actionEnCours()"
+            (click)="confirmationEncaissement.set(c.id)"
+          >
+            Encaisser {{ c.montantTotal | montant }}
+          </button>
+        }
+        @if (modePaiementDe(c.id) === 'MOBILE_MONEY') {
+          <p class="note-paiement">
+            Pour Mobile Money, vérifiez d'abord que le paiement est bien reçu.
+          </p>
+        }
+      </aside>
+    }
+  </div>
+} @else {
+  <section class="carte">
+    <p>La caisse n'est pas ouverte.</p>
+    <a routerLink="/caissier/ouvrir" class="btn btn-primaire">Ouvrir la caisse</a>
+  </section>
+}

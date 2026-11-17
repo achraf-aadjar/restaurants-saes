@@ -1,51 +1,51 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { CaisseService } from '../../core/caisse.service';
 import { classeBadgeStatut, LIBELLES_STATUT_COMMANDE } from '../../core/commande.util';
+import { estAujourdhui, FORMAT_HEURE } from '../../core/date.util';
 import { motifErreur } from '../../core/erreur.util';
 import { CommandeDto, ModePaiement, SessionCaisseDto } from '../../core/models';
+import { MontantPipe } from '../../shared/montant.pipe';
+import { RefusVisible } from '../../shared/refus-visible';
+import { MaCaisse } from './ma-caisse';
 
-/**
- * Ouvrir la caisse, Encaisser une commande, Cloturer la caisse (cahier des
- * charges §4.5), cote caissier.
- */
+/** Encaisser une commande (cahier des charges §4.5), cote caissier. */
 @Component({
-  selector: 'app-caisse',
-  imports: [FormsModule, DatePipe],
-  templateUrl: './caisse.html',
+  selector: 'app-encaisser-commande',
+  imports: [RouterLink, DatePipe, MaCaisse, MontantPipe, RefusVisible],
+  templateUrl: './encaisser-commande.html',
+  styleUrl: './encaisser-commande.scss',
 })
-export class Caisse {
+export class EncaisserCommande {
   private readonly caisseService = inject(CaisseService);
 
-  protected readonly libelles = LIBELLES_STATUT_COMMANDE;
-  protected readonly classeBadge = classeBadgeStatut;
-
-  protected readonly session = signal<SessionCaisseDto | null>(null);
+  protected readonly caisseOuverte = signal<SessionCaisseDto | null>(null);
   protected readonly commandes = signal<CommandeDto[]>([]);
   protected readonly chargement = signal(true);
   protected readonly erreur = signal<string | null>(null);
   protected readonly actionEnCours = signal(false);
+  protected readonly libelles = LIBELLES_STATUT_COMMANDE;
+  protected readonly classeBadge = classeBadgeStatut;
+  protected readonly estAujourdhui = estAujourdhui;
+  protected readonly formatHeure = FORMAT_HEURE;
 
-  protected fondDeCaisse = 10000;
-  protected montantCompte = 0;
+  /** La commande dont le paiement est prepare ; par defaut, la plus ancienne. */
+  private readonly choix = signal<number | null>(null);
+  protected readonly commandeChoisie = computed(
+    () => this.commandes().find((c) => c.id === this.choix()) ?? this.commandes()[0] ?? null,
+  );
+
   protected modePaiementParCommande = new Map<number, ModePaiement>();
-  protected readonly clotureOuverte = signal(false);
   protected readonly confirmationEncaissement = signal<number | null>(null);
-  protected readonly resultatCloture = signal<SessionCaisseDto | null>(null);
 
   constructor() {
-    this.charger();
-  }
-
-  private charger(): void {
-    this.chargement.set(true);
     this.caisseService.maSession().subscribe({
       next: (session) => {
-        this.session.set(session);
+        this.caisseOuverte.set(session && !session.dateHeureCloture ? session : null);
         this.chargement.set(false);
-        if (session && !session.dateHeureCloture) {
+        if (this.caisseOuverte()) {
           this.chargerCommandes();
         }
       },
@@ -66,23 +66,21 @@ export class Caisse {
           }
         }
       },
+      error: (err) => this.erreur.set(motifErreur(err, 'Impossible de charger les commandes')),
     });
   }
 
-  protected ouvrir(): void {
-    this.erreur.set(null);
-    this.actionEnCours.set(true);
-    this.caisseService.ouvrir({ fondDeCaisse: this.fondDeCaisse }).subscribe({
-      next: () => {
-        this.actionEnCours.set(false);
-        this.resultatCloture.set(null);
-        this.charger();
-      },
-      error: (err) => {
-        this.actionEnCours.set(false);
-        this.erreur.set(motifErreur(err, "Impossible d'ouvrir la caisse"));
-      },
-    });
+  protected choisir(commandeId: number): void {
+    this.choix.set(commandeId);
+    this.confirmationEncaissement.set(null);
+    // Sous 1100 px, le detail est sous la liste : on l'amene a l'ecran.
+    if (window.matchMedia('(width < 68.75rem)').matches) {
+      setTimeout(() =>
+        document
+          .querySelector('.detail-encaissement')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+      );
+    }
   }
 
   protected modePaiementDe(commandeId: number): ModePaiement {
@@ -97,7 +95,10 @@ export class Caisse {
     this.erreur.set(null);
     this.actionEnCours.set(true);
     this.caisseService
-      .encaisser(commande.id, { modePaiement: this.modePaiementDe(commande.id), version: commande.version })
+      .encaisser(commande.id, {
+        modePaiement: this.modePaiementDe(commande.id),
+        version: commande.version,
+      })
       .subscribe({
         next: () => {
           this.actionEnCours.set(false);
@@ -111,22 +112,5 @@ export class Caisse {
           this.chargerCommandes();
         },
       });
-  }
-
-  protected cloturer(): void {
-    this.erreur.set(null);
-    this.actionEnCours.set(true);
-    this.caisseService.cloturer({ montantCompte: this.montantCompte }).subscribe({
-      next: (session) => {
-        this.actionEnCours.set(false);
-        this.clotureOuverte.set(false);
-        this.resultatCloture.set(session);
-        this.charger();
-      },
-      error: (err) => {
-        this.actionEnCours.set(false);
-        this.erreur.set(motifErreur(err, 'Impossible de clôturer la caisse'));
-      },
-    });
   }
 }

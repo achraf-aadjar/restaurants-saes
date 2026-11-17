@@ -1,0 +1,69 @@
+<h1>Signaler une rupture</h1>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+@if (ruptureConfirmee()) {
+  <p class="message-ok">Rupture signalée : les plats concernés ont été désactivés.</p>
+}
+
+<section class="carte">
+  @if (ingredients().length === 0) {
+    <p>Aucun ingrédient.</p>
+  } @else {
+    <form (ngSubmit)="confirmationRupture.set(true)" class="ligne-dynamique">
+      <div class="champ champ-inline champ-etire">
+        <label for="ingredientRupture">Ingrédient</label>
+        <select
+          id="ingredientRupture"
+          [(ngModel)]="ingredientSelectionne"
+          (ngModelChange)="changerIngredient()"
+          name="ingredientRupture"
+        >
+          @for (i of ingredients(); track i.id) {
+            <option [ngValue]="i.id">
+              {{ i.nom }} (stock : {{ i.stock | quantite: i.unite }})
+            </option>
+          }
+        </select>
+      </div>
+      @if (!confirmationRupture()) {
+        <button type="submit" class="btn btn-primaire btn-petit" [appFocusAuRendu]="retourFocus()">
+          Signaler la rupture
+        </button>
+      }
+    </form>
+
+    @if (confirmationRupture()) {
+      <div
+        class="confirmation-carte"
+        role="group"
+        aria-labelledby="question-rupture"
+        (keydown.escape)="nePasSignaler()"
+      >
+        <p id="question-rupture">
+          Signaler la rupture de « {{ nomIngredientSelectionne() }} » ? Les plats qui en contiennent
+          seront désactivés et son stock ramené à zéro.
+        </p>
+        <div class="actions-danger">
+          <button
+            type="button"
+            class="btn btn-primaire btn-petit"
+            [disabled]="ruptureEnCours() !== null"
+            (click)="signalerRupture()"
+          >
+            Signaler la rupture
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondaire btn-petit"
+            appFocusAuRendu
+            (click)="nePasSignaler()"
+          >
+            Ne pas signaler
+          </button>
+        </div>
+      </div>
+    }
+  }
+</section>
