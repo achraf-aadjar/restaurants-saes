@@ -56,21 +56,39 @@ class HoraireService {
     }
 
     /**
-     * Vrai si le creneau [debut, fin) est entierement contenu dans une seule
-     * plage d'ouverture du meme jour (regle 14 : une plage commence et finit
-     * le meme jour, donc un creneau qui chevauche minuit n'est jamais dans
-     * les horaires).
+     * Vrai si le creneau [debut, fin) est entierement dans les horaires du
+     * jour (regle 14 : une plage commence et finit le meme jour, donc un
+     * creneau qui chevauche minuit n'est jamais dans les horaires). Des plages
+     * collees (12:00 - 14:00 puis 14:00 - 16:00) forment une seule periode
+     * d'ouverture : un creneau peut passer de l'une a l'autre.
      */
     boolean creneauDansHoraires(Restaurant restaurant, LocalDateTime debut, LocalDateTime fin) {
         if (!debut.toLocalDate().equals(fin.toLocalDate())) {
             return false;
         }
-        JourSemaine jour = JOURS.get(debut.getDayOfWeek());
         LocalTime heureDebut = debut.toLocalTime();
         LocalTime heureFin = fin.toLocalTime();
-        List<HoraireOuverture> horaires = horaireOuvertureRepository.findByRestaurantId(restaurant.getId());
-        return horaires.stream()
-                .filter(h -> h.getJour() == jour)
-                .anyMatch(h -> !heureDebut.isBefore(h.getHeureOuverture()) && !heureFin.isAfter(h.getHeureFermeture()));
+
+        LocalTime ouverture = null;
+        LocalTime fermeture = null;
+        for (HoraireOuverture plage : plagesDuJour(restaurant, debut.toLocalDate())) {
+            if (fermeture != null && !plage.getHeureOuverture().isAfter(fermeture)) {
+                // Plage collee a la precedente : la periode d'ouverture continue.
+                if (plage.getHeureFermeture().isAfter(fermeture)) {
+                    fermeture = plage.getHeureFermeture();
+                }
+                continue;
+            }
+            if (contient(ouverture, fermeture, heureDebut, heureFin)) {
+                return true;
+            }
+            ouverture = plage.getHeureOuverture();
+            fermeture = plage.getHeureFermeture();
+        }
+        return contient(ouverture, fermeture, heureDebut, heureFin);
+    }
+
+    private static boolean contient(LocalTime ouverture, LocalTime fermeture, LocalTime debut, LocalTime fin) {
+        return ouverture != null && !debut.isBefore(ouverture) && !fin.isAfter(fermeture);
     }
 }
