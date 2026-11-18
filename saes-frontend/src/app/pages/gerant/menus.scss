@@ -1,0 +1,103 @@
+/*
+ * Menus : le tableau est complet quand sa carte est large. Quand elle est
+ * étroite (téléphone, fenêtre réduite, texte agrandi), chaque menu devient
+ * une fiche, comme les écarts de caisse des rapports financiers : le nom et
+ * le bouton « Modifier », puis chaque valeur sous son nom. Rien n'est caché
+ * à droite, rien n'est à faire glisser.
+ */
+
+.liste-menus {
+  container: menus / inline-size;
+}
+
+/* Lu par les lecteurs d'écran, invisible à l'écran (colonne du bouton). */
+.cache-visuel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@container menus (max-width: 30rem) {
+  table {
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    tbody tr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-areas:
+        'nom nom action'
+        'debut fin plats';
+      gap: 0.6rem 0.75rem;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--saes-bordure);
+    }
+
+    tbody tr:first-child {
+      padding-top: 0;
+    }
+
+    tbody tr:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    td {
+      padding: 0;
+      border: none;
+      font-size: 1rem;
+      overflow-wrap: anywhere;
+    }
+
+    .nom {
+      grid-area: nom;
+      align-self: center;
+      font-weight: 700;
+    }
+
+    .debut {
+      grid-area: debut;
+    }
+
+    .fin {
+      grid-area: fin;
+    }
+
+    .plats {
+      grid-area: plats;
+    }
+
+    .actions-colonne {
+      grid-area: action;
+      justify-self: end;
+      align-self: start;
+    }
+
+    td[data-label]::before {
+      content: attr(data-label);
+      display: block;
+      color: var(--saes-vert-attenue);
+      font-size: 0.85em;
+      font-weight: 400;
+    }
+  }
+}
+
+/* Carte très étroite : les deux dates côte à côte, le nombre de plats dessous. */
+@container menus (max-width: 18rem) {
+  table tbody tr {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      'nom action'
+      'debut fin'
+      'plats .';
+  }
+}

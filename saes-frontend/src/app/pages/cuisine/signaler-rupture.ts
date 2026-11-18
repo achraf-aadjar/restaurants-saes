@@ -13,6 +13,7 @@ import { RefusVisible } from '../../shared/refus-visible';
   selector: 'app-signaler-rupture',
   imports: [FocusAuRendu, FormsModule, QuantitePipe, RefusVisible],
   templateUrl: './signaler-rupture.html',
+  styleUrl: './signaler-rupture.scss',
 })
 export class SignalerRupture {
   private readonly ruptureService = inject(RuptureService);

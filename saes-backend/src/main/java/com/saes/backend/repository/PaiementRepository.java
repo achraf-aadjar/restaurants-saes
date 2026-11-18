@@ -12,6 +12,4 @@ public interface PaiementRepository extends JpaRepository<Paiement, Long> {
     List<Paiement> findByCommande_Restaurant_IdAndDateHeureBetween(Long restaurantId, Instant debut, Instant fin);
 
     List<Paiement> findBySessionCaisse_Id(Long sessionCaisseId);
-
-    List<Paiement> findByDateHeureBetween(Instant debut, Instant fin);
 }

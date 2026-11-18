@@ -1,16 +1,11 @@
 <div class="page">
-  @if (!espaceAdmin()) {
-    <app-header />
-  }
+  <app-header />
   <div class="corps">
-    @if (!espaceAdmin()) {
-      <app-barre-laterale />
-    }
+    <app-barre-laterale />
     <main class="contenu">
       <router-outlet />
     </main>
   </div>
-  @if (!espaceAdmin()) {
-    <app-footer />
-  }
+  <app-footer />
 </div>
+<app-panneau-panier />

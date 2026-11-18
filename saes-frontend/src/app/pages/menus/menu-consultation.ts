@@ -1,21 +1,20 @@
 import {
+  afterNextRender,
   Component,
   computed,
-  effect,
-  ElementRef,
   inject,
+  Injector,
   LOCALE_ID,
   signal,
-  viewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
 
 import { AuthService } from '../../core/auth.service';
-import { CommandeClientService } from '../../core/commande-client.service';
 import { periodeEnLettres } from '../../core/date.util';
 import { motifErreur } from '../../core/erreur.util';
 import { CategoriePlat, MenuDto, PlatResume, RestaurantSummary } from '../../core/models';
 import { MenuService } from '../../core/menu.service';
+import { PanierService } from '../../core/panier.service';
+import { CompteurQuantite } from '../../shared/compteur-quantite';
 import { IconeCategorie } from '../../shared/icone-categorie';
 import { MontantPipe } from '../../shared/montant.pipe';
 import { PhotoPlat } from '../../shared/photo-plat';
@@ -36,11 +35,6 @@ interface GroupeCategorie {
   plats: PlatResume[];
 }
 
-interface LignePanier {
-  plat: PlatResume;
-  quantite: number;
-}
-
 interface MenuAffiche {
   menu: MenuDto;
   periode: string;
@@ -56,38 +50,38 @@ function grouperParCategorie(plats: PlatResume[]): GroupeCategorie[] {
 }
 
 /**
- * Consulter les menus (cahier des charges §4.2, accessible sans compte) et,
- * pour un client connecte, Passer une commande en ligne (§4.3). Chaque menu
- * en vigueur est affiche avec son nom, ses dates et ses plats actifs, ranges
- * par categorie.
+ * Consulter les menus (cahier des charges §4.2, accessible sans compte) et
+ * remplir le panier pour Passer une commande en ligne (§4.3). Chaque menu en
+ * vigueur est affiche avec son nom, ses dates et ses plats actifs, ranges par
+ * categorie. « Ajouter » met un plat dans le panier ; la carte montre alors sa
+ * quantite (− n +) et un contour rouge. Le panier lui-meme s'ouvre depuis
+ * le bouton « Panier » de l'en-tete (voir PanneauPanier).
  */
 @Component({
   selector: 'app-menu-consultation',
-  imports: [BandeauRestaurant, IconeCategorie, MontantPipe, PhotoPlat, RefusVisible],
+  imports: [
+    BandeauRestaurant,
+    CompteurQuantite,
+    IconeCategorie,
+    MontantPipe,
+    PhotoPlat,
+    RefusVisible,
+  ],
   templateUrl: './menu-consultation.html',
   styleUrl: './menu-consultation.scss',
 })
 export class MenuConsultation {
   private readonly menuService = inject(MenuService);
-  private readonly commandeClientService = inject(CommandeClientService);
-  private readonly router = inject(Router);
+  private readonly injector = inject(Injector);
   private readonly locale = inject(LOCALE_ID);
   protected readonly auth = inject(AuthService);
+  protected readonly panier = inject(PanierService);
 
   protected readonly restaurants = signal<RestaurantSummary[]>([]);
   protected readonly restaurantSelectionne = this.menuService.restaurantConsulte;
   protected readonly menus = signal<MenuDto[]>([]);
   protected readonly chargement = signal(false);
   protected readonly erreur = signal<string | null>(null);
-
-  protected readonly panier = signal<Map<number, LignePanier>>(new Map());
-  protected readonly envoiEnCours = signal(false);
-  protected readonly commandeConfirmee = signal(false);
-
-  private readonly colonnePanier = viewChild<ElementRef<HTMLElement>>('colonnePanier');
-  private readonly titrePanier = viewChild<ElementRef<HTMLElement>>('titrePanier');
-  /** Vrai quand une partie de la commande est a l'ecran. */
-  private readonly panierEnVue = signal(false);
 
   protected readonly menusAffiches = computed<MenuAffiche[]>(() =>
     this.menus().map((menu) => ({
@@ -106,41 +100,16 @@ export class MenuConsultation {
     () => !this.auth.estConnecte() || this.auth.aLeRole('CLIENT'),
   );
 
-  protected readonly lignesPanier = computed(() => Array.from(this.panier().values()));
-  protected readonly totalPanier = computed(() =>
-    this.lignesPanier().reduce((total, l) => total + l.plat.prix * l.quantite, 0),
-  );
-  /** « 4 articles » : la somme des quantites, comme sur l'ecran de reference 1. */
-  protected readonly nombreArticles = computed(() =>
-    this.lignesPanier().reduce((total, l) => total + l.quantite, 0),
-  );
-
-  /**
-   * Sur telephone, la commande vient apres les plats : une barre en bas de
-   * l'ecran la resume des le premier plat ajoute, et s'efface quand la commande
-   * elle-meme est en vue (la feuille de style la cache a partir de 860 px).
-   */
-  protected readonly afficherBarrePanier = computed(
-    () => this.nombreArticles() > 0 && !this.commandeConfirmee() && !this.panierEnVue(),
-  );
-
   constructor() {
-    effect((nettoyer) => {
-      const colonne = this.colonnePanier()?.nativeElement;
-      if (!colonne || typeof IntersectionObserver === 'undefined') return;
-      const observateur = new IntersectionObserver(([entree]) =>
-        this.panierEnVue.set(entree.isIntersecting),
-      );
-      observateur.observe(colonne);
-      nettoyer(() => observateur.disconnect());
-    });
-
     this.chargement.set(true);
     this.menuService.restaurants().subscribe({
       next: (restaurants) => {
         this.restaurants.set(restaurants);
-        if (restaurants.length > 0) {
-          this.selectionner(restaurants[0]);
+        // Le restaurant du panier d'abord : on retrouve ses plats.
+        const restaurant =
+          restaurants.find((r) => r.id === this.panier.restaurantId()) ?? restaurants[0];
+        if (restaurant) {
+          this.selectionner(restaurant);
         } else {
           this.chargement.set(false);
         }
@@ -154,13 +123,16 @@ export class MenuConsultation {
 
   protected selectionner(restaurant: RestaurantSummary): void {
     this.restaurantSelectionne.set(restaurant);
-    this.panier.set(new Map());
     this.chargement.set(true);
     this.erreur.set(null);
     this.menuService.menusEnVigueur(restaurant.id).subscribe({
       next: (menus) => {
         this.menus.set(menus);
         this.chargement.set(false);
+        this.panier.actualiser(
+          restaurant.id,
+          menus.flatMap((m) => m.plats),
+        );
       },
       error: (err) => {
         this.chargement.set(false);
@@ -169,67 +141,43 @@ export class MenuConsultation {
     });
   }
 
-  protected ajouter(plat: PlatResume): void {
-    const copie = new Map(this.panier());
-    const existant = copie.get(plat.id);
-    copie.set(plat.id, { plat, quantite: (existant?.quantite ?? 0) + 1 });
-    this.panier.set(copie);
-  }
-
-  protected retirer(plat: PlatResume): void {
-    const copie = new Map(this.panier());
-    const existant = copie.get(plat.id);
-    if (!existant) return;
-    if (existant.quantite <= 1) {
-      copie.delete(plat.id);
-    } else {
-      copie.set(plat.id, { plat, quantite: existant.quantite - 1 });
-    }
-    this.panier.set(copie);
-  }
-
-  /** La corbeille d'une ligne : le plat sort de la commande. */
-  protected enlever(plat: PlatResume): void {
-    const copie = new Map(this.panier());
-    copie.delete(plat.id);
-    this.panier.set(copie);
-  }
-
-  /** « Voir ma commande » : descend jusqu'a la commande et y place le focus. */
-  protected voirLaCommande(): void {
-    const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    this.colonnePanier()?.nativeElement.scrollIntoView({
-      behavior: reduit ? 'auto' : 'smooth',
-      block: 'start',
-    });
-    this.titrePanier()?.nativeElement.focus({ preventScroll: true });
-  }
-
-  protected passerCommande(): void {
+  /**
+   * « Ajouter » : le plat entre dans le panier. Le panier n'a qu'un restaurant
+   * a la fois ; s'il contient deja des plats d'un autre, on demande avant de
+   * le vider. Le bouton laisse place au compteur : le focus passe sur son « + ».
+   */
+  protected ajouter(plat: PlatResume, carte: HTMLElement): void {
     const restaurant = this.restaurantSelectionne();
-    if (!restaurant || this.lignesPanier().length === 0) return;
-
-    this.erreur.set(null);
-    this.envoiEnCours.set(true);
-    this.commandeClientService
-      .passerCommande({
-        restaurantId: restaurant.id,
-        lignes: this.lignesPanier().map((l) => ({ platId: l.plat.id, quantite: l.quantite })),
-      })
-      .subscribe({
-        next: () => {
-          this.envoiEnCours.set(false);
-          this.panier.set(new Map());
-          this.commandeConfirmee.set(true);
-        },
-        error: (err) => {
-          this.envoiEnCours.set(false);
-          this.erreur.set(motifErreur(err, "La commande n'a pas pu être enregistrée"));
-        },
-      });
+    if (!restaurant) return;
+    const autre = this.panier.restaurantId();
+    if (autre !== null && autre !== restaurant.id && this.panier.lignes().length > 0) {
+      const nomAutre = this.restaurants().find((r) => r.id === autre)?.nom ?? 'un autre restaurant';
+      const vider = window.confirm(
+        `Votre panier contient des plats de ${nomAutre}. Le vider pour commander ici ?`,
+      );
+      if (!vider) return;
+    }
+    this.panier.ajouter(plat, restaurant.id);
+    this.focusDans(carte, 'app-compteur-quantite button:last-of-type');
   }
 
-  protected voirMesCommandes(): void {
-    this.router.navigate(['/mes-commandes']);
+  /** « − » sur la carte : a zero, le compteur redevient « Ajouter », qui prend le focus. */
+  protected retirer(plat: PlatResume, carte: HTMLElement): void {
+    this.panier.retirer(plat);
+    if (this.panier.quantite(plat.id) === 0) this.focusDans(carte, '.btn-ajouter');
+  }
+
+  /** Quantite sur la carte : celle du panier, s'il est de ce restaurant. */
+  protected quantite(plat: PlatResume): number {
+    return this.panier.restaurantId() === this.restaurantSelectionne()?.id
+      ? this.panier.quantite(plat.id)
+      : 0;
+  }
+
+  /** Apres le rendu, le focus va au bouton voulu de la carte du plat. */
+  private focusDans(carte: HTMLElement, selecteur: string): void {
+    afterNextRender(() => carte.querySelector<HTMLElement>(selecteur)?.focus(), {
+      injector: this.injector,
+    });
   }
 }

@@ -8,7 +8,7 @@
 }
 
 @if (formulaireOuvert()) {
-  <section class="carte">
+  <section class="carte formulaire-menu">
     <form (ngSubmit)="enregistrer()" #f="ngForm" class="formulaire-creation formulaire-large">
       <h2>{{ idEnEdition ? 'Modifier le menu' : 'Nouveau menu' }}</h2>
 
@@ -44,38 +44,40 @@
       </div>
 
       <div class="actions-colonne actions-sous-formulaire">
-        <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enregistrementEnCours()">
+        <button
+          type="submit"
+          class="btn btn-primaire"
+          [disabled]="f.invalid || enregistrementEnCours()"
+        >
           {{ enregistrementEnCours() ? 'Enregistrement…' : 'Enregistrer' }}
         </button>
-        <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert.set(false)">
-          Annuler
-        </button>
+        <button type="button" class="btn btn-secondaire" (click)="annuler()">Annuler</button>
       </div>
     </form>
   </section>
 }
 
-<section class="carte bloc-suivant">
+<section class="carte bloc-suivant liste-menus">
   @if (chargement()) {
     <p>Chargement…</p>
   } @else {
     <table class="table-simple">
       <thead>
         <tr>
-          <th>Nom</th>
-          <th>Début</th>
-          <th>Fin</th>
-          <th>Plats</th>
-          <th></th>
+          <th scope="col">Nom</th>
+          <th scope="col">Début</th>
+          <th scope="col">Fin</th>
+          <th scope="col">Plats</th>
+          <th scope="col"><span class="cache-visuel">Action</span></th>
         </tr>
       </thead>
       <tbody>
         @for (m of menus(); track m.id) {
           <tr>
-            <td>{{ m.nom }}</td>
-            <td>{{ m.dateDebut | date: 'shortDate' }}</td>
-            <td>{{ (m.dateFin | date: 'shortDate') ?? '—' }}</td>
-            <td>{{ m.plats.length }}</td>
+            <td class="nom">{{ m.nom }}</td>
+            <td class="debut" data-label="Début">{{ m.dateDebut | date: 'shortDate' }}</td>
+            <td class="fin" data-label="Fin">{{ (m.dateFin | date: 'shortDate') ?? '—' }}</td>
+            <td class="plats" data-label="Plats">{{ m.plats.length }}</td>
             <td class="actions-colonne">
               <button type="button" class="btn btn-secondaire btn-petit" (click)="ouvrirEdition(m)">
                 Modifier

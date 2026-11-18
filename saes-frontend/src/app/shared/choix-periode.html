@@ -25,12 +25,7 @@
 </div>
 
 @if (ouvert()) {
-  <section
-    id="panneau-periode"
-    class="carte panneau-periode"
-    aria-label="Choisir la période"
-    (keydown.escape)="fermer()"
-  >
+  <section id="panneau-periode" class="carte panneau-periode" aria-label="Choisir la période">
     <form (ngSubmit)="valider()" class="formulaire-periode">
       <div class="champ">
         <label for="periode-debut">Du</label>

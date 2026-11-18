@@ -13,6 +13,7 @@ import {
   Utilisateur,
 } from '../../../core/models';
 import { RefusVisible } from '../../../shared/refus-visible';
+import { SuiviFormulaire, amenerALEcran, focusDans } from '../../../shared/suivi-formulaire';
 
 /**
  * Gerer les comptes utilisateurs (cahier des charges §4.7), reserve a
@@ -23,6 +24,7 @@ import { RefusVisible } from '../../../shared/refus-visible';
   selector: 'app-users-list',
   imports: [FormsModule, RefusVisible],
   templateUrl: './users-list.html',
+  host: { '(document:keydown.escape)': 'echap($event)' },
 })
 export class UsersList {
   private readonly adminUserService = inject(AdminUserService);
@@ -52,6 +54,9 @@ export class UsersList {
   protected readonly erreurEdition = signal<string | null>(null);
   protected rolesEdition = new Set<Role>();
   protected restaurantEdition: number | null = null;
+
+  private readonly suiviRoles = new SuiviFormulaire();
+  private readonly suiviCreation = new SuiviFormulaire();
 
   constructor() {
     this.charger();
@@ -121,11 +126,69 @@ export class UsersList {
     this.formulaireOuvert.set(false);
   }
 
+  /**
+   * « + Nouveau compte du personnel » ouvre ou referme le formulaire. Le
+   * refermer garde ce qui a été saisi (comme « Annuler ») : rien n'est perdu.
+   */
+  protected basculerCreation(): void {
+    if (this.formulaireOuvert()) {
+      this.fermerCreation();
+      return;
+    }
+    this.formulaireOuvert.set(true);
+    this.suiviCreation.ouvert(null);
+  }
+
+  protected fermerCreation(): void {
+    this.formulaireOuvert.set(false);
+    this.suiviCreation.rendreFocus();
+  }
+
   protected ouvrirEditionRoles(utilisateur: Utilisateur): void {
+    const ouvert = this.enEdition();
+    if (ouvert?.id === utilisateur.id) {
+      this.fermerRoles();
+      return;
+    }
+    if (ouvert && !this.suiviRoles.peutFermer(this.etatRoles())) return;
     this.enEdition.set(utilisateur);
     this.rolesEdition = new Set(utilisateur.roles);
     this.restaurantEdition = null;
     this.erreurEdition.set(null);
+    this.suiviRoles.ouvert(this.etatRoles());
+    amenerALEcran('.formulaire-roles');
+  }
+
+  /** Rôles cochés : pour savoir s'ils ont été modifiés avant de fermer. */
+  private etatRoles(): unknown {
+    return [this.enEdition()?.id, [...this.rolesEdition].sort(), this.restaurantEdition];
+  }
+
+  /** « Annuler » : on renonce, sans question. */
+  protected annulerRoles(): void {
+    this.enEdition.set(null);
+    this.suiviRoles.rendreFocus();
+  }
+
+  /** Échap ou second clic sur « Rôles » : confirmation si des rôles ont été changés. */
+  private fermerRoles(): void {
+    if (!this.enEdition() || !this.suiviRoles.peutFermer(this.etatRoles())) return;
+    this.annulerRoles();
+  }
+
+  /**
+   * Échap ferme le formulaire où l'on se trouve ; ailleurs dans la page, les
+   * rôles d'abord, puis la création.
+   */
+  protected echap(event: Event): void {
+    if (event.defaultPrevented) return;
+    if (this.formulaireOuvert() && focusDans('.formulaire-compte')) {
+      this.fermerCreation();
+    } else if (this.enEdition()) {
+      this.fermerRoles();
+    } else if (this.formulaireOuvert()) {
+      this.fermerCreation();
+    }
   }
 
   /**

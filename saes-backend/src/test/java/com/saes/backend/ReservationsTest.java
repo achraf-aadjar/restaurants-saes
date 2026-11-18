@@ -87,6 +87,32 @@ class ReservationsTest extends IntegrationTest {
     }
 
     @Test
+    void unCreneauQuiTientDansDeuxPlagesColleesEstDansLesHoraires() {
+        LocalDate demain = LocalDate.now().plusDays(1);
+
+        // 12:00 - 14:00 et 14:00 - 16:00 : le restaurant est ouvert sans interruption de 12:00 a 16:00.
+        changerHoraires("12:00:00", "14:00:00", "14:00:00", "16:00:00");
+        assertThat(reserver(monde.jetonClient, demain.atTime(13, 30), 2).statut()).isEqualTo(201);
+
+        // 12:00 - 14:00 et 14:30 - 16:00 : le restaurant est ferme de 14:00 a 14:30.
+        changerHoraires("12:00:00", "14:00:00", "14:30:00", "16:00:00");
+        assertThat(reserver(monde.jetonClient, demain.plusDays(1).atTime(13, 30), 2).statut()).isEqualTo(409);
+    }
+
+    /** Deux plages chaque jour de la semaine. */
+    private void changerHoraires(String ouverture1, String fermeture1, String ouverture2, String fermeture2) {
+        Map<String, Object> restaurant = Monde.requeteRestaurant("Deux plages par jour");
+        List<Map<String, Object>> horaires = new ArrayList<>();
+        for (String jour : List.of("LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE")) {
+            horaires.add(Map.of("jour", jour, "heureOuverture", ouverture1, "heureFermeture", fermeture1));
+            horaires.add(Map.of("jour", jour, "heureOuverture", ouverture2, "heureFermeture", fermeture2));
+        }
+        restaurant.put("horaires", horaires);
+        restaurant.put("tables", tablesExistantes());
+        ok(api.put(monde.jetonAdmin, "/api/admin/restaurants/" + monde.restaurantId, restaurant));
+    }
+
+    @Test
     void unCreneauQuiDepasseMinuitNEstPasDansLesHorairesDUnSeulJour() {
         assertThat(reserver(monde.jetonClient, LocalDate.now().plusDays(1).atTime(23, 0), 2).statut()).isEqualTo(409);
     }
@@ -212,6 +238,19 @@ class ReservationsTest extends IntegrationTest {
                 where t.restaurant_id = ?
                 """, Integer.class, monde.restaurantId);
         assertThat(chevauchements).isZero();
+    }
+
+    @Test
+    void leGerantVoitLesReservationsAVenirDeSonSeulRestaurantEtQuiJoindre() {
+        long confirmee = ok(reserver(monde.jetonClient, DEMAIN_MIDI, 3)).id();
+        long annulee = ok(reserver(monde.jetonClient, DEMAIN_MIDI.plusDays(1), 2)).id();
+        assertThat(api.delete(monde.jetonClient, "/api/reservations/" + annulee).statut()).isEqualTo(204);
+
+        // La base de test garde les reservations des autres restaurants : il ne voit que la sienne.
+        Reponse aVenir = ok(api.get(monde.jetonGerant, "/api/gerant/reservations"));
+        assertThat(aVenir.liste("$[*].id")).containsExactly((int) confirmee);
+        assertThat(aVenir.<String>lire("$[0].clientEmail"))
+                .isEqualTo(api.get(monde.jetonClient, "/api/me").<String>lire("$.email"));
     }
 
     private List<Map<String, Object>> tablesExistantes() {

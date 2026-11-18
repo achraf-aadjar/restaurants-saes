@@ -7,7 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.saes.backend.domain.ActionJournal;
+import com.saes.backend.domain.JournalOperation;
+import com.saes.backend.repository.JournalOperationRepository;
 import com.saes.backend.support.Api.Reponse;
 import com.saes.backend.support.IntegrationTest;
 import com.saes.backend.support.Monde;
@@ -15,12 +19,33 @@ import com.saes.backend.support.Monde;
 /** Historique des operations sensibles : qui, quoi, quand, sur quel objet. */
 class JournalOperationsTest extends IntegrationTest {
 
+    @Autowired
+    private JournalOperationRepository journalOperationRepository;
+
     private Reponse journal() {
         return ok(api.get(monde.jetonAdmin, "/api/admin/journal?nombre=500"));
     }
 
     private List<Object> entrees(String action, long objetId, String champ) {
         return journal().liste("$[?(@.action == '" + action + "' && @.objetId == " + objetId + ")]." + champ);
+    }
+
+    /**
+     * Entrees lues en base : les operations de caisse et de commandes sont
+     * enregistrees, mais l'historique de l'administrateur ne les montre pas.
+     */
+    private List<JournalOperation> enregistrees(ActionJournal action, long objetId) {
+        return journalOperationRepository.findAll().stream()
+                .filter(j -> j.getAction() == action && Long.valueOf(objetId).equals(j.getObjetId()))
+                .toList();
+    }
+
+    private List<Long> acteurs(ActionJournal action, long objetId) {
+        return enregistrees(action, objetId).stream().map(j -> j.getActeur().getId()).toList();
+    }
+
+    private List<String> details(ActionJournal action, long objetId) {
+        return enregistrees(action, objetId).stream().map(JournalOperation::getDetails).toList();
     }
 
     private long id(String jeton) {
@@ -35,11 +60,14 @@ class JournalOperationsTest extends IntegrationTest {
         ok(monde.encaisser(commande, "ESPECES"));
         ok(api.put(monde.jetonCaissier, "/api/caissier/caisse/cloturer", Map.of("montantCompte", 13_500)));
 
-        assertThat(entrees("CAISSE_OUVERTE", session, "acteurId")).containsExactly((int) caissier);
-        assertThat(entrees("COMMANDE_ENCAISSEE", commande, "details")).singleElement().asString()
+        assertThat(acteurs(ActionJournal.CAISSE_OUVERTE, session)).containsExactly(caissier);
+        assertThat(details(ActionJournal.COMMANDE_ENCAISSEE, commande)).singleElement().asString()
                 .contains("4000 FCFA").contains("ESPECES");
-        assertThat(entrees("CAISSE_CLOTUREE", session, "details")).singleElement().asString()
+        assertThat(details(ActionJournal.CAISSE_CLOTUREE, session)).singleElement().asString()
                 .contains("Theorique : 14000").contains("ecart : -500");
+        assertThat(journal().liste("$[*].action")).as("l'historique de l'administrateur : son domaine seulement")
+                .isNotEmpty()
+                .allMatch(action -> ActionJournal.ADMINISTRATION.contains(ActionJournal.valueOf((String) action)));
     }
 
     @Test
@@ -58,10 +86,10 @@ class JournalOperationsTest extends IntegrationTest {
 
         ok(api.post(monde.jetonCuisinier, "/api/cuisine/ingredients/" + monde.rizId + "/signaler-rupture", null));
 
-        assertThat(entrees("COMMANDE_ANNULEE", annuleeParClient, "acteurId")).containsExactly((int) id(monde.jetonClient));
-        assertThat(entrees("COMMANDE_MODIFIEE", modifiee, "details")).singleElement().asString().contains("6000 FCFA");
-        assertThat(entrees("COMMANDE_ABANDONNEE", abandonnee, "acteurId")).containsExactly((int) id(monde.jetonGerant));
-        assertThat(entrees("RUPTURE_SIGNALEE", monde.rizId, "details")).singleElement().asString()
+        assertThat(acteurs(ActionJournal.COMMANDE_ANNULEE, annuleeParClient)).containsExactly(id(monde.jetonClient));
+        assertThat(details(ActionJournal.COMMANDE_MODIFIEE, modifiee)).singleElement().asString().contains("6000 FCFA");
+        assertThat(acteurs(ActionJournal.COMMANDE_ABANDONNEE, abandonnee)).containsExactly(id(monde.jetonGerant));
+        assertThat(details(ActionJournal.RUPTURE_SIGNALEE, monde.rizId)).singleElement().asString()
                 .contains("1 plat(s) desactive(s)").contains("ramene a zero");
     }
 
@@ -90,9 +118,10 @@ class JournalOperationsTest extends IntegrationTest {
         assertThat(monde.encaisser(commande, "ESPECES").statut()).as("commande pas prete").isEqualTo(409);
 
         long caissier = id(monde.jetonCaissier);
-        assertThat(journal().liste("$[?(@.action == 'CAISSE_OUVERTE' && @.acteurId == " + caissier + ")].objetId"))
-                .containsExactly((int) session);
-        assertThat(entrees("COMMANDE_ENCAISSEE", commande, "id")).isEmpty();
+        assertThat(journalOperationRepository.findAll().stream()
+                .filter(j -> j.getAction() == ActionJournal.CAISSE_OUVERTE && j.getActeur().getId() == caissier)
+                .map(JournalOperation::getObjetId)).containsExactly(session);
+        assertThat(enregistrees(ActionJournal.COMMANDE_ENCAISSEE, commande)).isEmpty();
     }
 
     @Test

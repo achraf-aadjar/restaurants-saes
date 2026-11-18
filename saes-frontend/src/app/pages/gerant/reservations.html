@@ -1,0 +1,45 @@
+<h1>Réservations à venir</h1>
+<p class="commande-meta">
+  Réservations confirmées de votre restaurant, en cours ou à venir : les tables retenues, et qui
+  joindre en cas de besoin.
+</p>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+<section class="carte">
+  @if (chargement()) {
+    <p>Chargement…</p>
+  } @else if (reservations().length === 0) {
+    <p>Aucune réservation à venir.</p>
+  } @else {
+    <table class="table-simple">
+      <thead>
+        <tr>
+          <th>Date et heure</th>
+          <th>Couverts</th>
+          <th>Tables</th>
+          <th>Client</th>
+          <th>Contact</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of reservations(); track r.id) {
+          <tr>
+            <td>{{ r.dateHeure | date: 'EEEE d MMMM, HH:mm' }}</td>
+            <td>{{ r.nombreCouverts }}</td>
+            <td>{{ numeros(r) }}</td>
+            <td>{{ r.clientPrenom }} {{ r.clientNom }}</td>
+            <td>
+              <a [href]="'mailto:' + r.clientEmail">{{ r.clientEmail }}</a>
+              @if (r.clientTelephone; as tel) {
+                <br /><a [href]="'tel:' + tel">{{ tel }}</a>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

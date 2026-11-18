@@ -1,0 +1,173 @@
+/*
+ * Stocks : le tableau est complet quand sa carte est large. Quand elle est
+ * étroite (téléphone, fenêtre réduite, texte agrandi), chaque ingrédient
+ * devient une fiche, comme les écarts de caisse des rapports financiers :
+ * le nom et le stock, puis chaque valeur sous son nom, puis les boutons.
+ * Rien n'est caché à droite, rien n'est à faire glisser.
+ */
+
+.liste-stocks {
+  container: stocks / inline-size;
+}
+
+/* Lu par les lecteurs d'écran, invisible à l'écran (colonnes de boutons). */
+.cache-visuel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Entrée ou sortie : sur sa propre ligne, sous l'ingrédient, collée à lui ;
+   les champs et les boutons passent à la ligne si la place manque. */
+.ligne-mouvement .ligne-dynamique {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.6rem;
+  margin-bottom: 0;
+
+  /* Mêmes champs que les formulaires de l'application. */
+  select,
+  input {
+    font: inherit;
+    font-size: 1rem;
+    padding: 0.4em 0.6em;
+    border: 1px solid var(--saes-bordure);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--saes-vert);
+  }
+
+  select:focus,
+  input:focus {
+    outline: 2px solid var(--saes-vert);
+    outline-offset: 1px;
+  }
+
+  input {
+    width: 6.5rem;
+  }
+}
+
+/* Valider et Annuler restent ensemble : ils passent à la ligne à deux. */
+.boutons-mouvement {
+  display: inline-flex;
+  gap: 0.5rem;
+}
+
+.table-simple tr:has(+ .ligne-mouvement) td {
+  border-bottom-color: transparent;
+}
+
+.table-simple .ligne-mouvement td {
+  padding-top: 0;
+  padding-bottom: 0.75rem;
+}
+
+@container stocks (max-width: 40rem) {
+  table {
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    tbody tr {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-areas:
+        'nom stock'
+        'seuil cible'
+        'unite .'
+        'actions actions';
+      gap: 0.6rem 0.75rem;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--saes-bordure);
+    }
+
+    tbody tr:first-child {
+      padding-top: 0;
+    }
+
+    tbody tr:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    td {
+      padding: 0;
+      border: none;
+      font-size: 1rem;
+      overflow-wrap: anywhere;
+    }
+
+    .nom {
+      grid-area: nom;
+      font-weight: 700;
+
+      .badge {
+        margin-left: 0.3em;
+        font-weight: 600;
+      }
+    }
+
+    .stock {
+      grid-area: stock;
+      justify-self: end;
+      text-align: right;
+      font-weight: 700;
+    }
+
+    .seuil {
+      grid-area: seuil;
+    }
+
+    .cible {
+      grid-area: cible;
+    }
+
+    .unite {
+      grid-area: unite;
+    }
+
+    .actions-colonne {
+      grid-area: actions;
+      flex-wrap: wrap;
+      padding-top: 0.15rem;
+    }
+
+    /* La saisie d'une entrée ou d'une sortie suit sa fiche, sans trait entre les deux. */
+    tbody tr:has(+ .ligne-mouvement) {
+      padding-bottom: 0.6rem;
+      border-bottom: none;
+    }
+
+    tbody tr.ligne-mouvement {
+      display: block;
+      padding-top: 0;
+    }
+
+    td[data-label]::before {
+      content: attr(data-label);
+      display: block;
+      color: var(--saes-vert-attenue);
+      font-size: 0.85em;
+      font-weight: 400;
+    }
+  }
+}
+
+/* Fiche assez large : le seuil, le niveau cible et l'unité sur une même ligne. */
+@container stocks (18rem <= width <= 40rem) {
+  table tbody tr {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-areas:
+      'nom nom stock'
+      'seuil cible unite'
+      'actions actions actions';
+  }
+}

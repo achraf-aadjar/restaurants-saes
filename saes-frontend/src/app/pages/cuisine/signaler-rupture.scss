@@ -1,0 +1,25 @@
+/*
+ * Signaler une rupture : c'est l'action de la page. La liste des ingrédients
+ * prend la place dont elle a besoin (nom et stock lisibles en entier) et le
+ * bouton a sa taille normale, à la hauteur de la liste. Quand la ligne est
+ * trop étroite (téléphone, texte agrandi), le bouton passe dessous, au lieu
+ * de couper le nom de l'ingrédient.
+ */
+.formulaire-rupture {
+  flex-wrap: wrap;
+  margin-bottom: 0;
+
+  .champ-etire {
+    flex: 1 1 16rem;
+    max-width: 28rem;
+  }
+
+  .btn {
+    min-height: 2.75rem;
+  }
+}
+
+/* La question de confirmation se détache de la liste au-dessus d'elle. */
+.confirmation-carte {
+  margin-top: 1rem;
+}

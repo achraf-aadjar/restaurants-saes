@@ -1,3 +1,26 @@
+:host {
+  display: block;
+}
+
+/*
+ * L'en-tete du client et du visiteur reste en haut de l'ecran, sur telephone
+ * comme sur ordinateur : le bouton « Panier » est toujours a portee, a la
+ * place ou on l'attend (en haut a droite, Baymard), sans barre en double en
+ * bas (NN/g, « Sticky Headers », 2021). Sur ordinateur portable, un en-tete
+ * fixe s'est montre plus facile a utiliser (Murano et Kongshaug, ICEIS 2024).
+ * Il occupe 7 a 10 % de l'ecran d'un telephone tenu droit, 12 % a 1280×600.
+ * Fenetre basse (telephone tenu en largeur, fort zoom) : il redevient normal,
+ * pour laisser la place au contenu (W3C, technique C34 : 480 px de haut). Le
+ * personnel n'a pas de panier : son en-tete ne change pas.
+ */
+@media (min-height: 30rem) {
+  :host:has(.bouton-panier) {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+  }
+}
+
 .entete {
   /* Fond creme comme la page, sur tous les ecrans de reference. */
   background: var(--saes-creme);
@@ -55,9 +78,12 @@
   }
 }
 
+/* Lien vers l'accueil : 44 px de côté au moins, la taille d'une cible au doigt. */
 .marque {
   display: flex;
   align-items: center;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
 }
 
 .logo {
@@ -114,6 +140,93 @@
   a.actif {
     border-bottom-color: var(--saes-rouge);
   }
+}
+
+/* Compte et panier, a droite ; sur telephone, le panier seul, avant le menu. */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+/* Panier : chariot et mot « Panier » ; le nombre d'articles dans une pastille
+   rouge sur le chariot, seulement s'il y en a. */
+.bouton-panier {
+  display: inline-flex;
+  align-items: center;
+  /* Assez d'air pour que la pastille du nombre ne touche pas le mot « Panier ». */
+  gap: 0.65em;
+  padding: 0.35em 0.55em;
+  border: none;
+  border-radius: var(--saes-rayon);
+  background: none;
+  color: var(--saes-vert);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: rgb(8 49 45 / 6%);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--saes-vert);
+    outline-offset: 2px;
+  }
+
+  /* Au doigt, 44 px de haut, comme les autres boutons tactiles. */
+  @media (pointer: coarse) {
+    min-height: 2.75rem;
+  }
+
+  svg {
+    display: block;
+    width: 1.55em;
+    height: 1.55em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+.icone-bouton-panier {
+  position: relative;
+}
+
+.pastille-panier {
+  position: absolute;
+  top: -0.5em;
+  right: -0.5em;
+  display: grid;
+  place-items: center;
+  min-width: 1.45em;
+  height: 1.45em;
+  padding: 0 0.3em;
+  border-radius: 999px;
+  background: var(--saes-rouge);
+  color: var(--saes-texte-clair);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 0 0 2px var(--saes-creme);
+
+  @media (forced-colors: active) {
+    border: 1px solid CanvasText;
+  }
+}
+
+/* Hors de l'ecran, mais lu par les lecteurs d'ecran. */
+.annonce-panier {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .compte {
@@ -182,10 +295,17 @@
   font-size: 0.85rem;
 }
 
+/* ☰ : 44 px de côté ; la marge négative garde le trait au même endroit. */
 .bouton-burger {
-  margin-left: auto;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-right: -0.4rem;
+  padding: 0;
   background: none;
   border: none;
+  border-radius: var(--saes-rayon);
   font-size: 1.4rem;
   cursor: pointer;
   color: var(--saes-vert);
@@ -303,8 +423,15 @@
     }
   }
 
-  .compte {
+  .actions {
     justify-self: end;
+    gap: 1.25rem;
+    margin-left: 0;
+  }
+
+  .bouton-panier {
+    font-size: 1.1rem;
+    font-weight: 500;
   }
 
   .bouton-compte {
@@ -318,5 +445,21 @@
 
   .nav-mobile {
     display: none;
+  }
+}
+
+/* Entre 860 et 1000 px, le client a trois onglets, son nom et le panier : au
+   centre de la page, les onglets laisseraient trop peu de place au nom, qui
+   passerait sur deux lignes. Ils se centrent alors entre le logo et le compte
+   (50 px plus a gauche que le centre de la page). Un nom tres long passe
+   encore sur deux lignes, sans faire deborder l'en-tete. */
+@media (min-width: 860px) and (max-width: 999.98px) {
+  .entete-ligne {
+    grid-template-columns: auto minmax(max-content, 1fr) auto;
+    column-gap: 1rem;
+  }
+
+  .nav-desktop {
+    justify-self: center;
   }
 }

@@ -1,16 +1,21 @@
 <div class="titre-page">
   <h1>Comptes utilisateurs</h1>
-  <button type="button" class="btn btn-primaire" (click)="formulaireOuvert.set(true)">
+  <button type="button" class="btn btn-primaire" (click)="basculerCreation()">
     + Nouveau compte du personnel
   </button>
 </div>
+<p class="commande-meta">
+  Pour nommer un administrateur, ouvrez les rôles d'un compte existant et cochez « Administrateur ».
+  Personne ne peut retirer son propre rôle d'administrateur ni désactiver son propre compte : un
+  autre administrateur doit le faire.
+</p>
 
 @if (erreur(); as e) {
   <p class="message-refus">{{ e }}</p>
 }
 
 @if (formulaireOuvert()) {
-  <section class="carte">
+  <section class="carte formulaire-compte">
     <form (ngSubmit)="creerPersonnel()" #f="ngForm" class="formulaire-creation">
       <h2>Nouveau compte du personnel</h2>
 
@@ -81,16 +86,14 @@
         <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || creationEnCours()">
           {{ creationEnCours() ? 'Création…' : 'Créer le compte' }}
         </button>
-        <button type="button" class="btn btn-secondaire" (click)="formulaireOuvert.set(false)">
-          Annuler
-        </button>
+        <button type="button" class="btn btn-secondaire" (click)="fermerCreation()">Annuler</button>
       </div>
     </form>
   </section>
 }
 
 @if (enEdition(); as u) {
-  <section class="carte" style="margin-top: 1rem">
+  <section class="carte bloc-suivant formulaire-roles">
     <h2>Rôles de {{ u.prenom }} {{ u.nom }}</h2>
     @if (erreurEdition(); as e) {
       <p class="message-refus">{{ e }}</p>
@@ -125,15 +128,13 @@
 
       <div class="actions-colonne">
         <button type="submit" class="btn btn-primaire">Enregistrer</button>
-        <button type="button" class="btn btn-secondaire" (click)="enEdition.set(null)">
-          Annuler
-        </button>
+        <button type="button" class="btn btn-secondaire" (click)="annulerRoles()">Annuler</button>
       </div>
     </form>
   </section>
 }
 
-<section class="carte" style="margin-top: 1rem">
+<section class="carte bloc-suivant">
   @if (chargement()) {
     <p>Chargement…</p>
   } @else {

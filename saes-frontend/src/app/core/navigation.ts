@@ -53,8 +53,7 @@ const ICONES = {
   ouvrirCaisse: cadre(3, 11, 18, 11, 2) + 'M7 11V7a5 5 0 0 1 9.9-1',
   encaisser: cadre(2, 6, 20, 12, 2) + rond(12, 12, 2) + 'M6 12h.01M18 12h.01',
   cloturerCaisse: cadre(3, 11, 18, 11, 2) + 'M7 11V7a5 5 0 0 1 10 0v4',
-  ensemble:
-    cadre(3, 3, 7, 9, 1) + cadre(14, 3, 7, 5, 1) + cadre(14, 12, 7, 9, 1) + cadre(3, 16, 7, 5, 1),
+  reservations: cadre(3, 4, 18, 18, 2) + 'M16 2v4M8 2v4M3 10h18m-12 6 2 2 4-4',
   comptes:
     rond(9, 7, 4) +
     'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',
@@ -133,6 +132,11 @@ export const SECTIONS: Section[] = [
       { libelle: 'Gérer les menus', lien: '/gerant/menus', icone: ICONES.menus },
       { libelle: 'Gérer les stocks', lien: '/gerant/stocks', icone: ICONES.stocks },
       {
+        libelle: 'Consulter les réservations à venir',
+        lien: '/gerant/reservations',
+        icone: ICONES.reservations,
+      },
+      {
         libelle: 'Déclarer une commande abandonnée',
         lien: '/gerant/commandes',
         icone: ICONES.alerte,
@@ -157,9 +161,8 @@ export const SECTIONS: Section[] = [
   {
     role: 'ADMINISTRATEUR',
     intitule: 'Administration',
-    accueil: '/admin',
+    accueil: '/admin/utilisateurs',
     fonctions: [
-      { libelle: "Vue d'ensemble", lien: '/admin', icone: ICONES.ensemble },
       {
         libelle: 'Gérer les comptes utilisateurs',
         lien: '/admin/utilisateurs',

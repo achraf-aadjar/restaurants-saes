@@ -7,8 +7,8 @@ import { authGuard, roleGuard } from './core/auth.guard';
 import { accueilDe } from './core/navigation';
 
 export const routes: Routes = [
-  // Chacun arrive sur sa page d'accueil : l'espace d'administration, la
-  // premiere fonction du personnel, les menus pour un client ou un visiteur.
+  // Chacun arrive sur sa page d'accueil : la premiere fonction du personnel
+  // ou de l'administrateur, les menus pour un client ou un visiteur.
   {
     path: '',
     pathMatch: 'full',
@@ -33,7 +33,8 @@ export const routes: Routes = [
   },
   {
     path: 'confidentialite',
-    loadComponent: () => import('./pages/confidentialite/confidentialite').then((m) => m.Confidentialite),
+    loadComponent: () =>
+      import('./pages/confidentialite/confidentialite').then((m) => m.Confidentialite),
   },
   {
     path: 'mes-commandes',
@@ -46,51 +47,24 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/mes-reservations/mes-reservations').then((m) => m.MesReservations),
   },
+  // Administration (cahier des charges §4.7) : comptes et restaurants, dans le
+  // meme cadre que le personnel. Son historique ne porte que sur ce domaine.
+  { path: 'admin', pathMatch: 'full', redirectTo: 'admin/utilisateurs' },
   {
-    path: 'admin',
+    path: 'admin/utilisateurs',
     canActivate: [roleGuard('ADMINISTRATEUR')],
-    loadComponent: () => import('./pages/admin/espace/espace-admin').then((m) => m.EspaceAdmin),
-    children: [
-      {
-        path: '',
-        pathMatch: 'full',
-        loadComponent: () => import('./pages/admin/vue-ensemble/vue-ensemble').then((m) => m.VueEnsemble),
-      },
-      {
-        path: 'finances',
-        loadComponent: () => import('./pages/admin/finances/finances').then((m) => m.AdminFinances),
-      },
-      {
-        path: 'commandes',
-        loadComponent: () => import('./pages/admin/commandes/admin-commandes').then((m) => m.AdminCommandes),
-      },
-      {
-        path: 'reservations',
-        loadComponent: () =>
-          import('./pages/admin/reservations/admin-reservations').then((m) => m.AdminReservations),
-      },
-      {
-        path: 'caisses',
-        loadComponent: () => import('./pages/admin/caisses/admin-caisses').then((m) => m.AdminCaisses),
-      },
-      {
-        path: 'stocks',
-        loadComponent: () => import('./pages/admin/stocks/admin-stocks').then((m) => m.AdminStocks),
-      },
-      {
-        path: 'restaurants',
-        loadComponent: () =>
-          import('./pages/admin/restaurants/restaurants-list').then((m) => m.RestaurantsList),
-      },
-      {
-        path: 'utilisateurs',
-        loadComponent: () => import('./pages/admin/users/users-list').then((m) => m.UsersList),
-      },
-      {
-        path: 'journal',
-        loadComponent: () => import('./pages/admin/journal/journal').then((m) => m.Journal),
-      },
-    ],
+    loadComponent: () => import('./pages/admin/users/users-list').then((m) => m.UsersList),
+  },
+  {
+    path: 'admin/restaurants',
+    canActivate: [roleGuard('ADMINISTRATEUR')],
+    loadComponent: () =>
+      import('./pages/admin/restaurants/restaurants-list').then((m) => m.RestaurantsList),
+  },
+  {
+    path: 'admin/journal',
+    canActivate: [roleGuard('ADMINISTRATEUR')],
+    loadComponent: () => import('./pages/admin/journal/journal').then((m) => m.Journal),
   },
   {
     path: 'serveur/prendre-commande',
@@ -127,8 +101,7 @@ export const routes: Routes = [
   {
     path: 'gerant/commandes',
     canActivate: [roleGuard('GERANT')],
-    loadComponent: () =>
-      import('./pages/gerant/commandes-abandon').then((m) => m.CommandesAbandon),
+    loadComponent: () => import('./pages/gerant/commandes-abandon').then((m) => m.CommandesAbandon),
   },
   {
     path: 'gerant/plats',
@@ -144,6 +117,11 @@ export const routes: Routes = [
     path: 'gerant/stocks',
     canActivate: [roleGuard('GERANT')],
     loadComponent: () => import('./pages/gerant/stocks').then((m) => m.GerantStocks),
+  },
+  {
+    path: 'gerant/reservations',
+    canActivate: [roleGuard('GERANT')],
+    loadComponent: () => import('./pages/gerant/reservations').then((m) => m.GerantReservations),
   },
   {
     path: 'gerant/recommandations',

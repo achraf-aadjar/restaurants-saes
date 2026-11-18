@@ -210,14 +210,15 @@
     }
   }
 
-  /* Le plat est coupe par le bord de la fenetre. L'image est agrandie de moitie
-     et cadree en haut a gauche (feuilles, piment, bord du plat) : le citron et
-     les grains du bas sortent du bandeau, ce qui aere la composition. */
+  /* Le plat est coupe par le bord de la fenetre. L'image est agrandie de 30 %
+     et cadree a gauche (feuilles, piment, bord du plat) ; remontee d'un
+     cinquieme, elle laisse voir le citron et une bonne part du plat. La largeur
+     ne change pas : l'ecart avec le bouton « Reserver » reste le meme. */
   .decor-bandeau {
-    top: 0;
+    top: calc(-0.2 * var(--decor));
     bottom: auto;
     width: calc(0.78 * var(--decor));
-    height: calc(1.5 * var(--decor));
+    height: calc(1.3 * var(--decor));
     object-fit: cover;
     object-position: left top;
   }

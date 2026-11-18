@@ -14,6 +14,7 @@ import {
 } from '../../core/models';
 import { MontantPipe } from '../../shared/montant.pipe';
 import { RefusVisible } from '../../shared/refus-visible';
+import { SuiviFormulaire } from '../../shared/suivi-formulaire';
 
 const CATEGORIES: CategoriePlat[] = ['ENTREE', 'PLAT_PRINCIPAL', 'DESSERT', 'BOISSON'];
 
@@ -27,6 +28,7 @@ const CATEGORIES: CategoriePlat[] = ['ENTREE', 'PLAT_PRINCIPAL', 'DESSERT', 'BOI
   imports: [FormsModule, MontantPipe, RefusVisible],
   templateUrl: './plats.html',
   styleUrl: './plats.scss',
+  host: { '(document:keydown.escape)': 'echap($event)' },
 })
 export class GerantPlats {
   private readonly gerantPlatService = inject(GerantPlatService);
@@ -50,6 +52,8 @@ export class GerantPlats {
   protected prix = 0;
   protected categorie: CategoriePlat = 'PLAT_PRINCIPAL';
   protected recette: RecetteLigneDto[] = [];
+
+  private readonly suivi = new SuiviFormulaire();
 
   constructor() {
     this.charger();
@@ -75,6 +79,11 @@ export class GerantPlats {
   }
 
   protected ouvrirCreation(): void {
+    if (this.formulaireOuvert() && this.idEnEdition === null) {
+      this.fermer();
+      return;
+    }
+    if (this.formulaireOuvert() && !this.suivi.peutFermer(this.etat())) return;
     this.idEnEdition = null;
     this.nom = '';
     this.description = '';
@@ -85,6 +94,7 @@ export class GerantPlats {
       : [];
     this.erreurFormulaire.set(null);
     this.formulaireOuvert.set(true);
+    this.suivi.ouvert(this.etat());
     this.amenerLaFiche();
   }
 
@@ -93,8 +103,25 @@ export class GerantPlats {
     return this.formulaireOuvert() && this.idEnEdition === plat.id;
   }
 
-  protected fermer(): void {
+  /** Valeurs de la fiche : pour savoir si elle a été modifiée avant de la fermer. */
+  private etat(): unknown {
+    return [this.idEnEdition, this.nom, this.description, this.prix, this.categorie, this.recette];
+  }
+
+  /** « Annuler » : on renonce, sans question. */
+  protected annuler(): void {
     this.formulaireOuvert.set(false);
+    this.suivi.rendreFocus();
+  }
+
+  /** Échap ou second clic sur le plat : confirmation si la fiche a été modifiée. */
+  protected fermer(): void {
+    if (!this.formulaireOuvert() || !this.suivi.peutFermer(this.etat())) return;
+    this.annuler();
+  }
+
+  protected echap(event: Event): void {
+    if (!event.defaultPrevented) this.fermer();
   }
 
   /**
@@ -115,6 +142,11 @@ export class GerantPlats {
   }
 
   protected ouvrirEdition(plat: PlatGerantDto): void {
+    if (this.estChoisi(plat)) {
+      this.fermer();
+      return;
+    }
+    if (this.formulaireOuvert() && !this.suivi.peutFermer(this.etat())) return;
     this.idEnEdition = plat.id;
     this.nom = plat.nom;
     this.description = plat.description ?? '';
@@ -123,6 +155,7 @@ export class GerantPlats {
     this.recette = plat.recette.map((l) => ({ ...l }));
     this.erreurFormulaire.set(null);
     this.formulaireOuvert.set(true);
+    this.suivi.ouvert(this.etat());
     this.amenerLaFiche();
   }
 

@@ -11,7 +11,7 @@
   @if (ingredients().length === 0) {
     <p>Aucun ingrédient.</p>
   } @else {
-    <form (ngSubmit)="confirmationRupture.set(true)" class="ligne-dynamique">
+    <form (ngSubmit)="confirmationRupture.set(true)" class="ligne-dynamique formulaire-rupture">
       <div class="champ champ-inline champ-etire">
         <label for="ingredientRupture">Ingrédient</label>
         <select
@@ -28,7 +28,7 @@
         </select>
       </div>
       @if (!confirmationRupture()) {
-        <button type="submit" class="btn btn-primaire btn-petit" [appFocusAuRendu]="retourFocus()">
+        <button type="submit" class="btn btn-primaire" [appFocusAuRendu]="retourFocus()">
           Signaler la rupture
         </button>
       }
