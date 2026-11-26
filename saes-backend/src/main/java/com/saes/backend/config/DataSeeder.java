@@ -67,11 +67,14 @@ import com.saes.backend.repository.UtilisateurRepository;
  * "dev" : la production n'en recoit jamais rien. Le tirage aleatoire part
  * d'une graine fixe, donc deux installations obtiennent exactement le meme jeu.
  *
- * <p>Ce qu'il contient : trois restaurants avec leurs tables et leurs horaires,
+ * <p>Ce qu'il contient : le restaurant de l'EPT avec ses tables et ses horaires,
  * un compte par role plus du personnel et des clients, des ingredients et leurs
  * mouvements de stock, des plats avec leur recette, des menus, dix semaines de
  * commandes payees avec leurs paiements et leurs sessions de caisse, des
  * reservations passees et a venir, et des entrees de journal.
+ *
+ * <p>Un seul restaurant est cree : c'est a l'administrateur d'en ajouter
+ * d'autres depuis son ecran, comme le prevoit le cahier des charges (§4.7).
  *
  * <p>Toutes les regles du cahier des charges sont respectees : le prix d'une
  * ligne est celui du plat au moment ou elle est creee (regle 4), le stock est
@@ -124,20 +127,6 @@ public class DataSeeder {
                     new int[][] {{1, 2}, {2, 2}, {3, 2}, {4, 4}, {5, 4}, {6, 4}, {7, 6}, {8, 6}, {9, 8}},
                     LocalTime.of(8, 0), LocalTime.of(21, 0), false));
 
-            Restaurant baobab = restaurantRepository.save(restaurant(
-                    "Le Baobab",
-                    "Avenue Lamine Guèye, Thiès, Sénégal",
-                    "+221 33 951 14 22", 120,
-                    new int[][] {{1, 2}, {2, 2}, {3, 4}, {4, 4}, {5, 6}, {6, 8}},
-                    LocalTime.of(11, 0), LocalTime.of(23, 0), true));
-
-            Restaurant terrasse = restaurantRepository.save(restaurant(
-                    "La Terrasse du SAES",
-                    "Cité Malick Sy, Thiès, Sénégal",
-                    "+221 33 952 07 18", 90,
-                    new int[][] {{1, 4}, {2, 4}, {3, 4}, {4, 6}, {5, 6}},
-                    LocalTime.of(9, 0), LocalTime.of(20, 0), true));
-
             // ----- Comptes -----------------------------------------------------
             // Les six comptes de la documentation gardent leur adresse et leur role.
             Utilisateur admin = utilisateur("Seck", "Awa", "admin@saes.sn", passwordEncoder, null, Role.ADMINISTRATEUR);
@@ -151,14 +140,11 @@ public class DataSeeder {
                     admin, gerant, caissier, cuisinier, serveur, client,
                     utilisateur("Sow", "Aminata", "a.sow@saes.sn", passwordEncoder, ept, Role.SERVEUR),
                     utilisateur("Gueye", "Moussa", "m.gueye@saes.sn", passwordEncoder, ept, Role.CUISINIER),
-                    utilisateur("Cissé", "Ndeye", "n.cisse@saes.sn", passwordEncoder, ept, Role.CAISSIER),
-                    utilisateur("Thiam", "Ibrahima", "i.thiam@saes.sn", passwordEncoder, baobab, Role.GERANT),
-                    utilisateur("Sarr", "Fatou", "f.sarr@saes.sn", passwordEncoder, baobab, Role.CAISSIER),
-                    utilisateur("Diallo", "Cheikh", "c.diallo@saes.sn", passwordEncoder, terrasse, Role.GERANT)));
+                    utilisateur("Cissé", "Ndeye", "n.cisse@saes.sn", passwordEncoder, ept, Role.CAISSIER)));
 
             // Un compte qui porte deux roles : un seul compte suffit (cahier §3).
             Utilisateur gerantCaissier = utilisateur(
-                    "Mbaye", "Sokhna", "s.mbaye@saes.sn", passwordEncoder, terrasse, Role.GERANT);
+                    "Mbaye", "Sokhna", "s.mbaye@saes.sn", passwordEncoder, ept, Role.GERANT);
             gerantCaissier.setRoles(EnumSet.of(Role.GERANT, Role.CAISSIER));
             comptes.add(gerantCaissier);
 
@@ -331,10 +317,6 @@ public class DataSeeder {
 
             platRepository.saveAll(platsEpt);
 
-            // Les deux autres restaurants : une carte plus courte, sans historique.
-            List<Plat> platsBaobab = cartePartenaire(ing, ingredientRepository, baobab, platRepository);
-            List<Plat> platsTerrasse = cartePartenaire(ing, ingredientRepository, terrasse, platRepository);
-
             // ----- Menus ---------------------------------------------------------
             LocalDate aujourdhui = LocalDate.now();
 
@@ -356,9 +338,7 @@ public class DataSeeder {
                     aujourdhui.plusDays(14), aujourdhui.plusDays(28),
                     List.of(dibi, cBoukhonk, saladeAvocat, sombi, jusMangue));
 
-            menuRepository.saveAll(List.of(carte, semaine, passe, futur,
-                    menu(baobab, "Carte du Baobab", aujourdhui.minusDays(30), null, platsBaobab),
-                    menu(terrasse, "Carte de la Terrasse", aujourdhui.minusDays(21), null, platsTerrasse)));
+            menuRepository.saveAll(List.of(carte, semaine, passe, futur));
 
             // Les plats reellement commandables aujourd'hui, avec leur poids dans
             // les ventes : le thieboudienne part plus souvent que la salade.
@@ -583,10 +563,10 @@ public class DataSeeder {
 
             // ----- Journal des operations -------------------------------------------
             List<JournalOperation> journal = new ArrayList<>();
-            journal.add(entree(admin, ActionJournal.RESTAURANT_CREE, "Restaurant", baobab.getId(),
-                    "Le Baobab", instant(aujourdhui.minusDays(30), LocalTime.of(9, 12))));
-            journal.add(entree(admin, ActionJournal.RESTAURANT_CREE, "Restaurant", terrasse.getId(),
-                    "La Terrasse du SAES", instant(aujourdhui.minusDays(21), LocalTime.of(10, 2))));
+            journal.add(entree(admin, ActionJournal.RESTAURANT_CREE, "Restaurant", ept.getId(),
+                    "Restaurant de l'EPT", instant(aujourdhui.minusDays(60), LocalTime.of(9, 12))));
+            journal.add(entree(admin, ActionJournal.COMPTE_CREE, "Utilisateur", gerant.getId(),
+                    "Khadim Faye : gérant", instant(aujourdhui.minusDays(60), LocalTime.of(9, 40))));
             journal.add(entree(admin, ActionJournal.COMPTE_CREE, "Utilisateur", gerantCaissier.getId(),
                     "Sokhna Mbaye : gérant, caissier", instant(aujourdhui.minusDays(20), LocalTime.of(11, 40))));
             journal.add(entree(admin, ActionJournal.ROLES_MODIFIES, "Utilisateur", gerantCaissier.getId(),
@@ -707,48 +687,6 @@ public class DataSeeder {
         m.setDateFin(fin);
         m.getPlats().addAll(plats);
         return m;
-    }
-
-    /**
-     * Carte courte d'un restaurant partenaire : ses propres ingredients et ses
-     * propres plats, car tout appartient a un seul restaurant (regle 15).
-     */
-    private static List<Plat> cartePartenaire(
-            Map<String, Ingredient> ingredientsEpt, IngredientRepository ingredientRepository,
-            Restaurant restaurant, PlatRepository platRepository) {
-        Map<String, Ingredient> propres = new HashMap<>();
-        ajouterIngredient(propres, restaurant, "Riz brisé", Unite.KILOGRAMME, 6, 40);
-        ajouterIngredient(propres, restaurant, "Poisson thiof", Unite.KILOGRAMME, 4, 25);
-        ajouterIngredient(propres, restaurant, "Poulet", Unite.KILOGRAMME, 4, 25);
-        ajouterIngredient(propres, restaurant, "Légumes", Unite.KILOGRAMME, 5, 30);
-        ajouterIngredient(propres, restaurant, "Pâte d'arachide", Unite.KILOGRAMME, 2, 10);
-        ajouterIngredient(propres, restaurant, "Mil", Unite.KILOGRAMME, 2, 12);
-        ajouterIngredient(propres, restaurant, "Fleurs de bissap", Unite.GRAMME, 300, 2000);
-        ajouterIngredient(propres, restaurant, "Pulpe de bouye", Unite.GRAMME, 300, 2000);
-        ingredientRepository.saveAll(propres.values());
-
-        List<Plat> plats = new ArrayList<>();
-        plat(plats, restaurant, "Pastels au poisson", "Beignets farcis au poisson", 800,
-                CategoriePlat.ENTREE, recette(propres.get("Poisson thiof"), "0.080"));
-        plat(plats, restaurant, "Thiéboudienne", "Riz au poisson et légumes", 2400,
-                CategoriePlat.PLAT_PRINCIPAL, recette(propres.get("Riz brisé"), "0.300"),
-                recette(propres.get("Poisson thiof"), "0.250"), recette(propres.get("Légumes"), "0.200"));
-        plat(plats, restaurant, "Yassa poulet", "Poulet aux oignons confits", 2100,
-                CategoriePlat.PLAT_PRINCIPAL, recette(propres.get("Poulet"), "0.300"),
-                recette(propres.get("Riz brisé"), "0.250"));
-        plat(plats, restaurant, "Mafé", "Sauce à l'arachide et légumes", 2000,
-                CategoriePlat.PLAT_PRINCIPAL, recette(propres.get("Pâte d'arachide"), "0.080"),
-                recette(propres.get("Riz brisé"), "0.250"));
-        plat(plats, restaurant, "Thiakry", "Couscous de mil au lait caillé", 700,
-                CategoriePlat.DESSERT, recette(propres.get("Mil"), "0.150"));
-        plat(plats, restaurant, "Jus de bissap", "Infusion d'hibiscus glacée", 500,
-                CategoriePlat.BOISSON, recette(propres.get("Fleurs de bissap"), "30"));
-        plat(plats, restaurant, "Jus de bouye", "Pulpe de fruit du baobab", 500,
-                CategoriePlat.BOISSON, recette(propres.get("Pulpe de bouye"), "30"));
-        platRepository.saveAll(plats);
-
-        // Une entree de stock initiale, au niveau cible.
-        return plats;
     }
 
     // ---------------------------------------------------------------------

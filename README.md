@@ -55,11 +55,15 @@ cd saes-backend
 
 Le profil `dev` fournit une clé de jeton de développement et, **si la base est
 vide**, la remplit avec le jeu de démonstration (`config/DataSeeder.java`) :
-trois restaurants avec leurs tables et leurs horaires, 24 comptes (un par rôle,
-plus du personnel et des clients), 42 plats avec leur recette, 6 menus, et dix
+le restaurant de l'EPT avec ses tables et ses horaires, 21 comptes (un par rôle,
+plus du personnel et des clients), 28 plats avec leur recette, 4 menus, et dix
 semaines d'activité — 750 commandes, leurs paiements, 51 sessions de caisse,
 4 000 mouvements de stock et 40 réservations. Le tirage part d'une graine fixe :
 le jeu est le même sur toutes les installations.
+
+Il ne crée **qu'un seul restaurant** : c'est à l'administrateur d'en ajouter
+d'autres depuis son écran (« Choisir un restaurant », puis « Ajouter un
+restaurant »).
 
 Ce jeu n'existe qu'avec le profil `dev` ; la production ne reçoit rien.
 
@@ -115,6 +119,11 @@ visuelle se fait à un seul endroit.
 Le détail du chantier de refonte, la matrice de conformité au cahier des
 charges et ce qui reste à faire sont dans [REFONTE_PLAN.md](REFONTE_PLAN.md).
 Le scénario de soutenance est dans [DEMO_JURY.md](DEMO_JURY.md).
+
+**Photos de la vitrine** : les pages « Accueil » et « Photos » utilisent les
+photos listées dans `saes-frontend/src/app/core/photos-site.ts`. Pour mettre les
+vôtres, déposer les fichiers `.webp` dans `saes-frontend/public/assets/site/` et
+les ajouter à ce fichier, avec une légende.
 
 **Photos des plats** : six plats en ont une. Pour en ajouter, déposer
 `saes-frontend/public/assets/plats/<nom-du-plat>-360.webp` et `-720.webp`

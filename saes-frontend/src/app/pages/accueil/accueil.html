@@ -1,6 +1,15 @@
-<!-- Ouverture : la promesse, les deux actions du cahier des charges, et le plat
-     mis en avant par le menu du jour. -->
-<section class="ouverture sur-sombre">
+<!-- Ouverture : la photo du restaurant en grand, le nom et les deux actions. -->
+<section class="ouverture">
+  <img
+    class="photo-ouverture"
+    [src]="ouverture.src"
+    [srcset]="ouverture.srcset"
+    sizes="100vw"
+    width="800"
+    height="426"
+    alt=""
+    fetchpriority="high"
+  />
   <div class="ouverture-texte">
     <p class="enseigne">Restaurants du SAES · Thiès</p>
     <h1>
@@ -11,7 +20,6 @@
       Consultez le menu du jour, commandez à emporter et réservez votre table au restaurant du SAES,
       à l'École polytechnique de Thiès.
     </p>
-
     <div class="ouverture-actions">
       <a routerLink="/menus" class="btn btn-accent btn-large">
         Voir le menu du jour
@@ -19,46 +27,6 @@
       </a>
       <a routerLink="/mes-reservations" class="btn btn-contour btn-large">Réserver une table</a>
     </div>
-
-    @if (!chargement()) {
-      <dl class="reperes">
-        <div>
-          <dt>Plats au menu</dt>
-          <dd>{{ platsDuJour().length }}</dd>
-        </div>
-        <div>
-          <dt>Catégories</dt>
-          <dd>{{ categories().length }}</dd>
-        </div>
-        <div>
-          <dt>{{ restaurants().length > 1 ? 'Restaurants ouverts' : 'Restaurant' }}</dt>
-          <dd>
-            {{ restaurants().length > 1 ? nombreRestaurantsOuverts() : restaurants().length }}
-          </dd>
-        </div>
-      </dl>
-    }
-  </div>
-
-  <div class="ouverture-image">
-    @if (photoVedette(); as p) {
-      <img
-        [src]="p.src"
-        [srcset]="p.srcset"
-        sizes="(min-width: 60rem) 36rem, 90vw"
-        width="720"
-        height="800"
-        alt=""
-        fetchpriority="high"
-      />
-      @if (platVedette(); as plat) {
-        <div class="vignette-vedette">
-          <span class="sur-titre">Au menu aujourd'hui</span>
-          <strong>{{ plat.nom }}</strong>
-          <span class="prix-vedette montant">{{ plat.prix | montant }}</span>
-        </div>
-      }
-    }
   </div>
 </section>
 
@@ -66,37 +34,35 @@
   <p class="message-refus bloc-vitrine">{{ e }}</p>
 }
 
-<!-- Les categories reellement proposees aujourd'hui. -->
-@if (categories().length > 0) {
-  <section class="bloc-vitrine categories-vitrine" aria-labelledby="titre-categories">
-    <h2 id="titre-categories" class="titre-section">La carte du jour</h2>
-    <ul class="liste-categories">
-      @for (c of categories(); track c.categorie) {
-        <li>
-          <a routerLink="/menus">
-            <app-icone-categorie [categorie]="c.categorie" />
-            <strong>{{ c.libelle }}</strong>
-            <span>{{ c.nombre }} {{ c.nombre > 1 ? 'plats' : 'plat' }}</span>
-          </a>
-        </li>
-      }
-    </ul>
-  </section>
-}
-
-<!-- Les plats du menu en vigueur, avec leur prix du jour. -->
-@if (suggestions().length > 0) {
-  <section class="bloc-vitrine" aria-labelledby="titre-suggestions">
-    <div class="entete-section">
-      <div>
-        <span class="sur-titre">Menu en vigueur</span>
-        <h2 id="titre-suggestions" class="titre-section">Nos suggestions</h2>
-      </div>
-      <a routerLink="/menus" class="lien-section">
-        Tout le menu
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-      </a>
+<!-- 1. Le menu : les plats réellement proposés aujourd'hui. -->
+<section class="bloc-vitrine" id="menu" aria-labelledby="titre-menu">
+  <div class="entete-section">
+    <div>
+      <span class="sur-titre">Menu en vigueur</span>
+      <h2 id="titre-menu" class="titre-section">Le menu</h2>
     </div>
+    <a routerLink="/menus" class="lien-section">
+      Tout le menu
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+    </a>
+  </div>
+
+  @if (chargement()) {
+    <p class="etat-page" role="status">Chargement du menu…</p>
+  } @else if (suggestions().length === 0) {
+    <p class="etat-page">Aucun menu en vigueur pour le moment.</p>
+  } @else {
+    @if (categories().length > 0) {
+      <ul class="puces-categories">
+        @for (c of categories(); track c.categorie) {
+          <li>
+            <app-icone-categorie [categorie]="c.categorie" />
+            {{ c.libelle }}
+            <span class="compte-categorie">{{ c.nombre }}</span>
+          </li>
+        }
+      </ul>
+    }
 
     <div class="grille-suggestions">
       @for (plat of suggestions(); track plat.id) {
@@ -122,100 +88,115 @@
         </article>
       }
     </div>
-  </section>
-}
-
-<!-- Le parcours reel d'une commande en ligne (cahier des charges §4.3 et limite 4). -->
-<section class="bloc-vitrine sur-sombre parcours" aria-labelledby="titre-parcours">
-  <span class="sur-titre">Commander en ligne</span>
-  <h2 id="titre-parcours" class="titre-section">Trois étapes, et c'est prêt</h2>
-  <ol class="etapes">
-    <li>
-      <span class="numero-etape" aria-hidden="true">1</span>
-      <h3>Composez votre commande</h3>
-      <p>
-        Choisissez vos plats parmi le menu en vigueur du restaurant et ajustez les quantités dans
-        votre panier.
-      </p>
-    </li>
-    <li>
-      <span class="numero-etape" aria-hidden="true">2</span>
-      <h3>Suivez sa préparation</h3>
-      <p>
-        Depuis « Mes commandes », vous voyez votre commande passer de « reçue » à « en préparation »
-        puis « prête ».
-      </p>
-    </li>
-    <li>
-      <span class="numero-etape" aria-hidden="true">3</span>
-      <h3>Retirez et réglez sur place</h3>
-      <p>Le règlement se fait à la caisse au moment du retrait, en espèces ou par Mobile Money.</p>
-    </li>
-  </ol>
-  @if (!auth.estConnecte()) {
-    <a routerLink="/inscription" class="btn btn-accent">Créer mon compte</a>
   }
 </section>
 
-<!-- Les restaurants, avec leurs horaires du jour venus du backend. -->
-@if (restaurants().length > 0) {
-  <section class="bloc-vitrine" aria-labelledby="titre-restaurants">
+<!-- 2. Traiteur : une presentation, pas une fonction. Les demandes passent par
+     le telephone du restaurant. -->
+<section class="bloc-vitrine sur-sombre traiteur-apercu" aria-labelledby="titre-traiteur">
+  <div class="traiteur-interieur">
+    <div>
+      <span class="sur-titre">Hors les murs</span>
+      <h2 id="titre-traiteur" class="titre-section">Traiteur</h2>
+      <p class="traiteur-texte">
+        Soutenances, séminaires, remises de diplômes, réceptions de laboratoire : la cuisine du
+        restaurant se déplace sur le campus et à Thiès, avec les mêmes plats que ceux de la carte.
+      </p>
+      <a routerLink="/traiteur" class="btn btn-accent">
+        Découvrir le traiteur
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+      </a>
+    </div>
+    <ul class="traiteur-points">
+      <li>Réceptions de 20 à 200 couverts</li>
+      <li>Les plats de la carte, en format buffet</li>
+      <li>Service sur le campus de l'EPT et à Thiès</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 3. Photos : un apercu de la galerie. -->
+<section class="bloc-vitrine" id="photos" aria-labelledby="titre-photos">
+  <div class="entete-section">
+    <div>
+      <span class="sur-titre">En images</span>
+      <h2 id="titre-photos" class="titre-section">Photos</h2>
+    </div>
+    <a routerLink="/photos" class="lien-section">
+      Toute la galerie
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+    </a>
+  </div>
+  <ul class="apercu-galerie">
+    @for (photo of apercuGalerie(); track photo.base + $index) {
+      <li>
+        <img
+          [src]="sources(photo).src"
+          [srcset]="sources(photo).srcset"
+          sizes="(min-width: 60rem) 22rem, 45vw"
+          width="400"
+          height="400"
+          loading="lazy"
+          [alt]="photo.legende"
+        />
+      </li>
+    }
+  </ul>
+</section>
+
+<!-- 4. Le restaurant : ses informations, telles que le backend les donne. -->
+@if (restaurantVedette(); as r) {
+  <section class="bloc-vitrine" id="restaurant" aria-labelledby="titre-restaurant">
     <span class="sur-titre">Où nous trouver</span>
-    <h2 id="titre-restaurants" class="titre-section">
-      {{ restaurants().length > 1 ? 'Nos restaurants' : 'Notre restaurant' }}
-    </h2>
-    <div class="grille-restaurants">
-      @for (r of restaurants(); track r.id) {
-        <article class="carte carte-restaurant">
-          <div class="entete-restaurant">
-            <h3>{{ r.nom }}</h3>
-            <span class="badge" [class.badge-actif]="r.ouvert" [class.badge-neutre]="!r.ouvert">
-              {{ r.ouvert ? 'Ouvert' : 'Fermé' }}
-            </span>
-          </div>
-          <dl class="infos-restaurant">
-            <div>
-              <dt>
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"
-                  />
-                  <circle cx="12" cy="10" r="3" />
-                </svg>
-                <span class="hors-ecran">Adresse</span>
-              </dt>
-              <dd>{{ ville(r) }}</dd>
-            </div>
-            <div>
-              <dt>
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 6v6l4 2" />
-                </svg>
-                <span class="hors-ecran">Horaires du jour</span>
-              </dt>
-              <dd>{{ horaires(r) }}</dd>
-            </div>
-            <div>
-              <dt>
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92"
-                  />
-                </svg>
-                <span class="hors-ecran">Téléphone</span>
-              </dt>
-              <dd>
-                <a [href]="'tel:' + r.telephone">{{ r.telephone }}</a>
-              </dd>
-            </div>
-          </dl>
-          <div class="actions-restaurant">
-            <a routerLink="/menus" class="btn btn-secondaire btn-petit">Voir le menu</a>
-            <a routerLink="/mes-reservations" class="btn btn-secondaire btn-petit">Réserver</a>
-          </div>
-        </article>
-      }
+    <h2 id="titre-restaurant" class="titre-section">Le restaurant</h2>
+    <div class="carte carte-restaurant">
+      <div class="entete-restaurant">
+        <h3>{{ r.nom }}</h3>
+        <span class="badge" [class.badge-actif]="r.ouvert" [class.badge-neutre]="!r.ouvert">
+          {{ r.ouvert ? 'Ouvert' : 'Fermé' }}
+        </span>
+      </div>
+      <dl class="infos-restaurant">
+        <div>
+          <dt>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"
+              />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            <span class="hors-ecran">Adresse</span>
+          </dt>
+          <dd>{{ r.adresse }}</dd>
+        </div>
+        <div>
+          <dt>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 6v6l4 2" />
+            </svg>
+            <span class="hors-ecran">Horaires du jour</span>
+          </dt>
+          <dd>{{ horaires(r) }}</dd>
+        </div>
+        <div>
+          <dt>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92"
+              />
+            </svg>
+            <span class="hors-ecran">Téléphone</span>
+          </dt>
+          <dd>
+            <a [href]="'tel:' + r.telephone">{{ r.telephone }}</a>
+          </dd>
+        </div>
+      </dl>
+      <div class="actions-restaurant">
+        <a routerLink="/menus" class="btn btn-primaire">Voir le menu</a>
+        <a routerLink="/mes-reservations" class="btn btn-secondaire">Réserver une table</a>
+      </div>
     </div>
   </section>
 }

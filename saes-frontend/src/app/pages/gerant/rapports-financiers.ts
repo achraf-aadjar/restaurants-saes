@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 
 import { motifErreur } from '../../core/erreur.util';
+import { restaurantSupervise } from '../../core/supervision';
 import { GerantRapportService } from '../../core/gerant-rapport.service';
 import { RapportFinancierDto } from '../../core/models';
 import { ChiffreCle } from '../../shared/chiffre-cle';
@@ -37,6 +38,8 @@ function premierDuMois(): string {
 })
 export class GerantRapportsFinanciers {
   private readonly gerantRapportService = inject(GerantRapportService);
+  /** Restaurant supervise par l'administrateur (lecture seule), ou null pour le gerant. */
+  protected readonly supervise = restaurantSupervise();
 
   /**
    * Période des montants affichés (AAAA-MM-JJ). Au départ, le mois en cours,
@@ -125,7 +128,7 @@ export class GerantRapportsFinanciers {
   protected charger(periode: Periode): void {
     this.erreur.set(null);
     this.chargement.set(true);
-    this.gerantRapportService.consulter(periode.debut, periode.fin).subscribe({
+    this.gerantRapportService.consulter(periode.debut, periode.fin, this.supervise).subscribe({
       next: (rapport) => {
         this.rapport.set(rapport);
         this.periode.set(periode);

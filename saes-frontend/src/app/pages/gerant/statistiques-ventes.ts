@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 
 import { motifErreur } from '../../core/erreur.util';
+import { restaurantSupervise } from '../../core/supervision';
 import { GerantStatistiquesService } from '../../core/gerant-statistiques.service';
 import { LIBELLES_CATEGORIES, LIBELLES_CATEGORIES_PLURIEL } from '../../core/libelles';
 import { StatistiquesVentesDto } from '../../core/models';
@@ -37,6 +38,8 @@ function premierDuMois(): string {
 })
 export class GerantStatistiquesVentes {
   private readonly gerantStatistiquesService = inject(GerantStatistiquesService);
+  /** Restaurant supervise par l'administrateur (lecture seule), ou null pour le gerant. */
+  protected readonly supervise = restaurantSupervise();
 
   protected readonly libellesCategories = LIBELLES_CATEGORIES;
   protected readonly libellesCategoriesPluriel = LIBELLES_CATEGORIES_PLURIEL;
@@ -103,7 +106,7 @@ export class GerantStatistiquesVentes {
   protected charger(periode: Periode): void {
     this.erreur.set(null);
     this.chargement.set(true);
-    this.gerantStatistiquesService.consulter(periode.debut, periode.fin).subscribe({
+    this.gerantStatistiquesService.consulter(periode.debut, periode.fin, this.supervise).subscribe({
       next: (statistiques) => {
         this.statistiques.set(statistiques);
         this.periode.set(periode);

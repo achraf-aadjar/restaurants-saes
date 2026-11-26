@@ -1,0 +1,92 @@
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+@if (chargement()) {
+  <p class="etat-page" role="status">Chargement…</p>
+} @else if (statistiques(); as s) {
+  <p class="periode">
+    Les 30 derniers jours, du {{ debut | date: 'dd/MM/yyyy' }} au {{ fin | date: 'dd/MM/yyyy' }}.
+  </p>
+
+  <div class="chiffres">
+    <app-chiffre-cle
+      icone="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7ZM14 2v4a2 2 0 0 0 2 2h4M10 9H8M16 13H8M16 17H8"
+      [nombre]="s.nombreCommandesPayees"
+      [libelle]="s.nombreCommandesPayees > 1 ? 'commandes payées' : 'commande payée'"
+    />
+    <app-chiffre-cle
+      icone="M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2ZM10 12a2 2 0 1 0 4 0a2 2 0 1 0-4 0M6 12h.01M18 12h.01"
+      [nombre]="totalEncaisse() | montant"
+      libelle="encaissés"
+    />
+    <app-chiffre-cle
+      icone="M2 8a6 6 0 1 0 12 0a6 6 0 1 0-12 0M18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"
+      [nombre]="s.montantMoyen | montant"
+      libelle="montant moyen d'une commande"
+    />
+    <app-chiffre-cle
+      icone="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3M12 9v4M12 17h.01"
+      [nombre]="enAlerte().length"
+      [libelle]="enAlerte().length > 1 ? 'ingrédients en alerte' : 'ingrédient en alerte'"
+    />
+  </div>
+
+  <div class="colonnes">
+    <section class="carte">
+      <h2>Encaissements par jour</h2>
+      @if ((rapport()?.encaissementsParJour ?? []).length === 0) {
+        <p class="etat-page">Aucun encaissement sur cette période.</p>
+      } @else {
+        <app-graphique
+          forme="barres"
+          titre="Montants encaissés par jour et par mode de paiement"
+          intituleAxe="Jour"
+          [empile]="true"
+          [hauteur]="280"
+          [etiquettes]="joursCourts()"
+          [series]="seriesEncaissements()"
+          [formatValeur]="enFrancs"
+        />
+      }
+      <a [routerLink]="['/admin/choix', restaurantId, 'rapports']" class="lien-detail"
+        >Voir les rapports financiers</a
+      >
+    </section>
+
+    <section class="carte">
+      <h2>Les plats les plus rentables</h2>
+      @if (meilleurs().length === 0) {
+        <p class="etat-page">Aucune vente sur cette période.</p>
+      } @else {
+        <ol class="classement">
+          @for (p of meilleurs(); track p.platId) {
+            <li>
+              <span class="rang" aria-hidden="true">{{ $index + 1 }}</span>
+              <span class="nom">{{ p.nom }}</span>
+              <span class="detail">{{ p.quantiteVendue }} vendus</span>
+              <strong class="montant">{{ p.montant | montant }}</strong>
+            </li>
+          }
+        </ol>
+      }
+      <a [routerLink]="['/admin/choix', restaurantId, 'statistiques']" class="lien-detail"
+        >Voir les statistiques de ventes</a
+      >
+    </section>
+  </div>
+
+  @if (enAlerte().length > 0) {
+    <section class="carte alerte-stock">
+      <h2>Stocks sous leur seuil d'alerte</h2>
+      <ul class="puces-alerte">
+        @for (i of enAlerte(); track i.id) {
+          <li>{{ i.nom }}</li>
+        }
+      </ul>
+      <a [routerLink]="['/admin/choix', restaurantId, 'stocks']" class="lien-detail"
+        >Voir les stocks</a
+      >
+    </section>
+  }
+}

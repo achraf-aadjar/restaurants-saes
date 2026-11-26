@@ -1,9 +1,16 @@
 <div class="titre-page">
   <h1>Stocks</h1>
-  <button type="button" class="btn btn-primaire" (click)="ouvrirCreation()">
-    + Nouvel ingrédient
-  </button>
+  @if (!supervise) {
+    <button type="button" class="btn btn-primaire" (click)="ouvrirCreation()">
+      + Nouvel ingrédient
+    </button>
+  }
 </div>
+@if (supervise) {
+  <p class="commande-meta">
+    Supervision en lecture seule : seul le gérant du restaurant modifie ses stocks.
+  </p>
+}
 
 @if (erreur(); as e) {
   <p class="message-refus">{{ e }}</p>
@@ -33,7 +40,7 @@
   </section>
 }
 
-@if (formulaireOuvert()) {
+@if (formulaireOuvert() && !supervise) {
   <section class="carte formulaire-ingredient">
     <form (ngSubmit)="enregistrer()" #f="ngForm" class="formulaire-creation">
       <h2>{{ idEnEdition ? "Modifier l'ingrédient" : 'Nouvel ingrédient' }}</h2>
@@ -139,22 +146,28 @@
             </td>
             <td class="cible" data-label="Niveau cible">{{ i.niveauCible | quantite: i.unite }}</td>
             <td class="actions-colonne">
-              <button type="button" class="btn btn-secondaire btn-petit" (click)="ouvrirEdition(i)">
-                Modifier
-              </button>
-              <button
-                type="button"
-                class="btn btn-secondaire btn-petit"
-                [attr.aria-expanded]="mouvementIngredientId() === i.id"
-                (click)="ouvrirMouvement(i)"
-              >
-                Mouvement
-              </button>
+              @if (!supervise) {
+                <button
+                  type="button"
+                  class="btn btn-secondaire btn-petit"
+                  (click)="ouvrirEdition(i)"
+                >
+                  Modifier
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondaire btn-petit"
+                  [attr.aria-expanded]="mouvementIngredientId() === i.id"
+                  (click)="ouvrirMouvement(i)"
+                >
+                  Mouvement
+                </button>
+              }
             </td>
           </tr>
           <!-- Entrée ou sortie : sur sa propre ligne, sous l'ingrédient, pour ne pas
                élargir le tableau. -->
-          @if (mouvementIngredientId() === i.id) {
+          @if (!supervise && mouvementIngredientId() === i.id) {
             <tr class="ligne-mouvement">
               <td colspan="7">
                 <form

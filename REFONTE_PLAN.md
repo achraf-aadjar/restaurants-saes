@@ -75,7 +75,13 @@ couvrant une seule journée, une seule police, peu de visuels.
 - Toutes les couleurs écrites en dur dans les composants ont été remplacées par
   des jetons.
 
-### C — Page d'accueil (`/`)
+### C — Page d'accueil (`/`) et barre de navigation
+
+Barre de navigation en haut pour le visiteur et le client : **Accueil, Menu,
+Traiteur, Photos**. La page d'accueil enchaîne une grande photo d'ouverture, le
+menu, le traiteur, un aperçu des photos et le restaurant. Les pages **Traiteur**
+et **Photos** sont des présentations sans formulaire. Les photos se changent dans
+`core/photos-site.ts`.
 
 Vitrine du visiteur et du client. Le personnel reste renvoyé vers sa première
 fonction (`vitrineGuard`). Tout ce qu'elle affiche vient du backend : plats du
@@ -109,10 +115,10 @@ vide, tirage à graine fixe (jeu identique partout).
 
 | Objet | Volume |
 | --- | --- |
-| Restaurants | 3 |
-| Comptes | 24 (6 de référence + personnel + 10 clients) |
-| Plats | 42 |
-| Menus | 6 (dont un terminé et un à venir) |
+| Restaurants | 1 (le restaurant de l'EPT ; l'administrateur en ajoute d'autres) |
+| Comptes | 21 (6 de référence + personnel + 10 clients) |
+| Plats | 28 |
+| Menus | 4 (dont un terminé et un à venir) |
 | Commandes | 750 sur 10 semaines |
 | Lignes de commande | 1 486 |
 | Paiements | 717 |
@@ -162,16 +168,32 @@ rôles, les statuts et les workflows sont inchangés.
 | 4.5 | Ouvrir la caisse | `/caissier/ouvrir` | inchangé |
 | 4.5 | Encaisser une commande | `/caissier/encaisser` | **temps d'attente ajouté** |
 | 4.5 | Clôturer la caisse | `/caissier/cloturer` | inchangé |
-| 4.5 | Consulter les rapports financiers | `/gerant/rapports-financiers` | **graphiques ajoutés** |
+| 4.5 | Consulter les rapports financiers | `/gerant/rapports-financiers` | **graphiques ajoutés ; aussi en lecture seule pour l'administrateur (écart assumé)** |
 | 4.6 | Gérer les stocks | `/gerant/stocks` | **alertes et jauges ajoutées** |
-| 4.6 | Consulter les statistiques de ventes | `/gerant/statistiques-ventes` | **graphiques ajoutés** |
+| 4.6 | Consulter les statistiques de ventes | `/gerant/statistiques-ventes` | **graphiques ajoutés ; aussi en lecture seule pour l'administrateur (écart assumé)** |
 | 4.6 | Consulter les recommandations | `/gerant/recommandations` | inchangé |
 | 4.6 | Signaler une rupture | `/cuisine/rupture` | inchangé |
 | 4.7 | Gérer les comptes utilisateurs | `/admin/utilisateurs` | **cartes sur téléphone** |
-| 4.7 | Gérer les restaurants | `/admin/restaurants` | **cartes sur téléphone** |
+| 4.7 | Gérer les restaurants | `/admin/restaurants` | **cartes sur téléphone ; écran d'arrivée « Choisir un restaurant » ajouté** |
 
 « Présentation refaite » veut dire : mêmes données, mêmes règles, mêmes actions,
 mise en page et styles différents.
+
+### Écarts assumés au cahier des charges (décidés par l'équipe)
+
+Ces trois points ne figurent pas au cahier des charges. Ils ont été demandés et
+sont documentés ici pour être expliqués au jury.
+
+| Écart | Ce qui est fait | Garde-fous |
+| --- | --- | --- |
+| **Supervision par l'administrateur** (§4.5 et §4.6 réservent statistiques, rapports, stocks et recommandations au gérant) | À sa connexion, l'administrateur choisit un restaurant (`/admin/choix`), puis consulte ses statistiques, rapports, stocks, recommandations, informations et comptes | **Lecture seule** : aucune route d'écriture. Mêmes services et mêmes chiffres que le gérant. Les autres rôles n'ont pas accès. `SupervisionAdminTest` : 6 tests |
+| **Page Traiteur** | Une page de présentation (formules, comment faire une demande, téléphone du restaurant) | Aucun formulaire, aucune commande traiteur, aucune fonction métier |
+| **Page Photos** | Une galerie avec agrandissement | Contenu statique |
+
+Conséquence sur la qualité attendue n° 1 (« chaque utilisateur n'accède qu'aux
+fonctions de ses rôles ») : elle reste vraie pour tous les rôles sauf
+l'administrateur, qui a désormais en lecture ce que le gérant a en lecture et en
+écriture.
 
 ### Éléments hors cahier des charges (déjà présents avant ce chantier)
 
@@ -230,3 +252,6 @@ mise en page et styles différents.
 - 2026-11-26 — Design system, page d'accueil, données de démonstration.
 - 2026-11-26 — Cuisine, serveur, gérant, caisse, pied de page.
 - 2026-11-26 — Tests, matrice de conformité, scénario de démonstration.
+- 2026-11-26 — Retour de l'équipe : un seul restaurant au départ, accueil refait
+  (photo, menu, traiteur, photos, barre de navigation), supervision de
+  l'administrateur par restaurant.

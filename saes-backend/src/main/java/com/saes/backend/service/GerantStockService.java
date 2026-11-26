@@ -34,7 +34,11 @@ public class GerantStockService {
     private final PersonnelRestaurantResolver personnelRestaurantResolver;
 
     public List<IngredientDto> lister(Long gerantId) {
-        Restaurant restaurant = personnelRestaurantResolver.restaurantDe(gerantId);
+        return listerPourRestaurant(personnelRestaurantResolver.restaurantDe(gerantId));
+    }
+
+    /** Les stocks d'un restaurant donne, en lecture seule, pour l'administrateur. */
+    public List<IngredientDto> listerPourRestaurant(Restaurant restaurant) {
         return ingredientRepository.findByRestaurantId(restaurant.getId()).stream()
                 .map(i -> IngredientDto.from(i, mouvementStockRepository.calculerStock(i.getId())))
                 .toList();

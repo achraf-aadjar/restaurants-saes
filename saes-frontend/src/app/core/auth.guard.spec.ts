@@ -103,8 +103,8 @@ describe('vitrineGuard (page d accueil)', () => {
     expect(cheminDe(executer(vitrineGuard))).toBe('/cuisine/preparation');
   });
 
-  it("renvoie l'administrateur vers l'administration", () => {
+  it("renvoie l'administrateur vers le choix du restaurant", () => {
     connecter(['ADMINISTRATEUR']);
-    expect(cheminDe(executer(vitrineGuard))).toBe('/admin/utilisateurs');
+    expect(cheminDe(executer(vitrineGuard))).toBe('/admin/choix');
   });
 });

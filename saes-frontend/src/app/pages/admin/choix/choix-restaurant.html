@@ -1,0 +1,84 @@
+<div class="invite">
+  <span class="sur-titre">Administration</span>
+  <h1>Quel restaurant voulez-vous voir ?</h1>
+  <p class="commande-meta">
+    Choisissez un restaurant pour consulter ses statistiques, ses rapports financiers, ses stocks,
+    ses tables et ses comptes. Vous pouvez aussi en ajouter un.
+  </p>
+</div>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+@if (chargement()) {
+  <p class="etat-page" role="status">Chargement…</p>
+} @else {
+  <ul class="grille-restaurants">
+    @for (r of tries(); track r.id) {
+      <li>
+        <a
+          class="carte-restaurant"
+          [class.desactive]="!r.estActif"
+          [routerLink]="['/admin/restaurants', r.id]"
+        >
+          @if (photo(r); as p) {
+            <img
+              class="visuel"
+              [src]="p.src"
+              [srcset]="p.srcset"
+              sizes="(min-width: 60rem) 24rem, 90vw"
+              width="400"
+              height="213"
+              alt=""
+            />
+          } @else {
+            <span class="visuel visuel-vide" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M2 7h20"
+                />
+              </svg>
+            </span>
+          }
+          <span class="corps">
+            <span class="ligne-titre">
+              <strong class="nom">{{ r.nom }}</strong>
+              <span
+                class="badge"
+                [class.badge-actif]="r.estActif"
+                [class.badge-neutre]="!r.estActif"
+              >
+                {{ r.estActif ? 'Actif' : 'Désactivé' }}
+              </span>
+            </span>
+            <span class="adresse">{{ r.adresse }}</span>
+            <span class="chiffres">
+              <span
+                ><strong>{{ r.tables.length }}</strong> tables</span
+              >
+              <span
+                ><strong>{{ places(r) }}</strong> places</span
+              >
+              <span>{{ horairesDuJour(r) }}</span>
+            </span>
+            <span class="voir">
+              Voir ce restaurant
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+            </span>
+          </span>
+        </a>
+      </li>
+    }
+
+    <li>
+      <a class="carte-ajout" routerLink="/admin/restaurants" [queryParams]="{ creer: 1 }">
+        <span class="plus" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
+        </span>
+        <strong>Ajouter un restaurant</strong>
+        <span class="aide">Nom, adresse, tables et horaires d'ouverture.</span>
+      </a>
+    </li>
+  </ul>
+}

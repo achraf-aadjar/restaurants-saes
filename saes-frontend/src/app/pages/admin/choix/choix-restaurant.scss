@@ -1,0 +1,188 @@
+:host {
+  display: block;
+}
+
+.invite {
+  max-width: 48rem;
+  margin-bottom: 1.75rem;
+}
+
+.invite h1 {
+  margin-bottom: 0.6rem;
+}
+
+.grille-restaurants {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  gap: clamp(1rem, 1.6vw, 1.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.grille-restaurants > li {
+  display: flex;
+}
+
+.carte-restaurant,
+.carte-ajout {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--saes-bordure);
+  border-radius: var(--saes-rayon);
+  background: var(--saes-surface);
+  box-shadow: var(--saes-ombre);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.carte-restaurant:hover,
+.carte-ajout:hover {
+  border-color: var(--saes-action);
+  box-shadow: var(--saes-ombre-haute);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .carte-restaurant:hover,
+  .carte-ajout:hover {
+    transform: translateY(-3px);
+  }
+}
+
+.carte-restaurant.desactive {
+  opacity: 0.7;
+}
+
+.visuel {
+  display: block;
+  width: 100%;
+  height: 10.5rem;
+  object-fit: cover;
+}
+
+.visuel-vide {
+  display: grid;
+  place-items: center;
+  background: var(--saes-fond-doux);
+  color: var(--saes-vert-attenue);
+
+  svg {
+    width: 3rem;
+    height: 3rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+.corps {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.15rem 1.15rem;
+}
+
+.ligne-titre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.nom {
+  font-family: var(--saes-font-titre);
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.adresse {
+  color: var(--saes-vert-attenue);
+  font-size: 0.9rem;
+}
+
+.chiffres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  margin-top: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.chiffres strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.voir {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  color: var(--saes-prix);
+  font-weight: 700;
+
+  svg {
+    width: 1.1em;
+    height: 1.1em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+/* Le carre d'ajout : un contour en pointilles, comme un emplacement a remplir. */
+.carte-ajout {
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 14rem;
+  padding: 1.5rem;
+  border-style: dashed;
+  border-width: 2px;
+  border-color: var(--saes-bordure-forte);
+  background: transparent;
+  box-shadow: none;
+  text-align: center;
+}
+
+.plus {
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  background: var(--saes-vert-pale);
+  color: var(--saes-prix);
+
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+  }
+}
+
+.carte-ajout strong {
+  font-size: 1.1rem;
+}
+
+.aide {
+  max-width: 22ch;
+  color: var(--saes-vert-attenue);
+  font-size: 0.9rem;
+}

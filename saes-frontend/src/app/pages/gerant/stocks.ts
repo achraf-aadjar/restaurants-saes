@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { motifErreur } from '../../core/erreur.util';
+import { restaurantSupervise } from '../../core/supervision';
 import { GerantStockService } from '../../core/gerant-stock.service';
 import { LIBELLES_UNITES, SYMBOLES_UNITES } from '../../core/libelles';
 import {
@@ -33,6 +34,9 @@ export class GerantStocks {
   protected readonly unites = UNITES;
   protected readonly libellesUnites = LIBELLES_UNITES;
   protected readonly symbolesUnites = SYMBOLES_UNITES;
+
+  /** Restaurant supervise par l'administrateur : alors la page est en lecture seule. */
+  protected readonly supervise = restaurantSupervise();
 
   protected readonly ingredients = signal<IngredientDto[]>([]);
   protected readonly chargement = signal(true);
@@ -76,7 +80,7 @@ export class GerantStocks {
 
   private charger(): void {
     this.chargement.set(true);
-    this.gerantStockService.lister().subscribe({
+    this.gerantStockService.lister(this.supervise).subscribe({
       next: (ingredients) => {
         this.ingredients.set(ingredients);
         this.chargement.set(false);

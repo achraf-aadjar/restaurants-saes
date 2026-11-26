@@ -11,7 +11,16 @@
 
     <nav class="nav-desktop">
       @if (ongletsClient()) {
-        <a routerLink="/menus" routerLinkActive="actif" ariaCurrentWhenActive="page">Menus</a>
+        <a
+          routerLink="/"
+          routerLinkActive="actif"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
+          >Accueil</a
+        >
+        <a routerLink="/menus" routerLinkActive="actif" ariaCurrentWhenActive="page">Menu</a>
+        <a routerLink="/traiteur" routerLinkActive="actif" ariaCurrentWhenActive="page">Traiteur</a>
+        <a routerLink="/photos" routerLinkActive="actif" ariaCurrentWhenActive="page">Photos</a>
       }
       @if (auth.aLeRole('CLIENT')) {
         <a routerLink="/mes-commandes" routerLinkActive="actif" ariaCurrentWhenActive="page"
@@ -127,11 +136,33 @@
       }
       @if (ongletsClient()) {
         <a
+          routerLink="/"
+          routerLinkActive="actif"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
+          (click)="basculerMenuMobile()"
+          >Accueil</a
+        >
+        <a
           routerLink="/menus"
           routerLinkActive="actif"
           ariaCurrentWhenActive="page"
           (click)="basculerMenuMobile()"
-          >Menus</a
+          >Menu</a
+        >
+        <a
+          routerLink="/traiteur"
+          routerLinkActive="actif"
+          ariaCurrentWhenActive="page"
+          (click)="basculerMenuMobile()"
+          >Traiteur</a
+        >
+        <a
+          routerLink="/photos"
+          routerLinkActive="actif"
+          ariaCurrentWhenActive="page"
+          (click)="basculerMenuMobile()"
+          >Photos</a
         >
       }
       @if (auth.aLeRole('CLIENT')) {

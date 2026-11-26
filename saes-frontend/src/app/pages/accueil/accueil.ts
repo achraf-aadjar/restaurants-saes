@@ -9,6 +9,7 @@ import { MenuService } from '../../core/menu.service';
 import { CategoriePlat, MenuDto, PlatResume, RestaurantSummary } from '../../core/models';
 import { PanierService } from '../../core/panier.service';
 import { photoDuPlat } from '../../core/photos-plats';
+import { GALERIE, PHOTO_OUVERTURE, PhotoSite, sourcesDe } from '../../core/photos-site';
 import { ToastService } from '../../core/toast.service';
 import { IconeCategorie } from '../../shared/icone-categorie';
 import { MontantPipe } from '../../shared/montant.pipe';
@@ -41,6 +42,12 @@ export class Accueil {
   private readonly toast = inject(ToastService);
   protected readonly auth = inject(AuthService);
 
+  protected readonly ouverture = sourcesDe(PHOTO_OUVERTURE);
+  protected readonly sources = sourcesDe;
+
+  /** Les six premieres photos de la galerie, en apercu sur l'accueil. */
+  protected readonly apercuGalerie = computed<PhotoSite[]>(() => GALERIE.slice(0, 6));
+
   protected readonly restaurants = signal<RestaurantSummary[]>([]);
   protected readonly menusEnVigueur = signal<MenuDto[]>([]);
   protected readonly chargement = signal(true);
@@ -71,14 +78,6 @@ export class Accueil {
     return [...avecPhoto, ...sansPhoto].slice(0, 6);
   });
 
-  /** Le plat mis en avant dans l'image d'ouverture. */
-  protected readonly platVedette = computed(() => this.suggestions()[0] ?? null);
-
-  protected readonly photoVedette = computed(() => {
-    const plat = this.platVedette();
-    return plat ? photoDuPlat(plat.nom) : null;
-  });
-
   /** Les categories reellement proposees aujourd'hui, avec leur nombre de plats. */
   protected readonly categories = computed<CategorieVitrine[]>(() => {
     const plats = this.platsDuJour();
@@ -88,10 +87,6 @@ export class Accueil {
       nombre: plats.filter((p) => p.categorie === categorie).length,
     })).filter((c) => c.nombre > 0);
   });
-
-  protected readonly nombreRestaurantsOuverts = computed(
-    () => this.restaurants().filter((r) => r.ouvert).length,
-  );
 
   constructor() {
     this.menus.restaurants().subscribe({
@@ -129,15 +124,6 @@ export class Accueil {
       ),
     );
     return plages.length > 0 ? plages.join(' · ') : "Fermé aujourd'hui";
-  }
-
-  /** Ville du restaurant : les deux derniers elements de l'adresse. */
-  protected ville(restaurant: RestaurantSummary): string {
-    const parties = (restaurant.adresse ?? '')
-      .split(',')
-      .map((p) => p.trim())
-      .filter(Boolean);
-    return parties.slice(-2).join(', ');
   }
 
   /** « Ajouter » depuis la vitrine : le meme panier que la page des menus. */

@@ -24,7 +24,7 @@ cd saes-frontend && npm start     # http://localhost:4200
 Vérifications d'avant-match :
 
 - [ ] La page d'accueil s'ouvre sur `http://localhost:4200`.
-- [ ] Les trois restaurants apparaissent, celui de l'EPT est « Ouvert ».
+- [ ] Le restaurant de l'EPT apparaît, « Ouvert ».
 - [ ] Les statistiques du gérant affichent un mois de ventes.
 - [ ] Préparer **deux fenêtres** côte à côte : une pour le client, une pour le
       personnel (deux profils de navigateur, ou une fenêtre privée).
@@ -48,13 +48,17 @@ Vérifications d'avant-match :
 
 Ouvrir `/` sans être connecté.
 
-À montrer : l'ouverture, les chiffres du jour (nombre de plats au menu, de
-catégories, de restaurants ouverts) qui **viennent du backend**, les suggestions
-du menu en vigueur avec leur prix du jour, et les trois restaurants avec leurs
-horaires et leur état d'ouverture.
+À montrer : la grande photo d'ouverture, le menu en vigueur avec ses catégories et
+ses prix du jour (qui **viennent du backend**), le bloc Traiteur, l'aperçu des
+photos, puis le restaurant avec ses horaires du jour et son état d'ouverture.
+
+La barre de navigation en haut donne les quatre pages publiques : **Accueil, Menu,
+Traiteur, Photos**. Parcourir « Traiteur » et « Photos ».
 
 > À dire : « Un visiteur peut consulter les menus sans compte, comme le demande
-> le cahier des charges §4.2. »
+> le cahier des charges §4.2. Les pages Traiteur et Photos sont de la
+> présentation : elles n'ajoutent aucune fonction, et le traiteur se demande par
+> téléphone. »
 
 Basculer le **mode sombre** depuis l'en-tête : toute l'interface suit.
 
@@ -157,6 +161,18 @@ Se connecter en `gerant@saes.sn`.
 
 Se connecter en `admin@saes.sn`.
 
+0. **« Quel restaurant voulez-vous voir ? »** : l'écran d'arrivée de l'administrateur.
+   Un carré par restaurant, et « Ajouter un restaurant ». Cliquer sur le restaurant
+   de l'EPT : sa fiche s'ouvre, avec ses onglets (vue d'ensemble, statistiques,
+   rapports, stocks, approvisionnement, informations et comptes), **en lecture
+   seule**.
+
+> **Écart assumé.** « Le cahier des charges réserve les statistiques et les
+> rapports au gérant. Nous avons choisi de laisser l'administrateur les consulter,
+> pour qu'il supervise chaque restaurant, mais en lecture seule : il ne peut rien
+> modifier. Le calcul est exactement celui du gérant, et un test vérifie que les
+> deux voient les mêmes chiffres. »
+
 1. **Comptes utilisateurs** : les rôles, les comptes actifs et désactivés.
    Montrer qu'un administrateur **ne peut pas** se retirer son propre rôle.
 2. **Restaurants** : les tables, les plages d'ouverture par jour.
@@ -181,7 +197,7 @@ l'administration, où **le tableau devient une pile de cartes**.
 | Transaction atomique statut + stock | Étape 4, « Démarrer la préparation » |
 | Gestion de la concurrence | Deux onglets sur la même commande : la seconde action est refusée et l'écran se remet à jour |
 | Contrôle des accès | Ouvrir `/admin/utilisateurs` en étant connecté comme serveur |
-| Isolation des restaurants | Le gérant du Baobab ne voit que ses plats |
+| Isolation des restaurants | Créer un second restaurant depuis l'administration : son gérant ne voit rien de l'EPT |
 | Stock piloté par les recettes | Étape 4 |
 | Traçabilité financière | Étape 5 puis étape 7 : commande → paiement → session de caisse → rapport |
 
@@ -194,6 +210,9 @@ l'administration, où **le tableau devient une pile de cartes**.
   suivi par la plateforme, sans IA.
 - **« Et les jours fériés ? »** Hors périmètre (limite 1) : la plateforme ne
   connaît que les horaires habituels de la semaine.
+- **« Pourquoi l'administrateur voit-il les statistiques ? »** C'est un écart
+  assumé au cahier des charges (§4.5, §4.6), documenté dans `REFONTE_PLAN.md` :
+  lecture seule, mêmes chiffres que le gérant, couvert par des tests.
 - **« Les données sont-elles réalistes ? »** Elles sont générées par
   `DataSeeder`, uniquement avec le profil `dev`, à partir d'une graine fixe :
   dix semaines de commandes, de paiements, de caisses et de mouvements de stock
