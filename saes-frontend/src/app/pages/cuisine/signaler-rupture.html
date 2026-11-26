@@ -9,7 +9,7 @@
 
 <section class="carte">
   @if (ingredients().length === 0) {
-    <p>Aucun ingrédient.</p>
+    <p class="etat-page">Aucun ingrédient.</p>
   } @else {
     <form (ngSubmit)="confirmationRupture.set(true)" class="ligne-dynamique formulaire-rupture">
       <div class="champ champ-inline champ-etire">

@@ -14,6 +14,7 @@ import { motifErreur } from '../../core/erreur.util';
 import { CategoriePlat, MenuDto, PlatResume, RestaurantSummary } from '../../core/models';
 import { MenuService } from '../../core/menu.service';
 import { PanierService } from '../../core/panier.service';
+import { ToastService } from '../../core/toast.service';
 import { CompteurQuantite } from '../../shared/compteur-quantite';
 import { IconeCategorie } from '../../shared/icone-categorie';
 import { MontantPipe } from '../../shared/montant.pipe';
@@ -76,6 +77,7 @@ export class MenuConsultation {
   private readonly locale = inject(LOCALE_ID);
   protected readonly auth = inject(AuthService);
   protected readonly panier = inject(PanierService);
+  private readonly toast = inject(ToastService);
 
   protected readonly restaurants = signal<RestaurantSummary[]>([]);
   protected readonly restaurantSelectionne = this.menuService.restaurantConsulte;
@@ -91,11 +93,7 @@ export class MenuConsultation {
     })),
   );
 
-  /**
-   * L'ecran de reference 1 est celui du client (et du visiteur) : bandeau
-   * pleine largeur, decor et bouton « Reserver ». Le personnel, qui a deja son
-   * bandeau et sa barre laterale, voit le bandeau dans un cadre.
-   */
+  /** Affiche le bandeau public avec son lien de réservation. */
   protected readonly vueClient = computed(
     () => !this.auth.estConnecte() || this.auth.aLeRole('CLIENT'),
   );
@@ -158,6 +156,10 @@ export class MenuConsultation {
       if (!vider) return;
     }
     this.panier.ajouter(plat, restaurant.id);
+    this.toast.afficher(`${plat.nom} ajouté au panier`, {
+      libelle: 'Voir le panier',
+      executer: () => this.panier.ouvert.set(true),
+    });
     this.focusDans(carte, 'app-compteur-quantite button:last-of-type');
   }
 
@@ -175,6 +177,13 @@ export class MenuConsultation {
   }
 
   /** Apres le rendu, le focus va au bouton voulu de la carte du plat. */
+  /** Fait defiler la page jusqu'a une categorie du menu (puces sous le titre). */
+  protected allerALaCategorie(menuId: number, categorie: CategoriePlat): void {
+    document
+      .getElementById(`cat-${menuId}-${categorie}`)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   private focusDans(carte: HTMLElement, selecteur: string): void {
     afterNextRender(() => carte.querySelector<HTMLElement>(selecteur)?.focus(), {
       injector: this.injector,

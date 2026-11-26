@@ -5,7 +5,7 @@
 }
 
 @if (chargement()) {
-  <p>Chargement…</p>
+  <p class="etat-page" role="status">Chargement…</p>
 } @else if (occupation(); as occ) {
   <section class="carte bloc-espace-bas">
     <h2>Tables</h2>
@@ -23,7 +23,7 @@
   <section class="carte bloc-espace-bas">
     <h2>Réservations confirmées du jour</h2>
     @if (occ.reservationsDuJour.length === 0) {
-      <p>Aucune réservation aujourd'hui.</p>
+      <p class="etat-page">Aucune réservation aujourd'hui.</p>
     } @else {
       <table class="table-simple">
         <thead>

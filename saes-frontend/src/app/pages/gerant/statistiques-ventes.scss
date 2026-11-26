@@ -129,7 +129,7 @@
   height: clamp(0.8rem, 1.2vw, 1.1rem);
   margin-top: 0.5rem;
   border-radius: 999px;
-  background: #e8eeee;
+  background: var(--saes-fond-doux);
 
   span {
     display: block;

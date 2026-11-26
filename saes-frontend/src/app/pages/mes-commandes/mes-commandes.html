@@ -5,7 +5,7 @@
 }
 
 @if (chargement()) {
-  <p>Chargement…</p>
+  <p class="etat-page" role="status">Chargement…</p>
 } @else if (commandes().length === 0) {
   <p>Vous n'avez pas encore passé de commande.</p>
 } @else {
@@ -32,11 +32,12 @@
       } @else {
         <div class="liste-commandes">
           @for (c of partie.commandes; track c.id) {
-            <article class="carte commande">
+            <article class="carte commande" [attr.data-statut]="c.statut">
               <div class="commande-entete">
                 <span class="badge" [class]="classeBadge(c.statut)">{{ libelles[c.statut] }}</span>
                 <span class="commande-date">{{ c.dateHeure | date }}</span>
               </div>
+              <app-frise-statut [statut]="c.statut" />
               <ul class="liste-panier">
                 @for (ligne of c.lignes; track ligne.platId) {
                   <li>

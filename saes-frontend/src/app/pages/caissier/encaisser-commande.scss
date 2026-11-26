@@ -148,7 +148,7 @@
 
   /* La commande choisie : fond chaud et barre rouge à gauche. */
   tbody tr.choisie {
-    background: #fdf3e1;
+    background: var(--saes-fond-chaud);
   }
 
   tbody tr.choisie td:first-child {
@@ -191,7 +191,7 @@
     justify-content: space-between;
     gap: 1rem;
     padding: 0.7rem 0;
-    border-top: 1px solid rgb(8 49 45 / 12%);
+    border-top: 1px solid var(--saes-trait);
   }
 }
 
@@ -208,7 +208,7 @@
   font-weight: 700;
 
   strong {
-    color: var(--saes-rouge);
+    color: var(--saes-rouge-texte);
     font-size: clamp(1.5rem, 2.2vw, 2.1rem);
     font-weight: 800;
   }

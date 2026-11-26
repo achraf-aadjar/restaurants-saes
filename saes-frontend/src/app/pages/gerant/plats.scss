@@ -97,7 +97,7 @@
 
   /* Le plat choisi : fond chaud et barre rouge à gauche. */
   tbody tr.choisie {
-    background: #fdf3e1;
+    background: var(--saes-fond-chaud);
   }
 
   tbody tr.choisie td:first-child {
@@ -434,7 +434,7 @@
   min-height: clamp(2.75rem, 3.3vw, 3.2rem);
   border: 1px solid var(--saes-bordure);
   border-radius: 10px;
-  background: #fbf9f2;
+  background: var(--saes-fond-pale);
 
   select {
     min-width: 0;
@@ -456,7 +456,7 @@
   padding-inline: 0.9em;
   border: 1px solid var(--saes-bordure);
   border-radius: 10px;
-  background: #fff;
+  background: var(--saes-surface);
   color: var(--saes-vert);
   font-size: 1.1rem;
   cursor: text;
@@ -527,8 +527,8 @@
 }
 
 .btn-retirer {
-  background: #fff;
-  color: var(--saes-rouge-fonce);
+  background: var(--saes-surface);
+  color: var(--saes-refus-texte);
   border-color: rgb(230 12 26 / 35%);
 }
 
@@ -556,7 +556,7 @@
     padding: 0.6rem;
     border: 1px solid var(--saes-bordure);
     border-radius: 10px;
-    background: #f9f6ec;
+    background: var(--saes-fond-pale);
     margin-bottom: 0.6rem;
   }
 
@@ -569,7 +569,7 @@
     min-height: 2.75rem;
     border: 1px solid var(--saes-bordure);
     border-radius: 10px;
-    background-color: #fff;
+    background-color: var(--saes-surface);
   }
 
   .quantite-unite {
@@ -594,4 +594,9 @@
     padding-inline: 0.55em;
     font-size: 1rem;
   }
+}
+
+/* Mode sombre : la fleche des listes passe en clair. */
+:host-context(:root[data-theme='dark']) select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e8f0eb' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
 }

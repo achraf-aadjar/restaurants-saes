@@ -18,7 +18,7 @@
   list-style: none;
   margin: 0.2rem 0 0.8rem;
   padding: 0.8rem 0 0;
-  border-top: 1px solid rgb(8 49 45 / 12%);
+  border-top: 1px solid var(--saes-trait);
   font-size: clamp(1rem, 1.25vw, 1.2rem);
 
   li {

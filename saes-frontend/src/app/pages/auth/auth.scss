@@ -18,7 +18,7 @@
   width: 100%;
   min-width: 0; // sans cela, l'iframe du bouton Google peut elargir la carte au-dela de l'ecran
   max-width: 440px;
-  background: #fff;
+  background: var(--saes-surface);
   border: 1px solid var(--saes-bordure);
   border-radius: 14px;
   box-shadow: 0 10px 30px rgba(8, 49, 45, 0.08);
@@ -114,8 +114,8 @@
   font-family: inherit;
   font-size: 1rem; // 16px : evite le zoom automatique sur iPhone
   color: var(--saes-vert);
-  background: #fff;
-  border: 1px solid #d9d2bd;
+  background: var(--saes-surface);
+  border: 1px solid var(--saes-bordure);
   border-radius: 10px;
   transition:
     border-color 0.15s ease,
@@ -126,7 +126,7 @@
   }
 
   &:hover {
-    border-color: #c4bca3;
+    border-color: var(--saes-bordure-forte);
   }
 
   &:focus {
@@ -156,7 +156,7 @@
 }
 
 .auth-erreur-champ {
-  color: var(--saes-rouge-fonce);
+  color: var(--saes-refus-texte);
   font-weight: 600;
 }
 
@@ -187,7 +187,7 @@
   cursor: pointer;
 
   &:hover {
-    background: rgba(8, 49, 45, 0.06);
+    background: var(--saes-survol);
   }
 
   &:focus-visible {
@@ -231,7 +231,7 @@
 
 .auth-pied a {
   font-weight: 700;
-  color: var(--saes-rouge);
+  color: var(--saes-rouge-texte);
   text-decoration: none;
 
   &:hover {
@@ -286,7 +286,7 @@
   .auth-carte {
     padding: 1.5rem 1.25rem 1.1rem;
     border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(8, 49, 45, 0.06);
+    box-shadow: 0 4px 16px var(--saes-survol);
   }
 
   .auth-entete {
@@ -306,5 +306,47 @@
 
   .auth-mot-de-passe input {
     padding-right: 4.75rem;
+  }
+}
+
+.auth-carte {
+  border-radius: var(--saes-rayon);
+  box-shadow: var(--saes-ombre);
+}
+
+.auth-entete h1 {
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  font-weight: 800;
+}
+
+.auth-champ input {
+  border-color: var(--saes-bordure-forte);
+}
+
+@media (min-width: 860px) {
+  /* Photo et carte forment un seul bloc, de meme hauteur et alignes. */
+  .auth {
+    align-items: stretch;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    max-width: 62rem;
+    margin-inline: auto;
+    padding-block: 1rem;
+  }
+
+  .auth-carte {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .auth::before {
+    content: '';
+    flex: 0 1 30rem;
+    align-self: stretch;
+    min-height: 24rem;
+    border-radius: var(--saes-rayon);
+    background:
+      linear-gradient(145deg, rgb(8 49 45 / 28%), transparent),
+      var(--saes-vert) url('/assets/plats/thieboudienne-720.webp') center / cover no-repeat;
   }
 }

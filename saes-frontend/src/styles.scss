@@ -12,12 +12,33 @@
   --saes-vert-attenue: #526f6c; /* textes secondaires : le vert eclairci, contraste 5,3 */
   --saes-rouge-fonce: #b50a15;
   --saes-bordure: #e4ddc9;
+  --saes-bordure-forte: #a89f82; /* contour des champs et des boutons secondaires */
   --saes-texte-clair: #ffffff;
   --saes-vert-pale: #e6f3ec; /* fonds verts pâles : pastille d'icône, choix retenu, quantité */
   --saes-rose: #f9ece4; /* cadres roses de l'ecran 1 : total, pastille d'articles */
 
-  --saes-rayon: 10px;
-  --saes-ombre: 0 2px 8px rgba(8, 49, 45, 0.08);
+  --saes-rayon: 1rem;
+  --saes-surface: #fff;
+  --saes-fond-doux: #f3efe2;
+  --saes-fond-chaud: #fdf3e1; /* ligne choisie d'un tableau */
+  --saes-fond-pale: #fbf9f2;
+  --saes-rouge-texte: #e60c1a; /* rouge utilise comme couleur de texte */
+  --saes-ok-fond: #e9f5ee;
+  --saes-ok-texte: #0f4a2b;
+  --saes-ok-bordure: #bfdccb;
+  --saes-refus-fond: #fdeceb;
+  --saes-refus-texte: #b50a15;
+  --saes-refus-bordure: #f0c4c1;
+  --saes-attente-fond: #fff1b8;
+  --saes-attente-texte: #6b4d00;
+  --saes-neutre-fond: #e3eaec;
+  --saes-neutre-texte: #2c4a50;
+  --saes-grille: #ece6d6; /* graphiques */
+  --saes-axe-base: #c9c1aa;
+  --saes-marque-vert: #08312d; /* vert du logo, pour les filets decoratifs */
+  --saes-survol: rgb(8 49 45 / 6%);
+  --saes-trait: rgb(8 49 45 / 12%);
+  --saes-ombre: 0 4px 16px rgb(8 49 45 / 7%);
 
   --saes-font: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
@@ -26,6 +47,67 @@
      telephone). Au-dela de 1536 px, le contenu reste a sa largeur, centre. */
   --saes-gouttiere: clamp(1rem, 2.35vw, 2.25rem);
   --saes-largeur-page: 1536px;
+}
+
+/* ---------------------------------------------------------------------------
+   Mode sombre : meme identite (jaune, rouge, vert), fonds vert tres fonce.
+   Choisi par le bouton de l'en-tete (ThemeService) ; <html data-theme="dark">.
+   --------------------------------------------------------------------------- */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --saes-vert: #e8f0eb; /* textes */
+  --saes-vert-clair: #cfe0d6;
+  --saes-vert-attenue: #a9beb5;
+  --saes-creme: #0d1b19; /* fond de page */
+  --saes-surface: #14262a;
+  --saes-fond-doux: #1b312e;
+  --saes-bordure: #2d453f;
+  --saes-bordure-forte: #5f7b73;
+  --saes-vert-pale: #1d3b33;
+  --saes-rose: #3b2224;
+  --saes-rouge-fonce: #c40f1c; /* survol des boutons rouges */
+  --saes-rouge-texte: #ff7d86;
+  --saes-fond-chaud: #2c2814;
+  --saes-fond-pale: #172b28;
+  --saes-ok-fond: #17382c;
+  --saes-ok-texte: #8fe0b0;
+  --saes-ok-bordure: #2f6f52;
+  --saes-refus-fond: #3d1f22;
+  --saes-refus-texte: #ff9aa1;
+  --saes-refus-bordure: #6b2d32;
+  --saes-attente-fond: #3d3315;
+  --saes-attente-texte: #ffd966;
+  --saes-neutre-fond: #26363a;
+  --saes-neutre-texte: #bccdd2;
+  --saes-grille: #29413c;
+  --saes-axe-base: #4c6761;
+  --saes-marque-vert: #2f9e5c;
+  --saes-survol: rgb(255 255 255 / 8%);
+  --saes-trait: rgb(255 255 255 / 14%);
+  --saes-ombre: 0 4px 16px rgb(0 0 0 / 35%);
+}
+
+/* Les surfaces jaunes gardent un texte vert fonce, dans les deux modes. */
+.bandeau,
+.bandeau-restaurant {
+  --saes-vert: #08312d;
+  --saes-vert-attenue: #3f5855;
+  --saes-ok-fond: #e9f5ee;
+  --saes-ok-texte: #0f4a2b;
+  --saes-refus-fond: #fdeceb;
+  --saes-refus-texte: #b50a15;
+}
+
+/* Le logo est vert fonce : en mode sombre, il garde son fond clair. */
+:root[data-theme='dark'] .logo-complet {
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.6rem;
+  background: #fcfbf7;
+}
+
+:root[data-theme='dark'] img:not(.logo) {
+  filter: brightness(0.92);
 }
 
 * {
@@ -39,6 +121,7 @@ body {
 
 body {
   margin: 0;
+  line-height: 1.5;
   font-family: var(--saes-font);
   color: var(--saes-vert);
   background: var(--saes-creme);
@@ -49,6 +132,8 @@ h2,
 h3 {
   color: var(--saes-vert);
   margin: 0 0 0.5em;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
   overflow-wrap: break-word; /* un mot trop long pour un petit ecran passe a la ligne */
 }
 
@@ -67,8 +152,8 @@ a {
    menus, et sa phrase d'introduction plus lisible. Le titre du bandeau du
    restaurant (.identite) garde sa taille. */
 .corps:has(app-barre-laterale.visible) .contenu h1:not(.identite h1) {
-  margin-bottom: 0.2rem;
-  font-size: clamp(1.75rem, 3vw, 2.875rem);
+  margin-bottom: 0.5rem;
+  font-size: clamp(1.75rem, 3vw, 2.625rem);
   font-weight: 800;
   line-height: 1.15;
 }
@@ -77,11 +162,6 @@ a {
   margin-bottom: 1rem;
   font-size: clamp(1rem, 1.25vw, 1.2rem);
   color: var(--saes-vert);
-}
-
-/* Sous l'en-tete, le bandeau jaune des menus suit sans trait (ecran 1). */
-.page:has(.bandeau-restaurant.pleine-largeur) .entete {
-  border-bottom-color: transparent;
 }
 
 button {
@@ -93,8 +173,9 @@ button {
   align-items: center;
   justify-content: center;
   gap: 0.4em;
-  padding: 0.6em 1.2em;
-  border-radius: var(--saes-rayon);
+  min-height: 2.75rem;
+  padding: 0.55em 1.15em;
+  border-radius: 0.7rem;
   border: 1px solid transparent;
   font-weight: 600;
   font-size: 0.95rem;
@@ -102,7 +183,17 @@ button {
   cursor: pointer;
   transition:
     background-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease,
     opacity 0.15s ease;
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px) scale(0.99);
+}
+
+.btn-primaire:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgb(230 12 26 / 28%);
 }
 
 .btn-primaire {
@@ -115,13 +206,13 @@ button {
 }
 
 .btn-secondaire {
-  background: transparent;
+  background: var(--saes-surface);
   color: var(--saes-vert);
-  border-color: var(--saes-vert);
+  border-color: var(--saes-bordure-forte);
 }
 
 .btn-secondaire:hover:not(:disabled) {
-  background: rgba(8, 49, 45, 0.06);
+  background: var(--saes-survol);
 }
 
 .btn:disabled {
@@ -130,11 +221,11 @@ button {
 }
 
 .carte {
-  background: #fff;
+  background: var(--saes-surface);
   border: 1px solid var(--saes-bordure);
   border-radius: var(--saes-rayon);
   box-shadow: var(--saes-ombre);
-  padding: 1.25rem;
+  padding: clamp(1rem, 1.6vw, 1.5rem);
 }
 
 .champ {
@@ -154,10 +245,12 @@ button {
 .champ textarea {
   font-family: inherit;
   font-size: 1rem;
-  padding: 0.55em 0.7em;
-  border: 1px solid var(--saes-bordure);
+  min-height: 2.75rem;
+  max-width: 100%;
+  padding: 0.55em 0.75em;
+  border: 1px solid var(--saes-bordure-forte);
   border-radius: 8px;
-  background: #fff;
+  background: var(--saes-surface);
   color: var(--saes-vert);
 }
 
@@ -174,8 +267,8 @@ button {
    devient visible en contraste élevé. */
 .message-refus {
   position: relative;
-  background: #fdeceb;
-  color: var(--saes-rouge-fonce);
+  background: var(--saes-refus-fond);
+  color: var(--saes-refus-texte);
   border: 1px solid transparent;
   border-radius: var(--saes-rayon);
   padding: 0.75em 1em 0.75em 2.75em;
@@ -202,8 +295,8 @@ button {
 }
 
 .message-ok {
-  background: #e9f5ee;
-  color: #0f4a2b;
+  background: var(--saes-ok-fond);
+  color: var(--saes-ok-texte);
   border: 1px solid #2f9e5c;
   border-radius: var(--saes-rayon);
   padding: 0.75em 1em;
@@ -267,14 +360,96 @@ button {
   th,
   td {
     text-align: left;
-    padding: 0.5em 0.6em;
+    padding: 0.75em 0.85em;
     border-bottom: 1px solid var(--saes-bordure);
     font-size: 0.9rem;
   }
 
+  thead {
+    background: var(--saes-fond-doux);
+  }
+
+  tbody tr:hover {
+    background: var(--saes-creme);
+  }
+
   th {
-    color: var(--saes-vert-attenue);
+    color: var(--saes-vert);
     font-weight: 600;
+  }
+}
+
+/* Sur telephone, un tableau « en cartes » devient une pile : une carte par ligne,
+   chaque valeur precedee de son intitule (data-label). Plus de defilement a
+   l'horizontale pour atteindre les boutons. */
+@media (max-width: 40rem) {
+  .carte:has(.table-cartes) {
+    overflow-x: visible;
+    padding: 0.5rem;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .table-cartes,
+  .table-cartes tbody,
+  .table-cartes tr,
+  .table-cartes td {
+    display: block;
+  }
+
+  .table-cartes thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .table-cartes tbody tr {
+    margin-bottom: 0.75rem;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--saes-bordure);
+    border-radius: var(--saes-rayon);
+    background: var(--saes-surface);
+    box-shadow: var(--saes-ombre);
+  }
+
+  .table-cartes td {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5em 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .table-cartes td:last-child {
+    border-bottom: none;
+  }
+
+  .table-cartes td[data-label]::before {
+    content: attr(data-label);
+    flex: none;
+    color: var(--saes-vert-attenue);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-align: left;
+  }
+
+  .table-cartes td.actions-colonne {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding-top: 0.75em;
+  }
+
+  .table-cartes td.actions-colonne .btn + .btn {
+    margin-left: 0;
   }
 }
 
@@ -282,29 +457,29 @@ button {
   display: inline-block;
   padding: 0.15em 0.6em;
   border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-size: 0.875rem;
+  font-weight: 700;
 }
 
 .badge-actif {
-  background: #e9f5ee;
-  color: #0f4a2b;
+  background: var(--saes-ok-fond);
+  color: var(--saes-ok-texte);
 }
 
 .badge-inactif {
-  background: #fdeceb;
-  color: var(--saes-rouge-fonce);
+  background: var(--saes-refus-fond);
+  color: var(--saes-refus-texte);
 }
 
 .badge-attente {
-  background: #fff1b8;
-  color: #6b4d00;
+  background: var(--saes-attente-fond);
+  color: var(--saes-attente-texte);
 }
 
 /* En attente : un gris-bleu, pour ne pas confondre avec « En preparation ». */
 .badge-neutre {
-  background: #e3eaec;
-  color: #2c4a50;
+  background: var(--saes-neutre-fond);
+  color: var(--saes-neutre-texte);
 }
 
 /* Un point devant chaque statut, comme sur les ecrans de reference. La
@@ -322,7 +497,7 @@ button {
 
 .liste-commandes {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
   gap: 1rem;
 }
 
@@ -366,7 +541,7 @@ button {
 
 .chiffres-cles {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: 1rem;
   margin-top: 1rem;
 
@@ -411,7 +586,7 @@ button {
   padding: 0.6em 1em;
   border: 1px solid var(--saes-bordure);
   border-radius: var(--saes-rayon);
-  background: #fff;
+  background: var(--saes-surface);
   color: var(--saes-vert);
   font-weight: 600;
   font-size: 0.95rem;
@@ -433,7 +608,7 @@ button {
    (client) et la prise de commande (serveur). */
 .grille-plats {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
   gap: 1rem;
 }
 
@@ -449,7 +624,7 @@ button {
 
 .plat .prix {
   font-weight: 700;
-  color: var(--saes-rouge);
+  color: var(--saes-rouge-texte);
   margin: 0 0 0.5rem;
 }
 
@@ -513,25 +688,52 @@ html:has(.panneau-panier[open]) {
 
 .grille-tables {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr));
+  gap: 1rem;
 }
 
+/* Une table = une tuile : grand numero, capacite, puis l'etat avec sa pastille
+   (l'etat est aussi ecrit : la couleur n'est jamais seule). */
 .table-vignette {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.2rem;
-  padding: 0.75rem;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--saes-ok-bordure);
+  border-left: 5px solid #1f7a4d;
   border-radius: var(--saes-rayon);
-  background: #e9f5ee;
-  color: #0f4a2b;
-  font-size: 0.85rem;
+  background: var(--saes-vert-pale);
+  color: var(--saes-ok-texte);
+  font-size: 0.9rem;
+
+  strong {
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+
+  span:last-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    margin-top: 0.35rem;
+    font-weight: 700;
+
+    &::before {
+      content: '';
+      width: 0.6em;
+      height: 0.6em;
+      border-radius: 50%;
+      background: currentColor;
+    }
+  }
 }
 
 .table-vignette.table-occupee {
-  background: #fdeceb;
-  color: var(--saes-rouge-fonce);
+  border-color: var(--saes-refus-bordure);
+  border-left-color: var(--saes-rouge);
+  background: var(--saes-refus-fond);
+  color: var(--saes-refus-texte);
 }
 
 .zone-danger {
@@ -558,6 +760,7 @@ html:has(.panneau-panier[open]) {
 }
 
 .btn-petit {
+  min-height: 2.125rem;
   padding: 0.35em 0.75em;
   font-size: 0.82rem;
 }
@@ -617,6 +820,7 @@ html:has(.panneau-panier[open]) {
 
 .ligne-dynamique {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-end;
   gap: 0.75rem;
   margin-bottom: 0.6rem;
@@ -649,7 +853,19 @@ html:has(.panneau-panier[open]) {
 
 .actions-colonne {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+/* Dans un tableau, la cellule reste une cellule (sinon ses filets se decalent
+   par rapport aux autres colonnes) ; les boutons s'alignent a l'interieur. */
+td.actions-colonne {
+  display: table-cell;
+  white-space: nowrap;
+
+  .btn + .btn {
+    margin-left: 0.5rem;
+  }
 }
 
 /* Espacements et largeurs ponctuels, plutot que des styles ecrits dans le HTML. */
@@ -673,4 +889,139 @@ html:has(.panneau-panier[open]) {
 .montant {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+.etat-page {
+  padding: clamp(1rem, 3vw, 2rem);
+  border: 1px dashed var(--saes-bordure-forte);
+  border-radius: var(--saes-rayon);
+  background: var(--saes-surface);
+  color: var(--saes-vert-attenue);
+}
+
+/* ---------------------------------------------------------------------------
+   Finitions : mouvement, chargement, etats vides, accents de marque.
+   --------------------------------------------------------------------------- */
+
+/* Titre des pages du personnel : petit trait aux couleurs de la marque. */
+.corps:has(app-barre-laterale.visible) .contenu h1:not(.identite h1) {
+  padding-bottom: 0.6rem;
+  background: linear-gradient(90deg, var(--saes-jaune) 0 55%, var(--saes-rouge) 55% 100%) left
+    bottom / 3.5rem 4px no-repeat;
+}
+
+/* Chargement : une pastille qui tourne et un reflet qui passe. */
+.etat-page[role='status'] {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  overflow: hidden;
+  border-style: solid;
+  border-color: var(--saes-bordure);
+
+  &::before {
+    content: '';
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 3px solid var(--saes-bordure);
+    border-top-color: var(--saes-rouge);
+    border-radius: 50%;
+    animation: saes-rotation 0.8s linear infinite;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 30%, rgb(254 198 8 / 16%) 50%, transparent 70%);
+    transform: translateX(-100%);
+    animation: saes-reflet 1.6s ease-in-out infinite;
+  }
+}
+
+/* Etat vide : une assiette, puis le message, centres. */
+.etat-page:not([role='status']) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+
+  &::before {
+    content: '';
+    width: 3rem;
+    height: 3rem;
+    background: var(--saes-jaune);
+    opacity: 0.85;
+    -webkit-mask: var(--saes-icone-vide) center / contain no-repeat;
+    mask: var(--saes-icone-vide) center / contain no-repeat;
+  }
+}
+
+:root {
+  --saes-icone-vide: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='13' r='7'/%3E%3Ccircle cx='12' cy='13' r='3.5'/%3E%3Cpath d='M3 3v6M5 3v6M4 9v3M20 3c-1.5 1.5-2 3-2 5h2v4'/%3E%3C/svg%3E");
+}
+
+/* Une commande : un liseret de la couleur de son etat. */
+.carte.commande {
+  border-top: 4px solid var(--saes-bordure);
+
+  &[data-statut='EN_ATTENTE'] {
+    border-top-color: #7b8f94;
+  }
+
+  &[data-statut='EN_PREPARATION'] {
+    border-top-color: var(--saes-jaune);
+  }
+
+  &[data-statut='PRETE'],
+  &[data-statut='PAYEE'] {
+    border-top-color: #2f9e5c;
+  }
+
+  &[data-statut='ANNULEE'],
+  &[data-statut='ABANDONNEE'] {
+    border-top-color: var(--saes-rouge);
+  }
+}
+
+@keyframes saes-rotation {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes saes-reflet {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes saes-apparition {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* Entree des pages et des cartes, sauf si l'utilisateur reduit les animations. */
+@media (prefers-reduced-motion: no-preference) {
+  .contenu > :not(router-outlet) {
+    animation: saes-apparition 0.35s ease-out both;
+  }
+
+  .liste-commandes > *,
+  .grille-plats > *,
+  .grille-tables > *,
+  .chiffres-cles > * {
+    animation: saes-apparition 0.4s ease-out both;
+
+    @for $i from 2 through 8 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{($i - 1) * 45}ms;
+      }
+    }
+  }
 }

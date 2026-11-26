@@ -16,10 +16,11 @@ import { filter, map } from 'rxjs';
 import { AuthService } from '../../core/auth.service';
 import { accueilDe, estPersonnel, nomAffiche, sectionsDe } from '../../core/navigation';
 import { PanierService } from '../../core/panier.service';
+import { ThemeService } from '../../core/theme.service';
 
 /**
  * En-tete (organisation_travail_sujet17.pdf, Design) : le client a trois
- * onglets ; le personnel a un bandeau jaune avec son restaurant et la date.
+ * onglets ; le personnel a un bandeau avec son restaurant et la date.
  * Sur telephone, le nom et les fonctions passent sous le bouton menu. Les deux
  * menus se ferment par Echap (le focus revient a leur bouton), par un clic
  * ailleurs dans la page, ou par leur bouton.
@@ -37,6 +38,7 @@ import { PanierService } from '../../core/panier.service';
 export class Header {
   protected readonly auth = inject(AuthService);
   protected readonly panier = inject(PanierService);
+  protected readonly theme = inject(ThemeService);
   private readonly router = inject(Router);
 
   protected readonly menuOuvert = signal(false);
@@ -84,7 +86,7 @@ export class Header {
    */
   protected readonly annoncePanier = signal('');
 
-  /** Restaurant du bandeau jaune, pour le personnel seulement. */
+  /** Restaurant du bandeau, pour le personnel seulement. */
   protected readonly restaurantDuBandeau = computed(() => {
     const utilisateur = this.auth.utilisateur();
     return estPersonnel(utilisateur) ? (utilisateur?.restaurantNom ?? null) : null;

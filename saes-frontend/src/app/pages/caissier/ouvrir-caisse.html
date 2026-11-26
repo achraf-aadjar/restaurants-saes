@@ -5,7 +5,7 @@
 }
 
 @if (chargement()) {
-  <p>Chargement…</p>
+  <p class="etat-page" role="status">Chargement…</p>
 } @else if (caisseOuverte(); as session) {
   <app-ma-caisse [session]="session" />
 } @else {

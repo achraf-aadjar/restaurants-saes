@@ -68,18 +68,18 @@ const MARGE_HAUT = 10;
   `,
   styles: `
     :host { display: block; }
-    .legende { display: flex; flex-wrap: wrap; gap: 1rem; font-size: 0.82rem; color: #4f5a55; margin-bottom: 0.6rem; }
+    .legende { display: flex; flex-wrap: wrap; gap: 1rem; font-size: 0.82rem; color: var(--saes-vert-attenue); margin-bottom: 0.6rem; }
     .entree { display: inline-flex; align-items: center; gap: 0.4rem; }
     .pastille { width: 10px; height: 10px; border-radius: 3px; display: inline-block; flex-shrink: 0; }
     .zone { position: relative; }
     svg { display: block; overflow: visible; }
-    .grille { stroke: #ece6d6; stroke-width: 1; vector-effect: non-scaling-stroke; }
-    .base { stroke: #c9c1aa; stroke-width: 1; vector-effect: non-scaling-stroke; }
-    .axe { fill: #7a817c; font-size: 11px; }
+    .grille { stroke: var(--saes-grille); stroke-width: 1; vector-effect: non-scaling-stroke; }
+    .base { stroke: var(--saes-axe-base); stroke-width: 1; vector-effect: non-scaling-stroke; }
+    .axe { fill: var(--saes-vert-attenue); font-size: 11px; }
     g { cursor: pointer; }
     .info-bulle {
       position: absolute; top: 0; transform: translateX(-50%);
-      background: #fff; border: 1px solid var(--saes-bordure); border-radius: 8px;
+      background: var(--saes-surface); border: 1px solid var(--saes-bordure); border-radius: 8px;
       box-shadow: 0 6px 20px rgba(8, 49, 45, 0.12); padding: 0.55rem 0.7rem;
       display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.8rem; color: var(--saes-vert);
       pointer-events: none; white-space: nowrap; z-index: 2;

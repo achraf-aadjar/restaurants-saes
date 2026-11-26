@@ -43,7 +43,7 @@
   padding: 0.5em 0.75em;
   border: 1px solid var(--saes-bordure);
   border-radius: 8px;
-  background: #fff;
+  background: var(--saes-surface);
   font-size: 1.15rem;
   font-weight: 700;
 }
@@ -90,7 +90,7 @@
   margin-bottom: 1.25rem;
   border: 1px solid var(--saes-bordure);
   border-radius: 8px;
-  background: #fff;
+  background: var(--saes-surface);
 
   label {
     display: block;
@@ -146,7 +146,7 @@
   list-style: none;
   border: 1px solid var(--saes-bordure);
   border-radius: 8px;
-  background: #fff;
+  background: var(--saes-surface);
 
   li {
     display: grid;
@@ -211,7 +211,7 @@
   padding: 0;
   border: 1.5px solid var(--saes-bordure);
   border-radius: 50%;
-  background: #fff;
+  background: var(--saes-surface);
   color: var(--saes-vert);
   cursor: pointer;
 
@@ -272,7 +272,7 @@
   font-weight: 800;
 
   strong {
-    color: var(--saes-rouge);
+    color: var(--saes-rouge-texte);
     overflow-wrap: anywhere;
   }
 }
@@ -309,7 +309,7 @@
     padding: clamp(1rem, 1.6vw, 1.5rem);
     border: 1px solid var(--saes-bordure);
     border-radius: var(--saes-rayon);
-    background: #fff;
+    background: var(--saes-surface);
     box-shadow: var(--saes-ombre);
   }
 
@@ -347,4 +347,9 @@
     padding-top: 0.7rem;
     border-top: 1px solid var(--saes-bordure);
   }
+}
+
+/* Mode sombre : la fleche des listes passe en clair. */
+:host-context(:root[data-theme='dark']) select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e8f0eb' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
 }

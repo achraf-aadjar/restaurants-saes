@@ -136,9 +136,9 @@
 
 <section class="carte bloc-suivant">
   @if (chargement()) {
-    <p>Chargement…</p>
+    <p class="etat-page" role="status">Chargement…</p>
   } @else {
-    <table class="table-simple">
+    <table class="table-simple table-cartes">
       <thead>
         <tr>
           <th>Nom</th>
@@ -152,15 +152,15 @@
       <tbody>
         @for (u of utilisateurs(); track u.id) {
           <tr>
-            <td>{{ u.prenom }} {{ u.nom }}</td>
-            <td>{{ u.email }}</td>
-            <td>{{ u.restaurantNom ?? '—' }}</td>
-            <td>
+            <td data-label="Nom">{{ u.prenom }} {{ u.nom }}</td>
+            <td data-label="E-mail">{{ u.email }}</td>
+            <td data-label="Restaurant">{{ u.restaurantNom ?? '—' }}</td>
+            <td data-label="Rôles">
               @for (role of u.roles; track role) {
                 {{ libellesRoles[role] }}{{ $last ? '' : ', ' }}
               }
             </td>
-            <td>
+            <td data-label="Statut">
               <span
                 class="badge"
                 [class.badge-actif]="u.estActif"

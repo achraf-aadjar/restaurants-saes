@@ -60,7 +60,7 @@
 
 <section class="bloc-suivant">
   @if (chargement()) {
-    <p>Chargement…</p>
+    <p class="etat-page" role="status">Chargement…</p>
   } @else if (reservations().length === 0) {
     <p>Vous n'avez pas encore de réservation.</p>
   } @else {

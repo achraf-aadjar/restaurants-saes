@@ -20,9 +20,9 @@ import { Component, input, output } from '@angular/core';
     :host {
       display: inline-flex;
       align-items: center;
-      border: 1px solid rgb(8 49 45 / 14%);
+      border: 1px solid var(--saes-trait);
       border-radius: 999px;
-      background: #fff;
+      background: var(--saes-surface);
     }
 
     button {
