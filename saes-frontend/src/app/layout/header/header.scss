@@ -46,18 +46,45 @@
   max-width: none;
 }
 
+/* Bandeau du personnel : une barre sobre, sous l'en-tete, avec le restaurant a
+   gauche et la date a droite. L'orange de la marque n'est qu'un filet : une
+   large surface orange tirerait l'oeil loin du travail de la page. */
 .bandeau {
-  background: var(--saes-jaune);
-  color: var(--saes-vert);
-  padding: 0.7rem var(--saes-gouttiere);
+  position: relative;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   gap: 1rem;
+  padding: 0.7rem var(--saes-gouttiere);
+  border-bottom: 1px solid var(--saes-bordure);
+  background: var(--saes-fond-doux);
+  color: var(--saes-vert);
 }
 
-.bandeau-restaurant {
-  font-size: 1.15rem;
+.bandeau::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--saes-jaune) 0 14rem, transparent 14rem);
+}
+
+.bandeau-nom {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* Pastille orange devant le nom du restaurant : le rappel de la marque. */
+.bandeau-nom::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--saes-jaune);
 }
 
 /* Sur telephone, le bandeau ne garde que le restaurant (ecran 6). */
@@ -108,7 +135,7 @@
     forced-color-adjust: none;
     padding: 0.2rem 0.4rem;
     border-radius: 6px;
-    background: #fcfbf7;
+    background: var(--saes-creme);
   }
 }
 
@@ -356,7 +383,7 @@
 
   a.actif {
     border-left-color: var(--saes-rouge);
-    background: rgba(254, 198, 8, 0.18);
+    background: color-mix(in srgb, var(--saes-jaune) 16%, transparent);
   }
 
   /* En contraste élevé, un trait « transparent » devient visible : on
@@ -432,7 +459,7 @@
 
     a:hover,
     a.actif {
-      background: rgba(254, 198, 8, 0.18);
+      background: color-mix(in srgb, var(--saes-jaune) 16%, transparent);
     }
 
     a.actif {

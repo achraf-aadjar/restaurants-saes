@@ -1,46 +1,151 @@
 /*
- * Affichage de cuisine : lu de loin, mains occupees. Les cartes remplissent la
- * largeur, le texte est grand, le statut est une pastille visible et les
- * boutons sont larges. Le statut et le bouton sont toujours en bas de la
- * carte, a la meme hauteur d'une carte a l'autre.
+ * Affichage de cuisine, lu de loin et les mains occupees : une colonne par
+ * statut du cahier des charges, les commandes empilees par ordre d'arrivee, le
+ * texte grand et le bouton large, toujours en bas de la carte.
+ *
+ * Les deux colonnes sont cote a cote des qu'il y a la place ; sur un petit
+ * ecran, elles se suivent.
  */
-.liste-commandes {
-  grid-template-columns: repeat(auto-fit, minmax(clamp(220px, 18vw, 280px), 1fr));
+.tableau-cuisine {
+  display: grid;
+  gap: clamp(0.9rem, 1.6vw, 1.5rem);
+  align-items: start;
+}
+
+@media (min-width: 60rem) {
+  .tableau-cuisine {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.colonne {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid var(--saes-bordure);
+  border-radius: var(--saes-rayon);
+  background: var(--saes-fond-doux);
+}
+
+.entete-colonne {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-left: 0.6rem;
+  border-left: 4px solid var(--saes-bordure-forte);
+}
+
+.colonne[data-statut='EN_ATTENTE'] .entete-colonne {
+  border-left-color: var(--saes-neutre-texte);
+}
+
+.colonne[data-statut='EN_PREPARATION'] .entete-colonne {
+  border-left-color: var(--saes-jaune);
+}
+
+.entete-colonne h2 {
+  margin: 0;
+  font-family: var(--saes-font);
+  font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+/* Le nombre de commandes de la colonne, lisible d'un coup d'oeil. */
+.compte {
+  display: grid;
+  place-items: center;
+  min-width: 1.9rem;
+  height: 1.9rem;
+  padding-inline: 0.4rem;
+  border-radius: 999px;
+  background: var(--saes-surface);
+  border: 1px solid var(--saes-bordure);
+  font-size: 0.95rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.colonne-vide {
+  margin: 0;
+  padding: 1.5rem 0.6rem;
+  color: var(--saes-vert-attenue);
+  text-align: center;
+}
+
+.pile-commandes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
   gap: clamp(0.75rem, 1.2vw, 1.1rem);
-  align-items: stretch;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pile-commandes > li {
+  display: flex;
 }
 
 .commande-cuisine {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   padding: clamp(1rem, 1.4vw, 1.4rem);
+}
+
+/* Le numero a gauche, le temps d'attente a droite, sur la meme ligne. */
+.haut-carte {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.haut-carte > app-commande-entete {
+  display: block;
+  min-width: 0;
 }
 
 .liste-lignes {
   list-style: none;
-  margin: 0.2rem 0 0.8rem;
+  margin: 0.4rem 0 0.9rem;
   padding: 0.8rem 0 0;
   border-top: 1px solid var(--saes-trait);
   font-size: clamp(1rem, 1.25vw, 1.2rem);
 
   li {
-    margin-bottom: 0.45rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+    overflow-wrap: anywhere;
   }
 }
 
-.statut-cuisine {
-  display: block;
-  margin-top: auto;
-  padding: 0.4em 0.8em;
-  border-radius: 12px;
-  font-size: clamp(0.95rem, 1.15vw, 1.1rem);
-  font-weight: 600;
+/* La quantite d'abord, dans une pastille : c'est ce que le cuisinier cherche. */
+.quantite-ligne {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  min-width: 1.7em;
+  height: 1.7em;
+  padding-inline: 0.3em;
+  border-radius: 0.5rem;
+  background: var(--saes-vert-pale);
+  color: var(--saes-prix);
+  font-size: 0.9em;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
 }
 
 .btn-cuisine {
   width: 100%;
-  margin-top: 0.7rem;
-  min-height: clamp(3rem, 4.2vw, 4rem);
-  border-radius: 10px;
-  font-size: clamp(1.05rem, 1.4vw, 1.3rem);
+  margin-top: auto;
+  min-height: clamp(3rem, 4.2vw, 3.75rem);
+  border-radius: 0.7rem;
+  font-size: clamp(1.02rem, 1.3vw, 1.2rem);
   font-weight: 800;
   line-height: 1.2;
 }

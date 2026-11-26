@@ -22,6 +22,11 @@
       [libelle]="s.nombreCommandesPayees > 1 ? 'commandes payées' : 'commande payée'"
     />
     <app-chiffre-cle
+      icone="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+      [nombre]="montantTotal() | montant"
+      libelle="montant total vendu"
+    />
+    <app-chiffre-cle
       icone="M2 8a6 6 0 1 0 12 0a6 6 0 1 0-12 0M18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"
       [nombre]="s.montantMoyen | montant"
       libelle="montant moyen d'une commande"
@@ -34,6 +39,15 @@
       @if (categories().length === 0) {
         <p class="etat-page">Aucune vente sur cette période.</p>
       } @else {
+        <app-graphique
+          forme="anneau"
+          titre="Montant vendu par catégorie"
+          intituleAxe="Catégorie"
+          [hauteur]="248"
+          [etiquettes]="etiquettesCategories()"
+          [series]="serieCategories()"
+          [formatValeur]="enFrancs"
+        />
         <table class="categories">
           <thead>
             <tr>
@@ -43,13 +57,13 @@
             </tr>
           </thead>
           <tbody>
-            @for (v of categories(); track v.categorie) {
+            @for (v of categories(); track v.categorie; let i = $index) {
               <tr>
                 <td>
-                  <span class="nom-ligne">{{ libellesCategoriesPluriel[v.categorie] }}</span>
-                  <div class="barre" aria-hidden="true">
-                    <span [style.width.%]="largeurBarre(v.montant)"></span>
-                  </div>
+                  <span class="nom-ligne">
+                    <span class="puce" aria-hidden="true" [style.background]="couleur(i)"></span>
+                    {{ libellesCategoriesPluriel[v.categorie] }}
+                  </span>
                 </td>
                 <td class="qte">
                   {{ v.quantiteVendue }}
@@ -64,36 +78,54 @@
     </section>
 
     <section class="carte bloc">
-      <h2>Par plat</h2>
+      <h2>Les plus vendus</h2>
       @if (plats().length === 0) {
         <p class="etat-page">Aucune vente sur cette période.</p>
       } @else {
-        <div class="cadre-tableau">
-          <table class="plats">
-            <thead>
-              <tr>
-                <th scope="col">Plat</th>
-                <th scope="col">Catégorie</th>
-                <th scope="col">Quantité vendue</th>
-                <th scope="col">Montant</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (v of plats(); track v.platId) {
-                <tr>
-                  <td class="nom-ligne">{{ v.nom }}</td>
-                  <td class="cat">{{ libellesCategories[v.categorie] }}</td>
-                  <td class="qte">
-                    {{ v.quantiteVendue }}
-                    <span class="vendus">{{ v.quantiteVendue > 1 ? 'vendus' : 'vendu' }}</span>
-                  </td>
-                  <td class="montant">{{ v.montant | montant }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+        <p class="commande-meta">
+          Les {{ meilleursPlats().length }} plats qui ont rapporté le plus sur la période.
+        </p>
+        <app-graphique
+          forme="barres-horizontales"
+          titre="Montant vendu par plat, les plus rentables en premier"
+          intituleAxe="Plat"
+          [hauteur]="400"
+          [etiquettes]="etiquettesMeilleurs()"
+          [series]="serieMeilleurs()"
+          [formatValeur]="enFrancs"
+        />
       }
     </section>
   </div>
+
+  @if (plats().length > 0) {
+    <section class="carte bloc bloc-suivant">
+      <h2>Détail par plat</h2>
+      <div class="cadre-tableau">
+        <table class="plats">
+          <thead>
+            <tr>
+              <th scope="col">Plat</th>
+              <th scope="col">Catégorie</th>
+              <th scope="col">Quantité vendue</th>
+              <th scope="col">Montant</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (v of plats(); track v.platId) {
+              <tr>
+                <td class="nom-ligne">{{ v.nom }}</td>
+                <td class="cat">{{ libellesCategories[v.categorie] }}</td>
+                <td class="qte">
+                  {{ v.quantiteVendue }}
+                  <span class="vendus">{{ v.quantiteVendue > 1 ? 'vendus' : 'vendu' }}</span>
+                </td>
+                <td class="montant">{{ v.montant | montant }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
 }

@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../../core/auth.service';
+import { heureEnLettres } from '../../core/date.util';
 import { MenuService } from '../../core/menu.service';
 import { RestaurantSummary } from '../../core/models';
 
@@ -44,6 +45,20 @@ export class Footer {
       error: () => this.restaurantParDefaut.set(null),
     });
   }
+
+  protected readonly estConnecte = computed(() => this.auth.estConnecte());
+
+  /** « 8 h – 21 h », ou vide quand le restaurant est fermé aujourd'hui. */
+  protected readonly horairesDuJour = computed(() =>
+    (this.restaurantAffiche()?.horairesDuJour ?? [])
+      .map((h) =>
+        `${heureEnLettres(h.heureOuverture)} – ${heureEnLettres(h.heureFermeture)}`.replace(
+          / /g,
+          '\u00a0',
+        ),
+      )
+      .join(' · '),
+  );
 
   protected lienTelephone(telephone: string): string {
     return 'tel:' + telephone.replace(/[^\d+]/g, '');

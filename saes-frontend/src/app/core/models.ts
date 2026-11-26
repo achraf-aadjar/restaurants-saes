@@ -133,7 +133,8 @@ export interface RestaurantSaveRequest {
 
 export type TypeCommande = 'SUR_PLACE' | 'A_EMPORTER';
 
-export type StatutCommande = 'EN_ATTENTE' | 'EN_PREPARATION' | 'PRETE' | 'PAYEE' | 'ANNULEE' | 'ABANDONNEE';
+export type StatutCommande =
+  'EN_ATTENTE' | 'EN_PREPARATION' | 'PRETE' | 'PAYEE' | 'ANNULEE' | 'ABANDONNEE';
 
 export type StatutReservation = 'CONFIRMEE' | 'ANNULEE';
 

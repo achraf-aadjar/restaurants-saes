@@ -8,7 +8,7 @@ API Spring Boot, interface Angular, base PostgreSQL.
 ```
 restaurants-saes/
 ├── saes-backend/    API REST — Spring Boot 4.1, Java 21, Maven
-└── saes-frontend/   Interface — Angular 22
+└── saes-frontend/   Interface — Angular 22, Chart.js 4
 ```
 
 ## Prérequis
@@ -53,10 +53,23 @@ cd saes-backend
 
 (Sous macOS ou Linux : `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`.)
 
-Le profil `dev` fournit une clé de jeton de développement et, si la base est
-vide, la remplit avec les données de test : un restaurant avec ses tables et
-ses horaires, un compte par rôle, des ingrédients, des plats, un menu et des
-commandes dans chaque statut.
+Le profil `dev` fournit une clé de jeton de développement et, **si la base est
+vide**, la remplit avec le jeu de démonstration (`config/DataSeeder.java`) :
+trois restaurants avec leurs tables et leurs horaires, 24 comptes (un par rôle,
+plus du personnel et des clients), 42 plats avec leur recette, 6 menus, et dix
+semaines d'activité — 750 commandes, leurs paiements, 51 sessions de caisse,
+4 000 mouvements de stock et 40 réservations. Le tirage part d'une graine fixe :
+le jeu est le même sur toutes les installations.
+
+Ce jeu n'existe qu'avec le profil `dev` ; la production ne reçoit rien.
+
+Comme il n'est inséré que si la base est vide, une base déjà remplie garde son
+contenu. Pour repartir du jeu complet (**cela efface les données de la base de
+développement**) :
+
+```bash
+docker exec saes-postgres psql -U postgres -c "DROP DATABASE saes;" -c "CREATE DATABASE saes;"
+```
 
 **Terminal 2 — frontend (port 4200)**
 
@@ -91,6 +104,23 @@ npm test                    # tests unitaires (Vitest)
 npm run build               # build de production dans dist/
 npx prettier --write src    # formatage automatique
 ```
+
+## Design
+
+Toutes les couleurs, les échelles et les ombres sont des variables CSS groupées
+en tête de `saes-frontend/src/styles.scss`, en deux thèmes complets (clair et
+sombre). Aucun composant n'écrit une couleur en dur : changer l'identité
+visuelle se fait à un seul endroit.
+
+Le détail du chantier de refonte, la matrice de conformité au cahier des
+charges et ce qui reste à faire sont dans [REFONTE_PLAN.md](REFONTE_PLAN.md).
+Le scénario de soutenance est dans [DEMO_JURY.md](DEMO_JURY.md).
+
+**Photos des plats** : six plats en ont une. Pour en ajouter, déposer
+`saes-frontend/public/assets/plats/<nom-du-plat>-360.webp` et `-720.webp`
+(ratio 9:10), puis ajouter le nom dans
+`saes-frontend/src/app/core/photos-plats.ts`. Un plat sans photo affiche
+l'icône de sa catégorie.
 
 ## Déploiement (HTTPS)
 

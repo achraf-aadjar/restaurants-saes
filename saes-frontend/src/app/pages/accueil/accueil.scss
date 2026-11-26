@@ -1,0 +1,503 @@
+/*
+ * Page d'accueil (vitrine). Deux registres alternent : les blocs « sur-sombre »,
+ * bleu nuit, qui portent l'identite de la marque, et les blocs sur le fond de la
+ * page, qui portent les donnees (plats, restaurants).
+ *
+ * La page est bord a bord : chaque bloc deborde la gouttiere de la zone de
+ * contenu et remet sa propre marge interieure.
+ */
+
+:host {
+  display: block;
+}
+
+/* Un bloc sombre : l'identite de la marque, dans les deux themes. */
+.sur-sombre {
+  --saes-vert: #f5f2ea;
+  --saes-vert-attenue: #a7b2c1;
+  --saes-bordure: rgb(255 255 255 / 14%);
+  --saes-surface: #142130;
+
+  position: relative;
+  background: #080f19;
+  color: var(--saes-vert);
+}
+
+/* Un voile tres leger donne de la profondeur au bleu nuit. */
+.sur-sombre::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60rem 30rem at 85% 0%, rgb(255 133 0 / 10%), transparent 70%),
+    radial-gradient(50rem 28rem at 0% 100%, rgb(118 185 71 / 10%), transparent 70%);
+  pointer-events: none;
+}
+
+.sur-sombre > * {
+  position: relative;
+}
+
+/* ---------- Ouverture ---------- */
+
+.ouverture {
+  display: grid;
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: center;
+  padding: clamp(2.5rem, 6vw, 5.5rem) var(--saes-gouttiere) clamp(2.5rem, 5vw, 4.5rem);
+}
+
+@media (min-width: 60rem) {
+  .ouverture {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    max-width: var(--saes-largeur-page);
+    margin-inline: auto;
+  }
+}
+
+.enseigne {
+  margin: 0 0 1rem;
+  color: var(--saes-jaune);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.ouverture h1 {
+  margin: 0 0 1.25rem;
+  font-size: clamp(2.5rem, 6.2vw, 4.75rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+}
+
+.ouverture h1 em {
+  color: var(--saes-jaune);
+  font-style: italic;
+}
+
+.promesse {
+  max-width: 34rem;
+  margin: 0 0 2rem;
+  color: var(--saes-vert-attenue);
+  font-size: clamp(1.05rem, 1.3vw, 1.2rem);
+  line-height: 1.65;
+}
+
+.ouverture-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.btn-large {
+  min-height: 3.25rem;
+  padding-inline: 1.6rem;
+  font-size: 1.05rem;
+}
+
+.btn-large svg {
+  width: 1.15em;
+  height: 1.15em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Bouton pose sur le bleu nuit : un simple contour clair. */
+.btn-contour {
+  border-color: rgb(255 255 255 / 30%);
+  background: transparent;
+  color: #f5f2ea;
+}
+
+.btn-contour:hover:not(:disabled) {
+  border-color: rgb(255 255 255 / 60%);
+  background: rgb(255 255 255 / 8%);
+}
+
+/* Trois reperes chiffres, tires des donnees du menu. */
+.reperes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  margin: 2.5rem 0 0;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--saes-bordure);
+}
+
+.reperes dt {
+  color: var(--saes-vert-attenue);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.reperes dd {
+  margin: 0.2rem 0 0;
+  font-family: var(--saes-font);
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* L'image du plat mis en avant, et sa vignette de prix. */
+.ouverture-image {
+  position: relative;
+  justify-self: center;
+  width: min(100%, 30rem);
+}
+
+.ouverture-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 9 / 10;
+  object-fit: cover;
+  border-radius: 1.5rem;
+  box-shadow: 0 30px 80px rgb(0 0 0 / 55%);
+}
+
+.vignette-vedette {
+  position: absolute;
+  left: clamp(-1rem, -2vw, 0rem);
+  bottom: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  padding: 0.85rem 1.25rem;
+  border-radius: 1rem;
+  background: #142130;
+  box-shadow: 0 18px 44px rgb(0 0 0 / 50%);
+}
+
+.vignette-vedette strong {
+  font-family: var(--saes-font-titre);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.prix-vedette {
+  margin-top: 0.15rem;
+  color: var(--saes-jaune);
+  font-weight: 800;
+}
+
+/* ---------- Blocs de contenu ---------- */
+
+.bloc-vitrine {
+  max-width: var(--saes-largeur-page);
+  margin-inline: auto;
+  padding: clamp(2.5rem, 5vw, 4.5rem) var(--saes-gouttiere);
+}
+
+.sur-sombre.bloc-vitrine {
+  max-width: none;
+  padding-inline: var(--saes-gouttiere);
+}
+
+.sur-sombre.bloc-vitrine > * {
+  max-width: var(--saes-largeur-page);
+  margin-inline: auto;
+}
+
+.titre-section {
+  margin: 0 0 1.75rem;
+  font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+  font-weight: 600;
+}
+
+.entete-section {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.entete-section .titre-section {
+  margin: 0;
+}
+
+.lien-section {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-weight: 700;
+  text-decoration-color: var(--saes-jaune);
+  text-underline-offset: 0.3em;
+}
+
+.lien-section svg {
+  width: 1.1em;
+  height: 1.1em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.18s ease;
+}
+
+.lien-section:hover svg {
+  transform: translateX(3px);
+}
+
+/* ---------- Categories ---------- */
+
+.liste-categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: 1rem;
+  max-width: 64rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.liste-categories a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  height: 100%;
+  padding: 1.25rem;
+  border: 1px solid var(--saes-bordure);
+  border-radius: var(--saes-rayon);
+  background: var(--saes-surface);
+  text-decoration: none;
+  transition:
+    border-color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.liste-categories a:hover {
+  border-color: var(--saes-jaune);
+  box-shadow: var(--saes-ombre);
+  transform: translateY(-2px);
+}
+
+.liste-categories app-icone-categorie {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--saes-accent-texte);
+}
+
+.liste-categories strong {
+  font-size: 1.1rem;
+}
+
+.liste-categories span {
+  color: var(--saes-vert-attenue);
+  font-size: 0.9rem;
+}
+
+/* ---------- Suggestions ---------- */
+
+.grille-suggestions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  gap: clamp(1rem, 1.8vw, 1.5rem);
+}
+
+.carte-suggestion {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--saes-bordure);
+  border-radius: var(--saes-rayon);
+  background: var(--saes-surface);
+  box-shadow: var(--saes-ombre);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .carte-suggestion:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--saes-ombre-haute);
+  }
+}
+
+.carte-suggestion app-photo-plat {
+  border: none;
+  border-radius: 0;
+  aspect-ratio: 4 / 3;
+}
+
+.corps-suggestion {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 1rem 1.1rem 1.1rem;
+}
+
+.corps-suggestion h3 {
+  margin: 0 0 0.3rem;
+  font-size: 1.15rem;
+}
+
+.corps-suggestion .description {
+  margin: 0 0 0.9rem;
+  color: var(--saes-vert-attenue);
+  font-size: 0.9rem;
+}
+
+.pied-suggestion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: auto;
+}
+
+.pied-suggestion .prix {
+  color: var(--saes-prix);
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.pied-suggestion svg {
+  width: 1em;
+  height: 1em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+}
+
+/* ---------- Parcours de commande ---------- */
+
+.parcours .sur-titre {
+  color: var(--saes-jaune);
+}
+
+.etapes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  margin: 0 0 2.25rem;
+  padding: 0;
+  list-style: none;
+  counter-reset: etape;
+}
+
+.etapes li {
+  padding-top: 1.25rem;
+  border-top: 2px solid rgb(255 255 255 / 16%);
+}
+
+.numero-etape {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-bottom: 0.9rem;
+  border-radius: 50%;
+  background: var(--saes-jaune);
+  color: #0e1a26;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.etapes h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.2rem;
+}
+
+.etapes p {
+  margin: 0;
+  color: var(--saes-vert-attenue);
+  line-height: 1.65;
+}
+
+/* ---------- Restaurants ---------- */
+
+.grille-restaurants {
+  display: grid;
+  /* « auto-fit » : trois restaurants remplissent la rangee au lieu de laisser
+     une colonne vide. La carte est bornee pour qu'un restaurant seul ne
+     s'etire pas sur toute la page. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 1rem;
+  justify-content: start;
+}
+
+.grille-restaurants > * {
+  max-width: 34rem;
+}
+
+.carte-restaurant {
+  display: flex;
+  flex-direction: column;
+}
+
+.entete-restaurant {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.entete-restaurant h3 {
+  margin: 0;
+  font-family: var(--saes-font-titre);
+  font-size: 1.5rem;
+}
+
+.infos-restaurant {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0 0 1.25rem;
+}
+
+.infos-restaurant > div {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.infos-restaurant dt {
+  display: flex;
+  flex: none;
+}
+
+.infos-restaurant svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: var(--saes-vert-attenue);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.infos-restaurant dd {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.actions-restaurant {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.hors-ecran {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}

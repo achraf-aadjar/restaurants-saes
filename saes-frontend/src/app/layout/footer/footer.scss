@@ -32,38 +32,99 @@
   }
 }
 
-// Client ou visiteur : coordonnees du restaurant, puis le copyright.
+// Client ou visiteur : un pied de page complet, bleu nuit, qui ferme la
+// vitrine comme l'ouverture de la page d'accueil l'ouvre.
+
+.pied-client {
+  --saes-vert: #f5f2ea;
+  --saes-vert-attenue: #a7b2c1;
+
+  background: #080f19;
+  color: var(--saes-vert-attenue);
+}
 
 .pied-client .pied-conteneur {
-  padding-top: 1.1rem;
+  padding-top: clamp(2rem, 4vw, 3.25rem);
   padding-bottom: 1.25rem;
 }
 
-.pied-ligne {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.35rem 1.5rem;
+.pied-colonnes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.75rem, 4vw, 3rem);
+  padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
 }
 
-.pied-restaurant {
-  margin: 0;
-  line-height: 1.5;
-
-  strong {
-    color: var(--saes-vert);
+@media (min-width: 48rem) {
+  .pied-colonnes {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr);
   }
 }
 
-// A droite, meme quand les coordonnees du restaurant manquent.
-.pied-confidentialite {
-  margin-left: auto;
+.logo-pied {
+  display: block;
+  width: clamp(8rem, 14vw, 10rem);
+  height: auto;
+  margin-bottom: 1rem;
+  // Le logo d'une seule couleur prend le creme du pied de page.
+  filter: brightness(0) invert(1);
+}
+
+.pied-phrase {
+  max-width: 34ch;
+  margin: 0;
+  line-height: 1.65;
+}
+
+.pied-nav h2,
+.pied-restaurant h2 {
+  margin: 0 0 0.85rem;
+  color: var(--saes-vert);
+  font-family: var(--saes-font);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.pied-nav ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pied-restaurant p {
+  margin: 0 0 0.4rem;
+  line-height: 1.6;
+}
+
+.pied-adresse {
+  max-width: 28ch;
+}
+
+.pied-horaires {
+  margin-top: 0.75rem;
+  color: var(--saes-vert);
+  font-weight: 600;
+}
+
+// Derniere ligne : copyright a gauche, confidentialite a droite.
+.pied-bas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid rgb(255 255 255 / 12%);
+  font-size: 0.82rem;
 }
 
 .pied-copyright {
-  margin: 0.4rem 0 0;
-  font-size: 0.82rem;
-  color: var(--saes-vert-attenue);
+  margin: 0;
 }
 
 // Personnel et administrateur : une seule ligne discrete.
@@ -80,18 +141,13 @@
   color: var(--saes-vert-attenue);
 }
 
-// Les trois couleurs du logo, en filet sur toute la largeur.
+// Les couleurs de la marque, en filet sur toute la largeur.
 .pied::before {
   content: '';
   position: absolute;
   inset: 0 0 auto;
   height: 4px;
-  background: linear-gradient(
-    90deg,
-    var(--saes-marque-vert) 0 34%,
-    var(--saes-jaune) 34% 67%,
-    var(--saes-rouge) 67%
-  );
+  background: linear-gradient(90deg, #76b947 0 34%, var(--saes-jaune) 34% 67%, #2a78d6 67%);
 }
 
 .pied-conteneur {

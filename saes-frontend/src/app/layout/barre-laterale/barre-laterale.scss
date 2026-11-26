@@ -64,7 +64,7 @@ a:hover {
 /* Fonction ouverte : filet rouge et fond clair (ecrans 2 a 5). */
 a.actif {
   border-left-color: var(--saes-rouge);
-  background: rgba(254, 198, 8, 0.18);
+  background: color-mix(in srgb, var(--saes-jaune) 16%, transparent);
   font-weight: 700;
 }
 

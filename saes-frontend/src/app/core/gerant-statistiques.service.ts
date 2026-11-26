@@ -10,6 +10,8 @@ export class GerantStatistiquesService {
   private readonly http = inject(HttpClient);
 
   consulter(debut: string, fin: string): Observable<StatistiquesVentesDto> {
-    return this.http.get<StatistiquesVentesDto>('/api/gerant/statistiques-ventes', { params: { debut, fin } });
+    return this.http.get<StatistiquesVentesDto>('/api/gerant/statistiques-ventes', {
+      params: { debut, fin },
+    });
   }
 }

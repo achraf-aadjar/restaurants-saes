@@ -2,34 +2,20 @@
   display: block;
 }
 
+/*
+ * Bandeau du restaurant. Cote client, c'est l'image d'ouverture de la page :
+ * la photo du lieu remplit le cadre, un degrade bleu nuit la recouvre, et le
+ * texte se pose dessus. Cote personnel, le meme bandeau reste une carte sobre,
+ * sans photo de fond, pour ne pas prendre la place du travail de la page.
+ */
 .bandeau-restaurant {
   position: relative;
   overflow: hidden;
   margin-bottom: clamp(1.5rem, 4vw, 3rem);
+  border: 1px solid var(--saes-bordure);
   border-radius: var(--saes-rayon);
-  background: var(--saes-jaune);
+  background: var(--saes-surface);
   color: var(--saes-vert);
-}
-
-/* Decor de plats, en bas a droite, derriere le contenu (client seulement). */
-.decor-bandeau {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: clamp(5rem, 14vw, 9rem);
-  height: auto;
-  object-fit: contain;
-  pointer-events: none;
-}
-
-.bandeau-client {
-  // Le bandeau client reste aligné avec la grille des plats.
-  box-shadow: var(--saes-ombre);
-
-  h1 {
-    color: inherit;
-    font-size: clamp(1.85rem, 4.2vw, 3.65rem);
-  }
 }
 
 .bandeau-interieur {
@@ -41,17 +27,8 @@
   padding: clamp(1.25rem, 3vw, 2.75rem);
 }
 
-.photo-restaurant {
-  display: block;
-  width: 100%;
-  height: clamp(8rem, 40vw, 13rem);
-  object-fit: cover;
-  border-radius: 0.7rem;
-}
-
 .identite h1 {
   margin: 0 0 0.6rem;
-  font-weight: 800;
   text-wrap: balance;
 }
 
@@ -89,27 +66,15 @@
   padding: 0.18em 0.7em;
 }
 
-.btn-reserver.btn-primaire {
-  justify-self: start;
-  gap: 0.55rem;
-  padding-inline: 1.25rem;
-  background: var(--saes-rouge);
-  color: var(--saes-texte-clair);
-
-  &:hover:not(:disabled) {
-    background: var(--saes-rouge-fonce);
-  }
-
-  svg {
-    width: 1.2em;
-    height: 1.2em;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
+.photo-restaurant {
+  display: block;
+  width: 100%;
+  height: clamp(8rem, 40vw, 13rem);
+  object-fit: cover;
+  border-radius: 0.7rem;
 }
+
+/* ---------- Vue du personnel : photo a gauche, texte a droite ---------- */
 
 @media (min-width: 680px) {
   .bandeau-interieur:has(.photo-restaurant) {
@@ -126,8 +91,114 @@
   }
 }
 
-/* Le vert vif de la maquette, lisible sur le jaune. */
-.bandeau-restaurant .badge-actif {
-  background: #84d45c;
-  color: var(--saes-vert);
+/* ---------- Vue du client : l'image d'ouverture ---------- */
+
+.bandeau-client {
+  --saes-vert: #f5f2ea;
+  --saes-vert-attenue: #c3cbd6;
+
+  min-height: clamp(16rem, 34vw, 24rem);
+  border: none;
+  border-radius: 1.25rem;
+  background: #080f19;
+  box-shadow: var(--saes-ombre-haute);
+}
+
+/* La photo du restaurant passe en fond, et le decor de plats disparait : la
+   photo porte deja l'image du lieu. */
+.bandeau-client .photo-restaurant {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  object-fit: cover;
+}
+
+/* Degrade : tres sombre a gauche, ou se trouve le texte, transparent a droite. */
+.bandeau-client::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgb(8 15 25 / 94%) 0%, rgb(8 15 25 / 78%) 45%, rgb(8 15 25 / 30%) 100%),
+    linear-gradient(0deg, rgb(8 15 25 / 55%), transparent 60%);
+}
+
+.bandeau-client .decor-bandeau {
+  display: none;
+}
+
+.bandeau-client .bandeau-interieur {
+  z-index: 1;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  gap: 0.75rem;
+  min-height: inherit;
+  padding: clamp(1.5rem, 4vw, 3.25rem);
+}
+
+.bandeau-client h1 {
+  max-width: 18ch;
+  margin-bottom: 0.9rem;
+  color: inherit;
+  font-size: clamp(2.1rem, 5vw, 4rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.bandeau-client .btn-reserver {
+  margin-top: 0.6rem;
+}
+
+@media (min-width: 680px) {
+  /* La photo de fond ne doit pas passer dans la colonne de gauche du mode
+     personnel : le bandeau client garde une seule colonne. */
+  .bandeau-client .bandeau-interieur:has(.photo-restaurant) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bandeau-client .photo-restaurant {
+    grid-column: auto;
+    grid-row: auto;
+    max-height: none;
+  }
+}
+
+/* ---------- « Réserver » ---------- */
+
+.btn-reserver.btn-primaire {
+  justify-self: start;
+  gap: 0.55rem;
+  padding-inline: 1.4rem;
+  min-height: 3rem;
+  background: var(--saes-jaune);
+  color: #0e1a26;
+  font-size: 1rem;
+
+  &:hover:not(:disabled) {
+    background: #e67800;
+    box-shadow: 0 6px 18px rgb(255 133 0 / 32%);
+  }
+
+  svg {
+    width: 1.2em;
+    height: 1.2em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+/* Sur le fond sombre du bandeau client, le vert de « Ouvert » doit rester vif. */
+.bandeau-client .badge-actif {
+  background: color-mix(in srgb, #9ad26f 22%, transparent);
+  color: #9ad26f;
+}
+
+.bandeau-client .badge-inactif {
+  background: rgb(255 255 255 / 12%);
+  color: #ffb0b4;
 }

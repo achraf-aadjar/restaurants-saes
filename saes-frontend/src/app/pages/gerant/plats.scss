@@ -529,7 +529,7 @@
 .btn-retirer {
   background: var(--saes-surface);
   color: var(--saes-refus-texte);
-  border-color: rgb(230 12 26 / 35%);
+  border-color: color-mix(in srgb, var(--saes-action) 45%, transparent);
 }
 
 .actions-formulaire {

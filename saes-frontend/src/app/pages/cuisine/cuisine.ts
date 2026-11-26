@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 
 import { classeBadgeStatut, LIBELLES_STATUT_COMMANDE } from '../../core/commande.util';
 import { CuisineService } from '../../core/cuisine.service';
@@ -6,11 +6,12 @@ import { motifErreur } from '../../core/erreur.util';
 import { CommandeDto } from '../../core/models';
 import { CommandeEntete } from '../../shared/commande-entete';
 import { RefusVisible } from '../../shared/refus-visible';
+import { TempsEcoule } from '../../shared/temps-ecoule';
 
 /** Gerer la preparation des commandes (cahier des charges §4.3), cote cuisinier. */
 @Component({
   selector: 'app-cuisine',
-  imports: [CommandeEntete, RefusVisible],
+  imports: [CommandeEntete, RefusVisible, TempsEcoule],
   templateUrl: './cuisine.html',
   styleUrl: './cuisine.scss',
 })
@@ -23,6 +24,27 @@ export class Cuisine {
   protected readonly chargement = signal(true);
   protected readonly erreur = signal<string | null>(null);
   protected readonly actionEnCours = signal<number | null>(null);
+
+  /**
+   * Les commandes rangees par statut, dans l'ordre de travail de la cuisine.
+   * Les deux statuts sont ceux que le cuisinier voit (cahier des charges
+   * §4.3) : aucun statut n'est ajoute. L'ordre d'arrivee est conserve a
+   * l'interieur de chaque colonne.
+   */
+  protected readonly colonnes = computed(() => [
+    {
+      statut: 'EN_ATTENTE' as const,
+      titre: 'À démarrer',
+      vide: 'Aucune commande en attente.',
+      commandes: this.commandes().filter((c) => c.statut === 'EN_ATTENTE'),
+    },
+    {
+      statut: 'EN_PREPARATION' as const,
+      titre: 'En préparation',
+      vide: 'Aucune préparation en cours.',
+      commandes: this.commandes().filter((c) => c.statut === 'EN_PREPARATION'),
+    },
+  ]);
 
   constructor() {
     this.charger();

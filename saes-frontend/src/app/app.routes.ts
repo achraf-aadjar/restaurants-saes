@@ -3,16 +3,16 @@ import { Routes } from '@angular/router';
 
 import { AuthService } from './core/auth.service';
 
-import { authGuard, roleGuard } from './core/auth.guard';
-import { accueilDe } from './core/navigation';
+import { authGuard, roleGuard, vitrineGuard } from './core/auth.guard';
 
 export const routes: Routes = [
-  // Chacun arrive sur sa page d'accueil : la premiere fonction du personnel
-  // ou de l'administrateur, les menus pour un client ou un visiteur.
+  // Le personnel et l'administrateur arrivent sur leur premiere fonction ; le
+  // client et le visiteur arrivent sur la vitrine.
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: () => accueilDe(inject(AuthService).utilisateur()),
+    canActivate: [vitrineGuard],
+    loadComponent: () => import('./pages/accueil/accueil').then((m) => m.Accueil),
   },
   {
     path: 'menus',

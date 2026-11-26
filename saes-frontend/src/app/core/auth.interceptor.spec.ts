@@ -34,7 +34,9 @@ describe('authInterceptor', () => {
 
     http.get('/api/commandes').subscribe();
 
-    expect(serveur.expectOne('/api/commandes').request.headers.get('Authorization')).toBe('Bearer jeton-123');
+    expect(serveur.expectOne('/api/commandes').request.headers.get('Authorization')).toBe(
+      'Bearer jeton-123',
+    );
   });
 
   it("n'envoie jamais le jeton hors de l'API", () => {
@@ -42,7 +44,9 @@ describe('authInterceptor', () => {
 
     http.get('https://exemple.com/donnees').subscribe();
 
-    expect(serveur.expectOne('https://exemple.com/donnees').request.headers.has('Authorization')).toBe(false);
+    expect(
+      serveur.expectOne('https://exemple.com/donnees').request.headers.has('Authorization'),
+    ).toBe(false);
   });
 
   it('sans session, aucun jeton n est joint', () => {
@@ -50,7 +54,9 @@ describe('authInterceptor', () => {
 
     http.get('/api/public/restaurants').subscribe();
 
-    expect(serveur.expectOne('/api/public/restaurants').request.headers.has('Authorization')).toBe(false);
+    expect(serveur.expectOne('/api/public/restaurants').request.headers.has('Authorization')).toBe(
+      false,
+    );
   });
 
   it('un jeton refuse (401) deconnecte et renvoie vers la page de connexion', () => {

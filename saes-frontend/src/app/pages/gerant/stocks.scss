@@ -171,3 +171,100 @@
       'actions actions actions';
   }
 }
+
+/* ---------- Signalement des stocks bas ---------- */
+
+.alerte-stock {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  border-color: var(--saes-refus-bordure);
+  background: var(--saes-refus-fond);
+  color: var(--saes-refus-texte);
+
+  h2 {
+    margin: 0 0 0.5rem;
+    color: inherit;
+    font-family: var(--saes-font);
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+}
+
+.icone-alerte {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.7rem;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+
+  svg {
+    width: 1.4rem;
+    height: 1.4rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+.puces-alerte {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    padding: 0.2em 0.65em;
+    border-radius: 999px;
+    background: var(--saes-surface);
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+}
+
+/* ---------- Jauge de niveau ---------- */
+
+.jauge {
+  position: relative;
+  display: block;
+  width: clamp(4rem, 9vw, 8rem);
+  height: 0.55rem;
+  border-radius: 999px;
+  background: var(--saes-fond-doux);
+  overflow: hidden;
+}
+
+.remplissage {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--saes-action);
+}
+
+.jauge-alerte .remplissage {
+  background: var(--saes-rouge);
+}
+
+/* Trait du seuil d'alerte, pose sur la jauge. */
+.repere-seuil {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  background: var(--saes-vert-attenue);
+}
+
+/* Sur telephone, la jauge prend toute la largeur de sa ligne. */
+@media (max-width: 40rem) {
+  .jauge {
+    width: 100%;
+    min-width: 6rem;
+  }
+}

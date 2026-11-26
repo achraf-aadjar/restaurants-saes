@@ -1,113 +1,172 @@
-/* Styles globaux - charte graphique (organisation_travail_sujet17.pdf, section Design) */
+/* ---------------------------------------------------------------------------
+   Systeme de design « Restaurants du SAES ».
+   Une seule source pour les couleurs, les echelles et les ombres : tout le reste
+   de l'application n'utilise que ces variables, jamais une couleur ecrite en dur.
+
+   Identite : bleu nuit profond, vert naturel, orange chaleureux, blanc creme.
+   Deux themes complets, clair et sombre (ThemeService, <html data-theme>).
+   --------------------------------------------------------------------------- */
 :root {
   color-scheme: light;
 
-  /* Identite */
-  --saes-vert: #08312d; /* textes et logo */
-  --saes-jaune: #fec608; /* bandeau du restaurant */
-  --saes-rouge: #e60c1a; /* boutons, selection, refus */
-  --saes-creme: #fcfbf7; /* fond */
+  /* --- Fonds et surfaces (du plus bas au plus haut) --- */
+  --saes-creme: #f7f5ef; /* fond de page */
+  --saes-fond-doux: #edeae0; /* entetes de tableau, zones creusees */
+  --saes-fond-pale: #faf8f3;
+  --saes-surface: #ffffff; /* cartes */
+  --saes-surface-haute: #ffffff; /* panneaux poses au-dessus des cartes */
+  --saes-fond-chaud: #fdf1e0; /* ligne choisie d'un tableau */
 
-  --saes-vert-clair: #0f4a43;
-  --saes-vert-attenue: #526f6c; /* textes secondaires : le vert eclairci, contraste 5,3 */
-  --saes-rouge-fonce: #b50a15;
-  --saes-bordure: #e4ddc9;
-  --saes-bordure-forte: #a89f82; /* contour des champs et des boutons secondaires */
+  /* --- Textes --- */
+  --saes-vert: #0e1a26; /* texte principal : le bleu nuit */
+  --saes-vert-clair: #1b2d3f;
+  --saes-vert-attenue: #5b6b7b; /* texte secondaire, contraste 4,7 */
   --saes-texte-clair: #ffffff;
-  --saes-vert-pale: #e6f3ec; /* fonds verts pâles : pastille d'icône, choix retenu, quantité */
-  --saes-rose: #f9ece4; /* cadres roses de l'ecran 1 : total, pastille d'articles */
 
-  --saes-rayon: 1rem;
-  --saes-surface: #fff;
-  --saes-fond-doux: #f3efe2;
-  --saes-fond-chaud: #fdf3e1; /* ligne choisie d'un tableau */
-  --saes-fond-pale: #fbf9f2;
-  --saes-rouge-texte: #e60c1a; /* rouge utilise comme couleur de texte */
-  --saes-ok-fond: #e9f5ee;
-  --saes-ok-texte: #0f4a2b;
-  --saes-ok-bordure: #bfdccb;
-  --saes-refus-fond: #fdeceb;
-  --saes-refus-texte: #b50a15;
+  /* --- Traits --- */
+  --saes-bordure: #e3dfd4;
+  --saes-bordure-forte: #a7a294; /* contour des champs et boutons secondaires */
+  --saes-survol: rgb(14 26 38 / 6%);
+  --saes-trait: rgb(14 26 38 / 12%);
+
+  /* --- Accents de marque --- */
+  --saes-action: #2f6b1e; /* vert : action principale */
+  --saes-action-fonce: #245415; /* son survol */
+  --saes-texte-sur-action: #ffffff;
+  --saes-jaune: #ff8500; /* orange chaleureux : bandeau, mise en avant */
+  --saes-accent-texte: #a85000; /* l'orange utilise comme couleur de texte */
+  --saes-marque-vert: #2f6b1e; /* filets decoratifs */
+  --saes-vert-pale: #e8f1e2; /* fond vert tres pale : choix retenu, pastilles */
+  --saes-rose: #fbeee2;
+  --saes-prix: #2f6b1e; /* les prix */
+
+  /* --- Refus et danger (rouge reserve a cela) --- */
+  --saes-rouge: #c62828;
+  --saes-rouge-fonce: #9f1f1f;
+  --saes-rouge-texte: #b3221f;
+
+  /* --- Statuts --- */
+  --saes-ok-fond: #e6f2e4;
+  --saes-ok-texte: #1d5a22;
+  --saes-ok-bordure: #bcd9b8;
+  --saes-refus-fond: #fceceb;
+  --saes-refus-texte: #a82020;
   --saes-refus-bordure: #f0c4c1;
-  --saes-attente-fond: #fff1b8;
-  --saes-attente-texte: #6b4d00;
-  --saes-neutre-fond: #e3eaec;
-  --saes-neutre-texte: #2c4a50;
-  --saes-grille: #ece6d6; /* graphiques */
-  --saes-axe-base: #c9c1aa;
-  --saes-marque-vert: #08312d; /* vert du logo, pour les filets decoratifs */
-  --saes-survol: rgb(8 49 45 / 6%);
-  --saes-trait: rgb(8 49 45 / 12%);
-  --saes-ombre: 0 4px 16px rgb(8 49 45 / 7%);
+  --saes-attente-fond: #ffeed6;
+  --saes-attente-texte: #8a4b00;
+  --saes-neutre-fond: #e6e9ed;
+  --saes-neutre-texte: #3c4b5a;
 
-  --saes-font: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* --- Graphiques --- */
+  --saes-grille: #e6e2d8;
+  --saes-axe-base: #bdb8ab;
+  /* Series des graphiques, dans un ordre fixe : chaque categorie garde sa
+     couleur quels que soient les filtres. Palette verifiee pour les daltonismes
+     (ecart minimal entre deux couleurs voisines) et pour le contraste. */
+  --saes-serie-1: #2a78d6;
+  --saes-serie-2: #eb6834;
+  --saes-serie-3: #1baf7a;
+  --saes-serie-4: #eda100;
+  --saes-serie-5: #e87ba4;
+  --saes-serie-6: #008300;
+
+  /* --- Elevation --- */
+  --saes-ombre: 0 1px 2px rgb(14 26 38 / 5%), 0 6px 20px rgb(14 26 38 / 6%);
+  --saes-ombre-haute: 0 2px 6px rgb(14 26 38 / 8%), 0 18px 48px rgb(14 26 38 / 12%);
+
+  /* --- Formes --- */
+  --saes-rayon: 1rem;
+  --saes-rayon-petit: 0.6rem;
+  --saes-rayon-bouton: 0.7rem;
+
+  /* --- Typographie --- */
+  --saes-font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --saes-font-titre: 'Playfair Display', Georgia, 'Times New Roman', serif;
 
   /* Mise en page des ecrans de reference (1536 px de large) : le contenu prend
      toute la largeur avec 36 px de marge ; la marge suit la fenetre (16 px sur
      telephone). Au-dela de 1536 px, le contenu reste a sa largeur, centre. */
   --saes-gouttiere: clamp(1rem, 2.35vw, 2.25rem);
   --saes-largeur-page: 1536px;
+  --saes-largeur-texte: 68ch;
 }
 
 /* ---------------------------------------------------------------------------
-   Mode sombre : meme identite (jaune, rouge, vert), fonds vert tres fonce.
-   Choisi par le bouton de l'en-tete (ThemeService) ; <html data-theme="dark">.
+   Mode sombre : l'identite de la marque, sur le bleu nuit profond.
    --------------------------------------------------------------------------- */
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --saes-vert: #e8f0eb; /* textes */
-  --saes-vert-clair: #cfe0d6;
-  --saes-vert-attenue: #a9beb5;
-  --saes-creme: #0d1b19; /* fond de page */
-  --saes-surface: #14262a;
-  --saes-fond-doux: #1b312e;
-  --saes-bordure: #2d453f;
-  --saes-bordure-forte: #5f7b73;
-  --saes-vert-pale: #1d3b33;
-  --saes-rose: #3b2224;
-  --saes-rouge-fonce: #c40f1c; /* survol des boutons rouges */
-  --saes-rouge-texte: #ff7d86;
-  --saes-fond-chaud: #2c2814;
-  --saes-fond-pale: #172b28;
-  --saes-ok-fond: #17382c;
-  --saes-ok-texte: #8fe0b0;
-  --saes-ok-bordure: #2f6f52;
-  --saes-refus-fond: #3d1f22;
+  --saes-creme: #080f19;
+  --saes-fond-doux: #101b28;
+  --saes-fond-pale: #0c1521;
+  --saes-surface: #142130;
+  --saes-surface-haute: #1a2838;
+  --saes-fond-chaud: #2d2113;
+
+  --saes-vert: #f5f2ea;
+  --saes-vert-clair: #dcd8cd;
+  --saes-vert-attenue: #a7b2c1;
+  --saes-texte-clair: #ffffff;
+
+  --saes-bordure: #243448;
+  --saes-bordure-forte: #4a5e76;
+  --saes-survol: rgb(255 255 255 / 7%);
+  --saes-trait: rgb(255 255 255 / 13%);
+
+  --saes-action: #76b947;
+  --saes-action-fonce: #8cc960;
+  --saes-texte-sur-action: #08121c;
+  --saes-jaune: #ff8500;
+  --saes-accent-texte: #ffa33d;
+  --saes-marque-vert: #76b947;
+  --saes-vert-pale: #1b2f1c;
+  --saes-rose: #2e2218;
+  --saes-prix: #9ad26f;
+
+  --saes-rouge: #c6303a;
+  --saes-rouge-fonce: #d8454f;
+  --saes-rouge-texte: #ff8b90;
+
+  --saes-ok-fond: #15301b;
+  --saes-ok-texte: #9ad26f;
+  --saes-ok-bordure: #2f5c30;
+  --saes-refus-fond: #35191c;
   --saes-refus-texte: #ff9aa1;
-  --saes-refus-bordure: #6b2d32;
-  --saes-attente-fond: #3d3315;
-  --saes-attente-texte: #ffd966;
-  --saes-neutre-fond: #26363a;
-  --saes-neutre-texte: #bccdd2;
-  --saes-grille: #29413c;
-  --saes-axe-base: #4c6761;
-  --saes-marque-vert: #2f9e5c;
-  --saes-survol: rgb(255 255 255 / 8%);
-  --saes-trait: rgb(255 255 255 / 14%);
-  --saes-ombre: 0 4px 16px rgb(0 0 0 / 35%);
+  --saes-refus-bordure: #5f282d;
+  --saes-attente-fond: #35250f;
+  --saes-attente-texte: #ffb561;
+  --saes-neutre-fond: #1e2b3a;
+  --saes-neutre-texte: #b6c2d1;
+
+  --saes-grille: #223246;
+  --saes-axe-base: #3d526b;
+  --saes-serie-1: #3987e5;
+  --saes-serie-2: #d95926;
+  --saes-serie-3: #199e70;
+  --saes-serie-4: #c98500;
+  --saes-serie-5: #d55181;
+  --saes-serie-6: #0ca30c;
+
+  --saes-ombre: 0 1px 2px rgb(0 0 0 / 40%), 0 8px 24px rgb(0 0 0 / 35%);
+  --saes-ombre-haute: 0 2px 8px rgb(0 0 0 / 45%), 0 24px 56px rgb(0 0 0 / 50%);
 }
 
-/* Les surfaces jaunes gardent un texte vert fonce, dans les deux modes. */
-.bandeau,
-.bandeau-restaurant {
-  --saes-vert: #08312d;
-  --saes-vert-attenue: #3f5855;
-  --saes-ok-fond: #e9f5ee;
-  --saes-ok-texte: #0f4a2b;
-  --saes-refus-fond: #fdeceb;
-  --saes-refus-texte: #b50a15;
+/* Les surfaces orange gardent un texte bleu nuit, dans les deux modes. */
+.sur-accent {
+  --saes-vert: #0e1a26;
+  --saes-vert-attenue: #4a3a28;
+  --saes-ok-fond: #e6f2e4;
+  --saes-ok-texte: #1d5a22;
+  --saes-refus-fond: #fceceb;
+  --saes-refus-texte: #a82020;
 }
 
-/* Le logo est vert fonce : en mode sombre, il garde son fond clair. */
+/* Le logo est bleu nuit : en mode sombre, il garde son fond clair. */
 :root[data-theme='dark'] .logo-complet {
   padding: 0.2rem 0.5rem;
   border-radius: 0.6rem;
-  background: #fcfbf7;
-}
-
-:root[data-theme='dark'] img:not(.logo) {
-  filter: brightness(0.92);
+  background: #f5f2ea;
 }
 
 * {
@@ -121,10 +180,22 @@ body {
 
 body {
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.55;
   font-family: var(--saes-font);
   color: var(--saes-vert);
   background: var(--saes-creme);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Les grands titres sont en caracteres a empattement (Playfair Display) : c'est
+   la signature editoriale de la marque. Les titres de travail (h3 et au-dela),
+   les tableaux et les formulaires restent en caracteres lineaires, plus lisibles
+   en petite taille et en grande quantite. */
+h1,
+h2 {
+  font-family: var(--saes-font-titre);
+  font-weight: 600;
+  letter-spacing: -0.015em;
 }
 
 h1,
@@ -132,9 +203,21 @@ h2,
 h3 {
   color: var(--saes-vert);
   margin: 0 0 0.5em;
-  line-height: 1.2;
-  letter-spacing: -0.025em;
+  line-height: 1.18;
   overflow-wrap: break-word; /* un mot trop long pour un petit ecran passe a la ligne */
+  text-wrap: balance;
+}
+
+h3 {
+  letter-spacing: -0.015em;
+}
+
+/* Un titre de donnees (nombre, montant, numero) reste lineaire : les chiffres
+   d'une police a empattement s'alignent mal en colonne. */
+.titre-donnees,
+.grand-nombre {
+  font-family: var(--saes-font);
+  letter-spacing: -0.02em;
 }
 
 a {
@@ -172,37 +255,48 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4em;
+  gap: 0.45em;
   min-height: 2.75rem;
-  padding: 0.55em 1.15em;
-  border-radius: 0.7rem;
+  padding: 0.55em 1.25em;
+  border-radius: var(--saes-rayon-bouton);
   border: 1px solid transparent;
-  font-weight: 600;
+  font-weight: 650;
   font-size: 0.95rem;
+  letter-spacing: -0.005em;
   text-decoration: none; /* un lien presente comme un bouton (« Clôturer la caisse ») */
   cursor: pointer;
   transition:
-    background-color 0.15s ease,
-    box-shadow 0.15s ease,
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
     transform 0.1s ease,
-    opacity 0.15s ease;
+    opacity 0.16s ease;
 }
 
 .btn:active:not(:disabled) {
   transform: translateY(1px) scale(0.99);
 }
 
-.btn-primaire:hover:not(:disabled) {
-  box-shadow: 0 4px 12px rgb(230 12 26 / 28%);
-}
-
+/* L'action principale : le vert de la marque. */
 .btn-primaire {
-  background: var(--saes-rouge);
-  color: var(--saes-texte-clair);
+  background: var(--saes-action);
+  color: var(--saes-texte-sur-action);
 }
 
 .btn-primaire:hover:not(:disabled) {
-  background: var(--saes-rouge-fonce);
+  background: var(--saes-action-fonce);
+  box-shadow: 0 6px 18px rgb(47 107 30 / 28%);
+}
+
+/* L'action mise en avant d'une page vitrine : l'orange chaleureux. */
+.btn-accent {
+  background: var(--saes-jaune);
+  color: #0e1a26;
+}
+
+.btn-accent:hover:not(:disabled) {
+  background: #e67800;
+  box-shadow: 0 6px 18px rgb(255 133 0 / 32%);
 }
 
 .btn-secondaire {
@@ -212,6 +306,28 @@ button {
 }
 
 .btn-secondaire:hover:not(:disabled) {
+  background: var(--saes-survol);
+  border-color: var(--saes-vert-attenue);
+}
+
+/* Une action qui detruit (annuler, desactiver, vider) : le rouge. */
+.btn-danger {
+  background: var(--saes-rouge);
+  color: var(--saes-texte-clair);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--saes-rouge-fonce);
+  box-shadow: 0 6px 18px rgb(198 40 40 / 28%);
+}
+
+/* Une action discrete, sans cadre : « Voir tout », « Fermer ». */
+.btn-discret {
+  background: transparent;
+  color: var(--saes-vert);
+}
+
+.btn-discret:hover:not(:disabled) {
   background: var(--saes-survol);
 }
 
@@ -226,6 +342,17 @@ button {
   border-radius: var(--saes-rayon);
   box-shadow: var(--saes-ombre);
   padding: clamp(1rem, 1.6vw, 1.5rem);
+}
+
+/* Intitule court au-dessus d'une valeur ou d'un bloc. */
+.sur-titre {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--saes-vert-attenue);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
 }
 
 .champ {
@@ -297,7 +424,7 @@ button {
 .message-ok {
   background: var(--saes-ok-fond);
   color: var(--saes-ok-texte);
-  border: 1px solid #2f9e5c;
+  border: 1px solid var(--saes-ok-bordure);
   border-radius: var(--saes-rayon);
   padding: 0.75em 1em;
   margin-bottom: 1rem;
@@ -624,7 +751,7 @@ button {
 
 .plat .prix {
   font-weight: 700;
-  color: var(--saes-rouge-texte);
+  color: var(--saes-prix);
   margin: 0 0 0.5rem;
 }
 
@@ -701,7 +828,7 @@ html:has(.panneau-panier[open]) {
   gap: 0.15rem;
   padding: 0.9rem 1rem;
   border: 1px solid var(--saes-ok-bordure);
-  border-left: 5px solid #1f7a4d;
+  border-left: 5px solid var(--saes-action);
   border-radius: var(--saes-rayon);
   background: var(--saes-vert-pale);
   color: var(--saes-ok-texte);
@@ -906,8 +1033,8 @@ td.actions-colonne {
 /* Titre des pages du personnel : petit trait aux couleurs de la marque. */
 .corps:has(app-barre-laterale.visible) .contenu h1:not(.identite h1) {
   padding-bottom: 0.6rem;
-  background: linear-gradient(90deg, var(--saes-jaune) 0 55%, var(--saes-rouge) 55% 100%) left
-    bottom / 3.5rem 4px no-repeat;
+  background: linear-gradient(90deg, var(--saes-jaune) 0 55%, var(--saes-marque-vert) 55% 100%) left
+    bottom / 3.5rem 3px no-repeat;
 }
 
 /* Chargement : une pastille qui tourne et un reflet qui passe. */
@@ -926,7 +1053,7 @@ td.actions-colonne {
     width: 1.25rem;
     height: 1.25rem;
     border: 3px solid var(--saes-bordure);
-    border-top-color: var(--saes-rouge);
+    border-top-color: var(--saes-action);
     border-radius: 50%;
     animation: saes-rotation 0.8s linear infinite;
   }
@@ -935,7 +1062,7 @@ td.actions-colonne {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(100deg, transparent 30%, rgb(254 198 8 / 16%) 50%, transparent 70%);
+    background: linear-gradient(100deg, transparent 30%, rgb(255 133 0 / 14%) 50%, transparent 70%);
     transform: translateX(-100%);
     animation: saes-reflet 1.6s ease-in-out infinite;
   }
@@ -969,7 +1096,7 @@ td.actions-colonne {
   border-top: 4px solid var(--saes-bordure);
 
   &[data-statut='EN_ATTENTE'] {
-    border-top-color: #7b8f94;
+    border-top-color: var(--saes-neutre-texte);
   }
 
   &[data-statut='EN_PREPARATION'] {
@@ -978,7 +1105,7 @@ td.actions-colonne {
 
   &[data-statut='PRETE'],
   &[data-statut='PAYEE'] {
-    border-top-color: #2f9e5c;
+    border-top-color: var(--saes-action);
   }
 
   &[data-statut='ANNULEE'],

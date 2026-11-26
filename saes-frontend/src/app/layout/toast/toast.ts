@@ -47,9 +47,10 @@ import { ToastService } from '../../core/toast.service';
       max-width: 30rem;
       padding: 0.7rem 0.9rem;
       border-radius: 0.9rem;
-      background: #08312d;
-      color: #fcfbf7;
-      box-shadow: 0 10px 30px rgb(0 0 0 / 28%);
+      background: var(--saes-surface-haute);
+      color: var(--saes-vert);
+      box-shadow: var(--saes-ombre-haute);
+      border: 1px solid var(--saes-bordure);
       font-weight: 600;
       pointer-events: auto;
       animation: saes-toast 0.28s cubic-bezier(0.2, 0.8, 0.3, 1.2);
@@ -61,9 +62,9 @@ import { ToastService } from '../../core/toast.service';
       height: 1.5rem;
       padding: 0.25rem;
       border-radius: 50%;
-      background: #2f9e5c;
+      background: var(--saes-action);
       fill: none;
-      stroke: #fff;
+      stroke: var(--saes-texte-sur-action);
       stroke-width: 3;
       stroke-linecap: round;
       stroke-linejoin: round;
@@ -78,10 +79,10 @@ import { ToastService } from '../../core/toast.service';
       flex: none;
       min-height: 2rem;
       padding: 0.2rem 0.7rem;
-      border: 1.5px solid #fec608;
+      border: 1.5px solid var(--saes-jaune);
       border-radius: 999px;
       background: transparent;
-      color: #fec608;
+      color: var(--saes-accent-texte);
       font: inherit;
       font-size: 0.9rem;
       font-weight: 700;
@@ -89,8 +90,8 @@ import { ToastService } from '../../core/toast.service';
     }
 
     .action:hover {
-      background: #fec608;
-      color: #08312d;
+      background: var(--saes-jaune);
+      color: #0e1a26;
     }
 
     @keyframes saes-toast {

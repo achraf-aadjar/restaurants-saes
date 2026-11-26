@@ -41,13 +41,15 @@
   }
 }
 
+/* Le nombre tient sur une ligne : un montant coupe en deux (« 1 016 300 FC /
+   FA ») se lit mal. Il retrecit avec la carte plutot que de passer a la ligne. */
 .kpi-nombre {
   grid-area: nombre;
-  font-size: clamp(1.75rem, 12.5cqi, 4.4rem);
+  font-size: clamp(1.5rem, 9.5cqi, 3.5rem);
   font-weight: 800;
   line-height: 1.05;
   font-variant-numeric: tabular-nums;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
 }
 
 .kpi-libelle {

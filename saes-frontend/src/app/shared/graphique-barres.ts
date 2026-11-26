@@ -1,4 +1,13 @@
-import { Component, DestroyRef, ElementRef, afterNextRender, computed, inject, input, signal } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  afterNextRender,
+  computed,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 
 export interface SerieGraphique {
   nom: string;
@@ -27,7 +36,9 @@ const MARGE_HAUT = 10;
   template: `
     <div class="legende" aria-hidden="true">
       @for (s of series(); track s.nom) {
-        <span class="entree"><span class="pastille" [style.background]="s.couleur"></span>{{ s.nom }}</span>
+        <span class="entree"
+          ><span class="pastille" [style.background]="s.couleur"></span>{{ s.nom }}</span
+        >
       }
     </div>
     <div class="zone">
@@ -39,27 +50,61 @@ const MARGE_HAUT = 10;
         [attr.aria-label]="description()"
       >
         @for (g of graduations(); track g.valeur) {
-          <line [attr.x1]="margeGauche" [attr.x2]="largeur()" [attr.y1]="g.y" [attr.y2]="g.y" class="grille" />
-          <text [attr.x]="margeGauche - 8" [attr.y]="g.y + 4" class="axe" text-anchor="end">{{ g.libelle }}</text>
+          <line
+            [attr.x1]="margeGauche"
+            [attr.x2]="largeur()"
+            [attr.y1]="g.y"
+            [attr.y2]="g.y"
+            class="grille"
+          />
+          <text [attr.x]="margeGauche - 8" [attr.y]="g.y + 4" class="axe" text-anchor="end">
+            {{ g.libelle }}
+          </text>
         }
         @for (c of colonnes(); track c.index) {
-          <g (mouseenter)="survol.set(c.index)" (mouseleave)="survol.set(null)" (click)="survol.set(c.index)">
-            <rect [attr.x]="c.xZone" y="0" [attr.width]="c.largeurZone" [attr.height]="hauteurTotale" fill="transparent" />
+          <g
+            (mouseenter)="survol.set(c.index)"
+            (mouseleave)="survol.set(null)"
+            (click)="survol.set(c.index)"
+          >
+            <rect
+              [attr.x]="c.xZone"
+              y="0"
+              [attr.width]="c.largeurZone"
+              [attr.height]="hauteurTotale"
+              fill="transparent"
+            />
             @for (seg of c.segments; track $index) {
               <path [attr.d]="seg.chemin" [attr.fill]="seg.couleur" />
             }
             @if (c.afficherLibelle) {
-              <text [attr.x]="c.xCentre" [attr.y]="hauteurTotale - 6" class="axe" text-anchor="middle">{{ c.libelleCourt }}</text>
+              <text
+                [attr.x]="c.xCentre"
+                [attr.y]="hauteurTotale - 6"
+                class="axe"
+                text-anchor="middle"
+              >
+                {{ c.libelleCourt }}
+              </text>
             }
           </g>
         }
-        <line [attr.x1]="margeGauche" [attr.x2]="largeur()" [attr.y1]="basGraphique" [attr.y2]="basGraphique" class="base" />
+        <line
+          [attr.x1]="margeGauche"
+          [attr.x2]="largeur()"
+          [attr.y1]="basGraphique"
+          [attr.y2]="basGraphique"
+          class="base"
+        />
       </svg>
       @if (infoBulle(); as b) {
         <div class="info-bulle" [style.left.%]="b.positionPourcent">
           <strong>{{ b.libelle }}</strong>
           @for (l of b.lignes; track l.nom) {
-            <span><span class="pastille" [style.background]="l.couleur"></span>{{ l.nom }} : {{ format(l.valeur) }}</span>
+            <span
+              ><span class="pastille" [style.background]="l.couleur"></span>{{ l.nom }} :
+              {{ format(l.valeur) }}</span
+            >
           }
           <span class="total">Total : {{ format(b.total) }}</span>
         </div>
@@ -67,25 +112,82 @@ const MARGE_HAUT = 10;
     </div>
   `,
   styles: `
-    :host { display: block; }
-    .legende { display: flex; flex-wrap: wrap; gap: 1rem; font-size: 0.82rem; color: var(--saes-vert-attenue); margin-bottom: 0.6rem; }
-    .entree { display: inline-flex; align-items: center; gap: 0.4rem; }
-    .pastille { width: 10px; height: 10px; border-radius: 3px; display: inline-block; flex-shrink: 0; }
-    .zone { position: relative; }
-    svg { display: block; overflow: visible; }
-    .grille { stroke: var(--saes-grille); stroke-width: 1; vector-effect: non-scaling-stroke; }
-    .base { stroke: var(--saes-axe-base); stroke-width: 1; vector-effect: non-scaling-stroke; }
-    .axe { fill: var(--saes-vert-attenue); font-size: 11px; }
-    g { cursor: pointer; }
-    .info-bulle {
-      position: absolute; top: 0; transform: translateX(-50%);
-      background: var(--saes-surface); border: 1px solid var(--saes-bordure); border-radius: 8px;
-      box-shadow: 0 6px 20px rgba(8, 49, 45, 0.12); padding: 0.55rem 0.7rem;
-      display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.8rem; color: var(--saes-vert);
-      pointer-events: none; white-space: nowrap; z-index: 2;
+    :host {
+      display: block;
     }
-    .info-bulle span { display: inline-flex; align-items: center; gap: 0.35rem; }
-    .total { font-weight: 700; border-top: 1px solid var(--saes-bordure); padding-top: 0.2rem; margin-top: 0.1rem; }
+    .legende {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.82rem;
+      color: var(--saes-vert-attenue);
+      margin-bottom: 0.6rem;
+    }
+    .entree {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .pastille {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .zone {
+      position: relative;
+    }
+    svg {
+      display: block;
+      overflow: visible;
+    }
+    .grille {
+      stroke: var(--saes-grille);
+      stroke-width: 1;
+      vector-effect: non-scaling-stroke;
+    }
+    .base {
+      stroke: var(--saes-axe-base);
+      stroke-width: 1;
+      vector-effect: non-scaling-stroke;
+    }
+    .axe {
+      fill: var(--saes-vert-attenue);
+      font-size: 11px;
+    }
+    g {
+      cursor: pointer;
+    }
+    .info-bulle {
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+      background: var(--saes-surface);
+      border: 1px solid var(--saes-bordure);
+      border-radius: 8px;
+      box-shadow: var(--saes-ombre-haute);
+      padding: 0.55rem 0.7rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      font-size: 0.8rem;
+      color: var(--saes-vert);
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 2;
+    }
+    .info-bulle span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .total {
+      font-weight: 700;
+      border-top: 1px solid var(--saes-bordure);
+      padding-top: 0.2rem;
+      margin-top: 0.1rem;
+    }
   `,
 })
 export class GraphiqueBarres {
@@ -141,9 +243,15 @@ export class GraphiqueBarres {
         const h = s.v * echelle;
         const haut = bas - h;
         const dernier = rang === nonNuls.length - 1;
-        const chemin = this.rectangle(x, haut, largeurBarre, Math.max(0, h - (dernier ? 0 : 2)), dernier ? 4 : 0);
+        const chemin = this.rectangle(
+          x,
+          haut,
+          largeurBarre,
+          Math.max(0, h - (dernier ? 0 : 2)),
+          dernier ? 4 : 0,
+        );
         bas = haut;
-        return { chemin, couleur: this.series()[s.i]?.couleur ?? '#999' };
+        return { chemin, couleur: this.series()[s.i]?.couleur ?? 'var(--saes-serie-1)' };
       });
       return {
         index,
@@ -162,9 +270,18 @@ export class GraphiqueBarres {
     if (i === null) return null;
     const p = this.points()[i];
     const c = this.colonnes()[i];
-    const lignes = this.series().map((s, k) => ({ nom: s.nom, couleur: s.couleur, valeur: p.valeurs[k] ?? 0 }));
+    const lignes = this.series().map((s, k) => ({
+      nom: s.nom,
+      couleur: s.couleur,
+      valeur: p.valeurs[k] ?? 0,
+    }));
     const pourcent = Math.min(85, Math.max(15, (c.xCentre / this.largeur()) * 100));
-    return { libelle: p.libelle, lignes, total: lignes.reduce((a, l) => a + l.valeur, 0), positionPourcent: pourcent };
+    return {
+      libelle: p.libelle,
+      lignes,
+      total: lignes.reduce((a, l) => a + l.valeur, 0),
+      positionPourcent: pourcent,
+    };
   });
 
   protected readonly description = computed(() => {
@@ -177,8 +294,10 @@ export class GraphiqueBarres {
   }
 
   private court(valeur: number): string {
-    if (valeur >= 1_000_000) return `${(valeur / 1_000_000).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} M`;
-    if (valeur >= 1000) return `${(valeur / 1000).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} k`;
+    if (valeur >= 1_000_000)
+      return `${(valeur / 1_000_000).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} M`;
+    if (valeur >= 1000)
+      return `${(valeur / 1000).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} k`;
     return String(Math.round(valeur));
   }
 

@@ -19,14 +19,14 @@
   border: none;
   background: var(--saes-creme);
   color: var(--saes-vert);
-  box-shadow: -8px 0 32px rgb(8 49 45 / 18%);
+  box-shadow: var(--saes-ombre-haute);
 
   &[open] {
     animation: glisser 0.22s ease-out;
   }
 
   &::backdrop {
-    background: rgb(8 49 45 / 55%);
+    background: rgb(8 15 25 / 62%);
     backdrop-filter: blur(2px);
   }
 
@@ -323,7 +323,6 @@ div.corps {
     stroke-linecap: round;
     stroke-linejoin: round;
   }
-
 }
 
 /* Bouton plus compact en bas du panneau sur téléphone. */

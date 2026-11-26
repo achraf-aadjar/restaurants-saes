@@ -23,7 +23,9 @@ describe('AuthService', () => {
   let http: HttpTestingController;
 
   function creerService(): AuthService {
-    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
     http = TestBed.inject(HttpTestingController);
     return TestBed.inject(AuthService);
   }
@@ -71,10 +73,15 @@ describe('AuthService', () => {
   it('une connexion refusee ne connecte personne', () => {
     const auth = creerService();
 
-    auth.authentifier({ email: 'awa@test.sn', motDePasse: 'faux' }).subscribe({ error: () => undefined });
+    auth
+      .authentifier({ email: 'awa@test.sn', motDePasse: 'faux' })
+      .subscribe({ error: () => undefined });
     http
       .expectOne('/api/auth/login')
-      .flush({ motif: 'Adresse e-mail ou mot de passe incorrect' }, { status: 401, statusText: 'Unauthorized' });
+      .flush(
+        { motif: 'Adresse e-mail ou mot de passe incorrect' },
+        { status: 401, statusText: 'Unauthorized' },
+      );
 
     expect(auth.estConnecte()).toBe(false);
     expect(auth.getToken()).toBeNull();

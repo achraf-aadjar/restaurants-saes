@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { motifErreur } from '../../core/erreur.util';
@@ -41,6 +41,22 @@ export class GerantStocks {
   protected readonly enregistrementEnCours = signal(false);
   protected readonly formulaireOuvert = signal(false);
   protected readonly mouvementIngredientId = signal<number | null>(null);
+
+  /**
+   * Les ingredients dont le stock est sous leur seuil d'alerte : le cahier des
+   * charges demande qu'ils soient signales au gerant (§4.6).
+   */
+  protected readonly enAlerte = computed(() => this.ingredients().filter((i) => i.alerte));
+
+  /**
+   * Remplissage de la jauge d'un ingredient : son stock rapporte a son niveau
+   * cible. Un stock negatif (regle 10) est montre vide ; un stock au-dessus de
+   * la cible remplit la jauge entierement.
+   */
+  protected remplissage(stock: number, niveauCible: number): number {
+    if (niveauCible <= 0) return 0;
+    return Math.max(0, Math.min(100, (stock / niveauCible) * 100));
+  }
 
   protected idEnEdition: number | null = null;
   protected nom = '';

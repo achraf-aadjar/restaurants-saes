@@ -10,6 +10,8 @@ export class GerantRapportService {
   private readonly http = inject(HttpClient);
 
   consulter(debut: string, fin: string): Observable<RapportFinancierDto> {
-    return this.http.get<RapportFinancierDto>('/api/gerant/rapports-financiers', { params: { debut, fin } });
+    return this.http.get<RapportFinancierDto>('/api/gerant/rapports-financiers', {
+      params: { debut, fin },
+    });
   }
 }

@@ -1,19 +1,63 @@
 @if (estClientOuVisiteur()) {
   <footer class="pied pied-client">
     <div class="pied-conteneur">
-      <div class="pied-ligne">
-        @if (restaurantAffiche(); as restaurant) {
-          <p class="pied-restaurant">
-            <strong>{{ restaurant.nom }}</strong> · {{ restaurant.adresse }}
-            @if (restaurant.telephone) {
-              · Tél.
-              <a [href]="lienTelephone(restaurant.telephone)">{{ restaurant.telephone }}</a>
-            }
+      <div class="pied-colonnes">
+        <div class="pied-marque">
+          <img
+            src="assets/logo/logo_une_couleur.svg"
+            alt="Restaurants du SAES"
+            class="logo logo-pied"
+            width="150"
+            height="48"
+          />
+          <p class="pied-phrase">
+            La plateforme des restaurants du SAES de Thiès : consulter le menu du jour, commander à
+            emporter et réserver sa table.
           </p>
+        </div>
+
+        <nav class="pied-nav" aria-label="Pied de page">
+          <h2>Naviguer</h2>
+          <ul>
+            <li><a routerLink="/">Accueil</a></li>
+            <li><a routerLink="/menus">Menus</a></li>
+            <li><a routerLink="/mes-reservations">Réserver une table</a></li>
+            @if (estConnecte()) {
+              <li><a routerLink="/mes-commandes">Mes commandes</a></li>
+              <li><a routerLink="/mon-compte">Mon compte</a></li>
+            } @else {
+              <li><a routerLink="/connexion">Se connecter</a></li>
+              <li><a routerLink="/inscription">Créer un compte</a></li>
+            }
+          </ul>
+        </nav>
+
+        @if (restaurantAffiche(); as restaurant) {
+          <div class="pied-restaurant">
+            <h2>{{ restaurant.nom }}</h2>
+            <p class="pied-adresse">{{ restaurant.adresse }}</p>
+            @if (restaurant.telephone) {
+              <p>
+                <a [href]="lienTelephone(restaurant.telephone)">{{ restaurant.telephone }}</a>
+              </p>
+            }
+            <p class="pied-horaires">
+              @if (horairesDuJour()) {
+                Aujourd'hui : {{ horairesDuJour() }}
+              } @else {
+                Fermé aujourd'hui
+              }
+            </p>
+          </div>
         }
+      </div>
+
+      <div class="pied-bas">
+        <p class="pied-copyright">
+          © {{ annee }} Restaurants du SAES · Projet transversal DIC1, École polytechnique de Thiès
+        </p>
         <a class="pied-confidentialite" routerLink="/confidentialite">Confidentialité</a>
       </div>
-      <p class="pied-copyright">© {{ annee }} Restaurants du SAES</p>
     </div>
   </footer>
 } @else {

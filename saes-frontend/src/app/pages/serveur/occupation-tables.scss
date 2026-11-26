@@ -1,0 +1,214 @@
+/*
+ * Occupation des tables : un plan de salle plutot qu'une liste. Chaque table
+ * est dessinee avec ses couverts, et son etat se lit a la couleur, au texte et
+ * au trait de gauche : la couleur n'est jamais seule.
+ */
+
+/* ---------- Resume de la salle ---------- */
+
+.resume-salle {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: 0.75rem;
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+
+.tuile-salle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--saes-bordure);
+  border-left: 4px solid var(--saes-bordure-forte);
+  border-radius: var(--saes-rayon);
+  background: var(--saes-surface);
+  box-shadow: var(--saes-ombre);
+}
+
+.tuile-salle.libres {
+  border-left-color: var(--saes-action);
+}
+
+.tuile-salle.occupees {
+  border-left-color: var(--saes-rouge);
+}
+
+.tuile-salle.places {
+  border-left-color: var(--saes-serie-1);
+}
+
+.tuile-salle.reservations {
+  border-left-color: var(--saes-jaune);
+}
+
+.tuile-salle .valeur {
+  font-size: clamp(1.75rem, 3vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+
+.tuile-salle .intitule {
+  color: var(--saes-vert-attenue);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* ---------- Plan de salle ---------- */
+
+.plan-salle {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 10.5rem), 1fr));
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.table-plan {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 1.25rem 0.75rem 1rem;
+  border: 1px solid var(--saes-ok-bordure);
+  border-radius: var(--saes-rayon);
+  background: var(--saes-vert-pale);
+  text-align: center;
+}
+
+.table-plan.occupee {
+  border-color: var(--saes-refus-bordure);
+  background: var(--saes-refus-fond);
+}
+
+/* La table vue de dessus : le plateau au centre, un couvert par place autour. */
+.table-dessin {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 6.5rem;
+  height: 6.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.couvert {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.6rem;
+  height: 0.6rem;
+  margin: -0.3rem;
+  border-radius: 50%;
+  background: var(--saes-ok-texte);
+  opacity: 0.55;
+}
+
+.occupee .couvert {
+  background: var(--saes-refus-texte);
+}
+
+/* Repartition des couverts sur un cercle de 2,5 rem de rayon, autour du
+   plateau. Le premier est en haut, les suivants tournent dans le sens des
+   aiguilles d'une montre. */
+@for $n from 1 through 12 {
+  .couvert:nth-child(#{$n}) {
+    transform: rotate(#{($n - 1) * 30}deg) translateY(-2.5rem);
+  }
+}
+
+/* Les tables de deux, quatre, six et huit places : les couverts se repartissent
+   sur tout le tour plutot que de s'entasser d'un cote. */
+.table-plan[data-places='2'] .couvert:nth-child(2) {
+  transform: rotate(180deg) translateY(-2.5rem);
+}
+
+.table-plan[data-places='3'] .couvert:nth-child(2) {
+  transform: rotate(120deg) translateY(-2.5rem);
+}
+
+.table-plan[data-places='3'] .couvert:nth-child(3) {
+  transform: rotate(240deg) translateY(-2.5rem);
+}
+
+.table-plan[data-places='4'] .couvert:nth-child(2) {
+  transform: rotate(90deg) translateY(-2.5rem);
+}
+
+.table-plan[data-places='4'] .couvert:nth-child(3) {
+  transform: rotate(180deg) translateY(-2.5rem);
+}
+
+.table-plan[data-places='4'] .couvert:nth-child(4) {
+  transform: rotate(270deg) translateY(-2.5rem);
+}
+
+@for $n from 2 through 6 {
+  .table-plan[data-places='6'] .couvert:nth-child(#{$n}) {
+    transform: rotate(#{($n - 1) * 60}deg) translateY(-2.5rem);
+  }
+}
+
+@for $n from 2 through 8 {
+  .table-plan[data-places='8'] .couvert:nth-child(#{$n}) {
+    transform: rotate(#{($n - 1) * 45}deg) translateY(-2.5rem);
+  }
+}
+
+/* Le plateau de la table : son numero, en grand. */
+.plateau {
+  display: grid;
+  place-items: center;
+  width: 3.1rem;
+  height: 3.1rem;
+  border-radius: 0.8rem;
+  background: var(--saes-surface);
+  border: 1px solid var(--saes-bordure);
+  color: var(--saes-vert);
+  font-size: 1.35rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.nom-table {
+  font-weight: 700;
+}
+
+.capacite-table {
+  color: var(--saes-vert-attenue);
+  font-size: 0.88rem;
+}
+
+/* L'etat ecrit, avec sa pastille : la couleur ne porte jamais seule le sens. */
+.etat-table {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  margin-top: 0.4rem;
+  color: var(--saes-ok-texte);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.etat-table::before {
+  content: '';
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.occupee .etat-table {
+  color: var(--saes-refus-texte);
+}
+
+.prochaine {
+  margin-top: 0.45rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--saes-trait);
+  color: var(--saes-vert-attenue);
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
