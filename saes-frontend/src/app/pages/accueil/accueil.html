@@ -1,55 +1,42 @@
-<!-- Ouverture : le texte a gauche, deux photos cadrees a droite. Aucune photo
-     n'est etiree en fond : voir la regle de nettete dans core/photos-site.ts. -->
+<!-- Ouverture : la photo du restaurant en arriere-plan, le texte au centre. La
+     photo est une version agrandie et affinee (salle-hero-*.webp) : voir la regle
+     de nettete dans core/photos-site.ts. -->
 <section class="ouverture">
-  <div class="ouverture-grille">
-    <div class="ouverture-texte">
-      <p class="enseigne">Restaurants du SAES · Thiès</p>
-      <h1>
-        Les saveurs du Sénégal.<br />
-        <em>Une expérience réinventée.</em>
-      </h1>
-      <p class="promesse">
-        Consultez le menu du jour, commandez à emporter et réservez votre table au restaurant du
-        SAES, à l'École polytechnique de Thiès.
-      </p>
-      <div class="ouverture-actions">
-        <a routerLink="/menus" class="btn btn-accent btn-large">
-          Voir le menu du jour
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-        </a>
-        <a routerLink="/mes-reservations" class="btn btn-contour btn-large">Réserver une table</a>
-      </div>
-    </div>
+  <img
+    class="fond"
+    src="assets/site/salle-hero-1280.webp"
+    srcset="assets/site/salle-hero-1280.webp 1280w, assets/site/salle-hero-2560.webp 2560w"
+    sizes="100vw"
+    width="2560"
+    height="1920"
+    alt=""
+    fetchpriority="high"
+  />
+  <div class="voile" aria-hidden="true"></div>
 
-    <div class="ouverture-photos">
-      <figure class="photo-principale">
-        <img
-          [src]="salle.src"
-          [srcset]="salle.srcset"
-          sizes="(min-width: 60rem) 36rem, 92vw"
-          [attr.width]="salleDim.largeur"
-          [attr.height]="salleDim.hauteur"
-          [alt]="salleDim.legende"
-          fetchpriority="high"
-        />
-      </figure>
-      <figure class="photo-plat">
-        <img
-          [src]="plat.src"
-          [srcset]="plat.srcset"
-          sizes="(min-width: 60rem) 12rem, 38vw"
-          [attr.width]="platDim.largeur"
-          [attr.height]="platDim.hauteur"
-          [alt]="platDim.legende"
-        />
-      </figure>
-      @if (restaurantVedette(); as r) {
-        <p class="pastille-ouverture" [class.ferme]="!r.ouvert">
-          <span class="point" aria-hidden="true"></span>
-          {{ r.ouvert ? 'Ouvert' : 'Fermé' }} · {{ horaires(r) }}
-        </p>
-      }
+  <div class="ouverture-texte">
+    <p class="enseigne">Restaurants du SAES · Thiès</p>
+    <h1>
+      Les saveurs du Sénégal.<br />
+      <em>Une expérience réinventée.</em>
+    </h1>
+    <p class="promesse">
+      Consultez le menu du jour, commandez à emporter et réservez votre table au restaurant du SAES,
+      à l'École polytechnique de Thiès.
+    </p>
+    <div class="ouverture-actions">
+      <a routerLink="/menus" class="btn btn-accent btn-large">
+        Voir le menu du jour
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+      </a>
+      <a routerLink="/mes-reservations" class="btn btn-contour btn-large">Réserver une table</a>
     </div>
+    @if (restaurantVedette(); as r) {
+      <p class="pastille-ouverture" [class.ferme]="!r.ouvert">
+        <span class="point" aria-hidden="true"></span>
+        {{ r.ouvert ? 'Ouvert' : 'Fermé' }} · {{ horaires(r) }}
+      </p>
+    }
   </div>
 </section>
 
