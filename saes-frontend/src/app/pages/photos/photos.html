@@ -14,9 +14,9 @@
           <img
             [src]="sources(photo).src"
             [srcset]="sources(photo).srcset"
-            sizes="(min-width: 60rem) 22rem, 45vw"
-            width="400"
-            height="400"
+            sizes="(min-width: 72rem) 22rem, (min-width: 48rem) 30vw, 46vw"
+            [attr.width]="photo.largeur"
+            [attr.height]="photo.hauteur"
             loading="lazy"
             [alt]="photo.legende"
           />

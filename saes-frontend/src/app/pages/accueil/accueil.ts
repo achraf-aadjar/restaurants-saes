@@ -9,7 +9,13 @@ import { MenuService } from '../../core/menu.service';
 import { CategoriePlat, MenuDto, PlatResume, RestaurantSummary } from '../../core/models';
 import { PanierService } from '../../core/panier.service';
 import { photoDuPlat } from '../../core/photos-plats';
-import { GALERIE, PHOTO_OUVERTURE, PhotoSite, sourcesDe } from '../../core/photos-site';
+import {
+  GALERIE,
+  PhotoSite,
+  SALLE_PANORAMIQUE,
+  THIEBOUDIENNE,
+  sourcesDe,
+} from '../../core/photos-site';
 import { ToastService } from '../../core/toast.service';
 import { IconeCategorie } from '../../shared/icone-categorie';
 import { MontantPipe } from '../../shared/montant.pipe';
@@ -42,7 +48,10 @@ export class Accueil {
   private readonly toast = inject(ToastService);
   protected readonly auth = inject(AuthService);
 
-  protected readonly ouverture = sourcesDe(PHOTO_OUVERTURE);
+  protected readonly salle = sourcesDe(SALLE_PANORAMIQUE);
+  protected readonly salleDim = SALLE_PANORAMIQUE;
+  protected readonly plat = sourcesDe(THIEBOUDIENNE);
+  protected readonly platDim = THIEBOUDIENNE;
   protected readonly sources = sourcesDe;
 
   /** Les six premieres photos de la galerie, en apercu sur l'accueil. */

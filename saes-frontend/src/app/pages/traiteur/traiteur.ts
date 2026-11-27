@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 
 import { MenuService } from '../../core/menu.service';
+import { SALLE_ALLEE_CENTRALE, SALLE_TABLES_ROUGES, sourcesDe } from '../../core/photos-site';
 import { RestaurantSummary } from '../../core/models';
 
 /**
@@ -19,6 +20,11 @@ export class Traiteur {
   private readonly menus = inject(MenuService);
 
   protected readonly restaurant = signal<RestaurantSummary | null>(null);
+
+  protected readonly photoA = sourcesDe(SALLE_TABLES_ROUGES);
+  protected readonly dimA = SALLE_TABLES_ROUGES;
+  protected readonly photoB = sourcesDe(SALLE_ALLEE_CENTRALE);
+  protected readonly dimB = SALLE_ALLEE_CENTRALE;
 
   protected readonly formules = [
     {

@@ -91,38 +91,24 @@
   }
 }
 
-/* ---------- Vue du client : l'image d'ouverture ---------- */
+/* ---------- Vue du client ---------- */
 
+/*
+ * La photo n'est JAMAIS etiree en fond de bandeau : les photos du depot font de
+ * 400 a 1280 px de large, et un ecran Retina en demande le double de ce qu'il
+ * affiche. Etalee sur 2000 px, une photo de 800 px devient floue. Elle est donc
+ * posee dans un cadre dont la largeur reste proche de la sienne (34 rem maximum,
+ * soit 544 px CSS pour 1088 px de pixels : net sur Retina avec une source de
+ * 800 px ou plus).
+ */
 .bandeau-client {
   --saes-vert: #f5f2ea;
   --saes-vert-attenue: #c3cbd6;
 
-  min-height: clamp(16rem, 34vw, 24rem);
   border: none;
   border-radius: 1.25rem;
   background: #080f19;
   box-shadow: var(--saes-ombre-haute);
-}
-
-/* La photo du restaurant passe en fond, et le decor de plats disparait : la
-   photo porte deja l'image du lieu. */
-.bandeau-client .photo-restaurant {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 0;
-  object-fit: cover;
-}
-
-/* Degrade : tres sombre a gauche, ou se trouve le texte, transparent a droite. */
-.bandeau-client::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, rgb(8 15 25 / 94%) 0%, rgb(8 15 25 / 78%) 45%, rgb(8 15 25 / 30%) 100%),
-    linear-gradient(0deg, rgb(8 15 25 / 55%), transparent 60%);
 }
 
 .bandeau-client .decor-bandeau {
@@ -130,19 +116,26 @@
 }
 
 .bandeau-client .bandeau-interieur {
-  z-index: 1;
   grid-template-columns: minmax(0, 1fr);
-  align-content: center;
-  gap: 0.75rem;
-  min-height: inherit;
-  padding: clamp(1.5rem, 4vw, 3.25rem);
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  align-items: center;
+  padding: clamp(1.25rem, 3.5vw, 3rem);
+}
+
+.bandeau-client .photo-restaurant {
+  width: 100%;
+  height: auto;
+  max-height: none;
+  aspect-ratio: 16 / 10;
+  border-radius: 0.9rem;
+  object-fit: cover;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 45%);
 }
 
 .bandeau-client h1 {
-  max-width: 18ch;
   margin-bottom: 0.9rem;
   color: inherit;
-  font-size: clamp(2.1rem, 5vw, 4rem);
+  font-size: clamp(2rem, 4.6vw, 3.5rem);
   font-weight: 600;
   letter-spacing: -0.02em;
 }
@@ -151,17 +144,22 @@
   margin-top: 0.6rem;
 }
 
-@media (min-width: 680px) {
-  /* La photo de fond ne doit pas passer dans la colonne de gauche du mode
-     personnel : le bandeau client garde une seule colonne. */
+/* Le texte a gauche, la photo cadree a droite. */
+@media (min-width: 56rem) {
   .bandeau-client .bandeau-interieur:has(.photo-restaurant) {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 34rem);
+  }
+
+  .bandeau-client .identite,
+  .bandeau-client .horaires-du-jour,
+  .bandeau-client .btn-reserver {
+    grid-column: 1;
   }
 
   .bandeau-client .photo-restaurant {
-    grid-column: auto;
-    grid-row: auto;
-    max-height: none;
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    min-height: 0;
   }
 }
 

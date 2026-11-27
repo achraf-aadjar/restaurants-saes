@@ -1,70 +1,93 @@
 /**
- * Photos de la vitrine : l'image d'ouverture de l'accueil et la galerie.
+ * Photos de la vitrine : l'accueil, la galerie « Photos » et le traiteur.
  *
- * Pour mettre vos propres photos :
- *   1. deposer les fichiers dans `saes-frontend/public/assets/site/` ;
- *   2. ajouter leur nom ci-dessous, avec une legende.
+ * REGLE DE NETTETE : une photo n'est jamais etiree en fond de page. Un ecran
+ * Retina affiche deux fois plus de pixels que de pixels CSS, donc une photo de
+ * 800 px de large ne reste nette que dans un cadre d'environ 400 px CSS, et une
+ * photo de 1280 px dans un cadre d'environ 640 px. Chaque photo est donc posee
+ * dans un cadre a sa taille. Pour une photo plein ecran, il faut une source
+ * d'au moins 2400 px de large.
  *
- * Deux tailles par photo, en .webp : `<nom>-800.webp` et `<nom>-1600.webp`
- * pour l'ouverture (paysage), `<nom>-400.webp` et `<nom>-800.webp` pour la
- * galerie. Le navigateur choisit la bonne selon l'ecran.
- *
- * En attendant, la vitrine se sert des photos deja presentes dans le depot
- * (les plats et le restaurant) : la page n'est jamais vide.
+ * Pour ajouter une photo :
+ *   1. deposer ses fichiers .webp dans `saes-frontend/public/assets/site/`, sous
+ *      la forme `<nom>-<largeur>.webp` (ex. `salle-vue-ensemble-800.webp`) ;
+ *   2. l'ajouter ci-dessous avec ses largeurs reelles, ses dimensions et sa legende.
  */
 
 export interface PhotoSite {
-  /** Chemin du fichier, sans la taille ni l'extension. */
+  /** Chemin du fichier, sans la largeur ni l'extension. */
   base: string;
-  /** Les deux largeurs disponibles, en pixels. */
+  /** Les deux largeurs disponibles, en pixels, de la plus petite a la plus grande. */
   tailles: [number, number];
+  /** Dimensions de la plus grande, pour reserver la place avant le chargement. */
+  largeur: number;
+  hauteur: number;
   legende: string;
 }
 
-/** Grande image de l'ouverture de la page d'accueil (format paysage). */
-export const PHOTO_OUVERTURE: PhotoSite = {
-  base: 'assets/restaurants/restaurant-de-l-ept',
-  tailles: [400, 800],
-  legende: "La terrasse du restaurant de l'EPT",
+export const SALLE_PANORAMIQUE: PhotoSite = {
+  base: 'assets/site/salle-panoramique',
+  tailles: [400, 1280],
+  largeur: 1280,
+  hauteur: 960,
+  legende: 'La salle du restaurant de l’EPT',
 };
+
+export const SALLE_TABLES_ROUGES: PhotoSite = {
+  base: 'assets/site/salle-tables-rouges',
+  tailles: [400, 800],
+  largeur: 800,
+  hauteur: 600,
+  legende: 'Les tables rouges près des fenêtres',
+};
+
+export const SALLE_ALLEE_CENTRALE: PhotoSite = {
+  base: 'assets/site/salle-allee-centrale',
+  tailles: [400, 800],
+  largeur: 800,
+  hauteur: 600,
+  legende: 'La salle depuis l’allée centrale',
+};
+
+export const SALLE_TABLES_BLEUES: PhotoSite = {
+  base: 'assets/site/salle-tables-bleues',
+  tailles: [400, 800],
+  largeur: 800,
+  hauteur: 1067,
+  legende: 'Les tables bleues et leurs bouquets',
+};
+
+export const SALLE_TABLE_DRESSEE: PhotoSite = {
+  base: 'assets/site/salle-table-dressee',
+  tailles: [400, 800],
+  largeur: 800,
+  hauteur: 1067,
+  legende: 'Une table dressée près des rideaux',
+};
+
+const plat = (nom: string, legende: string): PhotoSite => ({
+  base: `assets/plats/${nom}`,
+  tailles: [360, 720],
+  largeur: 720,
+  hauteur: 800,
+  legende,
+});
+
+export const THIEBOUDIENNE = plat('thieboudienne', 'Thiéboudienne, riz au poisson et légumes');
 
 /** Galerie de la page « Photos », dans l'ordre d'affichage. */
 export const GALERIE: PhotoSite[] = [
-  {
-    base: 'assets/plats/thieboudienne',
-    tailles: [360, 720],
-    legende: 'Thiéboudienne, riz au poisson et légumes',
-  },
-  {
-    base: 'assets/plats/yassa-poulet',
-    tailles: [360, 720],
-    legende: 'Yassa poulet, oignons confits et citron',
-  },
-  {
-    base: 'assets/plats/mafe',
-    tailles: [360, 720],
-    legende: "Mafé, sauce à l'arachide",
-  },
-  {
-    base: 'assets/restaurants/restaurant-de-l-ept',
-    tailles: [400, 800],
-    legende: "La terrasse du restaurant de l'EPT",
-  },
-  {
-    base: 'assets/plats/jus-de-bissap',
-    tailles: [360, 720],
-    legende: "Jus de bissap, infusion d'hibiscus",
-  },
-  {
-    base: 'assets/plats/thiakry',
-    tailles: [360, 720],
-    legende: 'Thiakry, couscous de mil au lait caillé',
-  },
-  {
-    base: 'assets/plats/jus-de-bouye',
-    tailles: [360, 720],
-    legende: 'Jus de bouye, pulpe de fruit du baobab',
-  },
+  SALLE_PANORAMIQUE,
+  THIEBOUDIENNE,
+  SALLE_TABLES_BLEUES,
+  SALLE_TABLES_ROUGES,
+  plat('yassa-poulet', 'Yassa poulet, oignons confits et citron'),
+  SALLE_TABLE_DRESSEE,
+  SALLE_ALLEE_CENTRALE,
+  plat('mafe', "Mafé, sauce à l'arachide"),
+  plat('jus-de-bissap', "Jus de bissap, infusion d'hibiscus"),
+  plat('thiakry', 'Thiakry, couscous de mil au lait caillé'),
+  plat('jus-de-bouye', 'Jus de bouye, pulpe de fruit du baobab'),
 ];
 
 /** `src` et `srcset` d'une photo, pour une balise `img`. */

@@ -41,24 +41,24 @@
   font-size: 1.1rem;
 }
 
+/* Maconnerie : les photos gardent leur format (paysage ou portrait) au lieu d'etre
+   rognees en carres, et se rangent en colonnes. */
 .galerie {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(0.5rem, 1.2vw, 1rem);
+  columns: 2;
+  column-gap: clamp(0.5rem, 1.2vw, 1rem);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-@media (min-width: 48rem) {
-  .galerie {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+.galerie > li {
+  margin-bottom: clamp(0.5rem, 1.2vw, 1rem);
+  break-inside: avoid;
 }
 
-@media (min-width: 72rem) {
+@media (min-width: 48rem) {
   .galerie {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    columns: 3;
   }
 }
 
@@ -78,18 +78,15 @@
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 1;
-  object-fit: cover;
   transition: transform 0.35s ease;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .vignette:hover img {
-    transform: scale(1.05);
+    transform: scale(1.04);
   }
 }
 
-/* La legende apparait au survol et au clavier, et reste lisible sur la photo. */
 .legende {
   position: absolute;
   inset: auto 0 0;
@@ -126,13 +123,17 @@
 
 figure {
   position: relative;
-  max-width: min(100%, 60rem);
+  max-width: min(100%, 40rem);
   margin: 0;
 }
 
+/* Taille maximale : 40 rem (640 px CSS), soit 1280 px sur Retina, la definition
+   des plus grandes photos. Plus grand, la photo serait etiree donc floue. */
 figure img {
   display: block;
+  width: auto;
   max-width: 100%;
+  height: auto;
   max-height: 80vh;
   margin-inline: auto;
   border-radius: var(--saes-rayon);

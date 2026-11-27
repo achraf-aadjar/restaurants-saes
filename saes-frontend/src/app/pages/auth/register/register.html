@@ -1,5 +1,13 @@
 <div class="auth">
-  <section class="auth-carte auth-carte--large" aria-labelledby="titre-inscription">
+  <app-auth-panneau />
+  <section class="auth-carte" aria-labelledby="titre-inscription">
+    <nav class="auth-onglets" aria-label="Accès au compte">
+      <a routerLink="/connexion" queryParamsHandling="preserve">Connexion</a>
+      <a routerLink="/inscription" queryParamsHandling="preserve" aria-current="page"
+        >Inscription</a
+      >
+    </nav>
+
     <header class="auth-entete">
       <h1 id="titre-inscription">Créer un compte</h1>
       <p class="auth-soustitre">Commandez et réservez en ligne en quelques secondes.</p>

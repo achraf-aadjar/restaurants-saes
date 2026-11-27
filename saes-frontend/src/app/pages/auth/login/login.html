@@ -1,5 +1,11 @@
 <div class="auth">
+  <app-auth-panneau />
   <section class="auth-carte" aria-labelledby="titre-connexion">
+    <nav class="auth-onglets" aria-label="Accès au compte">
+      <a routerLink="/connexion" queryParamsHandling="preserve" aria-current="page">Connexion</a>
+      <a routerLink="/inscription" queryParamsHandling="preserve">Inscription</a>
+    </nav>
+
     <header class="auth-entete">
       <h1 id="titre-connexion">Connexion</h1>
       <p class="auth-soustitre">Heureux de vous revoir.</p>

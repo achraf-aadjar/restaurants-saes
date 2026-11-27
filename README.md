@@ -120,6 +120,12 @@ Le détail du chantier de refonte, la matrice de conformité au cahier des
 charges et ce qui reste à faire sont dans [REFONTE_PLAN.md](REFONTE_PLAN.md).
 Le scénario de soutenance est dans [DEMO_JURY.md](DEMO_JURY.md).
 
+**Netteté des photos** : une photo n'est jamais étirée en fond de page. Un écran
+Retina affiche deux fois plus de pixels que de pixels CSS : une photo de 800 px
+de large ne reste nette que dans un cadre d'environ 400 px, et une de 1280 px
+dans un cadre d'environ 640 px. Pour une photo plein écran, il faut une source
+d'au moins 2400 px de large.
+
 **Photos de la vitrine** : les pages « Accueil » et « Photos » utilisent les
 photos listées dans `saes-frontend/src/app/core/photos-site.ts`. Pour mettre les
 vôtres, déposer les fichiers `.webp` dans `saes-frontend/public/assets/site/` et

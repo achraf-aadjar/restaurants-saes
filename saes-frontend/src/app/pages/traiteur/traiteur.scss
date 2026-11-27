@@ -128,3 +128,26 @@
   color: var(--saes-vert-attenue);
   font-size: 0.9rem;
 }
+
+/* Deux photos de la salle, a leur taille : 800 px de source pour environ 400 px CSS. */
+.duo-photos {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 48rem) {
+  .duo-photos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.duo-photos img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--saes-rayon);
+  box-shadow: var(--saes-ombre);
+}

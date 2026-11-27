@@ -9,6 +9,27 @@
   </div>
 </section>
 
+<section class="bloc" aria-label="La salle de réception">
+  <div class="duo-photos">
+    <img
+      [src]="photoA.src"
+      [srcset]="photoA.srcset"
+      sizes="(min-width: 48rem) 34rem, 92vw"
+      [attr.width]="dimA.largeur"
+      [attr.height]="dimA.hauteur"
+      [alt]="dimA.legende"
+    />
+    <img
+      [src]="photoB.src"
+      [srcset]="photoB.srcset"
+      sizes="(min-width: 48rem) 34rem, 92vw"
+      [attr.width]="dimB.largeur"
+      [attr.height]="dimB.hauteur"
+      [alt]="dimB.legende"
+    />
+  </div>
+</section>
+
 <section class="bloc" aria-labelledby="titre-formules">
   <h2 id="titre-formules" class="titre-section">Nos formules</h2>
   <ul class="formules">

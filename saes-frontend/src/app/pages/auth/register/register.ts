@@ -1,3 +1,4 @@
+import { AuthPanneau } from '../auth-panneau';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -13,7 +14,7 @@ import { RefusVisible } from '../../../shared/refus-visible';
  */
 @Component({
   selector: 'app-register',
-  imports: [FormsModule, RouterLink, GoogleSignInButton, RefusVisible],
+  imports: [AuthPanneau, FormsModule, RouterLink, GoogleSignInButton, RefusVisible],
   templateUrl: './register.html',
   styleUrl: '../auth.scss',
 })

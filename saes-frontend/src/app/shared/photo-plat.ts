@@ -23,7 +23,11 @@ import { IconeCategorie } from './icone-categorie';
         [attr.loading]="prioritaire() ? 'eager' : 'lazy'"
       />
     } @else {
-      <app-icone-categorie [categorie]="categorie()" />
+      <!-- Pas encore de photo : un fond travaille et la pastille de la categorie,
+           pour que la carte ait l'air voulue et non vide. -->
+      <span class="vide" aria-hidden="true">
+        <span class="pastille"><app-icone-categorie [categorie]="categorie()" /></span>
+      </span>
     }
   `,
   styles: `
@@ -43,12 +47,41 @@ import { IconeCategorie } from './icone-categorie';
       object-fit: cover;
     }
 
+    .vide {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(
+          circle at 22% 18%,
+          color-mix(in srgb, var(--saes-jaune) 18%, transparent),
+          transparent 55%
+        ),
+        radial-gradient(
+          circle at 85% 90%,
+          color-mix(in srgb, var(--saes-action) 16%, transparent),
+          transparent 55%
+        ),
+        var(--saes-fond-doux);
+    }
+
+    .pastille {
+      display: grid;
+      place-items: center;
+      width: clamp(3.25rem, 34%, 5rem);
+      aspect-ratio: 1;
+      border: 1px solid var(--saes-bordure);
+      border-radius: 50%;
+      background: var(--saes-surface);
+      box-shadow: var(--saes-ombre);
+      color: var(--saes-accent-texte);
+    }
+
     app-icone-categorie {
       display: block;
-      width: 40%;
-      height: 100%;
-      margin: 0 auto;
-      color: var(--saes-vert-attenue);
+      width: 52%;
+      height: 52%;
     }
   `,
 })
