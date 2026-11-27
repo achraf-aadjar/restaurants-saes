@@ -70,7 +70,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 52rem;
+  max-width: 80rem;
   padding: clamp(2.5rem, 7vh, 5rem) var(--saes-gouttiere);
 }
 
@@ -109,13 +109,21 @@
 }
 
 .ouverture h1 {
-  max-width: 16ch;
+  max-width: none;
   margin: 0 auto 1.25rem;
   color: #f5f2ea;
-  font-size: clamp(2.5rem, 5.6vw, 4.5rem);
+  font-size: clamp(2.2rem, 5.6vw, 5rem);
   font-weight: 600;
   line-height: 1.04;
   letter-spacing: -0.02em;
+}
+
+/* Chacune des deux lignes du titre reste sur une seule ligne des que la fenetre
+   est assez large ; sur telephone, elles peuvent passer a la ligne. */
+@media (min-width: 40rem) {
+  .ouverture h1 {
+    white-space: nowrap;
+  }
 }
 
 .ouverture h1 em {
