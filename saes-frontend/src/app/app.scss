@@ -38,10 +38,25 @@
   padding-block: clamp(0.9rem, 2.4vh, 1.75rem) clamp(1rem, 2.4vh, 1.75rem);
 }
 
-/* Connexion et inscription : la carte tient dans la fenetre, sans defiler. Le
-   contenu prend toute la hauteur disponible et la carte s'y centre. */
+/* Connexion et inscription : un ecran plein format, en bleu nuit. L'en-tete et le
+   pied de page du site disparaissent (le panneau photo porte le logo et un lien
+   de retour a l'accueil), et la carte s'y centre, sans defiler. */
+.page:has(.auth) {
+  min-height: 100dvh;
+  background:
+    radial-gradient(50rem 28rem at 85% 0%, rgb(255 133 0 / 10%), transparent 70%),
+    radial-gradient(44rem 26rem at 5% 100%, rgb(118 185 71 / 10%), transparent 70%), #080f19;
+}
+
+.page:has(.auth) app-header,
+.page:has(.auth) app-footer {
+  display: none;
+}
+
 .contenu:has(.auth) {
   display: flex;
   flex-direction: column;
-  padding-block: clamp(0.75rem, 2.4vh, 1.5rem);
+  justify-content: center;
+  max-width: none;
+  padding: clamp(0.75rem, 3vh, 1.5rem) var(--saes-gouttiere);
 }

@@ -1,14 +1,39 @@
 /*
- * Connexion et inscription : un ecran scinde. A gauche le panneau de marque
- * (AuthPanneau, seulement sur grand ecran), a droite le formulaire. Sur
- * telephone, le formulaire seul, en pleine largeur.
+ * Connexion et inscription : un ecran plein format, sans en-tete ni pied de page
+ * (app.scss les masque ici). A gauche le formulaire, a droite la photo de la salle
+ * (AuthPanneau, seulement sur grand ecran). Sur telephone, le formulaire seul.
+ *
+ * L'ecran est toujours en bleu nuit, quel que soit le theme choisi : c'est une
+ * vitrine de la marque, comme l'ouverture de l'accueil. Les couleurs sont donc
+ * posees ici, sur l'hote, et se propagent a tout le formulaire.
  */
 
 :host {
+  --saes-vert: #f5f2ea;
+  --saes-vert-attenue: #a7b2c1;
+  --saes-surface: #0c1622;
+  --saes-surface-haute: #142130;
+  --saes-fond-doux: #101b28;
+  --saes-bordure: #223246;
+  --saes-bordure-forte: #3a4f68;
+  --saes-survol: rgb(255 255 255 / 7%);
+  --saes-trait: rgb(255 255 255 / 13%);
+  --saes-action: #76b947;
+  --saes-action-fonce: #8cc960;
+  --saes-texte-sur-action: #08121c;
+  --saes-prix: #9ad26f;
+  --saes-rouge: #c6303a;
+  --saes-rouge-texte: #ff8b90;
+  --saes-refus-fond: #35191c;
+  --saes-refus-texte: #ff9aa1;
+  --saes-refus-bordure: #5f282d;
+  --saes-ombre-haute: 0 24px 70px rgb(0 0 0 / 55%);
+
   display: grid;
   flex: 1;
   align-items: center;
   min-width: 0;
+  color: var(--saes-vert);
 }
 
 .auth {
@@ -24,11 +49,11 @@
 }
 
 /* L'ecran tient dans la fenetre : la hauteur de la carte suit celle de la fenetre
-   (moins l'en-tete, les marges et la ligne de pied de page), entre 30 et 40 rem. */
+   (moins les marges), entre 30 et 46 rem. */
 @media (min-width: 60rem) {
   .auth {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-    min-height: clamp(30rem, calc(100dvh - 11rem), 40rem);
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    min-height: clamp(30rem, calc(100dvh - 3rem), 46rem);
   }
 }
 
@@ -38,61 +63,35 @@
   }
 }
 
-/* Les marges et les tailles suivent la hauteur de la fenetre (vh) : sur un
-   ecran bas, tout se resserre au lieu de deborder. */
 .auth-carte {
   display: flex;
   flex-direction: column;
   justify-content: center;
   width: 100%;
   min-width: 0;
-  padding: clamp(1rem, 3.2vh, 2.25rem) clamp(1.25rem, 4vw, 3rem);
-}
-
-/* ---------- Onglets Connexion / Inscription ---------- */
-
-.auth-onglets {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.25rem;
-  margin-bottom: clamp(0.75rem, 2.2vh, 1.5rem);
-  padding: 0.25rem;
-  border: 1px solid var(--saes-bordure);
-  border-radius: 0.8rem;
-  background: var(--saes-fond-doux);
-}
-
-.auth-onglets a {
-  display: grid;
-  place-items: center;
-  min-height: clamp(2.4rem, 5vh, 2.75rem);
-  border-radius: 0.6rem;
-  color: var(--saes-vert-attenue);
-  font-size: 0.95rem;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.auth-onglets a:hover {
-  color: var(--saes-vert);
-}
-
-.auth-onglets a[aria-current='page'] {
-  background: var(--saes-surface-haute);
-  box-shadow: var(--saes-ombre);
-  color: var(--saes-vert);
+  padding: clamp(1.25rem, 4vh, 2.75rem) clamp(1.25rem, 4.5vw, 3.5rem);
 }
 
 /* ---------- En-tete ---------- */
 
 .auth-entete {
-  margin-bottom: clamp(0.75rem, 2vh, 1.25rem);
+  margin-bottom: clamp(0.9rem, 2.4vh, 1.5rem);
+}
+
+.auth-surtitre {
+  margin: 0 0 clamp(0.4rem, 1.2vh, 0.75rem);
+  color: var(--saes-action);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .auth-entete h1 {
-  margin: 0 0 0.35rem;
-  font-size: clamp(1.6rem, 4.4vh, 2.4rem);
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.9rem, 5vh, 2.9rem);
   font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .auth-soustitre {
@@ -114,7 +113,10 @@
   gap: 0.9rem;
   margin: clamp(0.6rem, 1.8vh, 1.1rem) 0;
   color: var(--saes-vert-attenue);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .auth-separateur::before,
@@ -156,9 +158,24 @@
   min-width: 0;
 }
 
+/* L'intitule d'un champ : une petite icone, puis le texte. */
 .auth-champ label {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
   font-size: 0.9rem;
   font-weight: 700;
+}
+
+.icone-champ {
+  flex: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: none;
+  stroke: var(--saes-vert-attenue);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .auth-facultatif {
@@ -168,11 +185,11 @@
 
 .auth-champ input {
   width: 100%;
-  min-height: clamp(2.6rem, 5.8vh, 3rem);
-  padding: 0.5rem 0.9rem;
+  min-height: clamp(2.7rem, 6vh, 3.25rem);
+  padding: 0.5rem 1.15rem;
   border: 1px solid var(--saes-bordure-forte);
-  border-radius: 0.7rem;
-  background: var(--saes-surface);
+  border-radius: 999px;
+  background: #09121d;
   color: var(--saes-vert);
   font: inherit;
   transition:
@@ -182,12 +199,12 @@
 
 .auth-champ input::placeholder {
   color: var(--saes-vert-attenue);
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 .auth-champ input:focus {
   border-color: var(--saes-action);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--saes-action) 22%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--saes-action) 24%, transparent);
   outline: none;
 }
 
@@ -196,18 +213,18 @@
 }
 
 .auth-champ input.invalide:focus {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--saes-rouge) 20%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--saes-rouge) 24%, transparent);
 }
 
 .auth-erreur-champ {
-  margin: 0;
+  margin: 0 0 0 1rem;
   color: var(--saes-refus-texte);
   font-size: 0.85rem;
   font-weight: 600;
 }
 
 .auth-aide {
-  margin: 0;
+  margin: 0 0 0 1rem;
   color: var(--saes-vert-attenue);
   font-size: 0.85rem;
 }
@@ -218,17 +235,17 @@
 }
 
 .auth-mot-de-passe input {
-  padding-right: 5.5rem;
+  padding-right: 5.75rem;
 }
 
 .auth-oeil {
   position: absolute;
   top: 50%;
-  right: 0.5rem;
+  right: 0.45rem;
   min-height: 2.25rem;
-  padding: 0 0.7rem;
+  padding: 0 0.9rem;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 999px;
   background: transparent;
   color: var(--saes-vert-attenue);
   font: inherit;
@@ -245,9 +262,11 @@
 
 .auth-bouton {
   width: 100%;
-  min-height: clamp(2.75rem, 6.2vh, 3.25rem);
+  min-height: clamp(2.8rem, 6.4vh, 3.4rem);
   margin-top: 0.3rem;
+  border-radius: 999px;
   font-size: 1.05rem;
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--saes-action) 28%, transparent);
 }
 
 .auth-mention {
@@ -255,34 +274,65 @@
   color: var(--saes-vert-attenue);
   font-size: 0.82rem;
   line-height: 1.5;
-}
-
-.auth-pied {
-  margin-top: clamp(0.75rem, 2vh, 1.5rem);
-  padding-top: clamp(0.6rem, 1.6vh, 1.25rem);
-  border-top: 1px solid var(--saes-bordure);
-  color: var(--saes-vert-attenue);
-  font-size: 0.92rem;
   text-align: center;
 }
 
-.auth-pied a {
+.auth-mention a {
+  color: inherit;
+}
+
+/* ---------- Pied : l'autre ecran, et le retour a l'accueil ---------- */
+
+.auth-pied {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem 0.4rem;
+  margin-top: clamp(0.75rem, 2.2vh, 1.5rem);
+  color: var(--saes-vert-attenue);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.auth-pied a:not(.auth-retour) {
   color: var(--saes-prix);
   font-weight: 700;
 }
 
-/* Fenetre basse (portable) : les textes qui ne sont pas indispensables s'effacent.
-   Le sous-titre est redondant avec le titre, et « Creer un compte » avec l'onglet. */
-@media (max-height: 52rem) {
-  .auth-soustitre,
-  .auth-pied {
-    display: none;
-  }
+.auth-retour {
+  display: inline-flex;
+  flex-basis: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--saes-vert-attenue);
+  font-weight: 600;
+  text-decoration: none;
 }
 
-/* Fenetre basse : tout se resserre un peu plus, et l'aide du mot de passe (deja
-   dite par le message d'erreur du champ) s'efface. */
+.auth-retour:hover {
+  color: var(--saes-vert);
+}
+
+.auth-retour svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---------- Fenetre basse : tout se resserre ---------- */
+
 @media (max-height: 52rem) {
+  .auth-soustitre,
+  .auth-aide {
+    display: none;
+  }
+
   .auth-formulaire,
   .auth-ligne {
     gap: 0.55rem;
@@ -296,31 +346,17 @@
     font-size: 0.85rem;
   }
 
-  .auth-champ input {
-    min-height: 2.5rem;
-  }
-
-  .auth-aide {
-    display: none;
-  }
-
-  .auth-mention {
-    font-size: 0.75rem;
-    line-height: 1.35;
-  }
-
   .auth-separateur {
     margin-block: 0.5rem;
   }
 
-  .auth-bouton {
-    min-height: 2.6rem;
+  .auth-mention {
+    font-size: 0.75rem;
   }
 }
 
-/* Tres basse (petit portable) : le titre devient invisible mais reste lu par les
-   lecteurs d'ecran (l'onglet actif dit deja ou l'on est), et la mention de
-   confidentialite laisse sa place au lien du pied de page. */
+/* Tres basse : le titre devient invisible mais reste lu par les lecteurs d'ecran,
+   et la mention laisse sa place au lien « Confidentialite » deja present ailleurs. */
 @media (max-height: 44rem) {
   .auth-entete {
     position: absolute;

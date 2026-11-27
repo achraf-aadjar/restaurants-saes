@@ -1,44 +1,63 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 /**
- * Panneau de marque de la connexion et de l'inscription : le logo, une phrase,
- * trois raisons de creer un compte (toutes issues du cahier des charges : menus,
- * commande a emporter, reservation) et une photo de la salle.
+ * Panneau photo de la connexion et de l'inscription, a droite du formulaire : la
+ * salle du restaurant en fond sous un voile sombre, le logo, un grand titre, une
+ * phrase et une note. Aucun chiffre : seulement ce que le cahier des charges
+ * promet (menus, commande a emporter, reservation, paiement a la caisse).
  *
- * La photo est posee dans un cadre de sa taille, jamais etiree en fond : la
- * source fait 1280 px de large et le cadre affiche environ 520 px CSS, soit
- * 1040 px sur un ecran Retina, ce qui reste net.
+ * La photo (1280 px de large) remplit un panneau d'environ 450 px de large sur
+ * 560 de haut : elle est reduite pour couvrir la hauteur, jamais agrandie.
  */
 @Component({
   selector: 'app-auth-panneau',
+  imports: [RouterLink],
   template: `
     <img
-      class="logo-panneau"
-      src="assets/logo/logo_une_couleur.svg"
-      alt="Restaurants du SAES"
-      width="150"
-      height="48"
-    />
-    <div class="texte">
-      <h2>Le restaurant du SAES, à portée de clic.</h2>
-      <ul>
-        <li>Consultez le menu du jour</li>
-        <li>Commandez à emporter</li>
-        <li>Réservez votre table</li>
-      </ul>
-    </div>
-    <img
-      class="photo-panneau"
+      class="fond"
       src="assets/site/salle-panoramique-400.webp"
       srcset="
         assets/site/salle-panoramique-400.webp   400w,
         assets/site/salle-panoramique-1280.webp 1280w
       "
-      sizes="(min-width: 60rem) 32rem, 0px"
+      sizes="(min-width: 60rem) 40rem, 0px"
       width="1280"
       height="960"
       alt=""
     />
+    <div class="voile"></div>
+
+    <div class="corps-panneau">
+      <a routerLink="/" class="marque" aria-label="Restaurants du SAES, accueil">
+        <img
+          src="assets/logo/logo_une_couleur.svg"
+          alt=""
+          width="150"
+          height="48"
+          class="logo-panneau"
+        />
+      </a>
+
+      <div class="texte">
+        <h2>Le restaurant du SAES, à portée de clic.</h2>
+        <p>
+          Consultez le menu du jour, commandez à emporter et réservez votre table, au restaurant de
+          l'École polytechnique de Thiès.
+        </p>
+      </div>
+
+      <p class="note">
+        <span class="icone-note" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <rect x="2" y="6" width="20" height="12" rx="2" />
+            <circle cx="12" cy="12" r="2.5" />
+            <path d="M6 12h.01M18 12h.01" />
+          </svg>
+        </span>
+        Une commande en ligne se règle à la caisse, au retrait, en espèces ou par Mobile Money.
+      </p>
+    </div>
   `,
   styles: `
     :host {
@@ -47,14 +66,49 @@ import { Component } from '@angular/core';
 
     @media (min-width: 60rem) {
       :host {
-        display: flex;
-        flex-direction: column;
-        gap: clamp(0.9rem, 2.4vh, 1.75rem);
-        padding: clamp(1.25rem, 3.4vh, 2.5rem) clamp(1.5rem, 3vw, 2.75rem);
+        position: relative;
+        display: block;
+        overflow: hidden;
         background: #080f19;
         color: #f5f2ea;
-        --saes-vert: #f5f2ea;
       }
+    }
+
+    .fond {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 55% center;
+    }
+
+    /* Voile : la photo reste lisible en haut, tres sombre en bas ou se trouve le texte. */
+    .voile {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(
+          0deg,
+          rgb(8 15 25 / 94%) 0%,
+          rgb(8 15 25 / 70%) 45%,
+          rgb(8 15 25 / 30%) 100%
+        ),
+        linear-gradient(90deg, rgb(8 15 25 / 35%), transparent 60%);
+    }
+
+    .corps-panneau {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.9rem, 2.4vh, 1.75rem);
+      height: 100%;
+      padding: clamp(1.25rem, 3.4vh, 2.5rem) clamp(1.5rem, 3vw, 2.5rem);
+    }
+
+    .marque {
+      display: inline-block;
+      align-self: flex-start;
     }
 
     .logo-panneau {
@@ -64,54 +118,60 @@ import { Component } from '@angular/core';
       filter: brightness(0) invert(1);
     }
 
+    .texte {
+      margin-top: auto;
+    }
+
     h2 {
-      margin: 0 0 clamp(0.6rem, 1.8vh, 1.25rem);
+      margin: 0 0 clamp(0.5rem, 1.6vh, 1rem);
       color: #f5f2ea;
-      font-size: clamp(1.5rem, 4.2vh, 2.4rem);
+      font-size: clamp(1.6rem, 4.6vh, 2.6rem);
       font-weight: 600;
-      line-height: 1.15;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
     }
 
-    ul {
-      display: flex;
-      flex-direction: column;
-      gap: 0.7rem;
+    .texte p {
+      max-width: 30rem;
       margin: 0;
-      padding: 0;
-      list-style: none;
+      color: #d6dce5;
+      font-size: clamp(0.9rem, 2vh, 1.05rem);
+      line-height: 1.6;
     }
 
-    li {
+    .note {
       display: flex;
       align-items: center;
-      gap: 0.7rem;
-      color: #c3cbd6;
-      font-weight: 600;
-    }
-
-    li::before {
-      content: '';
-      flex: none;
-      width: 1.25rem;
-      height: 1.25rem;
-      border-radius: 50%;
-      background:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2308121c' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5'/%3E%3C/svg%3E")
-          center / 70% no-repeat,
-        #76b947;
-    }
-
-    /* La photo prend la place qui reste dans la hauteur de la carte : elle ne
-       l'allonge jamais. */
-    .photo-panneau {
-      display: block;
-      flex: 1 1 0;
-      width: 100%;
-      min-height: 5rem;
-      height: 0;
-      object-fit: cover;
+      gap: 0.85rem;
+      margin: 0;
+      padding: 0.8rem 1rem;
+      border: 1px solid rgb(255 255 255 / 16%);
       border-radius: 1rem;
-      box-shadow: 0 14px 36px rgb(0 0 0 / 50%);
+      background: rgb(255 255 255 / 10%);
+      backdrop-filter: blur(8px);
+      color: #e6ebf2;
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .icone-note {
+      display: grid;
+      flex: none;
+      place-items: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.75rem;
+      background: rgb(255 255 255 / 14%);
+    }
+
+    .icone-note svg {
+      width: 1.3rem;
+      height: 1.3rem;
+      fill: none;
+      stroke: #f5f2ea;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
   `,
 })

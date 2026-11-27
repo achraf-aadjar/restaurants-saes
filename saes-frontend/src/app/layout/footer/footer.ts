@@ -34,14 +34,12 @@ export class Footer {
   );
 
   /**
-   * Ecrans d'un seul geste (connexion, inscription, compte, reservations) : ils
+   * Ecrans d'un seul geste (compte, reservations) : ils
    * doivent tenir dans la fenetre, sans defiler. Le grand pied de page bleu nuit
    * y est remplace par une ligne discrete.
    */
   protected readonly ecranUnique = computed(() =>
-    ['/connexion', '/inscription', '/mon-compte', '/mes-reservations'].some((p) =>
-      this.adresse().startsWith(p),
-    ),
+    ['/mon-compte', '/mes-reservations'].some((p) => this.adresse().startsWith(p)),
   );
   private readonly menuService = inject(MenuService);
 
