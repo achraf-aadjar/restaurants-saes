@@ -1,98 +1,116 @@
-<section class="carte formulaire-etroit">
-  <h1>Mon compte</h1>
+<div class="compte-page">
+  <section class="carte compte-formulaire">
+    <h1>Mon compte</h1>
 
-  @if (erreur(); as e) {
-    <p class="message-refus">{{ e }}</p>
-  }
-  @if (succes(); as s) {
-    <p class="message-ok">{{ s }}</p>
-  }
-
-  <form (ngSubmit)="enregistrer()" #f="ngForm">
-    <div class="champ">
-      <label for="prenom">Prénom</label>
-      <input id="prenom" name="prenom" type="text" required pattern=".*\S.*" [(ngModel)]="prenom" />
-    </div>
-
-    <div class="champ">
-      <label for="nom">Nom</label>
-      <input id="nom" name="nom" type="text" required pattern=".*\S.*" [(ngModel)]="nom" />
-    </div>
-
-    <div class="champ">
-      <label for="email">Adresse e-mail</label>
-      <input id="email" name="email" type="email" required email [(ngModel)]="email" />
-    </div>
-
-    <div class="champ">
-      <label for="telephone">Téléphone</label>
-      <input id="telephone" name="telephone" type="tel" [(ngModel)]="telephone" />
-    </div>
-
-    <div class="champ">
-      <label for="nouveauMotDePasse">Nouveau mot de passe (facultatif)</label>
-      <input
-        id="nouveauMotDePasse"
-        name="nouveauMotDePasse"
-        type="password"
-        minlength="8"
-        [(ngModel)]="nouveauMotDePasse"
-        autocomplete="new-password"
-      />
-    </div>
-
-    <div class="champ">
-      <label for="motDePasseActuel">Mot de passe actuel (obligatoire pour en changer)</label>
-      <input
-        id="motDePasseActuel"
-        name="motDePasseActuel"
-        type="password"
-        [required]="!!nouveauMotDePasse"
-        [(ngModel)]="motDePasseActuel"
-        autocomplete="current-password"
-      />
-    </div>
-
-    <button type="submit" class="btn btn-primaire" [disabled]="f.invalid || enCours()">
-      {{ enCours() ? 'Enregistrement…' : 'Enregistrer' }}
-    </button>
-  </form>
-</section>
-
-@if (estClientSeul()) {
-  <section class="carte formulaire-etroit zone-danger">
-    <h2>Supprimer mon compte</h2>
-    @if (!confirmationSuppression()) {
-      <button
-        type="button"
-        class="btn btn-secondaire"
-        [appFocusAuRendu]="retourFocus()"
-        (click)="confirmationSuppression.set(true)"
-      >
-        Supprimer mon compte
-      </button>
-    } @else {
-      <div
-        class="confirmation-carte"
-        role="group"
-        aria-labelledby="question-suppression"
-        (keydown.escape)="garderCompte()"
-      >
-        <p id="question-suppression">Supprimer votre compte ? C'est définitif.</p>
-        <div class="actions-danger">
-          <button
-            type="button"
-            class="btn btn-primaire"
-            [disabled]="enCours()"
-            (click)="supprimerCompte()"
-          >
-            Supprimer mon compte
-          </button>
-          <button type="button" class="btn btn-secondaire" appFocusAuRendu (click)="garderCompte()">
-            Garder mon compte
-          </button>
-        </div>
-      </div>
+    @if (erreur(); as e) {
+      <p class="message-refus">{{ e }}</p>
     }
+    @if (succes(); as s) {
+      <p class="message-ok">{{ s }}</p>
+    }
+
+    <form (ngSubmit)="enregistrer()" #f="ngForm" class="compte-champs">
+      <div class="champ">
+        <label for="prenom">Prénom</label>
+        <input
+          id="prenom"
+          name="prenom"
+          type="text"
+          required
+          pattern=".*\S.*"
+          [(ngModel)]="prenom"
+        />
+      </div>
+
+      <div class="champ">
+        <label for="nom">Nom</label>
+        <input id="nom" name="nom" type="text" required pattern=".*\S.*" [(ngModel)]="nom" />
+      </div>
+
+      <div class="champ">
+        <label for="email">Adresse e-mail</label>
+        <input id="email" name="email" type="email" required email [(ngModel)]="email" />
+      </div>
+
+      <div class="champ">
+        <label for="telephone">Téléphone</label>
+        <input id="telephone" name="telephone" type="tel" [(ngModel)]="telephone" />
+      </div>
+
+      <div class="champ">
+        <label for="nouveauMotDePasse">Nouveau mot de passe (facultatif)</label>
+        <input
+          id="nouveauMotDePasse"
+          name="nouveauMotDePasse"
+          type="password"
+          minlength="8"
+          [(ngModel)]="nouveauMotDePasse"
+          autocomplete="new-password"
+        />
+      </div>
+
+      <div class="champ">
+        <label for="motDePasseActuel">Mot de passe actuel (obligatoire pour en changer)</label>
+        <input
+          id="motDePasseActuel"
+          name="motDePasseActuel"
+          type="password"
+          [required]="!!nouveauMotDePasse"
+          [(ngModel)]="motDePasseActuel"
+          autocomplete="current-password"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primaire compte-envoi"
+        [disabled]="f.invalid || enCours()"
+      >
+        {{ enCours() ? 'Enregistrement…' : 'Enregistrer' }}
+      </button>
+    </form>
   </section>
-}
+
+  @if (estClientSeul()) {
+    <section class="carte compte-danger zone-danger">
+      <h2>Supprimer mon compte</h2>
+      @if (!confirmationSuppression()) {
+        <button
+          type="button"
+          class="btn btn-secondaire"
+          [appFocusAuRendu]="retourFocus()"
+          (click)="confirmationSuppression.set(true)"
+        >
+          Supprimer mon compte
+        </button>
+      } @else {
+        <div
+          class="confirmation-carte"
+          role="group"
+          aria-labelledby="question-suppression"
+          (keydown.escape)="garderCompte()"
+        >
+          <p id="question-suppression">Supprimer votre compte ? C'est définitif.</p>
+          <div class="actions-danger">
+            <button
+              type="button"
+              class="btn btn-danger"
+              [disabled]="enCours()"
+              (click)="supprimerCompte()"
+            >
+              Supprimer mon compte
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondaire"
+              appFocusAuRendu
+              (click)="garderCompte()"
+            >
+              Garder mon compte
+            </button>
+          </div>
+        </div>
+      }
+    </section>
+  }
+</div>

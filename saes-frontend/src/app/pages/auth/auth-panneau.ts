@@ -49,8 +49,8 @@ import { Component } from '@angular/core';
       :host {
         display: flex;
         flex-direction: column;
-        gap: clamp(1.25rem, 3vh, 2rem);
-        padding: clamp(1.75rem, 3vw, 2.75rem);
+        gap: clamp(0.9rem, 2.4vh, 1.75rem);
+        padding: clamp(1.25rem, 3.4vh, 2.5rem) clamp(1.5rem, 3vw, 2.75rem);
         background: #080f19;
         color: #f5f2ea;
         --saes-vert: #f5f2ea;
@@ -65,9 +65,9 @@ import { Component } from '@angular/core';
     }
 
     h2 {
-      margin: 0 0 1.25rem;
+      margin: 0 0 clamp(0.6rem, 1.8vh, 1.25rem);
       color: #f5f2ea;
-      font-size: clamp(1.75rem, 2.6vw, 2.4rem);
+      font-size: clamp(1.5rem, 4.2vh, 2.4rem);
       font-weight: 600;
       line-height: 1.15;
     }
@@ -101,12 +101,14 @@ import { Component } from '@angular/core';
         #76b947;
     }
 
+    /* La photo prend la place qui reste dans la hauteur de la carte : elle ne
+       l'allonge jamais. */
     .photo-panneau {
       display: block;
+      flex: 1 1 0;
       width: 100%;
-      height: auto;
-      margin-top: auto;
-      aspect-ratio: 4 / 3;
+      min-height: 5rem;
+      height: 0;
       object-fit: cover;
       border-radius: 1rem;
       box-shadow: 0 14px 36px rgb(0 0 0 / 50%);

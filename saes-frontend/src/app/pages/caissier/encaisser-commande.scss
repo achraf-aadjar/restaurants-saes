@@ -59,7 +59,7 @@
 
   /* Cibles tactiles : une ligne fait au moins 48 px de haut. */
   td {
-    padding-block: 0.95rem;
+    padding-block: clamp(0.75rem, 1.9vh, 0.95rem);
   }
 
   /* Petit ecran : chaque commande devient une ligne a deux etages (numero et

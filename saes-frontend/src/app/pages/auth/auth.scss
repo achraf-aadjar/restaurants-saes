@@ -9,7 +9,6 @@
   flex: 1;
   align-items: center;
   min-width: 0;
-  padding-block: clamp(0rem, 2vw, 2rem);
 }
 
 .auth {
@@ -24,9 +23,12 @@
   box-shadow: var(--saes-ombre-haute);
 }
 
+/* L'ecran tient dans la fenetre : la hauteur de la carte suit celle de la fenetre
+   (moins l'en-tete, les marges et la ligne de pied de page), entre 30 et 40 rem. */
 @media (min-width: 60rem) {
   .auth {
     grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    min-height: clamp(30rem, calc(100dvh - 11rem), 40rem);
   }
 }
 
@@ -36,10 +38,15 @@
   }
 }
 
+/* Les marges et les tailles suivent la hauteur de la fenetre (vh) : sur un
+   ecran bas, tout se resserre au lieu de deborder. */
 .auth-carte {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 100%;
   min-width: 0;
-  padding: clamp(1.25rem, 4vw, 3rem);
+  padding: clamp(1rem, 3.2vh, 2.25rem) clamp(1.25rem, 4vw, 3rem);
 }
 
 /* ---------- Onglets Connexion / Inscription ---------- */
@@ -48,7 +55,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.25rem;
-  margin-bottom: clamp(1.25rem, 3vw, 2rem);
+  margin-bottom: clamp(0.75rem, 2.2vh, 1.5rem);
   padding: 0.25rem;
   border: 1px solid var(--saes-bordure);
   border-radius: 0.8rem;
@@ -58,7 +65,7 @@
 .auth-onglets a {
   display: grid;
   place-items: center;
-  min-height: 2.75rem;
+  min-height: clamp(2.4rem, 5vh, 2.75rem);
   border-radius: 0.6rem;
   color: var(--saes-vert-attenue);
   font-size: 0.95rem;
@@ -79,12 +86,12 @@
 /* ---------- En-tete ---------- */
 
 .auth-entete {
-  margin-bottom: 1.5rem;
+  margin-bottom: clamp(0.75rem, 2vh, 1.25rem);
 }
 
 .auth-entete h1 {
   margin: 0 0 0.35rem;
-  font-size: clamp(1.9rem, 3.2vw, 2.5rem);
+  font-size: clamp(1.6rem, 4.4vh, 2.4rem);
   font-weight: 600;
 }
 
@@ -105,7 +112,7 @@
   display: flex;
   align-items: center;
   gap: 0.9rem;
-  margin: 1.25rem 0;
+  margin: clamp(0.6rem, 1.8vh, 1.1rem) 0;
   color: var(--saes-vert-attenue);
   font-size: 0.85rem;
 }
@@ -127,13 +134,13 @@
 .auth-formulaire {
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: clamp(0.6rem, 1.7vh, 1.1rem);
 }
 
 .auth-ligne {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 1.1rem;
+  gap: clamp(0.6rem, 1.7vh, 1.1rem);
 }
 
 @media (min-width: 36rem) {
@@ -161,8 +168,8 @@
 
 .auth-champ input {
   width: 100%;
-  min-height: 3rem;
-  padding: 0.6rem 0.9rem;
+  min-height: clamp(2.6rem, 5.8vh, 3rem);
+  padding: 0.5rem 0.9rem;
   border: 1px solid var(--saes-bordure-forte);
   border-radius: 0.7rem;
   background: var(--saes-surface);
@@ -238,8 +245,8 @@
 
 .auth-bouton {
   width: 100%;
-  min-height: 3.25rem;
-  margin-top: 0.4rem;
+  min-height: clamp(2.75rem, 6.2vh, 3.25rem);
+  margin-top: 0.3rem;
   font-size: 1.05rem;
 }
 
@@ -251,8 +258,8 @@
 }
 
 .auth-pied {
-  margin-top: 1.5rem;
-  padding-top: 1.25rem;
+  margin-top: clamp(0.75rem, 2vh, 1.5rem);
+  padding-top: clamp(0.6rem, 1.6vh, 1.25rem);
   border-top: 1px solid var(--saes-bordure);
   color: var(--saes-vert-attenue);
   font-size: 0.92rem;
@@ -262,4 +269,68 @@
 .auth-pied a {
   color: var(--saes-prix);
   font-weight: 700;
+}
+
+/* Fenetre basse (portable) : les textes qui ne sont pas indispensables s'effacent.
+   Le sous-titre est redondant avec le titre, et « Creer un compte » avec l'onglet. */
+@media (max-height: 52rem) {
+  .auth-soustitre,
+  .auth-pied {
+    display: none;
+  }
+}
+
+/* Fenetre basse : tout se resserre un peu plus, et l'aide du mot de passe (deja
+   dite par le message d'erreur du champ) s'efface. */
+@media (max-height: 52rem) {
+  .auth-formulaire,
+  .auth-ligne {
+    gap: 0.55rem;
+  }
+
+  .auth-champ {
+    gap: 0.25rem;
+  }
+
+  .auth-champ label {
+    font-size: 0.85rem;
+  }
+
+  .auth-champ input {
+    min-height: 2.5rem;
+  }
+
+  .auth-aide {
+    display: none;
+  }
+
+  .auth-mention {
+    font-size: 0.75rem;
+    line-height: 1.35;
+  }
+
+  .auth-separateur {
+    margin-block: 0.5rem;
+  }
+
+  .auth-bouton {
+    min-height: 2.6rem;
+  }
+}
+
+/* Tres basse (petit portable) : le titre devient invisible mais reste lu par les
+   lecteurs d'ecran (l'onglet actif dit deja ou l'on est), et la mention de
+   confidentialite laisse sa place au lien du pied de page. */
+@media (max-height: 44rem) {
+  .auth-entete {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .auth-mention {
+    display: none;
+  }
 }

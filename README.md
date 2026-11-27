@@ -120,6 +120,15 @@ Le détail du chantier de refonte, la matrice de conformité au cahier des
 charges et ce qui reste à faire sont dans [REFONTE_PLAN.md](REFONTE_PLAN.md).
 Le scénario de soutenance est dans [DEMO_JURY.md](DEMO_JURY.md).
 
+**Écrans qui tiennent dans la fenêtre** : la connexion, l'inscription, « Mon
+compte », « Mes réservations », la caisse et les écrans d'action du personnel
+s'affichent en entier sans défiler, jusqu'à une fenêtre de 600 px de haut. Pour
+cela, leurs marges et leurs tailles suivent la hauteur de la fenêtre (unités
+`vh` et `clamp()`), et certains textes secondaires s'effacent sur les fenêtres
+basses. Ces écrans utilisent une simple ligne en pied de page au lieu du grand
+pied de page. Les écrans de listes, de tableaux de bord et de graphiques défilent,
+c'est normal.
+
 **Netteté des photos** : une photo n'est jamais étirée en fond de page. Un écran
 Retina affiche deux fois plus de pixels que de pixels CSS : une photo de 800 px
 de large ne reste nette que dans un cadre d'environ 400 px, et une de 1280 px
