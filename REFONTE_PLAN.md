@@ -78,10 +78,9 @@ couvrant une seule journée, une seule police, peu de visuels.
 ### C — Page d'accueil (`/`) et barre de navigation
 
 Barre de navigation en haut pour le visiteur et le client : **Accueil, Menu,
-Traiteur, Photos**. La page d'accueil enchaîne une grande photo d'ouverture, le
-menu, le traiteur, un aperçu des photos et le restaurant. Les pages **Traiteur**
-et **Photos** sont des présentations sans formulaire. Les photos se changent dans
-`core/photos-site.ts`.
+Traiteur**. La page d'accueil enchaîne une grande photo d'ouverture, le menu, le
+traiteur et le restaurant. La page **Traiteur** est une présentation sans
+formulaire. La page « Photos », ajoutée puis demandée en suppression, n'existe plus.
 
 Vitrine du visiteur et du client. Le personnel reste renvoyé vers sa première
 fonction (`vitrineGuard`). Tout ce qu'elle affiche vient du backend : plats du
@@ -193,7 +192,6 @@ sont documentés ici pour être expliqués au jury.
 | --- | --- | --- |
 | **Supervision par l'administrateur** (§4.5 et §4.6 réservent statistiques, rapports, stocks et recommandations au gérant) | À sa connexion, l'administrateur choisit un restaurant (`/admin/choix`), puis consulte ses statistiques, rapports, stocks, recommandations, informations et comptes | **Lecture seule** : aucune route d'écriture. Mêmes services et mêmes chiffres que le gérant. Les autres rôles n'ont pas accès. `SupervisionAdminTest` : 6 tests |
 | **Page Traiteur** | Une page de présentation (formules, comment faire une demande, téléphone du restaurant) | Aucun formulaire, aucune commande traiteur, aucune fonction métier |
-| **Page Photos** | Une galerie avec agrandissement | Contenu statique |
 
 Conséquence sur la qualité attendue n° 1 (« chaque utilisateur n'accède qu'aux
 fonctions de ses rôles ») : elle reste vraie pour tous les rôles sauf
@@ -257,5 +255,5 @@ l'administrateur, qui a désormais en lecture ce que le gérant a en lecture et 
 - 2026-11-26 — Cuisine, serveur, gérant, caisse, pied de page.
 - 2026-11-26 — Tests, matrice de conformité, scénario de démonstration.
 - 2026-11-26 — Retour de l'équipe : un seul restaurant au départ, accueil refait
-  (photo, menu, traiteur, photos, barre de navigation), supervision de
+  (photo, menu, traiteur, barre de navigation), supervision de
   l'administrateur par restaurant.

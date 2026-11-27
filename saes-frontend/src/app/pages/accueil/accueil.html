@@ -125,36 +125,7 @@
   </div>
 </section>
 
-<!-- 3. Photos : un apercu de la galerie. -->
-<section class="bloc-vitrine" id="photos" aria-labelledby="titre-photos">
-  <div class="entete-section">
-    <div>
-      <span class="sur-titre">En images</span>
-      <h2 id="titre-photos" class="titre-section">Photos</h2>
-    </div>
-    <a routerLink="/photos" class="lien-section">
-      Toute la galerie
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
-    </a>
-  </div>
-  <ul class="apercu-galerie">
-    @for (photo of apercuGalerie(); track photo.base + $index) {
-      <li>
-        <img
-          [src]="sources(photo).src"
-          [srcset]="sources(photo).srcset"
-          sizes="(min-width: 60rem) 22rem, 45vw"
-          [attr.width]="photo.largeur"
-          [attr.height]="photo.hauteur"
-          loading="lazy"
-          [alt]="photo.legende"
-        />
-      </li>
-    }
-  </ul>
-</section>
-
-<!-- 4. Le restaurant : ses informations, telles que le backend les donne. -->
+<!-- 3. Le restaurant : ses informations, telles que le backend les donne. -->
 @if (restaurantVedette(); as r) {
   <section class="bloc-vitrine" id="restaurant" aria-labelledby="titre-restaurant">
     <span class="sur-titre">Où nous trouver</span>

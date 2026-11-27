@@ -9,7 +9,6 @@ import { MenuService } from '../../core/menu.service';
 import { CategoriePlat, MenuDto, PlatResume, RestaurantSummary } from '../../core/models';
 import { PanierService } from '../../core/panier.service';
 import { photoDuPlat } from '../../core/photos-plats';
-import { GALERIE, PhotoSite, sourcesDe } from '../../core/photos-site';
 import { ToastService } from '../../core/toast.service';
 import { IconeCategorie } from '../../shared/icone-categorie';
 import { MontantPipe } from '../../shared/montant.pipe';
@@ -41,11 +40,6 @@ export class Accueil {
   private readonly panier = inject(PanierService);
   private readonly toast = inject(ToastService);
   protected readonly auth = inject(AuthService);
-
-  protected readonly sources = sourcesDe;
-
-  /** Les six premieres photos de la galerie, en apercu sur l'accueil. */
-  protected readonly apercuGalerie = computed<PhotoSite[]>(() => GALERIE.slice(0, 6));
 
   protected readonly restaurants = signal<RestaurantSummary[]>([]);
   protected readonly menusEnVigueur = signal<MenuDto[]>([]);

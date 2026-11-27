@@ -25,8 +25,7 @@
 /* La page d'accueil est une vitrine bord a bord : elle pose elle-meme ses
    marges et centre chacun de ses blocs. */
 .contenu:has(app-accueil),
-.contenu:has(app-traiteur),
-.contenu:has(app-photos) {
+.contenu:has(app-traiteur) {
   max-width: none;
   padding: 0;
 }

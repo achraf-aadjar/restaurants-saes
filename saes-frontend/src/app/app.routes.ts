@@ -19,10 +19,6 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/traiteur/traiteur').then((m) => m.Traiteur),
   },
   {
-    path: 'photos',
-    loadComponent: () => import('./pages/photos/photos').then((m) => m.Photos),
-  },
-  {
     path: 'menus',
     loadComponent: () => import('./pages/menus/menu-consultation').then((m) => m.MenuConsultation),
   },

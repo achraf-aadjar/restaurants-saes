@@ -20,7 +20,6 @@
         >
         <a routerLink="/menus" routerLinkActive="actif" ariaCurrentWhenActive="page">Menu</a>
         <a routerLink="/traiteur" routerLinkActive="actif" ariaCurrentWhenActive="page">Traiteur</a>
-        <a routerLink="/photos" routerLinkActive="actif" ariaCurrentWhenActive="page">Photos</a>
       }
       @if (auth.aLeRole('CLIENT')) {
         <a routerLink="/mes-commandes" routerLinkActive="actif" ariaCurrentWhenActive="page"
@@ -156,13 +155,6 @@
           ariaCurrentWhenActive="page"
           (click)="basculerMenuMobile()"
           >Traiteur</a
-        >
-        <a
-          routerLink="/photos"
-          routerLinkActive="actif"
-          ariaCurrentWhenActive="page"
-          (click)="basculerMenuMobile()"
-          >Photos</a
         >
       }
       @if (auth.aLeRole('CLIENT')) {

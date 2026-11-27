@@ -1,5 +1,5 @@
 /**
- * Photos de la vitrine : l'accueil, la galerie « Photos » et le traiteur.
+ * Photos de la vitrine utilisees par la page « Traiteur ».
  *
  * REGLE DE NETTETE : une photo n'est jamais etiree en fond de page. Un ecran
  * Retina affiche deux fois plus de pixels que de pixels CSS, donc une photo de
@@ -25,14 +25,6 @@ export interface PhotoSite {
   legende: string;
 }
 
-export const SALLE_PANORAMIQUE: PhotoSite = {
-  base: 'assets/site/salle-panoramique',
-  tailles: [400, 1280],
-  largeur: 1280,
-  hauteur: 960,
-  legende: 'La salle du restaurant de l’EPT',
-};
-
 export const SALLE_TABLES_ROUGES: PhotoSite = {
   base: 'assets/site/salle-tables-rouges',
   tailles: [400, 800],
@@ -48,47 +40,6 @@ export const SALLE_ALLEE_CENTRALE: PhotoSite = {
   hauteur: 600,
   legende: 'La salle depuis l’allée centrale',
 };
-
-export const SALLE_TABLES_BLEUES: PhotoSite = {
-  base: 'assets/site/salle-tables-bleues',
-  tailles: [400, 800],
-  largeur: 800,
-  hauteur: 1067,
-  legende: 'Les tables bleues et leurs bouquets',
-};
-
-export const SALLE_TABLE_DRESSEE: PhotoSite = {
-  base: 'assets/site/salle-table-dressee',
-  tailles: [400, 800],
-  largeur: 800,
-  hauteur: 1067,
-  legende: 'Une table dressée près des rideaux',
-};
-
-const plat = (nom: string, legende: string): PhotoSite => ({
-  base: `assets/plats/${nom}`,
-  tailles: [360, 720],
-  largeur: 720,
-  hauteur: 800,
-  legende,
-});
-
-export const THIEBOUDIENNE = plat('thieboudienne', 'Thiéboudienne, riz au poisson et légumes');
-
-/** Galerie de la page « Photos », dans l'ordre d'affichage. */
-export const GALERIE: PhotoSite[] = [
-  SALLE_PANORAMIQUE,
-  THIEBOUDIENNE,
-  SALLE_TABLES_BLEUES,
-  SALLE_TABLES_ROUGES,
-  plat('yassa-poulet', 'Yassa poulet, oignons confits et citron'),
-  SALLE_TABLE_DRESSEE,
-  SALLE_ALLEE_CENTRALE,
-  plat('mafe', "Mafé, sauce à l'arachide"),
-  plat('jus-de-bissap', "Jus de bissap, infusion d'hibiscus"),
-  plat('thiakry', 'Thiakry, couscous de mil au lait caillé'),
-  plat('jus-de-bouye', 'Jus de bouye, pulpe de fruit du baobab'),
-];
 
 /** `src` et `srcset` d'une photo, pour une balise `img`. */
 export function sourcesDe(photo: PhotoSite): { src: string; srcset: string } {

@@ -1,6 +1,6 @@
 /*
  * Page d'accueil (vitrine) : la photo du restaurant en grand, puis le menu, le
- * traiteur, les photos et les informations du restaurant.
+ * traiteur et les informations du restaurant.
  *
  * La page est bord a bord : chaque bloc deborde la gouttiere de la zone de
  * contenu et remet sa propre marge interieure.
@@ -384,44 +384,6 @@
   border-radius: var(--saes-rayon);
   background: var(--saes-surface);
   font-weight: 600;
-}
-
-/* ---------- Photos (apercu) ---------- */
-
-.apercu-galerie {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(0.5rem, 1.2vw, 1rem);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-@media (min-width: 48rem) {
-  .apercu-galerie {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-.apercu-galerie li {
-  overflow: hidden;
-  border-radius: var(--saes-rayon);
-  background: var(--saes-fond-doux);
-}
-
-.apercu-galerie img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  transition: transform 0.35s ease;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .apercu-galerie li:hover img {
-    transform: scale(1.05);
-  }
 }
 
 /* ---------- Restaurant ---------- */

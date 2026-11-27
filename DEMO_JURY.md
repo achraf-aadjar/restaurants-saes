@@ -49,16 +49,15 @@ Vérifications d'avant-match :
 Ouvrir `/` sans être connecté.
 
 À montrer : la grande photo d'ouverture, le menu en vigueur avec ses catégories et
-ses prix du jour (qui **viennent du backend**), le bloc Traiteur, l'aperçu des
-photos, puis le restaurant avec ses horaires du jour et son état d'ouverture.
+ses prix du jour (qui **viennent du backend**), le bloc Traiteur, puis le
+restaurant avec ses horaires du jour et son état d'ouverture.
 
-La barre de navigation en haut donne les quatre pages publiques : **Accueil, Menu,
-Traiteur, Photos**. Parcourir « Traiteur » et « Photos ».
+La barre de navigation en haut donne les trois pages publiques : **Accueil, Menu,
+Traiteur**. Parcourir « Traiteur ».
 
 > À dire : « Un visiteur peut consulter les menus sans compte, comme le demande
-> le cahier des charges §4.2. Les pages Traiteur et Photos sont de la
-> présentation : elles n'ajoutent aucune fonction, et le traiteur se demande par
-> téléphone. »
+> le cahier des charges §4.2. La page Traiteur est de la présentation : elle
+> n'ajoute aucune fonction, et le traiteur se demande par téléphone. »
 
 Basculer le **mode sombre** depuis l'en-tête : toute l'interface suit.
 

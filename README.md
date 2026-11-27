@@ -136,10 +136,10 @@ de large ne reste nette que dans un cadre d'environ 400 px, et une de 1280 px
 dans un cadre d'environ 640 px. Pour une photo plein écran, il faut une source
 d'au moins 2400 px de large.
 
-**Photos de la vitrine** : les pages « Accueil » et « Photos » utilisent les
-photos listées dans `saes-frontend/src/app/core/photos-site.ts`. Pour mettre les
-vôtres, déposer les fichiers `.webp` dans `saes-frontend/public/assets/site/` et
-les ajouter à ce fichier, avec une légende.
+**Photos de la vitrine** : la photo d'ouverture de l'accueil est
+`saes-frontend/public/assets/site/salle-hero-*.webp` ; la page « Traiteur » utilise
+celles listées dans `saes-frontend/src/app/core/photos-site.ts`. Pour mettre les
+vôtres, remplacer les fichiers `.webp` de `saes-frontend/public/assets/site/`.
 
 **Photos des plats** : les six plats de la carte en ont une. Pour en ajouter, déposer
 `saes-frontend/public/assets/plats/<nom-du-plat>-360.webp` et `-720.webp`
