@@ -3,32 +3,11 @@
  * (app.scss les masque ici). A gauche le formulaire, a droite la photo de la salle
  * (AuthPanneau, seulement sur grand ecran). Sur telephone, le formulaire seul.
  *
- * L'ecran est toujours en bleu nuit, quel que soit le theme choisi : c'est une
- * vitrine de la marque, comme l'ouverture de l'accueil. Les couleurs sont donc
- * posees ici, sur l'hote, et se propagent a tout le formulaire.
+ * L'ecran suit le theme choisi (clair ou sombre), comme le reste du site. Seul le
+ * panneau photo reste sombre dans les deux cas : c'est une photo sous un voile.
  */
 
 :host {
-  --saes-vert: #f5f2ea;
-  --saes-vert-attenue: #a7b2c1;
-  --saes-surface: #0c1622;
-  --saes-surface-haute: #142130;
-  --saes-fond-doux: #101b28;
-  --saes-bordure: #223246;
-  --saes-bordure-forte: #3a4f68;
-  --saes-survol: rgb(255 255 255 / 7%);
-  --saes-trait: rgb(255 255 255 / 13%);
-  --saes-action: #76b947;
-  --saes-action-fonce: #8cc960;
-  --saes-texte-sur-action: #08121c;
-  --saes-prix: #9ad26f;
-  --saes-rouge: #c6303a;
-  --saes-rouge-texte: #ff8b90;
-  --saes-refus-fond: #35191c;
-  --saes-refus-texte: #ff9aa1;
-  --saes-refus-bordure: #5f282d;
-  --saes-ombre-haute: 0 24px 70px rgb(0 0 0 / 55%);
-
   display: grid;
   flex: 1;
   align-items: center;
@@ -189,7 +168,7 @@
   padding: 0.5rem 1.15rem;
   border: 1px solid var(--saes-bordure-forte);
   border-radius: 999px;
-  background: #09121d;
+  background: var(--saes-creme);
   color: var(--saes-vert);
   font: inherit;
   transition:
