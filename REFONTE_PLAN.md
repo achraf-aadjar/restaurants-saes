@@ -117,19 +117,24 @@ vide, tirage à graine fixe (jeu identique partout).
 | --- | --- |
 | Restaurants | 1 (le restaurant de l'EPT ; l'administrateur en ajoute d'autres) |
 | Comptes | 21 (6 de référence + personnel + 10 clients) |
-| Plats | 28 |
-| Menus | 4 (dont un terminé et un à venir) |
-| Commandes | 750 sur 10 semaines |
-| Lignes de commande | 1 486 |
-| Paiements | 717 |
+| Plats | 6 (la carte d'origine : thiéboudienne, yassa poulet, mafé, thiakry, jus de bissap, jus de bouye) |
+| Ingrédients | 7 |
+| Menus | 1 (« Menu de la semaine ») |
+| Commandes | environ 720 sur 10 semaines |
+| Lignes de commande | environ 1 450 |
+| Paiements | environ 690 |
 | Sessions de caisse | 51 |
-| Mouvements de stock | 4 167 |
-| Réservations | 40 |
+| Mouvements de stock | environ 2 700 |
+| Réservations | 39 |
 | Entrées de journal | 10 |
 
-État de stock obtenu volontairement : 4 ingrédients sous leur seuil d'alerte,
-dont l'agneau à zéro, pour que les alertes et les recommandations aient du
-contenu.
+Le restaurant du SAES est un restaurant simple, au sein de l'école : la carte
+reste celle d'origine, à six plats. Une première version du jeu de données en
+comptait 42, puis 28 ; elle a été ramenée à la carte d'origine.
+
+État de stock obtenu volontairement : 3 ingrédients sous leur seuil d'alerte
+(poisson, mil, pulpe de bouye), pour que les alertes et les recommandations
+aient du contenu.
 
 ### Graphiques
 
@@ -238,10 +243,9 @@ l'administrateur, qui a désormais en lecture ce que le gérant a en lecture et 
   formulaires d'édition, en clair et en sombre.
 - Largeur 1024 px non testée.
 - Navigation au clavier et ordre de tabulation non revérifiés après la refonte.
-- **Photographies** : seuls 6 plats sur 42 ont une vraie photo. Les autres
-  affichent l'icône de leur catégorie. Pour en ajouter : déposer
-  `public/assets/plats/<nom-du-plat>-360.webp` et `-720.webp` (ratio 9:10), puis
-  ajouter le nom dans `src/app/core/photos-plats.ts`.
+- **Photographies** : les six plats de la carte ont une photo. Pour remplacer
+  une photo : remplacer ses deux fichiers `public/assets/plats/<nom-du-plat>-360.webp`
+  et `-720.webp` (ratio 9:10), sous le même nom.
 - `/gerant/plats` et `/gerant/menus` n'ont pas été retravaillés.
 
 ---

@@ -26,21 +26,22 @@ export class Traiteur {
   protected readonly photoB = sourcesDe(SALLE_ALLEE_CENTRALE);
   protected readonly dimB = SALLE_ALLEE_CENTRALE;
 
+  /** Les formules ne parlent que des plats de la carte du restaurant. */
   protected readonly formules = [
     {
-      titre: 'Buffet sénégalais',
+      titre: 'Buffet',
       texte:
-        'Thiéboudienne, yassa et mafé servis en buffet, avec riz, légumes et sauces à part. La formule des grandes tablées.',
-    },
-    {
-      titre: 'Cocktail dînatoire',
-      texte:
-        'Pastels, fatayas et accras à partager, jus de bissap et de bouye. Pour les accueils et les remises de diplômes.',
+        'Thiéboudienne, yassa poulet et mafé servis en buffet, avec le riz et les sauces. Pour les grandes tablées.',
     },
     {
       titre: 'Plateaux repas',
       texte:
         'Un plat, une boisson et un dessert, prêts à emporter. Pour les séminaires, les soutenances et les journées de travail.',
+    },
+    {
+      titre: 'Boissons et desserts',
+      texte:
+        'Jus de bissap et de bouye, thiakry : pour accompagner un accueil ou une remise de diplômes.',
     },
   ];
 

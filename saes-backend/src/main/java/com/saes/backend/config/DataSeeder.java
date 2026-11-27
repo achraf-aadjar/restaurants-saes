@@ -172,184 +172,50 @@ public class DataSeeder {
 
             // ----- Ingredients --------------------------------------------------
             Map<String, Ingredient> ing = new HashMap<>();
-            ajouterIngredient(ing, ept, "Riz brisé", Unite.KILOGRAMME, 8, 60);
-            ajouterIngredient(ing, ept, "Poisson thiof", Unite.KILOGRAMME, 5, 30);
-            ajouterIngredient(ing, ept, "Poulet", Unite.KILOGRAMME, 5, 35);
-            ajouterIngredient(ing, ept, "Viande de bœuf", Unite.KILOGRAMME, 4, 25);
-            ajouterIngredient(ing, ept, "Agneau", Unite.KILOGRAMME, 3, 18);
-            ajouterIngredient(ing, ept, "Légumes", Unite.KILOGRAMME, 6, 40);
-            ajouterIngredient(ing, ept, "Oignons", Unite.KILOGRAMME, 5, 30);
-            ajouterIngredient(ing, ept, "Pâte d'arachide", Unite.KILOGRAMME, 2, 12);
-            ajouterIngredient(ing, ept, "Huile", Unite.LITRE, 4, 25);
-            ajouterIngredient(ing, ept, "Mil", Unite.KILOGRAMME, 3, 15);
-            ajouterIngredient(ing, ept, "Farine", Unite.KILOGRAMME, 3, 20);
-            ajouterIngredient(ing, ept, "Lait caillé", Unite.LITRE, 3, 18);
-            ajouterIngredient(ing, ept, "Sucre", Unite.KILOGRAMME, 2, 15);
-            ajouterIngredient(ing, ept, "Fleurs de bissap", Unite.GRAMME, 400, 3000);
-            ajouterIngredient(ing, ept, "Pulpe de bouye", Unite.GRAMME, 400, 3000);
-            ajouterIngredient(ing, ept, "Gingembre", Unite.GRAMME, 300, 2000);
-            ajouterIngredient(ing, ept, "Citron", Unite.KILOGRAMME, 2, 10);
-            ajouterIngredient(ing, ept, "Mangue", Unite.KILOGRAMME, 2, 12);
+            ajouterIngredient(ing, ept, "Riz", Unite.KILOGRAMME, 5, 30);
+            ajouterIngredient(ing, ept, "Poisson", Unite.KILOGRAMME, 3, 20);
+            ajouterIngredient(ing, ept, "Poulet", Unite.KILOGRAMME, 3, 20);
+            ajouterIngredient(ing, ept, "Légumes", Unite.KILOGRAMME, 4, 25);
+            ajouterIngredient(ing, ept, "Mil", Unite.KILOGRAMME, 2, 10);
+            ajouterIngredient(ing, ept, "Fleurs de bissap", Unite.GRAMME, 200, 2000);
+            ajouterIngredient(ing, ept, "Pulpe de bouye", Unite.GRAMME, 200, 2000);
             ingredientRepository.saveAll(ing.values());
 
             // ----- Plats et recettes --------------------------------------------
+            // La carte du restaurant : six plats, simples, comme dans un restaurant
+            // d'ecole. Ce sont les plats du jeu de donnees d'origine.
             List<Plat> platsEpt = new ArrayList<>();
-
-            // Entrees
-            Plat pastels = plat(platsEpt, ept, "Pastels au poisson",
-                    "Beignets croustillants farcis au poisson et aux herbes", 800, CategoriePlat.ENTREE,
-                    recette(ing.get("Farine"), "0.120"), recette(ing.get("Poisson thiof"), "0.080"),
-                    recette(ing.get("Huile"), "0.050"));
-            Plat fataya = plat(platsEpt, ept, "Fataya viande",
-                    "Chausson doré à la viande hachée et aux oignons", 700, CategoriePlat.ENTREE,
-                    recette(ing.get("Farine"), "0.110"), recette(ing.get("Viande de bœuf"), "0.070"),
-                    recette(ing.get("Oignons"), "0.050"));
-            Plat nems = plat(platsEpt, ept, "Accras de haricot",
-                    "Petits beignets de niébé servis avec une sauce pimentée", 600, CategoriePlat.ENTREE,
-                    recette(ing.get("Farine"), "0.100"), recette(ing.get("Huile"), "0.040"));
-            Plat saladeAvocat = plat(platsEpt, ept, "Salade d'avocat et mangue",
-                    "Avocat, mangue et citron vert, servis frais", 1200, CategoriePlat.ENTREE,
-                    recette(ing.get("Mangue"), "0.150"), recette(ing.get("Citron"), "0.030"));
-            Plat soupeKandia = plat(platsEpt, ept, "Soupou kandia",
-                    "Soupe de gombo au poisson et à l'huile de palme", 1500, CategoriePlat.ENTREE,
-                    recette(ing.get("Poisson thiof"), "0.120"), recette(ing.get("Légumes"), "0.150"),
-                    recette(ing.get("Huile"), "0.060"));
-
-            // Plats principaux
-            Plat thieb = plat(platsEpt, ept, "Thiéboudienne",
-                    "Riz au poisson, légumes et sauce tomate, le plat national", 2500,
-                    CategoriePlat.PLAT_PRINCIPAL,
-                    recette(ing.get("Riz brisé"), "0.300"), recette(ing.get("Poisson thiof"), "0.250"),
-                    recette(ing.get("Légumes"), "0.200"), recette(ing.get("Huile"), "0.040"));
-            Plat thiebBlanc = plat(platsEpt, ept, "Thiéboudienne blanc",
-                    "La version blanche, sans tomate, au poisson et aux légumes", 2500,
-                    CategoriePlat.PLAT_PRINCIPAL,
-                    recette(ing.get("Riz brisé"), "0.300"), recette(ing.get("Poisson thiof"), "0.230"),
+            Plat thieb = plat(platsEpt, ept, "Thiéboudienne", "Riz au poisson, légumes et sauce tomate",
+                    2500, CategoriePlat.PLAT_PRINCIPAL,
+                    recette(ing.get("Riz"), "0.300"), recette(ing.get("Poisson"), "0.250"),
                     recette(ing.get("Légumes"), "0.200"));
-            Plat yassaPoulet = plat(platsEpt, ept, "Yassa poulet",
-                    "Poulet mariné aux oignons confits et au citron", 2000, CategoriePlat.PLAT_PRINCIPAL,
-                    recette(ing.get("Poulet"), "0.300"), recette(ing.get("Riz brisé"), "0.250"),
-                    recette(ing.get("Oignons"), "0.200"), recette(ing.get("Citron"), "0.040"));
-            Plat yassaPoisson = plat(platsEpt, ept, "Yassa poisson",
-                    "Poisson grillé, oignons confits et riz blanc", 2200, CategoriePlat.PLAT_PRINCIPAL,
-                    recette(ing.get("Poisson thiof"), "0.280"), recette(ing.get("Riz brisé"), "0.250"),
-                    recette(ing.get("Oignons"), "0.200"));
-            Plat mafe = plat(platsEpt, ept, "Mafé",
-                    "Viande et légumes mijotés dans une sauce à l'arachide", 2000,
-                    CategoriePlat.PLAT_PRINCIPAL,
-                    recette(ing.get("Viande de bœuf"), "0.250"), recette(ing.get("Pâte d'arachide"), "0.080"),
-                    recette(ing.get("Riz brisé"), "0.250"));
-            Plat mafePoulet = plat(platsEpt, ept, "Mafé poulet",
-                    "La sauce à l'arachide, avec du poulet fermier", 1900, CategoriePlat.PLAT_PRINCIPAL,
-                    recette(ing.get("Poulet"), "0.260"), recette(ing.get("Pâte d'arachide"), "0.080"),
-                    recette(ing.get("Riz brisé"), "0.250"));
-            Plat domoda = plat(platsEpt, ept, "Domoda",
-                    "Ragoût de bœuf à la tomate et aux légumes du jour", 2100,
-                    CategoriePlat.PLAT_PRINCIPAL,
-                    recette(ing.get("Viande de bœuf"), "0.260"), recette(ing.get("Légumes"), "0.220"),
-                    recette(ing.get("Riz brisé"), "0.250"));
-            Plat thiereMbum = plat(platsEpt, ept, "Thiéré mbum",
-                    "Couscous de mil aux feuilles de baobab et à la viande", 2000,
-                    CategoriePlat.PLAT_PRINCIPAL,
-                    recette(ing.get("Mil"), "0.250"), recette(ing.get("Agneau"), "0.220"),
-                    recette(ing.get("Légumes"), "0.150"));
-            Plat dibi = plat(platsEpt, ept, "Dibi d'agneau",
-                    "Agneau grillé au feu de bois, oignons et moutarde", 3000,
-                    CategoriePlat.PLAT_PRINCIPAL,
-                    recette(ing.get("Agneau"), "0.350"), recette(ing.get("Oignons"), "0.150"));
-            Plat cBoukhonk = plat(platsEpt, ept, "Caldou de poisson",
-                    "Poisson poché au citron, riz blanc et légumes", 2300,
-                    CategoriePlat.PLAT_PRINCIPAL,
-                    recette(ing.get("Poisson thiof"), "0.260"), recette(ing.get("Riz brisé"), "0.250"),
-                    recette(ing.get("Citron"), "0.050"));
-            Plat vermicelle = plat(platsEpt, ept, "Vermicelles au poulet",
-                    "Vermicelles sautés, poulet et légumes croquants", 1800,
-                    CategoriePlat.PLAT_PRINCIPAL,
-                    recette(ing.get("Farine"), "0.200"), recette(ing.get("Poulet"), "0.220"),
-                    recette(ing.get("Légumes"), "0.150"));
-
-            // Desserts
-            Plat thiakry = plat(platsEpt, ept, "Thiakry",
-                    "Couscous de mil au lait caillé, vanille et sucre", 700, CategoriePlat.DESSERT,
-                    recette(ing.get("Mil"), "0.150"), recette(ing.get("Lait caillé"), "0.150"),
-                    recette(ing.get("Sucre"), "0.030"));
-            Plat sombi = plat(platsEpt, ept, "Sombi",
-                    "Riz au lait parfumé à la fleur d'oranger", 800, CategoriePlat.DESSERT,
-                    recette(ing.get("Riz brisé"), "0.100"), recette(ing.get("Lait caillé"), "0.180"),
-                    recette(ing.get("Sucre"), "0.040"));
-            Plat ngalax = plat(platsEpt, ept, "Ngalakh",
-                    "Crème de mil, pâte d'arachide et pain de singe", 900, CategoriePlat.DESSERT,
-                    recette(ing.get("Mil"), "0.120"), recette(ing.get("Pâte d'arachide"), "0.060"),
-                    recette(ing.get("Pulpe de bouye"), "60"));
-            Plat salade = plat(platsEpt, ept, "Salade de mangue",
-                    "Mangue fraîche, citron vert et menthe", 800, CategoriePlat.DESSERT,
-                    recette(ing.get("Mangue"), "0.200"), recette(ing.get("Citron"), "0.030"));
-            Plat beignets = plat(platsEpt, ept, "Beignets sucrés",
-                    "Beignets tièdes roulés dans le sucre", 500, CategoriePlat.DESSERT,
-                    recette(ing.get("Farine"), "0.120"), recette(ing.get("Sucre"), "0.040"),
-                    recette(ing.get("Huile"), "0.050"));
-
-            // Boissons
-            Plat bissap = plat(platsEpt, ept, "Jus de bissap",
-                    "Infusion d'hibiscus servie bien fraîche", 500, CategoriePlat.BOISSON,
-                    recette(ing.get("Fleurs de bissap"), "30"), recette(ing.get("Sucre"), "0.030"));
-            Plat bouye = plat(platsEpt, ept, "Jus de bouye",
-                    "Pulpe de fruit du baobab, onctueuse et peu sucrée", 500, CategoriePlat.BOISSON,
-                    recette(ing.get("Pulpe de bouye"), "30"), recette(ing.get("Sucre"), "0.030"));
-            Plat gingembre = plat(platsEpt, ept, "Jus de gingembre",
-                    "Gingembre frais pressé, relevé au citron", 600, CategoriePlat.BOISSON,
-                    recette(ing.get("Gingembre"), "40"), recette(ing.get("Citron"), "0.030"));
-            Plat jusMangue = plat(platsEpt, ept, "Jus de mangue",
-                    "Mangues mûres pressées le matin même", 700, CategoriePlat.BOISSON,
-                    recette(ing.get("Mangue"), "0.250"));
-            Plat eau = plat(platsEpt, ept, "Eau minérale 50 cl",
-                    "Bouteille d'eau minérale", 300, CategoriePlat.BOISSON,
-                    recette(ing.get("Sucre"), "0.001"));
-            Plat cafeTouba = plat(platsEpt, ept, "Café Touba",
-                    "Café au poivre de Selim, servi chaud", 400, CategoriePlat.BOISSON,
-                    recette(ing.get("Sucre"), "0.020"));
-
-            // Un plat retire de la carte : le gerant l'a desactive.
-            Plat ancienPlat = plat(platsEpt, ept, "Poulet braisé",
-                    "Plat retiré de la carte", 1900, CategoriePlat.PLAT_PRINCIPAL,
-                    recette(ing.get("Poulet"), "0.300"));
-            ancienPlat.setEstActif(false);
-
+            Plat yassaPoulet = plat(platsEpt, ept, "Yassa poulet", "Poulet mariné aux oignons et citron",
+                    2000, CategoriePlat.PLAT_PRINCIPAL,
+                    recette(ing.get("Poulet"), "0.300"), recette(ing.get("Riz"), "0.250"));
+            Plat mafe = plat(platsEpt, ept, "Mafé", "Viande et légumes dans une sauce à l'arachide",
+                    2000, CategoriePlat.PLAT_PRINCIPAL,
+                    recette(ing.get("Poulet"), "0.250"), recette(ing.get("Riz"), "0.250"));
+            Plat thiakry = plat(platsEpt, ept, "Thiakry", "Couscous de mil au lait caillé et au sucre",
+                    700, CategoriePlat.DESSERT,
+                    recette(ing.get("Mil"), "0.150"));
+            Plat bissap = plat(platsEpt, ept, "Jus de bissap", "Boisson rafraîchissante à l'hibiscus",
+                    500, CategoriePlat.BOISSON,
+                    recette(ing.get("Fleurs de bissap"), "30"));
+            Plat bouye = plat(platsEpt, ept, "Jus de bouye", "Boisson à la pulpe de fruit du baobab",
+                    500, CategoriePlat.BOISSON,
+                    recette(ing.get("Pulpe de bouye"), "30"));
             platRepository.saveAll(platsEpt);
 
-            // ----- Menus ---------------------------------------------------------
+            // ----- Menu ------------------------------------------------------------
             LocalDate aujourdhui = LocalDate.now();
+            menuRepository.save(menu(ept, "Menu de la semaine", aujourdhui.minusDays(7), null,
+                    List.of(thieb, yassaPoulet, mafe, thiakry, bissap, bouye)));
 
-            // Carte permanente : en vigueur depuis deux mois, sans date de fin.
-            Menu carte = menu(ept, "Carte permanente", aujourdhui.minusDays(60), null,
-                    List.of(pastels, fataya, nems, thieb, yassaPoulet, mafe, domoda, vermicelle,
-                            thiakry, sombi, beignets, bissap, bouye, gingembre, eau, cafeTouba));
-            // Menu de la semaine : les plats du moment, par-dessus la carte.
-            Menu semaine = menu(ept, "Menu de la semaine",
-                    aujourdhui.with(DayOfWeek.MONDAY), aujourdhui.with(DayOfWeek.SUNDAY),
-                    List.of(saladeAvocat, soupeKandia, thiebBlanc, yassaPoisson, mafePoulet,
-                            thiereMbum, dibi, cBoukhonk, ngalax, salade, jusMangue));
-            // Un menu deja termine : il n'est plus en vigueur, mais reste consultable
-            // par le gerant (et les commandes qui le citent gardent leur prix).
-            Menu passe = menu(ept, "Menu de la Tabaski",
-                    aujourdhui.minusDays(45), aujourdhui.minusDays(38),
-                    List.of(dibi, thiereMbum, ngalax, bissap));
-            Menu futur = menu(ept, "Menu de fin d'année",
-                    aujourdhui.plusDays(14), aujourdhui.plusDays(28),
-                    List.of(dibi, cBoukhonk, saladeAvocat, sombi, jusMangue));
-
-            menuRepository.saveAll(List.of(carte, semaine, passe, futur));
-
-            // Les plats reellement commandables aujourd'hui, avec leur poids dans
-            // les ventes : le thieboudienne part plus souvent que la salade.
-            List<Plat> commandables = new ArrayList<>();
-            for (Plat p : List.of(thieb, thieb, thieb, yassaPoulet, yassaPoulet, mafe, mafe,
-                    domoda, vermicelle, thiebBlanc, yassaPoisson, mafePoulet, thiereMbum, dibi,
-                    cBoukhonk, pastels, fataya, nems, saladeAvocat, soupeKandia,
-                    thiakry, sombi, ngalax, salade, beignets,
-                    bissap, bissap, bouye, gingembre, jusMangue, eau, cafeTouba)) {
-                commandables.add(p);
-            }
+            // Les plats commandables, avec leur poids dans les ventes : le
+            // thieboudienne part plus souvent que le thiakry.
+            List<Plat> commandables = List.of(
+                    thieb, thieb, thieb, yassaPoulet, yassaPoulet, mafe, mafe,
+                    thiakry, thiakry, bissap, bissap, bouye);
 
             // ----- Historique : commandes, paiements, caisses, stock --------------
             List<Commande> commandes = new ArrayList<>();
@@ -453,8 +319,8 @@ public class DataSeeder {
 
             Commande enAttente2 = duJour(ept, null, serveur, tables.get(3), TypeCommande.SUR_PLACE,
                     StatutCommande.EN_ATTENTE, minutesAvant(18));
-            ajouterLigne(enAttente2, yassaPoisson, 2);
-            ajouterLigne(enAttente2, pastels, 1);
+            ajouterLigne(enAttente2, yassaPoulet, 2);
+            ajouterLigne(enAttente2, thiakry, 1);
 
             Commande enPrepa = duJour(ept, null, serveur, tables.get(0), TypeCommande.SUR_PLACE,
                     StatutCommande.EN_PREPARATION, minutesAvant(42));
@@ -464,24 +330,24 @@ public class DataSeeder {
 
             Commande enPrepa2 = duJour(ept, clientsFictifs.get(1), null, null, TypeCommande.A_EMPORTER,
                     StatutCommande.EN_PREPARATION, minutesAvant(33));
-            ajouterLigne(enPrepa2, dibi, 1);
+            ajouterLigne(enPrepa2, mafe, 1);
             consommer(enPrepa2, sorties, mouvements, minutesAvant(30));
 
             Commande prete = duJour(ept, null, serveur, tables.get(1), TypeCommande.SUR_PLACE,
                     StatutCommande.PRETE, minutesAvant(58));
             ajouterLigne(prete, mafe, 1);
-            ajouterLigne(prete, gingembre, 1);
+            ajouterLigne(prete, bouye, 1);
             consommer(prete, sorties, mouvements, minutesAvant(52));
 
             Commande prete2 = duJour(ept, clientsFictifs.get(4), null, null, TypeCommande.A_EMPORTER,
                     StatutCommande.PRETE, minutesAvant(50));
-            ajouterLigne(prete2, thiebBlanc, 2);
+            ajouterLigne(prete2, thieb, 2);
             consommer(prete2, sorties, mouvements, minutesAvant(44));
 
             Commande payeeDuJour = duJour(ept, client, null, null, TypeCommande.A_EMPORTER,
                     StatutCommande.PAYEE, minutesAvant(140));
             ajouterLigne(payeeDuJour, thiakry, 2);
-            ajouterLigne(payeeDuJour, cafeTouba, 1);
+            ajouterLigne(payeeDuJour, bissap, 1);
             consommer(payeeDuJour, sorties, mouvements, minutesAvant(132));
             Paiement paiementDuJour = new Paiement();
             paiementDuJour.setCommande(payeeDuJour);
@@ -496,7 +362,7 @@ public class DataSeeder {
 
             Commande abandonnee = duJour(ept, null, serveur, tables.get(2), TypeCommande.SUR_PLACE,
                     StatutCommande.ABANDONNEE, minutesAvant(180));
-            ajouterLigne(abandonnee, domoda, 3);
+            ajouterLigne(abandonnee, yassaPoulet, 3);
             consommer(abandonnee, sorties, mouvements, minutesAvant(172));
 
             commandes.addAll(List.of(enAttente, enAttente2, enPrepa, enPrepa2, prete, prete2,
@@ -576,7 +442,7 @@ public class DataSeeder {
             journal.add(entree(admin, ActionJournal.RESTAURANT_MODIFIE, "Restaurant", ept.getId(),
                     "Ajout des tables 7 à 9", instant(aujourdhui.minusDays(9), LocalTime.of(8, 45))));
             journal.add(entree(cuisinier, ActionJournal.RUPTURE_SIGNALEE, "Ingredient",
-                    ing.get("Agneau").getId(), "Agneau",
+                    ing.get("Poisson").getId(), "Poisson",
                     instant(aujourdhui.minusDays(3), LocalTime.of(12, 20))));
             journal.add(entree(gerant, ActionJournal.COMMANDE_ABANDONNEE, "Commande",
                     abandonnee.getId(), "Commande non réglée",
@@ -747,16 +613,14 @@ public class DataSeeder {
 
     /**
      * Etat de stock voulu a la fin de l'historique : la plupart des ingredients
-     * confortables, trois sous leur seuil d'alerte et un a zero, pour que les
+     * confortables et trois sous leur seuil d'alerte, pour que les
      * alertes et les recommandations d'approvisionnement aient du contenu.
      */
     private static BigDecimal etatFinalVoulu(Ingredient i) {
         return switch (i.getNom()) {
-            case "Agneau" -> BigDecimal.ZERO;
-            case "Pâte d'arachide" -> i.getSeuilAlerte().multiply(new BigDecimal("0.6"));
-            case "Citron" -> i.getSeuilAlerte().multiply(new BigDecimal("0.8"));
-            case "Gingembre" -> i.getSeuilAlerte().multiply(new BigDecimal("0.7"));
-            case "Mangue" -> i.getNiveauCible().multiply(new BigDecimal("0.35"));
+            case "Poisson" -> i.getSeuilAlerte().multiply(new BigDecimal("0.5"));
+            case "Mil" -> i.getSeuilAlerte().multiply(new BigDecimal("0.8"));
+            case "Pulpe de bouye" -> i.getSeuilAlerte().multiply(new BigDecimal("0.6"));
             default -> i.getNiveauCible().multiply(new BigDecimal("0.72"));
         };
     }
