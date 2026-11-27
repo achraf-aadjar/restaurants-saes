@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 
 import { AuthService } from '../../core/auth.service';
 import { motifErreur } from '../../core/erreur.util';
+import { LIBELLES_PROFILS, PROFILS } from '../../core/libelles';
+import { ProfilClient } from '../../core/models';
 import { FocusAuRendu } from '../../shared/focus-au-rendu';
 import { RefusVisible } from '../../shared/refus-visible';
 
@@ -26,6 +28,10 @@ export class MonCompte {
   protected prenom = this.utilisateurInitial?.prenom ?? '';
   protected email = this.utilisateurInitial?.email ?? '';
   protected telephone = this.utilisateurInitial?.telephone ?? '';
+  /** Etudiant ou professeur : vide tant que le client ne l'a pas indique. */
+  protected profil: ProfilClient | '' = this.utilisateurInitial?.profil ?? '';
+  protected readonly profils = PROFILS;
+  protected readonly libellesProfils = LIBELLES_PROFILS;
   protected motDePasseActuel = '';
   protected nouveauMotDePasse = '';
 
@@ -50,6 +56,7 @@ export class MonCompte {
         prenom: this.prenom,
         email: this.email,
         telephone: this.telephone || undefined,
+        profil: this.profil || undefined,
         motDePasseActuel: this.motDePasseActuel || undefined,
         nouveauMotDePasse: this.nouveauMotDePasse || undefined,
       })

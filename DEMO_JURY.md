@@ -63,6 +63,10 @@ Basculer le **mode sombre** depuis l'en-tête : toute l'interface suit.
 
 ### Étape 2 — Le client commande (2 min)
 
+(Avant : créer un compte depuis « S'inscrire » pour montrer le choix
+**Étudiant / Professeur**. Expliquer que des abonnements existent pour chacun, que
+ce profil n'est pas un rôle, et que c'est un écart assumé au cahier des charges.)
+
 1. « Voir le menu du jour » → page Menus.
 2. Montrer les **puces de catégories** et le bandeau du restaurant.
 3. Ajouter deux plats : le message « ajouté au panier » apparaît, la pastille du

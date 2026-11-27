@@ -153,9 +153,9 @@ rôles, les statuts et les workflows sont inchangés.
 
 | § | Fonction | Écran | État |
 | --- | --- | --- | --- |
-| 4.1 | S'inscrire | `/inscription` | inchangé |
+| 4.1 | S'inscrire | `/inscription` | **refaite ; champ « Étudiant / Professeur » ajouté (écart assumé)** |
 | 4.1 | S'authentifier | `/connexion` | inchangé |
-| 4.1 | Gérer son compte | `/mon-compte` | inchangé |
+| 4.1 | Gérer son compte | `/mon-compte` | **champ « Vous êtes » ajouté (écart assumé)** |
 | 4.2 | Consulter les menus | `/menus` | **présentation refaite** |
 | 4.2 | Gérer les plats | `/gerant/plats` | inchangé |
 | 4.2 | Gérer les menus | `/gerant/menus` | inchangé |
@@ -185,12 +185,13 @@ mise en page et styles différents.
 
 ### Écarts assumés au cahier des charges (décidés par l'équipe)
 
-Ces trois points ne figurent pas au cahier des charges. Ils ont été demandés et
+Ces quatre points ne figurent pas au cahier des charges. Ils ont été demandés et
 sont documentés ici pour être expliqués au jury.
 
 | Écart | Ce qui est fait | Garde-fous |
 | --- | --- | --- |
 | **Supervision par l'administrateur** (§4.5 et §4.6 réservent statistiques, rapports, stocks et recommandations au gérant) | À sa connexion, l'administrateur choisit un restaurant (`/admin/choix`), puis consulte ses statistiques, rapports, stocks, recommandations, informations et comptes | **Lecture seule** : aucune route d'écriture. Mêmes services et mêmes chiffres que le gérant. Les autres rôles n'ont pas accès. `SupervisionAdminTest` : 6 tests |
+| **Profil étudiant ou professeur à l'inscription** (§4.1 ne cite que nom, prénom, e-mail, mot de passe et téléphone) | Un choix obligatoire « Étudiant / Professeur » à l'inscription (e-mail et Google), modifiable dans « Mon compte », affiché dans la liste des comptes de l'administrateur. Nouvelle colonne `utilisateur.profil` (migration V6) | **Ce n'est pas un rôle** : aucun droit en plus ni en moins (testé). Facultatif en base : le personnel, l'administrateur et les comptes antérieurs n'en ont pas. Effacé à la suppression du compte. **Les abonnements eux-mêmes ne sont pas construits** : on collecte seulement l'information |
 | **Page Traiteur** | Une page de présentation (formules, comment faire une demande, téléphone du restaurant) | Aucun formulaire, aucune commande traiteur, aucune fonction métier |
 
 Conséquence sur la qualité attendue n° 1 (« chaque utilisateur n'accède qu'aux

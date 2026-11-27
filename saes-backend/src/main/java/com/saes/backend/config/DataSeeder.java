@@ -35,6 +35,7 @@ import com.saes.backend.domain.ModePaiement;
 import com.saes.backend.domain.MouvementStock;
 import com.saes.backend.domain.Paiement;
 import com.saes.backend.domain.Plat;
+import com.saes.backend.domain.ProfilClient;
 import com.saes.backend.domain.Recette;
 import com.saes.backend.domain.Reservation;
 import com.saes.backend.domain.ReservationTable;
@@ -166,6 +167,11 @@ public class DataSeeder {
                         passwordEncoder, null, Role.CLIENT);
                 clientsFictifs.add(u);
                 comptes.add(u);
+            }
+            // Un profil a chaque client : une majorite d'etudiants, quelques professeurs.
+            client.setProfil(ProfilClient.ETUDIANT);
+            for (int i = 0; i < clientsFictifs.size(); i++) {
+                clientsFictifs.get(i).setProfil(i % 4 == 3 ? ProfilClient.PROFESSEUR : ProfilClient.ETUDIANT);
             }
             clientsFictifs.add(client);
             utilisateurRepository.saveAll(comptes);

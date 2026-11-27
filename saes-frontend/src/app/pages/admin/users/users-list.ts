@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AdminRestaurantService } from '../../../core/admin-restaurant.service';
 import { AdminUserService } from '../../../core/admin-user.service';
 import { motifErreur } from '../../../core/erreur.util';
-import { LIBELLES_ROLES } from '../../../core/libelles';
+import { LIBELLES_PROFILS, LIBELLES_ROLES } from '../../../core/libelles';
 import {
   ROLES_PERSONNEL,
   RestaurantDto,
@@ -33,6 +33,7 @@ export class UsersList {
   protected readonly rolesPersonnel = ROLES_PERSONNEL;
   protected readonly tousLesRoles = TOUS_LES_ROLES;
   protected readonly libellesRoles = LIBELLES_ROLES;
+  protected readonly libellesProfils = LIBELLES_PROFILS;
   protected readonly utilisateurs = signal<Utilisateur[]>([]);
   protected readonly restaurants = signal<RestaurantDto[]>([]);
   protected readonly chargement = signal(true);

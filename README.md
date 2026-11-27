@@ -121,6 +121,12 @@ Le détail du chantier de refonte, la matrice de conformité au cahier des
 charges et ce qui reste à faire sont dans [REFONTE_PLAN.md](REFONTE_PLAN.md).
 Le scénario de soutenance est dans [DEMO_JURY.md](DEMO_JURY.md).
 
+**Profil étudiant ou professeur** : l'inscription demande si la personne est
+étudiante ou professeure (des abonnements existent pour chacune). C'est un
+écart au cahier des charges (§4.1), documenté dans `REFONTE_PLAN.md`. Ce profil
+n'est pas un rôle et ne change aucun droit ; il se modifie dans « Mon compte ».
+Les abonnements eux-mêmes ne sont pas encore construits.
+
 **Écrans qui tiennent dans la fenêtre** : la connexion, l'inscription, « Mon
 compte », « Mes réservations », la caisse et les écrans d'action du personnel
 s'affichent en entier sans défiler, jusqu'à une fenêtre de 600 px de haut. Pour

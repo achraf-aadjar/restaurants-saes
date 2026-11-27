@@ -180,7 +180,8 @@ class AdministrationTest extends IntegrationTest {
         // La commande reste enregistree (comptes du restaurant) et l'adresse est liberee.
         assertThat(commandeRepository.findById(commande)).isPresent();
         assertThat(api.post(null, "/api/auth/register", Map.of(
-                "nom", "Diop", "prenom", "Awa", "email", email, "motDePasse", Monde.MOT_DE_PASSE)).statut())
+                "nom", "Diop", "prenom", "Awa", "email", email, "motDePasse", Monde.MOT_DE_PASSE,
+                "profil", "ETUDIANT")).statut())
                 .isEqualTo(201);
     }
 

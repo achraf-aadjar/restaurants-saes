@@ -1,4 +1,4 @@
-import { CategoriePlat, JourSemaine, Role, Unite } from './models';
+import { CategoriePlat, JourSemaine, ProfilClient, Role, Unite } from './models';
 
 /** Libelles francais des valeurs envoyees par le serveur : « DESSERT » devient « Dessert ». */
 
@@ -56,3 +56,11 @@ export const SYMBOLES_UNITES: Record<Unite, string> = {
   LITRE: 'L',
   PIECE: 'pièce',
 };
+
+/** Les deux profils proposes a l'inscription. */
+export const LIBELLES_PROFILS: Record<ProfilClient, string> = {
+  ETUDIANT: 'Étudiant',
+  PROFESSEUR: 'Professeur',
+};
+
+export const PROFILS: ProfilClient[] = ['ETUDIANT', 'PROFESSEUR'];

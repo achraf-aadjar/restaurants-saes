@@ -11,6 +11,7 @@ const CLIENT: Utilisateur = {
   prenom: 'Awa',
   email: 'awa@test.sn',
   telephone: null,
+  profil: null,
   roles: ['CLIENT'],
   restaurantId: null,
   restaurantNom: null,
@@ -48,11 +49,35 @@ describe('AuthService', () => {
     expect(auth.aLeRole('GERANT')).toBe(false);
   });
 
+  it("s'inscrire envoie le profil étudiant ou professeur", () => {
+    const auth = creerService();
+
+    auth
+      .inscrire({
+        nom: 'Sow',
+        prenom: 'Ibou',
+        email: 'ibou@test.sn',
+        motDePasse: 'motdepasse123',
+        profil: 'PROFESSEUR',
+      })
+      .subscribe();
+
+    const requete = http.expectOne('/api/auth/register');
+    expect(requete.request.body.profil).toBe('PROFESSEUR');
+    requete.flush(REPONSE);
+  });
+
   it("s'inscrire connecte directement le nouveau client", () => {
     const auth = creerService();
 
     auth
-      .inscrire({ nom: 'Diop', prenom: 'Awa', email: 'awa@test.sn', motDePasse: 'motdepasse123' })
+      .inscrire({
+        nom: 'Diop',
+        prenom: 'Awa',
+        email: 'awa@test.sn',
+        motDePasse: 'motdepasse123',
+        profil: 'ETUDIANT',
+      })
       .subscribe();
     http.expectOne('/api/auth/register').flush(REPONSE);
 

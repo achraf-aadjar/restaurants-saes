@@ -51,6 +51,11 @@ public class Utilisateur {
 
     private String telephone;
 
+    /** Etudiant ou professeur (clients seulement) ; vide tant qu'il n'est pas renseigne. */
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private ProfilClient profil;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;

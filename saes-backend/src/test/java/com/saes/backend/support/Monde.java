@@ -139,7 +139,8 @@ public final class Monde {
     public String nouveauClient() {
         String email = "client-" + suffixe + "-" + COMPTEUR.incrementAndGet() + "@test.sn";
         Reponse inscription = api.post(null, "/api/auth/register", Map.of(
-                "nom", "Diop", "prenom", "Awa", "email", email, "motDePasse", MOT_DE_PASSE));
+                "nom", "Diop", "prenom", "Awa", "email", email, "motDePasse", MOT_DE_PASSE,
+                "profil", "ETUDIANT"));
         assertThat(inscription.statut()).as(inscription.toString()).isEqualTo(201);
         return inscription.lire("$.token");
     }

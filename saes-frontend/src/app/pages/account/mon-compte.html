@@ -37,6 +37,18 @@
         <input id="telephone" name="telephone" type="tel" [(ngModel)]="telephone" />
       </div>
 
+      @if (estClientSeul()) {
+        <div class="champ">
+          <label for="profil">Vous êtes</label>
+          <select id="profil" name="profil" [(ngModel)]="profil">
+            <option value="">Non renseigné</option>
+            @for (p of profils; track p) {
+              <option [value]="p">{{ libellesProfils[p] }}</option>
+            }
+          </select>
+        </div>
+      }
+
       <div class="champ">
         <label for="nouveauMotDePasse">Nouveau mot de passe (facultatif)</label>
         <input

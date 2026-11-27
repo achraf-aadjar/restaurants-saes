@@ -6,7 +6,35 @@
       <p class="auth-soustitre">Commandez et réservez en ligne en quelques secondes.</p>
     </header>
 
-    <div class="auth-google">
+    <!-- Etudiant ou professeur : demande des l'inscription, car des abonnements
+         existent pour chacun. Place avant Google, qui en a besoin pour creer le compte. -->
+    <fieldset class="auth-profil" [class.invalide]="profilManquant()">
+      <legend>Vous êtes</legend>
+      <div class="auth-profil-choix">
+        @for (p of profils; track p) {
+          <label class="choix-profil">
+            <input
+              type="radio"
+              name="profil"
+              [value]="p"
+              [checked]="profil() === p"
+              (change)="choisirProfil(p)"
+            />
+            <span>{{ libellesProfils[p] }}</span>
+          </label>
+        }
+      </div>
+      @if (profilManquant()) {
+        <p class="auth-erreur-champ" role="alert">Indiquez si vous êtes étudiant ou professeur.</p>
+      }
+    </fieldset>
+
+    <div
+      class="auth-google"
+      [class.en-attente]="!profil()"
+      [attr.inert]="profil() ? null : ''"
+      [attr.title]="profil() ? null : 'Choisissez d\'abord étudiant ou professeur'"
+    >
       <app-google-sign-in-button texte="signup_with" (jeton)="inscrireAvecGoogle($event)" />
     </div>
 

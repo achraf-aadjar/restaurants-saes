@@ -18,6 +18,7 @@ function connecter(roles: Role[]): void {
     prenom: 'Omar',
     email: 'omar@test.sn',
     telephone: null,
+    profil: null,
     roles,
     restaurantId: 1,
     restaurantNom: 'Restaurant',
