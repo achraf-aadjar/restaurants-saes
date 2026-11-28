@@ -5,6 +5,7 @@ import { CommandeClientService } from '../../core/commande-client.service';
 import { classeBadgeStatut, LIBELLES_STATUT_COMMANDE } from '../../core/commande.util';
 import { motifErreur } from '../../core/erreur.util';
 import { CommandeDto, StatutCommande } from '../../core/models';
+import { FriseStatut } from '../../shared/frise-statut';
 import { FocusAuRendu } from '../../shared/focus-au-rendu';
 import { MontantPipe } from '../../shared/montant.pipe';
 import { RefusVisible } from '../../shared/refus-visible';
@@ -21,7 +22,7 @@ const PAR_PAGE = 10;
  */
 @Component({
   selector: 'app-mes-commandes',
-  imports: [DatePipe, FocusAuRendu, MontantPipe, RefusVisible],
+  imports: [DatePipe, FocusAuRendu, FriseStatut, MontantPipe, RefusVisible],
   templateUrl: './mes-commandes.html',
   styleUrl: './mes-commandes.scss',
 })

@@ -10,9 +10,9 @@
 
 <section class="carte">
   @if (chargement()) {
-    <p>Chargement…</p>
+    <p class="etat-page" role="status">Chargement…</p>
   } @else if (reservations().length === 0) {
-    <p>Aucune réservation à venir.</p>
+    <p class="etat-page">Aucune réservation à venir.</p>
   } @else {
     <table class="table-simple">
       <thead>

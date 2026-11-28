@@ -12,7 +12,7 @@
     <p class="total-panier">Écart : {{ rc.ecart | montant }}</p>
   </section>
 } @else if (chargement()) {
-  <p>Chargement…</p>
+  <p class="etat-page" role="status">Chargement…</p>
 } @else if (caisseOuverte(); as session) {
   <app-ma-caisse [session]="session" [avecCloture]="false" />
 

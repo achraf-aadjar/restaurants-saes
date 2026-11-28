@@ -1,8 +1,9 @@
 // Fond clair un peu different de la page, pour tous : les sept ecrans de
 // reference ont la meme bande, celui du personnel compris.
 .pied {
-  background: #f3efe2;
-  border-top: 1px solid var(--saes-bordure);
+  position: relative;
+  background: var(--saes-fond-doux);
+  border-top: 0;
   color: var(--saes-vert-attenue);
   font-size: 0.9rem;
 }
@@ -77,4 +78,22 @@
   padding-bottom: 0.9rem;
   font-size: 0.82rem;
   color: var(--saes-vert-attenue);
+}
+
+// Les trois couleurs du logo, en filet sur toute la largeur.
+.pied::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--saes-marque-vert) 0 34%,
+    var(--saes-jaune) 34% 67%,
+    var(--saes-rouge) 67%
+  );
+}
+
+.pied-conteneur {
+  padding-top: 0.25rem;
 }

@@ -10,7 +10,7 @@
 }
 
 @if (chargement()) {
-  <p>Chargement…</p>
+  <p class="etat-page" role="status">Chargement…</p>
 } @else if (idModifiee && !commandeTrouvee()) {
   <!-- La commande n'est plus en attente : le refus en haut suffit. -->
 } @else {

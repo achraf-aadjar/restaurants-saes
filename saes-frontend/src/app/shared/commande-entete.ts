@@ -17,6 +17,9 @@ import { CommandeDto } from '../core/models';
   imports: [DatePipe],
   template: `
     <div class="commande-entete" [class.grand]="grand()">
+      @if (grand()) {
+        <span class="etiquette">Commande n°</span>
+      }
       <span class="grand-nombre">{{ commande().id }}</span>
       @if (!grand()) {
         <span class="badge" [class]="classeBadge(commande().statut)">
@@ -55,8 +58,18 @@ import { CommandeDto } from '../core/models';
   `,
   styles: `
     .commande-entete.grand {
+      flex-direction: column;
+      align-items: flex-start;
       justify-content: flex-start;
       margin-bottom: 0.6rem;
+    }
+
+    .etiquette {
+      color: var(--saes-vert-attenue);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
     }
 
     .grand .grand-nombre {
@@ -92,7 +105,7 @@ import { CommandeDto } from '../core/models';
     }
 
     .avec-icone .icone-pleine circle {
-      fill: #fff;
+      fill: var(--saes-surface);
     }
   `,
 })

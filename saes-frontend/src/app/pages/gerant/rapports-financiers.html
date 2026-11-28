@@ -13,7 +13,7 @@
 }
 
 @if (chargement()) {
-  <p>Chargement…</p>
+  <p class="etat-page" role="status">Chargement…</p>
 } @else if (rapport(); as r) {
   <div class="chiffres">
     <app-chiffre-cle
@@ -32,7 +32,7 @@
     <section class="carte bloc">
       <h2>Encaissements par jour</h2>
       @if (r.encaissementsParJour.length === 0) {
-        <p>Aucun encaissement sur cette période.</p>
+        <p class="etat-page">Aucun encaissement sur cette période.</p>
       } @else {
         <div class="cadre-tableau">
           <table class="jours">
@@ -66,7 +66,7 @@
     <section class="carte bloc">
       <h2>Écarts de caisse</h2>
       @if (r.ecartsCaisse.length === 0) {
-        <p>Aucune caisse clôturée sur cette période.</p>
+        <p class="etat-page">Aucune caisse clôturée sur cette période.</p>
       } @else {
         <div class="cadre-tableau">
           <table class="ecarts">

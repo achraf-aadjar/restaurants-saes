@@ -19,28 +19,46 @@
 }
 
 @if (restaurantSelectionne(); as restaurant) {
-  <app-bandeau-restaurant
-    [restaurant]="restaurant"
-    [vueClient]="vueClient()"
-    [class.apres-selecteur]="restaurants().length > 1"
-  />
+  <app-bandeau-restaurant [restaurant]="restaurant" [vueClient]="vueClient()" />
 }
 
 <div class="colonne-menu">
   @if (chargement()) {
-    <p>Chargement du menu…</p>
+    <p class="etat-page" role="status">Chargement du menu…</p>
   } @else if (restaurants().length === 0) {
-    <p>Aucun restaurant n'est actif pour le moment.</p>
+    <p class="etat-page">Aucun restaurant n'est actif pour le moment.</p>
   } @else if (menusAffiches().length === 0) {
-    <p>Aucun menu en vigueur pour ce restaurant.</p>
+    <p class="etat-page">Aucun menu en vigueur pour ce restaurant.</p>
   } @else {
     @for (m of menusAffiches(); track m.menu.id; let premierMenu = $first) {
       <section class="menu">
         <h2>{{ m.menu.nom }}</h2>
         <p class="dates-menu">{{ m.periode }}</p>
+        @if (m.groupes.length > 1) {
+          <nav
+            class="chips-categories"
+            [class.collant]="vueClient()"
+            aria-label="Catégories du menu"
+          >
+            @for (groupe of m.groupes; track groupe.categorie) {
+              <button
+                type="button"
+                class="chip"
+                (click)="allerALaCategorie(m.menu.id, groupe.categorie)"
+              >
+                <app-icone-categorie [categorie]="groupe.categorie" />
+                {{ groupe.libelle }}
+              </button>
+            }
+          </nav>
+        }
         <div class="groupes">
           @for (groupe of m.groupes; track groupe.categorie; let premierGroupe = $first) {
-            <section class="groupe-categorie" [style.--n]="groupe.plats.length">
+            <section
+              class="groupe-categorie"
+              [id]="'cat-' + m.menu.id + '-' + groupe.categorie"
+              [style.--n]="groupe.plats.length"
+            >
               <h3>
                 <app-icone-categorie class="icone-titre" [categorie]="groupe.categorie" />
                 {{ groupe.libelle }}
@@ -52,42 +70,44 @@
                       [nom]="plat.nom"
                       [categorie]="plat.categorie"
                       [prioritaire]="premierMenu && premierGroupe"
+                      taille="(max-width: 600px) 100vw, (max-width: 950px) 50vw, 420px"
                     />
                     <div class="contenu-plat">
                       <h4>{{ plat.nom }}</h4>
                       @if (plat.description) {
                         <p class="description">{{ plat.description }}</p>
                       }
-                      <p class="prix">{{ plat.prix | montant }}</p>
+                      <div class="pied-plat">
+                        <p class="prix">{{ plat.prix | montant }}</p>
 
-                      @if (vueClient() && quantite(plat) > 0) {
-                        <app-compteur-quantite
-                          class="selecteur-quantite"
-                          [quantite]="quantite(plat)"
-                          [nom]="plat.nom"
-                          (moins)="retirer(plat, carte)"
-                          (plus)="ajouter(plat, carte)"
-                        />
-                      } @else if (vueClient()) {
-                        <button
-                          type="button"
-                          class="btn btn-primaire btn-ajouter"
-                          (click)="ajouter(plat, carte)"
-                        >
-                          Ajouter
-                          <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <circle cx="12" cy="12" r="10" />
-                            <path d="M12 7.5v9M7.5 12h9" />
-                          </svg>
-                        </button>
-                      }
+                        @if (vueClient() && quantite(plat) > 0) {
+                          <app-compteur-quantite
+                            class="selecteur-quantite"
+                            [quantite]="quantite(plat)"
+                            [nom]="plat.nom"
+                            (moins)="retirer(plat, carte)"
+                            (plus)="ajouter(plat, carte)"
+                          />
+                        } @else if (vueClient()) {
+                          <button
+                            type="button"
+                            class="btn btn-primaire btn-ajouter"
+                            (click)="ajouter(plat, carte)"
+                          >
+                            Ajouter
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                              <path d="M12 7.5v9M7.5 12h9" />
+                            </svg>
+                          </button>
+                        }
+                      </div>
                     </div>
                   </article>
                 }
               </div>
             </section>
           } @empty {
-            <p>Aucun plat disponible pour le moment.</p>
+            <p class="etat-page">Aucun plat disponible pour le moment.</p>
           }
         </div>
       </section>

@@ -1,180 +1,104 @@
-/* Le composant est un bloc : les marges du bandeau (dont le -1.25rem qui le colle
-   a l'en-tete en vue client) passent a travers lui comme avant. */
 :host {
   display: block;
 }
 
-/*
- * Bandeau du restaurant, mesure sur l'ecran de reference 1 (1536 px) : 167 px
- * de haut, photo 208 x 111, nom de 36 px, trait vertical de 84 px, pastille
- * « Ouvert » vert vif, bouton « Reserver » 260 x 61. Les tailles suivent la
- * largeur de la fenetre (vw) : a 1536 px et au-dela, ce sont celles de l'ecran.
- *
- * Par defaut (personnel), le bandeau reste dans un cadre : le personnel a deja
- * son bandeau et sa barre laterale. En vue client, il va d'un bord a l'autre
- * de la fenetre et colle a l'en-tete ; l'ombre et le clip-path peignent le
- * jaune hors de la colonne sans elargir la page.
- */
 .bandeau-restaurant {
-  --texte: 1.05rem;
-  --ecart: 0.9rem;
-  --marge-v: 1.25rem;
-  /* Decor de plats : carre colle au bord droit de la fenetre. */
-  --decor: 6.5rem;
   position: relative;
-  background: var(--saes-jaune);
+  overflow: hidden;
+  margin-bottom: clamp(1.5rem, 4vw, 3rem);
   border-radius: var(--saes-rayon);
-  padding: 1.25rem;
-  margin-bottom: 1.75rem;
+  background: var(--saes-jaune);
   color: var(--saes-vert);
-
-  h1 {
-    margin: 0 0 0.35rem;
-    font-weight: 800;
-    line-height: 1.2;
-    text-wrap: balance;
-  }
-
-  p {
-    margin: 0;
-  }
 }
 
-.bandeau-restaurant.pleine-largeur {
-  border-radius: 0;
-  box-shadow: 0 0 0 100vmax var(--saes-jaune);
-  clip-path: inset(0 -100vmax);
-  margin-top: -1.25rem;
-  padding: var(--marge-v) 0;
-}
-
-/* Sous le choix du restaurant, le bandeau ne remonte pas contre l'en-tete. */
-:host(.apres-selecteur) .bandeau-restaurant {
-  margin-top: 0;
-}
-
-/* Le decor est derriere le contenu ; ses feuilles (le quart gauche) peuvent
-   passer sous le bouton, comme sur l'ecran, jamais le plat. Sur telephone, il
-   est en bas a droite, a cote du bouton. */
+/* Decor de plats, en bas a droite, derriere le contenu (client seulement). */
 .decor-bandeau {
   position: absolute;
+  right: 0;
   bottom: 0;
-  right: calc((100% - 100vw) / 2);
-  width: var(--decor);
-  height: var(--decor);
+  width: clamp(5rem, 14vw, 9rem);
+  height: auto;
   object-fit: contain;
-  object-position: right bottom;
   pointer-events: none;
 }
 
-/* Sur telephone, la photo en haut puis le reste l'un sous l'autre. */
+.bandeau-client {
+  // Le bandeau client reste aligné avec la grille des plats.
+  box-shadow: var(--saes-ombre);
+
+  h1 {
+    color: inherit;
+    font-size: clamp(1.85rem, 4.2vw, 3.65rem);
+  }
+}
+
 .bandeau-interieur {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: var(--ecart);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: center;
+  padding: clamp(1.25rem, 3vw, 2.75rem);
 }
 
-/* Sur un ecran etroit, la photo prend la largeur mais pas plus de 190 px de
-   haut : elle ne doit pas repousser le menu hors de l'ecran. */
 .photo-restaurant {
+  display: block;
   width: 100%;
-  height: auto;
-  max-height: 190px;
-  aspect-ratio: 400 / 213;
+  height: clamp(8rem, 40vw, 13rem);
   object-fit: cover;
-  border-radius: var(--saes-rayon);
+  border-radius: 0.7rem;
 }
 
-.identite {
-  min-width: 0;
+.identite h1 {
+  margin: 0 0 0.6rem;
+  font-weight: 800;
+  text-wrap: balance;
 }
 
 .ligne-icone {
   display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-size: var(--texte);
-  font-weight: 500;
-  /* Une adresse trop longue passe sur deux lignes equilibrees. */
-  text-wrap: balance;
+  align-items: baseline;
+  gap: 0.55rem;
+  margin: 0;
 
   & + & {
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
   }
 
   svg {
+    align-self: center;
     flex: none;
-    width: 1.3em;
-    height: 1.3em;
+    width: 1.15rem;
+    height: 1.15rem;
     fill: none;
     stroke: currentColor;
-    stroke-width: 2.1;
+    stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
-  }
-
-  /* L'epingle du lieu est pleine sur l'ecran, son centre en jaune. */
-  .icone-pleine {
-    fill: currentColor;
-    stroke: none;
-
-    circle {
-      fill: var(--saes-jaune);
-    }
   }
 }
 
 .horaires-du-jour {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 0.5rem;
-
-  /* Sous le texte des horaires, pas sous l'horloge : icone (1,3 em) + ecart. */
-  .badge {
-    margin-left: calc(1.3 * var(--texte) + 0.45rem);
-  }
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
 }
 
-/* Pastille d'etat avec son point, comme sur l'ecran de reference 1. */
 .badge-point {
-  padding: 0.25em 0.75em;
-  font-size: calc(var(--texte) * 0.857);
-  font-weight: 700;
-
-  &::before {
-    content: '';
-    display: inline-block;
-    width: 0.6em;
-    height: 0.6em;
-    margin-right: 0.45em;
-    border-radius: 50%;
-    background: currentColor;
-    vertical-align: 0.02em;
-  }
-
-  /* Le vert vif de l'ecran 1, lisible sur le jaune ; le point en vert fonce. */
-  &.badge-actif {
-    background: #84d45c;
-    color: var(--saes-vert);
-
-    &::before {
-      background: #075d11;
-    }
-  }
+  padding: 0.18em 0.7em;
 }
 
-.btn-reserver {
-  align-self: flex-start;
-  gap: 0.5em;
-  padding: 0.79em 2em;
-  border-radius: 999px;
-  font-size: 1.2rem;
-  font-weight: 700;
-  white-space: nowrap;
+.btn-reserver.btn-primaire {
+  justify-self: start;
+  gap: 0.55rem;
+  padding-inline: 1.25rem;
+  background: var(--saes-rouge);
+  color: var(--saes-texte-clair);
+
+  &:hover:not(:disabled) {
+    background: var(--saes-rouge-fonce);
+  }
 
   svg {
     width: 1.2em;
@@ -185,121 +109,25 @@
     stroke-linecap: round;
     stroke-linejoin: round;
   }
-
-  .points {
-    stroke-width: 2.4;
-  }
 }
 
-/*
- * A partir de 860 px : la photo a gauche, le bouton a droite. Entre les deux,
- * le nom et l'adresse, puis les horaires en dessous ; a partir de 1200 px, les
- * horaires passent a droite du nom, derriere un trait, comme sur l'ecran.
- */
-@media (min-width: 860px) {
-  .bandeau-restaurant {
-    --texte: clamp(0.95rem, 1.146vw, 1.1rem);
-    --ecart: clamp(1rem, 1.82vw, 1.75rem);
-    --marge-v: clamp(1.25rem, 1.82vw, 1.75rem);
-    --photo: clamp(130px, 13.54vw, 208px);
-    /* Le decor a la hauteur du bandeau : photo + marges haut et bas. */
-    --decor: calc(var(--photo) * 213 / 400 + 2 * var(--marge-v));
-
-    h1 {
-      font-size: clamp(1.35rem, 2.344vw, 2.25rem);
-    }
-  }
-
-  /* Le plat est coupe par le bord de la fenetre. L'image est agrandie de 30 %
-     et cadree a gauche (feuilles, piment, bord du plat) ; remontee d'un
-     cinquieme, elle laisse voir le citron et une bonne part du plat. La largeur
-     ne change pas : l'ecart avec le bouton « Reserver » reste le meme. */
-  .decor-bandeau {
-    top: calc(-0.2 * var(--decor));
-    bottom: auto;
-    width: calc(0.78 * var(--decor));
-    height: calc(1.3 * var(--decor));
-    object-fit: cover;
-    object-position: left top;
-  }
-
-  .bandeau-interieur {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    grid-template-areas:
-      'photo identite bouton'
-      'photo horaires bouton';
-    align-items: center;
-    column-gap: var(--ecart);
-    row-gap: 0.6rem;
-  }
-
-  /* Place du decor : le bouton s'arrete avant le decor, avec un vide d'environ
-     12 % de sa taille (les feuilles sont l'element le plus a gauche a hauteur
-     du bouton). (100vw - 100 %) / 2 est ce qui separe le bandeau du bord. */
-  .pleine-largeur .bandeau-interieur {
-    padding-right: max(0px, calc(0.9 * var(--decor) - (100vw - 100%) / 2));
+@media (min-width: 680px) {
+  .bandeau-interieur:has(.photo-restaurant) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    column-gap: clamp(1.25rem, 4vw, 3rem);
   }
 
   .photo-restaurant {
-    grid-area: photo;
-    width: var(--photo);
-    max-height: none;
-  }
-
-  .identite {
-    grid-area: identite;
-    align-self: end;
-  }
-
-  .horaires-du-jour {
-    grid-area: horaires;
-    align-self: start;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    align-items: center;
-    column-gap: 0.75rem;
-
-    .badge {
-      margin-left: 0;
-    }
-  }
-
-  .btn-reserver {
-    grid-area: bouton;
-    align-self: center;
-    padding: 0.79em 3.08em;
-    font-size: clamp(1rem, 1.25vw, 1.2rem);
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    height: 100%;
+    min-height: 10rem;
+    max-height: 16rem;
   }
 }
 
-@media (min-width: 1200px) {
-  .bandeau-interieur {
-    grid-template-columns: auto minmax(0, 1fr) auto auto;
-    grid-template-areas: 'photo identite horaires bouton';
-  }
-
-  .identite {
-    align-self: center;
-  }
-
-  /* Sur l'ecran, un espace de plus separe les horaires du bouton. */
-  .btn-reserver {
-    margin-left: var(--ecart);
-  }
-
-  .horaires-du-jour {
-    align-self: center;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: clamp(4rem, 5.47vw, 5.25rem);
-    padding-left: var(--ecart);
-    border-left: 1px solid rgb(8 49 45 / 45%);
-
-    .badge {
-      margin-left: calc(1.3 * var(--texte) + 0.45rem);
-    }
-  }
+/* Le vert vif de la maquette, lisible sur le jaune. */
+.bandeau-restaurant .badge-actif {
+  background: #84d45c;
+  color: var(--saes-vert);
 }

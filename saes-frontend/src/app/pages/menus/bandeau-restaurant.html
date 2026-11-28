@@ -1,4 +1,4 @@
-<section class="bandeau-restaurant" [class.pleine-largeur]="vueClient()">
+<section class="bandeau-restaurant" [class.bandeau-client]="vueClient()">
   @if (vueClient()) {
     <img
       class="decor-bandeau"
@@ -16,7 +16,7 @@
         class="photo-restaurant"
         [src]="photo.src"
         [srcset]="photo.srcset"
-        sizes="(max-width: 859px) 100vw, 210px"
+        sizes="(max-width: 679px) 100vw, 420px"
         width="400"
         height="213"
         alt=""
@@ -29,7 +29,7 @@
     <div class="identite">
       <h1>{{ restaurant().nom }}</h1>
       <p class="ligne-icone">
-        <svg class="icone-pleine" viewBox="0 0 24 24" aria-hidden="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
           <path
             d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"
           />
@@ -85,7 +85,6 @@
           <path class="points" d="M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01M16 17h.01" />
         </svg>
         Réserver
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
       </a>
     }
   </div>

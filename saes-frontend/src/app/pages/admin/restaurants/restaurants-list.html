@@ -146,9 +146,9 @@
 
 <section class="carte bloc-suivant">
   @if (chargement()) {
-    <p>Chargement…</p>
+    <p class="etat-page" role="status">Chargement…</p>
   } @else {
-    <table class="table-simple">
+    <table class="table-simple table-cartes">
       <thead>
         <tr>
           <th>Nom</th>
@@ -161,10 +161,10 @@
       <tbody>
         @for (r of restaurants(); track r.id) {
           <tr>
-            <td>{{ r.nom }}</td>
-            <td>{{ r.adresse }}</td>
-            <td>{{ r.tables.length }}</td>
-            <td>
+            <td data-label="Nom">{{ r.nom }}</td>
+            <td data-label="Adresse">{{ r.adresse }}</td>
+            <td data-label="Tables">{{ r.tables.length }}</td>
+            <td data-label="Statut">
               <span
                 class="badge"
                 [class.badge-actif]="r.estActif"

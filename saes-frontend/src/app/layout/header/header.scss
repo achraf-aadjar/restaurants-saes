@@ -22,7 +22,6 @@
 }
 
 .entete {
-  /* Fond creme comme la page, sur tous les ecrans de reference. */
   background: var(--saes-creme);
   border-bottom: 1px solid var(--saes-bordure);
 }
@@ -38,7 +37,7 @@
   padding: 0.6rem var(--saes-gouttiere);
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: clamp(0.65rem, 2vw, 1.5rem);
 }
 
 /* Le personnel a sa barre laterale contre le bord gauche : l'en-tete et le
@@ -49,6 +48,7 @@
 
 .bandeau {
   background: var(--saes-jaune);
+  color: var(--saes-vert);
   padding: 0.7rem var(--saes-gouttiere);
   display: flex;
   justify-content: space-between;
@@ -158,9 +158,9 @@
   /* Assez d'air pour que la pastille du nombre ne touche pas le mot « Panier ». */
   gap: 0.65em;
   padding: 0.35em 0.55em;
-  border: none;
-  border-radius: var(--saes-rayon);
-  background: none;
+  border: 1px solid var(--saes-bordure);
+  border-radius: 0.7rem;
+  background: var(--saes-fond-doux);
   color: var(--saes-vert);
   font: inherit;
   font-size: 0.95rem;
@@ -168,7 +168,7 @@
   cursor: pointer;
 
   &:hover {
-    background: rgb(8 49 45 / 6%);
+    background: var(--saes-survol);
   }
 
   &:focus-visible {
@@ -214,8 +214,23 @@
   line-height: 1;
   box-shadow: 0 0 0 2px var(--saes-creme);
 
+  /* Chaque ajout recree la pastille : elle rebondit pour montrer le changement. */
+  @media (prefers-reduced-motion: no-preference) {
+    animation: saes-rebond 0.4s cubic-bezier(0.2, 0.8, 0.3, 1.6);
+  }
+
   @media (forced-colors: active) {
     border: 1px solid CanvasText;
+  }
+}
+
+@keyframes saes-rebond {
+  0% {
+    transform: scale(0.4);
+  }
+
+  60% {
+    transform: scale(1.35);
   }
 }
 
@@ -262,7 +277,7 @@
   position: absolute;
   top: 2.2rem;
   right: 0;
-  background: #fff;
+  background: var(--saes-surface);
   border: 1px solid var(--saes-bordure);
   border-radius: var(--saes-rayon);
   box-shadow: var(--saes-ombre);
@@ -319,6 +334,8 @@
 
   display: flex;
   flex-direction: column;
+  max-height: calc(100dvh - 4rem);
+  overflow-y: auto;
   padding: 0.5rem 1rem 1rem;
   border-top: 1px solid var(--saes-bordure);
 
@@ -339,7 +356,7 @@
 
   a.actif {
     border-left-color: var(--saes-rouge);
-    background: rgba(254, 198, 8, 0.14);
+    background: rgba(254, 198, 8, 0.18);
   }
 
   /* En contraste élevé, un trait « transparent » devient visible : on
@@ -394,7 +411,7 @@
   }
 
   .logo-complet {
-    height: 55px;
+    height: 45px;
   }
 
   .nav-desktop,
@@ -403,23 +420,26 @@
   }
 
   .nav-desktop {
-    gap: clamp(1.5rem, 3.1vw, 3rem);
+    gap: clamp(0.25rem, 1vw, 1rem);
 
     a {
       position: relative;
-      font-size: 1.1rem;
-      padding: 0.35em 0;
+      font-size: 1rem;
+      padding: 0.45em 0.7em;
+      border-radius: 0.65rem;
       border-bottom: none;
     }
 
-    a.actif::after {
-      content: '';
-      position: absolute;
-      left: -0.4em;
-      right: -0.4em;
-      bottom: 0;
-      height: 2px;
-      background: var(--saes-rouge);
+    a:hover,
+    a.actif {
+      background: rgba(254, 198, 8, 0.18);
+    }
+
+    a.actif {
+      text-decoration: underline;
+      text-decoration-color: var(--saes-rouge);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 0.3em;
     }
   }
 
@@ -461,5 +481,38 @@
 
   .nav-desktop {
     justify-self: center;
+  }
+}
+
+/* Bouton clair / sombre : une icone, a cote du compte. */
+.bouton-theme {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--saes-bordure);
+  border-radius: 0.7rem;
+  background: var(--saes-fond-doux);
+  color: var(--saes-vert);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--saes-survol);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--saes-vert);
+    outline-offset: 2px;
+  }
+
+  svg {
+    width: 1.3rem;
+    height: 1.3rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 }

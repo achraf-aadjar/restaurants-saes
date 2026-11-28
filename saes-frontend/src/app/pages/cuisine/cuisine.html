@@ -6,13 +6,13 @@
 }
 
 @if (chargement()) {
-  <p>Chargement…</p>
+  <p class="etat-page" role="status">Chargement…</p>
 } @else if (commandes().length === 0) {
-  <p>Aucune commande à préparer.</p>
+  <p class="etat-page">Aucune commande à préparer.</p>
 } @else {
   <div class="liste-commandes">
     @for (c of commandes(); track c.id) {
-      <article class="carte commande commande-cuisine">
+      <article class="carte commande commande-cuisine" [attr.data-statut]="c.statut">
         <app-commande-entete [commande]="c" affichage="grand" />
         <ul class="liste-lignes">
           @for (ligne of c.lignes; track ligne.platId) {

@@ -5,7 +5,7 @@
 }
 
 @if (chargement()) {
-  <p>Chargement…</p>
+  <p class="etat-page" role="status">Chargement…</p>
 } @else if (caisseOuverte(); as session) {
   <div class="encaissement">
     <div class="encaissement-liste">
@@ -14,7 +14,7 @@
       <section class="carte">
         <h2>Commandes prêtes</h2>
         @if (commandes().length === 0) {
-          <p>Aucune commande prête.</p>
+          <p class="etat-page">Aucune commande prête.</p>
         } @else {
           <table class="table-simple tableau-commandes">
             <thead>

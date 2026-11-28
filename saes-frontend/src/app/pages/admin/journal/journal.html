@@ -17,11 +17,11 @@
   </div>
 
   @if (chargement()) {
-    <p>Chargement…</p>
+    <p class="etat-page" role="status">Chargement…</p>
   } @else if (entreesAffichees().length === 0) {
-    <p>Aucune opération enregistrée.</p>
+    <p class="etat-page">Aucune opération enregistrée.</p>
   } @else {
-    <table class="table-simple">
+    <table class="table-simple table-cartes">
       <thead>
         <tr>
           <th>Date</th>
@@ -34,11 +34,11 @@
       <tbody>
         @for (e of entreesAffichees(); track e.id) {
           <tr>
-            <td>{{ e.dateHeure | date: 'dd/MM/yyyy HH:mm' }}</td>
-            <td>{{ e.acteur ?? 'Système' }}</td>
-            <td>{{ libelles[e.action] }}</td>
-            <td>{{ objets[e.objetType] ?? e.objetType }} n° {{ e.objetId }}</td>
-            <td>{{ e.details }}</td>
+            <td data-label="Date">{{ e.dateHeure | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td data-label="Par">{{ e.acteur ?? 'Système' }}</td>
+            <td data-label="Opération">{{ libelles[e.action] }}</td>
+            <td data-label="Objet">{{ objets[e.objetType] ?? e.objetType }} n° {{ e.objetId }}</td>
+            <td data-label="Détails">{{ e.details }}</td>
           </tr>
         }
       </tbody>

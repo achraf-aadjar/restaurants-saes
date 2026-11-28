@@ -26,7 +26,8 @@
   }
 
   &::backdrop {
-    background: rgb(8 49 45 / 45%);
+    background: rgb(8 49 45 / 55%);
+    backdrop-filter: blur(2px);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -54,8 +55,8 @@
   align-items: center;
   gap: 0.5rem 0.75rem;
   padding: 1rem 1rem 0.9rem 1.25rem;
-  border-bottom: 1px solid rgb(8 49 45 / 10%);
-  background: #fff;
+  border-bottom: 1px solid var(--saes-trait);
+  background: var(--saes-surface);
 
   h2 {
     margin: 0;
@@ -93,7 +94,7 @@
   padding: 0.3em 0.7em;
   border-radius: 8px;
   background: var(--saes-rose);
-  color: var(--saes-rouge);
+  color: var(--saes-rouge-texte);
   font-size: 0.95rem;
   font-weight: 700;
 }
@@ -165,7 +166,7 @@ div.corps {
     gap: 0 1rem;
     align-items: start;
     padding: 1rem 0;
-    border-bottom: 1px solid rgb(8 49 45 / 10%);
+    border-bottom: 1px solid var(--saes-trait);
   }
 
   li:last-child {
@@ -216,7 +217,7 @@ div.corps {
   padding: 0.2rem;
   border: none;
   background: none;
-  color: #5a5f61;
+  color: var(--saes-vert-attenue);
   cursor: pointer;
   border-radius: 6px;
   line-height: 0;
@@ -232,7 +233,7 @@ div.corps {
   }
 
   &:hover {
-    color: var(--saes-rouge);
+    color: var(--saes-rouge-texte);
   }
 
   &:focus-visible {
@@ -255,8 +256,8 @@ div.corps {
   flex: none;
   container: pied-panier / inline-size;
   padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom));
-  border-top: 1px solid rgb(8 49 45 / 10%);
-  background: #fff;
+  border-top: 1px solid var(--saes-trait);
+  background: var(--saes-surface);
 
   .message-refus {
     margin: 0 0 0.75rem;
@@ -270,8 +271,8 @@ div.corps {
   gap: 1rem;
   margin: 0 0 0.9rem;
   padding: 0.75rem 1.1rem;
-  border-radius: 8px;
-  background: var(--saes-rose);
+  border-radius: 0.75rem;
+  background: var(--saes-fond-doux);
 
   span {
     font-size: 1.35rem;
@@ -279,8 +280,9 @@ div.corps {
   }
 
   strong {
-    color: var(--saes-rouge);
+    color: var(--saes-vert);
     font-size: 1.6rem;
+    font-variant-numeric: tabular-nums;
     font-weight: 800;
   }
 }
@@ -322,17 +324,9 @@ div.corps {
     stroke-linejoin: round;
   }
 
-  /* Le chariot est plus grand que la fleche, comme sur l'ecran. */
-  svg:first-child {
-    width: 1.5em;
-    height: 1.5em;
-  }
 }
 
-/* Petit telephone : a 1,25rem, « Passer la commande » passait sur deux lignes
-   entre le chariot et la fleche. Un cran plus petit et un peu moins d'air sur
-   les cotes, il tient sur une ligne ; le texte agrandi peut encore passer a la
-   ligne, le bouton grandit alors en hauteur. */
+/* Bouton plus compact en bas du panneau sur téléphone. */
 @container pied-panier (max-width: 19rem) {
   .btn-commander {
     gap: 0.5em;

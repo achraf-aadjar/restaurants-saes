@@ -22,8 +22,7 @@
   padding: 1.25rem var(--saes-gouttiere) 2rem;
 }
 
-/* A cote de la barre laterale du personnel, la marge est plus courte
-   (22 px a 1536 px sur les ecrans de reference 2 a 5). */
 .corps:has(app-barre-laterale.visible) .contenu {
-  --saes-gouttiere: clamp(1rem, 1.43vw, 1.375rem);
+  --saes-gouttiere: clamp(1rem, 2.4vw, 2.5rem);
+  padding-block: clamp(1.5rem, 3vw, 3rem) 3rem;
 }

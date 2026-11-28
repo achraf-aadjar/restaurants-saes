@@ -10,9 +10,9 @@
 
 <section class="carte liste-recommandations">
   @if (chargement()) {
-    <p>Chargement…</p>
+    <p class="etat-page" role="status">Chargement…</p>
   } @else if (recommandations().length === 0) {
-    <p>Aucun ingrédient à réapprovisionner.</p>
+    <p class="etat-page">Aucun ingrédient à réapprovisionner.</p>
   } @else {
     <table class="table-simple">
       <thead>
