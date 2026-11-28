@@ -1,0 +1,74 @@
+<section class="entete-page sur-sombre">
+  <div class="entete-interieur">
+    <span class="sur-titre">Hors les murs</span>
+    <h1>Traiteur</h1>
+    <p class="chapeau">
+      Soutenances, séminaires, remises de diplômes, réceptions de laboratoire : la cuisine du
+      restaurant se déplace sur le campus et à Thiès, avec les mêmes plats que ceux de la carte.
+    </p>
+  </div>
+</section>
+
+<section class="bloc" aria-label="La salle de réception">
+  <div class="duo-photos">
+    <img
+      [src]="photoA.src"
+      [srcset]="photoA.srcset"
+      sizes="(min-width: 48rem) 34rem, 92vw"
+      [attr.width]="dimA.largeur"
+      [attr.height]="dimA.hauteur"
+      [alt]="dimA.legende"
+    />
+    <img
+      [src]="photoB.src"
+      [srcset]="photoB.srcset"
+      sizes="(min-width: 48rem) 34rem, 92vw"
+      [attr.width]="dimB.largeur"
+      [attr.height]="dimB.hauteur"
+      [alt]="dimB.legende"
+    />
+  </div>
+</section>
+
+<section class="bloc" aria-labelledby="titre-formules">
+  <h2 id="titre-formules" class="titre-section">Nos formules</h2>
+  <ul class="formules">
+    @for (f of formules; track f.titre) {
+      <li class="carte formule">
+        <h3>{{ f.titre }}</h3>
+        <p>{{ f.texte }}</p>
+      </li>
+    }
+  </ul>
+</section>
+
+<section class="bloc" aria-labelledby="titre-demande">
+  <h2 id="titre-demande" class="titre-section">Comment faire une demande</h2>
+  <div class="demande">
+    <ol class="etapes">
+      @for (e of etapes; track e; let i = $index) {
+        <li>
+          <span class="numero" aria-hidden="true">{{ i + 1 }}</span>
+          <span>{{ e }}</span>
+        </li>
+      }
+    </ol>
+
+    <aside class="carte contact" aria-label="Contact du restaurant">
+      @if (restaurant(); as r) {
+        <h3>{{ r.nom }}</h3>
+        <p class="adresse">{{ r.adresse }}</p>
+        <a class="btn btn-accent" [href]="lienTelephone(r.telephone)">
+          Appeler le {{ r.telephone }}
+        </a>
+      } @else {
+        <h3>Restaurant de l'EPT</h3>
+        <p class="adresse">Les coordonnées s'affichent dès que le restaurant répond.</p>
+      }
+    </aside>
+  </div>
+  <p class="mention">
+    Le traiteur ne fait pas l'objet d'une commande en ligne : les demandes passent par le
+    restaurant.
+  </p>
+</section>

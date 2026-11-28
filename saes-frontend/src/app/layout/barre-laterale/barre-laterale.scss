@@ -8,7 +8,7 @@
     width: clamp(13.5rem, 17.5vw, 16.5rem);
     flex-shrink: 0;
     border-right: 1px solid var(--saes-bordure);
-    padding: 1.5rem 0.85rem 2rem;
+    padding: clamp(1rem, 2.4vh, 1.5rem) 0.85rem clamp(1rem, 2.4vh, 2rem);
     background: var(--saes-surface);
   }
 }
@@ -35,8 +35,8 @@ a {
   display: flex;
   align-items: center;
   gap: 0.65em;
-  min-height: 2.875rem;
-  padding: 0.45em 0.6em;
+  min-height: clamp(2.5rem, 5.4vh, 2.875rem);
+  padding: 0.35em 0.6em;
   border-left: 4px solid transparent;
   border-radius: 0.65rem;
   color: var(--saes-vert);
@@ -64,7 +64,7 @@ a:hover {
 /* Fonction ouverte : filet rouge et fond clair (ecrans 2 a 5). */
 a.actif {
   border-left-color: var(--saes-rouge);
-  background: rgba(254, 198, 8, 0.18);
+  background: color-mix(in srgb, var(--saes-jaune) 16%, transparent);
   font-weight: 700;
 }
 

@@ -1,0 +1,106 @@
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+@if (chargement()) {
+  <p class="etat-page" role="status">Chargement…</p>
+} @else if (restaurant(); as r) {
+  <div class="grille">
+    <section class="carte">
+      <h2>Coordonnées</h2>
+      <dl class="liste-infos">
+        <div>
+          <dt>Adresse</dt>
+          <dd>{{ r.adresse }}</dd>
+        </div>
+        <div>
+          <dt>Téléphone</dt>
+          <dd>{{ r.telephone }}</dd>
+        </div>
+        <div>
+          <dt>Durée d'une réservation</dt>
+          <dd>{{ r.dureeReservationMinutes }} minutes</dd>
+        </div>
+      </dl>
+      <a routerLink="/admin/restaurants" class="btn btn-secondaire btn-petit">
+        Modifier dans « Gérer les restaurants »
+      </a>
+    </section>
+
+    <section class="carte">
+      <h2>Horaires d'ouverture</h2>
+      <ul class="semaine">
+        @for (j of semaine(); track j.jour) {
+          <li>
+            <span>{{ libellesJours[j.jour] }}</span>
+            @if (j.plages.length > 0) {
+              <strong>{{ j.plages.join(' · ') }}</strong>
+            } @else {
+              <span class="ferme">Fermé</span>
+            }
+          </li>
+        }
+      </ul>
+    </section>
+
+    <section class="carte">
+      <h2>
+        Tables <span class="compte">{{ r.tables.length }}</span>
+      </h2>
+      <p class="resume">{{ places() }} places au total</p>
+      <ul class="tables">
+        @for (t of r.tables; track t.id) {
+          <li>
+            <span class="numero">{{ t.numero }}</span>
+            <span>{{ t.capacite }} places</span>
+          </li>
+        }
+      </ul>
+    </section>
+  </div>
+
+  <section class="carte bloc-suivant">
+    <h2>
+      Comptes rattachés <span class="compte">{{ personnel().length }}</span>
+    </h2>
+    @if (personnel().length === 0) {
+      <p class="etat-page">Aucun compte n'est rattaché à ce restaurant.</p>
+    } @else {
+      <table class="table-simple table-cartes">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>E-mail</th>
+            <th>Rôles</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of personnel(); track u.id) {
+            <tr>
+              <td data-label="Nom">{{ u.prenom }} {{ u.nom }}</td>
+              <td data-label="E-mail">{{ u.email }}</td>
+              <td data-label="Rôles">
+                @for (role of u.roles; track role) {
+                  {{ libellesRoles[role] }}{{ $last ? '' : ', ' }}
+                }
+              </td>
+              <td data-label="Statut">
+                <span
+                  class="badge"
+                  [class.badge-actif]="u.estActif"
+                  [class.badge-neutre]="!u.estActif"
+                >
+                  {{ u.estActif ? 'Actif' : 'Désactivé' }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <a routerLink="/admin/utilisateurs" class="btn btn-secondaire btn-petit bloc-suivant">
+        Gérer les comptes
+      </a>
+    }
+  </section>
+}

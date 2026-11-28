@@ -8,7 +8,7 @@ import {
   provideRouter,
 } from '@angular/router';
 
-import { authGuard, roleGuard } from './auth.guard';
+import { authGuard, roleGuard, vitrineGuard } from './auth.guard';
 import { Role, Utilisateur } from './models';
 
 function connecter(roles: Role[]): void {
@@ -18,6 +18,7 @@ function connecter(roles: Role[]): void {
     prenom: 'Omar',
     email: 'omar@test.sn',
     telephone: null,
+    profil: null,
     roles,
     restaurantId: 1,
     restaurantNom: 'Restaurant',
@@ -80,5 +81,31 @@ describe('Gardes de navigation (droits d acces, qualite attendue 1)', () => {
     expect(executer(roleGuard('GERANT'))).toBe(true);
     expect(executer(roleGuard('CAISSIER'))).toBe(true);
     expect(cheminDe(executer(roleGuard('CUISINIER')))).toBe('/caissier/encaisser');
+  });
+});
+
+describe('vitrineGuard (page d accueil)', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    TestBed.configureTestingModule({ providers: [provideRouter([]), provideHttpClient()] });
+  });
+
+  it('laisse la vitrine au visiteur', () => {
+    expect(cheminDe(executer(vitrineGuard))).toBe(true);
+  });
+
+  it('laisse la vitrine au client', () => {
+    connecter(['CLIENT']);
+    expect(cheminDe(executer(vitrineGuard))).toBe(true);
+  });
+
+  it('renvoie le personnel vers sa premiere fonction', () => {
+    connecter(['CUISINIER']);
+    expect(cheminDe(executer(vitrineGuard))).toBe('/cuisine/preparation');
+  });
+
+  it("renvoie l'administrateur vers le choix du restaurant", () => {
+    connecter(['ADMINISTRATEUR']);
+    expect(cheminDe(executer(vitrineGuard))).toBe('/admin/choix');
   });
 });

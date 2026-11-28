@@ -1,0 +1,129 @@
+:host {
+  display: block;
+}
+
+.periode {
+  margin: 0 0 1rem;
+  color: var(--saes-vert-attenue);
+  font-size: 0.9rem;
+}
+
+.chiffres {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.colonnes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 77.5rem) {
+  .colonnes {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  }
+}
+
+h2 {
+  margin: 0 0 0.9rem;
+  font-size: 1.5rem;
+}
+
+.lien-detail {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-weight: 700;
+  text-decoration-color: var(--saes-jaune);
+  text-underline-offset: 0.3em;
+}
+
+.classement {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.classement li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'rang nom montant'
+    'rang detail montant';
+  align-items: center;
+  gap: 0 0.9rem;
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--saes-bordure);
+}
+
+.classement li:first-child {
+  border-top: none;
+}
+
+.rang {
+  grid-area: rang;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--saes-vert-pale);
+  color: var(--saes-prix);
+  font-weight: 800;
+}
+
+.nom {
+  grid-area: nom;
+  font-weight: 700;
+}
+
+.detail {
+  grid-area: detail;
+  color: var(--saes-vert-attenue);
+  font-size: 0.85rem;
+}
+
+.montant {
+  grid-area: montant;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.alerte-stock {
+  border-color: var(--saes-refus-bordure);
+  background: var(--saes-refus-fond);
+  color: var(--saes-refus-texte);
+}
+
+.alerte-stock h2 {
+  color: inherit;
+  font-family: var(--saes-font);
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.puces-alerte {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.puces-alerte li {
+  padding: 0.2em 0.65em;
+  border-radius: 999px;
+  background: var(--saes-surface);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.alerte-stock .lien-detail {
+  color: inherit;
+}

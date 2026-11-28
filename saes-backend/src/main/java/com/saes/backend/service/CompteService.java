@@ -61,6 +61,9 @@ public class CompteService {
         utilisateur.setPrenom(request.prenom());
         utilisateur.setEmail(request.email());
         utilisateur.setTelephone(request.telephone());
+        if (request.profil() != null) {
+            utilisateur.setProfil(request.profil());
+        }
         return UtilisateurDto.from(utilisateur);
     }
 
@@ -87,6 +90,7 @@ public class CompteService {
         utilisateur.setPrenom("Compte");
         utilisateur.setEmail("supprime-" + utilisateurId + DOMAINE_COMPTE_SUPPRIME);
         utilisateur.setTelephone(null);
+        utilisateur.setProfil(null);
         utilisateur.setMotDePasse(passwordEncoder.encode(UUID.randomUUID().toString()));
         utilisateur.setEstActif(false);
     }

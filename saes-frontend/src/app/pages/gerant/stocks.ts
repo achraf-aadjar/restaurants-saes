@@ -1,7 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { motifErreur } from '../../core/erreur.util';
+import { restaurantSupervise } from '../../core/supervision';
 import { GerantStockService } from '../../core/gerant-stock.service';
 import { LIBELLES_UNITES, SYMBOLES_UNITES } from '../../core/libelles';
 import {
@@ -34,6 +35,9 @@ export class GerantStocks {
   protected readonly libellesUnites = LIBELLES_UNITES;
   protected readonly symbolesUnites = SYMBOLES_UNITES;
 
+  /** Restaurant supervise par l'administrateur : alors la page est en lecture seule. */
+  protected readonly supervise = restaurantSupervise();
+
   protected readonly ingredients = signal<IngredientDto[]>([]);
   protected readonly chargement = signal(true);
   protected readonly erreur = signal<string | null>(null);
@@ -41,6 +45,22 @@ export class GerantStocks {
   protected readonly enregistrementEnCours = signal(false);
   protected readonly formulaireOuvert = signal(false);
   protected readonly mouvementIngredientId = signal<number | null>(null);
+
+  /**
+   * Les ingredients dont le stock est sous leur seuil d'alerte : le cahier des
+   * charges demande qu'ils soient signales au gerant (§4.6).
+   */
+  protected readonly enAlerte = computed(() => this.ingredients().filter((i) => i.alerte));
+
+  /**
+   * Remplissage de la jauge d'un ingredient : son stock rapporte a son niveau
+   * cible. Un stock negatif (regle 10) est montre vide ; un stock au-dessus de
+   * la cible remplit la jauge entierement.
+   */
+  protected remplissage(stock: number, niveauCible: number): number {
+    if (niveauCible <= 0) return 0;
+    return Math.max(0, Math.min(100, (stock / niveauCible) * 100));
+  }
 
   protected idEnEdition: number | null = null;
   protected nom = '';
@@ -60,7 +80,7 @@ export class GerantStocks {
 
   private charger(): void {
     this.chargement.set(true);
-    this.gerantStockService.lister().subscribe({
+    this.gerantStockService.lister(this.supervise).subscribe({
       next: (ingredients) => {
         this.ingredients.set(ingredients);
         this.chargement.set(false);

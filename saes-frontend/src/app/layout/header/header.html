@@ -11,7 +11,15 @@
 
     <nav class="nav-desktop">
       @if (ongletsClient()) {
-        <a routerLink="/menus" routerLinkActive="actif" ariaCurrentWhenActive="page">Menus</a>
+        <a
+          routerLink="/"
+          routerLinkActive="actif"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
+          >Accueil</a
+        >
+        <a routerLink="/menus" routerLinkActive="actif" ariaCurrentWhenActive="page">Menu</a>
+        <a routerLink="/traiteur" routerLinkActive="actif" ariaCurrentWhenActive="page">Traiteur</a>
       }
       @if (auth.aLeRole('CLIENT')) {
         <a routerLink="/mes-commandes" routerLinkActive="actif" ariaCurrentWhenActive="page"
@@ -127,11 +135,26 @@
       }
       @if (ongletsClient()) {
         <a
+          routerLink="/"
+          routerLinkActive="actif"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
+          (click)="basculerMenuMobile()"
+          >Accueil</a
+        >
+        <a
           routerLink="/menus"
           routerLinkActive="actif"
           ariaCurrentWhenActive="page"
           (click)="basculerMenuMobile()"
-          >Menus</a
+          >Menu</a
+        >
+        <a
+          routerLink="/traiteur"
+          routerLinkActive="actif"
+          ariaCurrentWhenActive="page"
+          (click)="basculerMenuMobile()"
+          >Traiteur</a
         >
       }
       @if (auth.aLeRole('CLIENT')) {
@@ -198,7 +221,7 @@
 
 @if (restaurantDuBandeau(); as restaurant) {
   <div class="bandeau">
-    <strong class="bandeau-restaurant">{{ restaurant }}</strong>
+    <strong class="bandeau-nom">{{ restaurant }}</strong>
     <span class="bandeau-date">{{ aujourdHui | date: 'fullDate' }}</span>
   </div>
 }

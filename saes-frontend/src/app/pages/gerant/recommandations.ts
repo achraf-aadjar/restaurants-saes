@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { motifErreur } from '../../core/erreur.util';
 import { RecommandationDto } from '../../core/models';
 import { RecommandationService } from '../../core/recommandation.service';
+import { restaurantSupervise } from '../../core/supervision';
 import { QuantitePipe } from '../../shared/quantite.pipe';
 import { RefusVisible } from '../../shared/refus-visible';
 
@@ -18,13 +19,15 @@ import { RefusVisible } from '../../shared/refus-visible';
 })
 export class GerantRecommandations {
   private readonly recommandationService = inject(RecommandationService);
+  /** Restaurant supervise par l'administrateur (lecture seule), ou null pour le gerant. */
+  protected readonly supervise = restaurantSupervise();
 
   protected readonly recommandations = signal<RecommandationDto[]>([]);
   protected readonly chargement = signal(true);
   protected readonly erreur = signal<string | null>(null);
 
   constructor() {
-    this.recommandationService.lister().subscribe({
+    this.recommandationService.lister(this.supervise).subscribe({
       next: (recommandations) => {
         this.recommandations.set(recommandations);
         this.chargement.set(false);

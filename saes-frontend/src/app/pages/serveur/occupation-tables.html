@@ -7,17 +7,57 @@
 @if (chargement()) {
   <p class="etat-page" role="status">Chargement…</p>
 } @else if (occupation(); as occ) {
-  <section class="carte bloc-espace-bas">
-    <h2>Tables</h2>
-    <div class="grille-tables">
-      @for (t of occ.tables; track t.id) {
-        <div class="table-vignette" [class.table-occupee]="t.occupee">
-          <strong>n°{{ t.numero }}</strong>
-          <span>{{ t.capacite }} places</span>
-          <span>{{ t.occupee ? 'Occupée' : 'Libre' }}</span>
-        </div>
-      }
+  <!-- Trois chiffres lus d'un coup d'oeil avant de placer un client. -->
+  <div class="resume-salle">
+    <div class="tuile-salle libres">
+      <span class="valeur">{{ nombreLibres() }}</span>
+      <span class="intitule">{{ nombreLibres() > 1 ? 'tables libres' : 'table libre' }}</span>
     </div>
+    <div class="tuile-salle occupees">
+      <span class="valeur">{{ nombreOccupees() }}</span>
+      <span class="intitule">
+        {{ nombreOccupees() > 1 ? 'tables occupées' : 'table occupée' }}
+      </span>
+    </div>
+    <div class="tuile-salle places">
+      <span class="valeur">{{ placesLibres() }}</span>
+      <span class="intitule">places libres</span>
+    </div>
+    <div class="tuile-salle reservations">
+      <span class="valeur">{{ occ.reservationsDuJour.length }}</span>
+      <span class="intitule">
+        {{ occ.reservationsDuJour.length > 1 ? 'réservations du jour' : 'réservation du jour' }}
+      </span>
+    </div>
+  </div>
+
+  <section class="carte bloc-espace-bas">
+    <h2>Plan de salle</h2>
+    <p class="commande-meta">
+      Une table est occupée quand elle porte une commande en attente, en préparation ou prête.
+    </p>
+    <ul class="plan-salle">
+      @for (t of tables(); track t.id) {
+        <li class="table-plan" [class.occupee]="t.occupee" [attr.data-places]="t.capacite">
+          <!-- Les couverts, dessinés autour de la table : la capacité se lit
+               sans compter, et elle est aussi écrite dessous. -->
+          <span class="table-dessin" aria-hidden="true">
+            @for (place of places(t.capacite); track $index) {
+              <span class="couvert"></span>
+            }
+            <span class="plateau">{{ t.numero }}</span>
+          </span>
+          <span class="nom-table">Table n°{{ t.numero }}</span>
+          <span class="capacite-table">{{ t.capacite }} places</span>
+          <span class="etat-table">{{ t.occupee ? 'Occupée' : 'Libre' }}</span>
+          @if (t.prochaine; as r) {
+            <span class="prochaine">
+              Réservée à {{ r.dateHeure | date: formatHeure }} · {{ r.nombreCouverts }} couverts
+            </span>
+          }
+        </li>
+      }
+    </ul>
   </section>
 
   <section class="carte bloc-espace-bas">
@@ -25,7 +65,7 @@
     @if (occ.reservationsDuJour.length === 0) {
       <p class="etat-page">Aucune réservation aujourd'hui.</p>
     } @else {
-      <table class="table-simple">
+      <table class="table-simple table-cartes">
         <thead>
           <tr>
             <th>Heure</th>
@@ -36,9 +76,9 @@
         <tbody>
           @for (r of occ.reservationsDuJour; track r.id) {
             <tr>
-              <td>{{ r.dateHeure | date: formatHeure }}</td>
-              <td>{{ r.nombreCouverts }}</td>
-              <td>
+              <td data-label="Heure">{{ r.dateHeure | date: formatHeure }}</td>
+              <td data-label="Couverts">{{ r.nombreCouverts }}</td>
+              <td data-label="Tables">
                 @for (t of r.tables; track t.numero) {
                   n°{{ t.numero }}{{ !$last ? ', ' : '' }}
                 }

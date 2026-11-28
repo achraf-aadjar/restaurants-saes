@@ -1,352 +1,440 @@
-// Styles communs a Connexion et Inscription.
+/*
+ * Connexion et inscription : un ecran plein format, sans en-tete ni pied de page
+ * (app.scss les masque ici). A gauche le formulaire, a droite la photo de la salle
+ * (AuthPanneau, seulement sur grand ecran). Sur telephone, le formulaire seul.
+ *
+ * L'ecran suit le theme choisi (clair ou sombre), comme le reste du site. Seul le
+ * panneau photo reste sombre dans les deux cas : c'est une photo sous un voile.
+ */
 
 :host {
-  display: flex;
+  display: grid;
   flex: 1;
+  align-items: center;
+  min-width: 0;
+  color: var(--saes-vert);
 }
 
 .auth {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 0 0.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: min(100%, 68rem);
+  margin-inline: auto;
+  overflow: hidden;
+  border: 1px solid var(--saes-bordure);
+  border-radius: 1.5rem;
+  background: var(--saes-surface);
+  box-shadow: var(--saes-ombre-haute);
+}
+
+/* L'ecran tient dans la fenetre : la hauteur de la carte suit celle de la fenetre
+   (moins les marges), entre 30 et 46 rem. */
+@media (min-width: 60rem) {
+  .auth {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    min-height: clamp(30rem, calc(100dvh - 3rem), 46rem);
+  }
+}
+
+@media (max-width: 40rem) {
+  .auth {
+    border-radius: 1rem;
+  }
 }
 
 .auth-carte {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 100%;
-  min-width: 0; // sans cela, l'iframe du bouton Google peut elargir la carte au-dela de l'ecran
-  max-width: 440px;
-  background: var(--saes-surface);
-  border: 1px solid var(--saes-bordure);
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(8, 49, 45, 0.08);
-  padding: 1.75rem 2.25rem 1.25rem;
+  min-width: 0;
+  padding: clamp(1.25rem, 4vh, 2.75rem) clamp(1.25rem, 4.5vw, 3.5rem);
 }
 
-// 472 px - 2 x 36 px de marge interieure = 400 px, la largeur maximale du
-// bouton Google : bouton et champs sont ainsi exactement alignes.
-.auth-carte--large {
-  max-width: 472px;
-}
-
-// En-tete
+/* ---------- En-tete ---------- */
 
 .auth-entete {
-  text-align: center;
-  margin-bottom: 1.25rem;
+  margin-bottom: clamp(0.9rem, 2.4vh, 1.5rem);
+}
+
+.auth-surtitre {
+  margin: 0 0 clamp(0.4rem, 1.2vh, 0.75rem);
+  color: var(--saes-action);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .auth-entete h1 {
-  font-size: 1.55rem;
-  line-height: 1.2;
-  margin: 0 0 0.3rem;
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.9rem, 5vh, 2.9rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .auth-soustitre {
   margin: 0;
   color: var(--saes-vert-attenue);
-  font-size: 0.95rem;
-  line-height: 1.45;
 }
 
-// Google + separateur
+/* ---------- Etudiant ou professeur (inscription) ---------- */
+
+.auth-profil {
+  min-width: 0;
+  margin: 0 0 clamp(0.6rem, 1.6vh, 1rem);
+  padding: 0;
+  border: 0;
+}
+
+.auth-profil legend {
+  display: block;
+  margin-bottom: 0.4rem;
+  padding: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.auth-profil-choix {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+/* Le bouton radio est masque mais reste accessible au clavier ; c'est l'etiquette
+   qui se voit, comme une pastille. */
+.choix-profil {
+  position: relative;
+}
+
+.choix-profil input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.choix-profil span {
+  display: grid;
+  place-items: center;
+  min-height: clamp(2.5rem, 5.6vh, 3rem);
+  border: 1px solid var(--saes-bordure-forte);
+  border-radius: 999px;
+  background: var(--saes-creme);
+  font-weight: 700;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.choix-profil:hover span {
+  border-color: var(--saes-vert-attenue);
+}
+
+.choix-profil input:checked + span {
+  border-color: var(--saes-action);
+  background: color-mix(in srgb, var(--saes-action) 16%, var(--saes-creme));
+  box-shadow: inset 0 0 0 1px var(--saes-action);
+}
+
+.choix-profil input:focus-visible + span {
+  outline: 3px solid var(--saes-action);
+  outline-offset: 2px;
+}
+
+.auth-profil.invalide .choix-profil span {
+  border-color: var(--saes-rouge);
+}
+
+/* Google reste en retrait tant que le profil n'est pas choisi. */
+.auth-google.en-attente {
+  opacity: 0.45;
+}
+
+/* ---------- Google ---------- */
 
 .auth-google {
-  min-width: 0;
-  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  min-height: 2.75rem;
 }
 
 .auth-separateur {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin: 0 0 1rem;
+  gap: 0.9rem;
+  margin: clamp(0.6rem, 1.8vh, 1.1rem) 0;
   color: var(--saes-vert-attenue);
-  font-size: 0.82rem;
-  text-align: center;
-
-  &::before,
-  &::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--saes-bordure);
-  }
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
-// Formulaire
+.auth-separateur::before,
+.auth-separateur::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--saes-bordure);
+}
+
+.auth-erreur {
+  margin-bottom: 1rem;
+}
+
+/* ---------- Formulaire ---------- */
 
 .auth-formulaire {
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
+  gap: clamp(0.6rem, 1.7vh, 1.1rem);
 }
 
 .auth-ligne {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.9rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(0.6rem, 1.7vh, 1.1rem);
+}
+
+@media (min-width: 36rem) {
+  .auth-ligne {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .auth-champ {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.4rem;
   min-width: 0;
 }
 
+/* L'intitule d'un champ : une petite icone, puis le texte. */
 .auth-champ label {
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
   font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.icone-champ {
+  flex: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: none;
+  stroke: var(--saes-vert-attenue);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .auth-facultatif {
-  font-weight: 400;
   color: var(--saes-vert-attenue);
+  font-weight: 500;
 }
 
 .auth-champ input {
   width: 100%;
-  min-height: 44px;
-  padding: 0.55rem 0.85rem;
-  font-family: inherit;
-  font-size: 1rem; // 16px : evite le zoom automatique sur iPhone
+  min-height: clamp(2.7rem, 6vh, 3.25rem);
+  padding: 0.5rem 1.15rem;
+  border: 1px solid var(--saes-bordure-forte);
+  border-radius: 999px;
+  background: var(--saes-creme);
   color: var(--saes-vert);
-  background: var(--saes-surface);
-  border: 1px solid var(--saes-bordure);
-  border-radius: 10px;
+  font: inherit;
   transition:
     border-color 0.15s ease,
     box-shadow 0.15s ease;
-
-  &::placeholder {
-    color: var(--saes-vert-attenue);
-  }
-
-  &:hover {
-    border-color: var(--saes-bordure-forte);
-  }
-
-  &:focus {
-    outline: none;
-    border-color: var(--saes-vert);
-    box-shadow: 0 0 0 3px rgba(8, 49, 45, 0.12);
-  }
-
-  &.invalide {
-    border-color: var(--saes-rouge);
-  }
-
-  &.invalide:focus {
-    box-shadow: 0 0 0 3px rgba(230, 12, 26, 0.12);
-  }
 }
 
-.auth-aide,
-.auth-erreur-champ {
-  margin: 0;
-  font-size: 0.8rem;
-  line-height: 1.35;
-}
-
-.auth-aide {
+.auth-champ input::placeholder {
   color: var(--saes-vert-attenue);
+  opacity: 0.7;
+}
+
+.auth-champ input:focus {
+  border-color: var(--saes-action);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--saes-action) 24%, transparent);
+  outline: none;
+}
+
+.auth-champ input.invalide {
+  border-color: var(--saes-rouge);
+}
+
+.auth-champ input.invalide:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--saes-rouge) 24%, transparent);
 }
 
 .auth-erreur-champ {
+  margin: 0 0 0 1rem;
   color: var(--saes-refus-texte);
+  font-size: 0.85rem;
   font-weight: 600;
 }
 
-// Mot de passe avec bouton Afficher / Masquer
+.auth-aide {
+  margin: 0 0 0 1rem;
+  color: var(--saes-vert-attenue);
+  font-size: 0.85rem;
+}
 
+/* Mot de passe : le bouton « Afficher » est dans le champ, a droite. */
 .auth-mot-de-passe {
   position: relative;
 }
 
 .auth-mot-de-passe input {
-  padding-right: 5.5rem;
+  padding-right: 5.75rem;
 }
 
 .auth-oeil {
   position: absolute;
   top: 50%;
-  right: 0.4rem;
-  transform: translateY(-50%);
-  min-height: 34px;
-  padding: 0 0.6rem;
+  right: 0.45rem;
+  min-height: 2.25rem;
+  padding: 0 0.9rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 999px;
   background: transparent;
-  color: var(--saes-vert);
-  font-family: inherit;
-  font-size: 0.82rem;
-  font-weight: 600;
+  color: var(--saes-vert-attenue);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
   cursor: pointer;
-
-  &:hover {
-    background: var(--saes-survol);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--saes-vert);
-    outline-offset: 1px;
-  }
+  transform: translateY(-50%);
 }
 
-// Bouton principal
+.auth-oeil:hover {
+  background: var(--saes-survol);
+  color: var(--saes-vert);
+}
 
 .auth-bouton {
   width: 100%;
-  min-height: 46px;
-  margin-top: 0.25rem;
-  font-size: 1rem;
-  border-radius: 10px;
+  min-height: clamp(2.8rem, 6.4vh, 3.4rem);
+  margin-top: 0.3rem;
+  border-radius: 999px;
+  font-size: 1.05rem;
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--saes-action) 28%, transparent);
 }
 
 .auth-mention {
-  margin: -0.35rem 0 0;
-  text-align: center;
-  font-size: 0.78rem;
-  line-height: 1.45;
+  margin: 0;
   color: var(--saes-vert-attenue);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  text-align: center;
 }
 
-.auth-erreur {
-  margin: 0 0 1rem;
+.auth-mention a {
+  color: inherit;
 }
 
-// Pied de carte
+/* ---------- Pied : l'autre ecran, et le retour a l'accueil ---------- */
 
 .auth-pied {
-  margin-top: 1.25rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--saes-bordure);
-  text-align: center;
-  font-size: 0.92rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem 0.4rem;
+  margin-top: clamp(0.75rem, 2.2vh, 1.5rem);
   color: var(--saes-vert-attenue);
+  font-size: 0.95rem;
+  text-align: center;
 }
 
-.auth-pied a {
+.auth-pied a:not(.auth-retour) {
+  color: var(--saes-prix);
   font-weight: 700;
-  color: var(--saes-rouge-texte);
+}
+
+.auth-retour {
+  display: inline-flex;
+  flex-basis: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--saes-vert-attenue);
+  font-weight: 600;
   text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
 }
 
-// Ecrans moyens et grands : prenom / nom cote a cote
-@media (min-width: 520px) {
-  .auth-ligne {
-    grid-template-columns: 1fr 1fr;
-  }
+.auth-retour:hover {
+  color: var(--saes-vert);
 }
 
-// Ordinateurs portables peu hauts (ex. 1366 x 650) : tout doit tenir sans
-// faire defiler la page.
-@media (min-width: 520px) and (max-height: 760px) {
-  .auth-soustitre {
+.auth-retour svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---------- Fenetre basse : tout se resserre ---------- */
+
+@media (max-height: 60rem) {
+  .auth-soustitre,
+  .auth-aide {
     display: none;
   }
 
-  .auth-entete {
-    margin-bottom: 1rem;
+  .auth-profil {
+    margin-bottom: 0.5rem;
   }
 
   .auth-formulaire,
   .auth-ligne {
-    gap: 0.75rem;
+    gap: 0.55rem;
   }
 
-  .auth-champ input {
-    min-height: 42px;
+  .auth-champ {
+    gap: 0.25rem;
   }
 
-  .auth-bouton {
-    min-height: 44px;
+  .auth-champ label {
+    font-size: 0.85rem;
   }
 
-  .auth-pied {
-    margin-top: 1rem;
-    padding-top: 0.85rem;
+  .auth-separateur {
+    margin-block: 0.5rem;
+  }
+
+  .auth-mention {
+    font-size: 0.75rem;
   }
 }
 
-// Telephones : carte plus compacte
-@media (max-width: 479px) {
-  .auth {
-    padding: 0;
-    align-items: flex-start;
-  }
-
-  .auth-carte {
-    padding: 1.5rem 1.25rem 1.1rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 16px var(--saes-survol);
-  }
-
+/* Tres basse : le titre devient invisible mais reste lu par les lecteurs d'ecran,
+   et la mention laisse sa place au lien « Confidentialite » deja present ailleurs. */
+@media (max-height: 44rem) {
   .auth-entete {
-    margin-bottom: 1.1rem;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
   }
 
-  .auth-entete h1 {
-    font-size: 1.4rem;
-  }
-}
-
-// Tres petits ecrans (ex. 320 px de large)
-@media (max-width: 359px) {
-  .auth-carte {
-    padding: 1.5rem 1rem 1rem;
-  }
-
-  .auth-mot-de-passe input {
-    padding-right: 4.75rem;
+  .auth-mention {
+    display: none;
   }
 }
 
-.auth-carte {
-  border-radius: var(--saes-rayon);
-  box-shadow: var(--saes-ombre);
-}
-
-.auth-entete h1 {
-  font-size: clamp(1.6rem, 3vw, 2rem);
-  font-weight: 800;
-}
-
-.auth-champ input {
-  border-color: var(--saes-bordure-forte);
-}
-
-@media (min-width: 860px) {
-  /* Photo et carte forment un seul bloc, de meme hauteur et alignes. */
-  .auth {
-    align-items: stretch;
-    gap: clamp(1.5rem, 4vw, 4rem);
-    max-width: 62rem;
-    margin-inline: auto;
-    padding-block: 1rem;
-  }
-
-  .auth-carte {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .auth::before {
-    content: '';
-    flex: 0 1 30rem;
-    align-self: stretch;
-    min-height: 24rem;
-    border-radius: var(--saes-rayon);
-    background:
-      linear-gradient(145deg, rgb(8 49 45 / 28%), transparent),
-      var(--saes-vert) url('/assets/plats/thieboudienne-720.webp') center / cover no-repeat;
+/* Fenetre assez basse : « Vous etes » devient invisible mais reste lu par les
+   lecteurs d'ecran ; les deux pastilles disent deja Etudiant et Professeur. */
+@media (max-height: 52rem) {
+  .auth-profil legend {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
   }
 }

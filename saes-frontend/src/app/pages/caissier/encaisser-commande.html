@@ -21,6 +21,7 @@
               <tr>
                 <th>Commande</th>
                 <th>Arrivée</th>
+                <th>Attente</th>
                 <th>Sur place ou à emporter</th>
                 <th>Montant</th>
                 <th>Statut</th>
@@ -47,6 +48,7 @@
                       {{ c.dateHeure | date }}
                     }
                   </td>
+                  <td><app-temps-ecoule [depuis]="c.dateHeure" /></td>
                   <td>{{ c.type === 'SUR_PLACE' ? 'Table ' + c.tableNumero : 'À emporter' }}</td>
                   <td>{{ c.montantTotal | montant }}</td>
                   <td>

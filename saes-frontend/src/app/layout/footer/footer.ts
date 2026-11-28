@@ -1,7 +1,10 @@
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Component, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { filter, map } from 'rxjs';
 
 import { AuthService } from '../../core/auth.service';
+import { heureEnLettres } from '../../core/date.util';
 import { MenuService } from '../../core/menu.service';
 import { RestaurantSummary } from '../../core/models';
 
@@ -19,6 +22,25 @@ import { RestaurantSummary } from '../../core/models';
 })
 export class Footer {
   private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+
+  /** Adresse de la page affichee (sans les parametres). */
+  private readonly adresse = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => e.urlAfterRedirects.split('?')[0]),
+    ),
+    { initialValue: this.router.url.split('?')[0] },
+  );
+
+  /**
+   * Ecrans d'un seul geste (compte, reservations) : ils
+   * doivent tenir dans la fenetre, sans defiler. Le grand pied de page bleu nuit
+   * y est remplace par une ligne discrete.
+   */
+  protected readonly ecranUnique = computed(() =>
+    ['/mon-compte', '/mes-reservations'].some((p) => this.adresse().startsWith(p)),
+  );
   private readonly menuService = inject(MenuService);
 
   protected readonly annee = new Date().getFullYear();
@@ -44,6 +66,20 @@ export class Footer {
       error: () => this.restaurantParDefaut.set(null),
     });
   }
+
+  protected readonly estConnecte = computed(() => this.auth.estConnecte());
+
+  /** « 8 h – 21 h », ou vide quand le restaurant est fermé aujourd'hui. */
+  protected readonly horairesDuJour = computed(() =>
+    (this.restaurantAffiche()?.horairesDuJour ?? [])
+      .map((h) =>
+        `${heureEnLettres(h.heureOuverture)} – ${heureEnLettres(h.heureFermeture)}`.replace(
+          / /g,
+          '\u00a0',
+        ),
+      )
+      .join(' · '),
+  );
 
   protected lienTelephone(telephone: string): string {
     return 'tel:' + telephone.replace(/[^\d+]/g, '');

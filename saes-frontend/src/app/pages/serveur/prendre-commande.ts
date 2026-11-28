@@ -35,7 +35,8 @@ export class PrendreCommande {
   private readonly router = inject(Router);
 
   /** Numero de la commande modifiee ; null quand on prend une nouvelle commande. */
-  protected readonly idModifiee = Number(inject(ActivatedRoute).snapshot.paramMap.get('id')) || null;
+  protected readonly idModifiee =
+    Number(inject(ActivatedRoute).snapshot.paramMap.get('id')) || null;
   /** La commande modifiee, telle qu'elle a ete chargee (sa version part avec la modification). */
   private commandeModifiee: CommandeDto | null = null;
   /** Faux tant que la commande a modifier n'est pas retrouvee parmi celles en attente. */
@@ -101,7 +102,10 @@ export class PrendreCommande {
         }
         this.plats.set(Array.from(parId.values()));
         if (this.idModifiee) {
-          this.preremplir(commandes.find((c) => c.id === this.idModifiee), parId);
+          this.preremplir(
+            commandes.find((c) => c.id === this.idModifiee),
+            parId,
+          );
         }
         this.chargement.set(false);
       },
@@ -119,7 +123,9 @@ export class PrendreCommande {
    */
   private preremplir(commande: CommandeDto | undefined, plats: Map<number, PlatResume>): void {
     if (!commande) {
-      this.erreur.set(`La commande ${this.idModifiee} n'est plus en attente : elle ne peut plus être modifiée`);
+      this.erreur.set(
+        `La commande ${this.idModifiee} n'est plus en attente : elle ne peut plus être modifiée`,
+      );
       return;
     }
     this.commandeModifiee = commande;
@@ -131,7 +137,13 @@ export class PrendreCommande {
     for (const l of commande.lignes) {
       let plat = plats.get(l.platId);
       if (!plat) {
-        plat = { id: l.platId, nom: l.platNom, description: null, prix: l.prixUnitaire, categorie: 'PLAT_PRINCIPAL' };
+        plat = {
+          id: l.platId,
+          nom: l.platNom,
+          description: null,
+          prix: l.prixUnitaire,
+          categorie: 'PLAT_PRINCIPAL',
+        };
         indisponibles.push(plat);
       }
       lignes.set(l.platId, { plat, quantite: l.quantite });

@@ -5,12 +5,17 @@ export type CategoriePlat = 'ENTREE' | 'PLAT_PRINCIPAL' | 'DESSERT' | 'BOISSON';
 export type JourSemaine =
   'LUNDI' | 'MARDI' | 'MERCREDI' | 'JEUDI' | 'VENDREDI' | 'SAMEDI' | 'DIMANCHE';
 
+/** Profil d'un client, demande a l'inscription : des abonnements existent pour chacun. */
+export type ProfilClient = 'ETUDIANT' | 'PROFESSEUR';
+
 export interface Utilisateur {
   id: number;
   nom: string;
   prenom: string;
   email: string;
   telephone: string | null;
+  /** Etudiant ou professeur ; null pour le personnel et tant qu'il n'est pas renseigne. */
+  profil: ProfilClient | null;
   roles: Role[];
   restaurantId: number | null;
   restaurantNom: string | null;
@@ -28,6 +33,7 @@ export interface InscriptionRequest {
   email: string;
   motDePasse: string;
   telephone?: string;
+  profil: ProfilClient;
 }
 
 export interface LoginRequest {
@@ -37,6 +43,8 @@ export interface LoginRequest {
 
 export interface GoogleAuthRequest {
   idToken: string;
+  /** Lu seulement a la creation du compte (inscription). */
+  profil?: ProfilClient;
 }
 
 export interface CompteUpdateRequest {
@@ -44,6 +52,7 @@ export interface CompteUpdateRequest {
   prenom: string;
   email: string;
   telephone?: string;
+  profil?: ProfilClient;
   motDePasseActuel?: string;
   nouveauMotDePasse?: string;
 }
@@ -133,7 +142,8 @@ export interface RestaurantSaveRequest {
 
 export type TypeCommande = 'SUR_PLACE' | 'A_EMPORTER';
 
-export type StatutCommande = 'EN_ATTENTE' | 'EN_PREPARATION' | 'PRETE' | 'PAYEE' | 'ANNULEE' | 'ABANDONNEE';
+export type StatutCommande =
+  'EN_ATTENTE' | 'EN_PREPARATION' | 'PRETE' | 'PAYEE' | 'ANNULEE' | 'ABANDONNEE';
 
 export type StatutReservation = 'CONFIRMEE' | 'ANNULEE';
 

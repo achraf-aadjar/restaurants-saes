@@ -3,16 +3,20 @@ import { Routes } from '@angular/router';
 
 import { AuthService } from './core/auth.service';
 
-import { authGuard, roleGuard } from './core/auth.guard';
-import { accueilDe } from './core/navigation';
+import { authGuard, roleGuard, vitrineGuard } from './core/auth.guard';
 
 export const routes: Routes = [
-  // Chacun arrive sur sa page d'accueil : la premiere fonction du personnel
-  // ou de l'administrateur, les menus pour un client ou un visiteur.
+  // Le personnel et l'administrateur arrivent sur leur premiere fonction ; le
+  // client et le visiteur arrivent sur la vitrine.
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: () => accueilDe(inject(AuthService).utilisateur()),
+    canActivate: [vitrineGuard],
+    loadComponent: () => import('./pages/accueil/accueil').then((m) => m.Accueil),
+  },
+  {
+    path: 'traiteur',
+    loadComponent: () => import('./pages/traiteur/traiteur').then((m) => m.Traiteur),
   },
   {
     path: 'menus',
@@ -49,7 +53,61 @@ export const routes: Routes = [
   },
   // Administration (cahier des charges §4.7) : comptes et restaurants, dans le
   // meme cadre que le personnel. Son historique ne porte que sur ce domaine.
-  { path: 'admin', pathMatch: 'full', redirectTo: 'admin/utilisateurs' },
+  { path: 'admin', pathMatch: 'full', redirectTo: 'admin/choix' },
+  // A sa connexion, l'administrateur choisit le restaurant qu'il veut voir ; sa
+  // fiche ouvre les statistiques, les rapports, les stocks, les recommandations
+  // et les informations de CE restaurant, en lecture seule (ecart assume au
+  // cahier des charges, voir REFONTE_PLAN.md).
+  {
+    path: 'admin/choix',
+    canActivate: [roleGuard('ADMINISTRATEUR')],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/admin/choix/choix-restaurant').then((m) => m.ChoixRestaurant),
+      },
+      {
+        path: ':restaurantId',
+        loadComponent: () =>
+          import('./pages/admin/supervision/supervision-restaurant').then(
+            (m) => m.SupervisionRestaurant,
+          ),
+        children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            loadComponent: () =>
+              import('./pages/admin/supervision/vue-ensemble').then((m) => m.VueEnsemble),
+          },
+          {
+            path: 'statistiques',
+            loadComponent: () =>
+              import('./pages/gerant/statistiques-ventes').then((m) => m.GerantStatistiquesVentes),
+          },
+          {
+            path: 'rapports',
+            loadComponent: () =>
+              import('./pages/gerant/rapports-financiers').then((m) => m.GerantRapportsFinanciers),
+          },
+          {
+            path: 'stocks',
+            loadComponent: () => import('./pages/gerant/stocks').then((m) => m.GerantStocks),
+          },
+          {
+            path: 'recommandations',
+            loadComponent: () =>
+              import('./pages/gerant/recommandations').then((m) => m.GerantRecommandations),
+          },
+          {
+            path: 'informations',
+            loadComponent: () =>
+              import('./pages/admin/supervision/informations').then((m) => m.Informations),
+          },
+        ],
+      },
+    ],
+  },
   {
     path: 'admin/utilisateurs',
     canActivate: [roleGuard('ADMINISTRATEUR')],

@@ -3,7 +3,7 @@ import { CanActivateFn, Router, UrlTree } from '@angular/router';
 
 import { AuthService } from './auth.service';
 import { Role } from './models';
-import { accueilDe } from './navigation';
+import { accueilDe, estPersonnel } from './navigation';
 
 /**
  * Sans compte, on part vers la connexion en retenant la page demandee : la
@@ -34,3 +34,17 @@ export function roleGuard(role: Role): CanActivateFn {
     return auth.aLeRole(role) ? true : router.createUrlTree([accueilDe(auth.utilisateur())]);
   };
 }
+
+/**
+ * Page d'accueil « / » : la vitrine est faite pour le visiteur et le client. Un
+ * membre du personnel ou un administrateur est renvoye vers sa premiere
+ * fonction, comme avant l'existence de cette page.
+ */
+export const vitrineGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  const utilisateur = auth.utilisateur();
+  const personnel =
+    estPersonnel(utilisateur) || (utilisateur?.roles.includes('ADMINISTRATEUR') ?? false);
+  return personnel ? router.parseUrl(accueilDe(utilisateur)) : true;
+};

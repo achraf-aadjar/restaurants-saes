@@ -251,3 +251,69 @@ table {
     }
   }
 }
+
+/* ---------- Graphiques ---------- */
+
+.colonnes-graphiques {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1rem, 1.3vw, 1.5rem);
+  margin-bottom: clamp(1rem, 1.3vw, 1.5rem);
+  align-items: stretch;
+}
+
+/* L'historique par jour est le graphique principal : il prend deux tiers. */
+@media (min-width: 77.5rem) {
+  .colonnes-graphiques {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  }
+}
+
+app-graphique {
+  margin-bottom: 0.75rem;
+}
+
+/* Rappel chiffre des deux parts de l'anneau. */
+.repartition {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+
+  > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--saes-bordure);
+  }
+
+  dt {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-weight: 600;
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 800;
+  }
+}
+
+/* La couleur n'est jamais seule : le nom du mode est ecrit a cote. */
+.puce {
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: 50%;
+}
+
+.serie-1 {
+  background: var(--saes-serie-1);
+}
+
+.serie-2 {
+  background: var(--saes-serie-2);
+}

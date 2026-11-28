@@ -11,6 +11,7 @@ const CLIENT: Utilisateur = {
   prenom: 'Awa',
   email: 'awa@test.sn',
   telephone: null,
+  profil: null,
   roles: ['CLIENT'],
   restaurantId: null,
   restaurantNom: null,
@@ -23,7 +24,9 @@ describe('AuthService', () => {
   let http: HttpTestingController;
 
   function creerService(): AuthService {
-    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
     http = TestBed.inject(HttpTestingController);
     return TestBed.inject(AuthService);
   }
@@ -46,11 +49,35 @@ describe('AuthService', () => {
     expect(auth.aLeRole('GERANT')).toBe(false);
   });
 
+  it("s'inscrire envoie le profil étudiant ou professeur", () => {
+    const auth = creerService();
+
+    auth
+      .inscrire({
+        nom: 'Sow',
+        prenom: 'Ibou',
+        email: 'ibou@test.sn',
+        motDePasse: 'motdepasse123',
+        profil: 'PROFESSEUR',
+      })
+      .subscribe();
+
+    const requete = http.expectOne('/api/auth/register');
+    expect(requete.request.body.profil).toBe('PROFESSEUR');
+    requete.flush(REPONSE);
+  });
+
   it("s'inscrire connecte directement le nouveau client", () => {
     const auth = creerService();
 
     auth
-      .inscrire({ nom: 'Diop', prenom: 'Awa', email: 'awa@test.sn', motDePasse: 'motdepasse123' })
+      .inscrire({
+        nom: 'Diop',
+        prenom: 'Awa',
+        email: 'awa@test.sn',
+        motDePasse: 'motdepasse123',
+        profil: 'ETUDIANT',
+      })
       .subscribe();
     http.expectOne('/api/auth/register').flush(REPONSE);
 
@@ -71,10 +98,15 @@ describe('AuthService', () => {
   it('une connexion refusee ne connecte personne', () => {
     const auth = creerService();
 
-    auth.authentifier({ email: 'awa@test.sn', motDePasse: 'faux' }).subscribe({ error: () => undefined });
+    auth
+      .authentifier({ email: 'awa@test.sn', motDePasse: 'faux' })
+      .subscribe({ error: () => undefined });
     http
       .expectOne('/api/auth/login')
-      .flush({ motif: 'Adresse e-mail ou mot de passe incorrect' }, { status: 401, statusText: 'Unauthorized' });
+      .flush(
+        { motif: 'Adresse e-mail ou mot de passe incorrect' },
+        { status: 401, statusText: 'Unauthorized' },
+      );
 
     expect(auth.estConnecte()).toBe(false);
     expect(auth.getToken()).toBeNull();

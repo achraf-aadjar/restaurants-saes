@@ -1,0 +1,42 @@
+<!-- Pas de <svg> dans ce gabarit : place avant un router-outlet, il fait creer
+     les pages enfants dans l'espace de noms SVG, et elles deviennent invisibles. -->
+<a routerLink="/admin/choix" class="retour">
+  <span class="fleche" aria-hidden="true">←</span>
+  Changer de restaurant
+</a>
+
+@if (erreur(); as e) {
+  <p class="message-refus">{{ e }}</p>
+}
+
+@if (restaurant(); as r) {
+  <header class="entete-restaurant">
+    <div>
+      <span class="sur-titre">Restaurant supervisé</span>
+      <h1>{{ r.nom }}</h1>
+      <p class="commande-meta">{{ r.adresse }}</p>
+    </div>
+    <span class="badge" [class.badge-actif]="r.estActif" [class.badge-neutre]="!r.estActif">
+      {{ r.estActif ? 'Actif' : 'Désactivé' }}
+    </span>
+  </header>
+
+  <nav class="onglets" aria-label="Sections du restaurant">
+    @for (o of onglets; track o.lien) {
+      <a
+        [routerLink]="o.lien"
+        routerLinkActive="actif"
+        [routerLinkActiveOptions]="{ exact: o.exact }"
+        ariaCurrentWhenActive="page"
+        >{{ o.libelle }}</a
+      >
+    }
+  </nav>
+
+  <p class="lecture-seule">
+    Vous consultez ce restaurant en lecture seule : seul son gérant modifie ses plats, ses menus et
+    ses stocks.
+  </p>
+
+  <router-outlet />
+}

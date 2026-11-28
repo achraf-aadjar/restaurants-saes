@@ -8,7 +8,7 @@ API Spring Boot, interface Angular, base PostgreSQL.
 ```
 restaurants-saes/
 ├── saes-backend/    API REST — Spring Boot 4.1, Java 21, Maven
-└── saes-frontend/   Interface — Angular 22
+└── saes-frontend/   Interface — Angular 22, Chart.js 4
 ```
 
 ## Prérequis
@@ -53,10 +53,28 @@ cd saes-backend
 
 (Sous macOS ou Linux : `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`.)
 
-Le profil `dev` fournit une clé de jeton de développement et, si la base est
-vide, la remplit avec les données de test : un restaurant avec ses tables et
-ses horaires, un compte par rôle, des ingrédients, des plats, un menu et des
-commandes dans chaque statut.
+Le profil `dev` fournit une clé de jeton de développement et, **si la base est
+vide**, la remplit avec le jeu de démonstration (`config/DataSeeder.java`) :
+le restaurant de l'EPT avec ses tables et ses horaires, 21 comptes (un par rôle,
+plus du personnel et des clients), **6 plats** avec leur recette (thiéboudienne,
+yassa poulet, mafé, thiakry, jus de bissap, jus de bouye), 1 menu, et dix
+semaines d'activité — environ 720 commandes, leurs paiements, 51 sessions de
+caisse, 2 700 mouvements de stock et 40 réservations. Le tirage part d'une graine fixe :
+le jeu est le même sur toutes les installations.
+
+Il ne crée **qu'un seul restaurant** : c'est à l'administrateur d'en ajouter
+d'autres depuis son écran (« Choisir un restaurant », puis « Ajouter un
+restaurant »).
+
+Ce jeu n'existe qu'avec le profil `dev` ; la production ne reçoit rien.
+
+Comme il n'est inséré que si la base est vide, une base déjà remplie garde son
+contenu. Pour repartir du jeu complet (**cela efface les données de la base de
+développement**) :
+
+```bash
+docker exec saes-postgres psql -U postgres -c "DROP DATABASE saes;" -c "CREATE DATABASE saes;"
+```
 
 **Terminal 2 — frontend (port 4200)**
 
@@ -91,6 +109,49 @@ npm test                    # tests unitaires (Vitest)
 npm run build               # build de production dans dist/
 npx prettier --write src    # formatage automatique
 ```
+
+## Design
+
+Toutes les couleurs, les échelles et les ombres sont des variables CSS groupées
+en tête de `saes-frontend/src/styles.scss`, en deux thèmes complets (clair et
+sombre). Aucun composant n'écrit une couleur en dur : changer l'identité
+visuelle se fait à un seul endroit.
+
+Le détail du chantier de refonte, la matrice de conformité au cahier des
+charges et ce qui reste à faire sont dans [REFONTE_PLAN.md](REFONTE_PLAN.md).
+Le scénario de soutenance est dans [DEMO_JURY.md](DEMO_JURY.md).
+
+**Profil étudiant ou professeur** : l'inscription demande si la personne est
+étudiante ou professeure (des abonnements existent pour chacune). C'est un
+écart au cahier des charges (§4.1), documenté dans `REFONTE_PLAN.md`. Ce profil
+n'est pas un rôle et ne change aucun droit ; il se modifie dans « Mon compte ».
+Les abonnements eux-mêmes ne sont pas encore construits.
+
+**Écrans qui tiennent dans la fenêtre** : la connexion, l'inscription, « Mon
+compte », « Mes réservations », la caisse et les écrans d'action du personnel
+s'affichent en entier sans défiler, jusqu'à une fenêtre de 600 px de haut. Pour
+cela, leurs marges et leurs tailles suivent la hauteur de la fenêtre (unités
+`vh` et `clamp()`), et certains textes secondaires s'effacent sur les fenêtres
+basses. Ces écrans utilisent une simple ligne en pied de page au lieu du grand
+pied de page. Les écrans de listes, de tableaux de bord et de graphiques défilent,
+c'est normal.
+
+**Netteté des photos** : une photo n'est jamais étirée en fond de page. Un écran
+Retina affiche deux fois plus de pixels que de pixels CSS : une photo de 800 px
+de large ne reste nette que dans un cadre d'environ 400 px, et une de 1280 px
+dans un cadre d'environ 640 px. Pour une photo plein écran, il faut une source
+d'au moins 2400 px de large.
+
+**Photos de la vitrine** : la photo d'ouverture de l'accueil est
+`saes-frontend/public/assets/site/salle-hero-*.webp` ; la page « Traiteur » utilise
+celles listées dans `saes-frontend/src/app/core/photos-site.ts`. Pour mettre les
+vôtres, remplacer les fichiers `.webp` de `saes-frontend/public/assets/site/`.
+
+**Photos des plats** : les six plats de la carte en ont une. Pour en ajouter, déposer
+`saes-frontend/public/assets/plats/<nom-du-plat>-360.webp` et `-720.webp`
+(ratio 9:10), puis ajouter le nom dans
+`saes-frontend/src/app/core/photos-plats.ts`. Un plat sans photo affiche
+l'icône de sa catégorie.
 
 ## Déploiement (HTTPS)
 

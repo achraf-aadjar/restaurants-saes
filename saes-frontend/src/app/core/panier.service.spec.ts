@@ -27,6 +27,7 @@ function utilisateur(role: Role): Utilisateur {
     prenom: 'Awa',
     email: 'awa@test.sn',
     telephone: null,
+    profil: null,
     roles: [role],
     restaurantId: null,
     restaurantNom: null,

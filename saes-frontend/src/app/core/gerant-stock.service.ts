@@ -9,8 +9,16 @@ import { IngredientDto, IngredientSaveRequest, MouvementStockRequest } from './m
 export class GerantStockService {
   private readonly http = inject(HttpClient);
 
-  lister(): Observable<IngredientDto[]> {
-    return this.http.get<IngredientDto[]>('/api/gerant/ingredients');
+  /**
+   * Sans restaurant : ceux du gerant. Avec : la supervision de l'administrateur,
+   * qui est en lecture seule (la route admin s'appelle « stocks »).
+   */
+  lister(restaurantId?: number | null): Observable<IngredientDto[]> {
+    return this.http.get<IngredientDto[]>(
+      restaurantId == null
+        ? '/api/gerant/ingredients'
+        : `/api/admin/restaurants/${restaurantId}/stocks`,
+    );
   }
 
   creer(request: IngredientSaveRequest): Observable<IngredientDto> {

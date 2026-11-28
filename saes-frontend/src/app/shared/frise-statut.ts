@@ -99,7 +99,7 @@ const ETAPES: { statut: StatutCommande; libelle: string }[] = [
       width: 0.9rem;
       height: 0.9rem;
       fill: none;
-      stroke: #fff;
+      stroke: var(--saes-texte-sur-action);
       stroke-width: 3.5;
       stroke-linecap: round;
       stroke-linejoin: round;
@@ -107,11 +107,11 @@ const ETAPES: { statut: StatutCommande; libelle: string }[] = [
 
     @keyframes saes-pouls {
       0% {
-        box-shadow: 0 0 0 0 rgb(47 158 92 / 45%);
+        box-shadow: 0 0 0 0 color-mix(in srgb, var(--saes-action) 45%, transparent);
       }
 
       100% {
-        box-shadow: 0 0 0 0.6rem rgb(47 158 92 / 0%);
+        box-shadow: 0 0 0 0.6rem transparent;
       }
     }
 

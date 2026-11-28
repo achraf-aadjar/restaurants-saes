@@ -10,38 +10,62 @@
 } @else if (commandes().length === 0) {
   <p class="etat-page">Aucune commande à préparer.</p>
 } @else {
-  <div class="liste-commandes">
-    @for (c of commandes(); track c.id) {
-      <article class="carte commande commande-cuisine" [attr.data-statut]="c.statut">
-        <app-commande-entete [commande]="c" affichage="grand" />
-        <ul class="liste-lignes">
-          @for (ligne of c.lignes; track ligne.platId) {
-            <li>{{ ligne.quantite }} × {{ ligne.platNom }}</li>
-          }
-        </ul>
-        <span class="badge statut-cuisine" [class]="classeBadge(c.statut)">
-          {{ libelles[c.statut] }}
-        </span>
-        @if (c.statut === 'EN_ATTENTE') {
-          <button
-            type="button"
-            class="btn btn-primaire btn-cuisine"
-            [disabled]="actionEnCours() === c.id"
-            (click)="demarrer(c)"
-          >
-            Démarrer la préparation
-          </button>
-        } @else if (c.statut === 'EN_PREPARATION') {
-          <button
-            type="button"
-            class="btn btn-primaire btn-cuisine"
-            [disabled]="actionEnCours() === c.id"
-            (click)="terminer(c)"
-          >
-            Terminer la préparation
-          </button>
+  <!-- Une colonne par statut existant du cahier des charges : la cuisine voit
+       les commandes en attente, puis celles qu'elle a commencées. -->
+  <div class="tableau-cuisine">
+    @for (colonne of colonnes(); track colonne.statut) {
+      <section class="colonne" [attr.data-statut]="colonne.statut">
+        <header class="entete-colonne">
+          <h2>{{ colonne.titre }}</h2>
+          <span class="compte" [attr.aria-label]="colonne.commandes.length + ' commande(s)'">
+            {{ colonne.commandes.length }}
+          </span>
+        </header>
+
+        @if (colonne.commandes.length === 0) {
+          <p class="colonne-vide">{{ colonne.vide }}</p>
+        } @else {
+          <ul class="pile-commandes">
+            @for (c of colonne.commandes; track c.id) {
+              <li>
+                <article class="carte commande commande-cuisine" [attr.data-statut]="c.statut">
+                  <div class="haut-carte">
+                    <app-commande-entete [commande]="c" affichage="grand" />
+                    <app-temps-ecoule [depuis]="c.dateHeure" />
+                  </div>
+                  <ul class="liste-lignes">
+                    @for (ligne of c.lignes; track ligne.platId) {
+                      <li>
+                        <span class="quantite-ligne">{{ ligne.quantite }}</span>
+                        {{ ligne.platNom }}
+                      </li>
+                    }
+                  </ul>
+                  @if (c.statut === 'EN_ATTENTE') {
+                    <button
+                      type="button"
+                      class="btn btn-primaire btn-cuisine"
+                      [disabled]="actionEnCours() === c.id"
+                      (click)="demarrer(c)"
+                    >
+                      Démarrer la préparation
+                    </button>
+                  } @else if (c.statut === 'EN_PREPARATION') {
+                    <button
+                      type="button"
+                      class="btn btn-primaire btn-cuisine"
+                      [disabled]="actionEnCours() === c.id"
+                      (click)="terminer(c)"
+                    >
+                      Terminer la préparation
+                    </button>
+                  }
+                </article>
+              </li>
+            }
+          </ul>
         }
-      </article>
+      </section>
     }
   </div>
 }

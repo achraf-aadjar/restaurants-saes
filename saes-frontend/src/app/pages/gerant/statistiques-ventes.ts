@@ -1,11 +1,14 @@
 import { Component, computed, inject, signal } from '@angular/core';
 
 import { motifErreur } from '../../core/erreur.util';
+import { restaurantSupervise } from '../../core/supervision';
 import { GerantStatistiquesService } from '../../core/gerant-statistiques.service';
 import { LIBELLES_CATEGORIES, LIBELLES_CATEGORIES_PLURIEL } from '../../core/libelles';
 import { StatistiquesVentesDto } from '../../core/models';
 import { ChiffreCle } from '../../shared/chiffre-cle';
 import { ChoixPeriode, Periode } from '../../shared/choix-periode';
+import { Graphique, SerieGraphique } from '../../shared/graphique';
+import { enFrancsCourt } from '../../core/montant.util';
 import { MontantPipe } from '../../shared/montant.pipe';
 import { RefusVisible } from '../../shared/refus-visible';
 
@@ -29,12 +32,14 @@ function premierDuMois(): string {
  */
 @Component({
   selector: 'app-gerant-statistiques-ventes',
-  imports: [ChiffreCle, ChoixPeriode, MontantPipe, RefusVisible],
+  imports: [ChiffreCle, ChoixPeriode, Graphique, MontantPipe, RefusVisible],
   templateUrl: './statistiques-ventes.html',
   styleUrl: './statistiques-ventes.scss',
 })
 export class GerantStatistiquesVentes {
   private readonly gerantStatistiquesService = inject(GerantStatistiquesService);
+  /** Restaurant supervise par l'administrateur (lecture seule), ou null pour le gerant. */
+  protected readonly supervise = restaurantSupervise();
 
   protected readonly libellesCategories = LIBELLES_CATEGORIES;
   protected readonly libellesCategoriesPluriel = LIBELLES_CATEGORIES_PLURIEL;
@@ -63,25 +68,45 @@ export class GerantStatistiquesVentes {
     [...(this.statistiques()?.parPlat ?? [])].sort((a, b) => b.montant - a.montant),
   );
 
-  /** Plus grand montant par catégorie : la barre la plus longue la remplit. */
-  private readonly montantMaximal = computed(() =>
-    Math.max(1, ...(this.statistiques()?.parCategorie.map((v) => v.montant) ?? [])),
+  /** Montant total vendu : la somme des catégories, soit tout ce qui a été payé. */
+  protected readonly montantTotal = computed(() =>
+    this.categories().reduce((total, v) => total + v.montant, 0),
   );
+
+  /** Les huit plats les plus rentables : au-delà, le graphique devient illisible. */
+  protected readonly meilleursPlats = computed(() => this.plats().slice(0, 8));
+
+  protected readonly etiquettesCategories = computed(() =>
+    this.categories().map((v) => this.libellesCategoriesPluriel[v.categorie]),
+  );
+
+  protected readonly serieCategories = computed<SerieGraphique[]>(() => [
+    { libelle: 'Montant vendu', valeurs: this.categories().map((v) => v.montant) },
+  ]);
+
+  protected readonly etiquettesMeilleurs = computed(() => this.meilleursPlats().map((v) => v.nom));
+
+  protected readonly serieMeilleurs = computed<SerieGraphique[]>(() => [
+    { libelle: 'Montant vendu', valeurs: this.meilleursPlats().map((v) => v.montant) },
+  ]);
+
+  /** Montant abrégé des axes et des infobulles : « 190 k FCFA ». */
+  protected readonly enFrancs = enFrancsCourt;
 
   constructor() {
     this.charger(this.periode());
   }
 
-  /** Largeur de la barre d'une catégorie, en pourcentage du plus grand montant. */
-  protected largeurBarre(montant: number): number {
-    return montant > 0 ? Math.max(4, (montant / this.montantMaximal()) * 100) : 0;
+  /** Couleur de la part d'une catégorie, la même que dans le graphique. */
+  protected couleur(index: number): string {
+    return `var(--saes-serie-${(index % 6) + 1})`;
   }
 
   /** Charge les statistiques d'une période ; la période affichée change quand elles arrivent. */
   protected charger(periode: Periode): void {
     this.erreur.set(null);
     this.chargement.set(true);
-    this.gerantStatistiquesService.consulter(periode.debut, periode.fin).subscribe({
+    this.gerantStatistiquesService.consulter(periode.debut, periode.fin, this.supervise).subscribe({
       next: (statistiques) => {
         this.statistiques.set(statistiques);
         this.periode.set(periode);

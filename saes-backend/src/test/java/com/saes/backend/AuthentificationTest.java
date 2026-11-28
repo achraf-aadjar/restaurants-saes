@@ -20,7 +20,8 @@ import io.jsonwebtoken.security.Keys;
 class AuthentificationTest extends IntegrationTest {
 
     private Map<String, Object> inscription(String email) {
-        return Map.of("nom", "Fall", "prenom", "Binta", "email", email, "motDePasse", Monde.MOT_DE_PASSE);
+        return Map.of("nom", "Fall", "prenom", "Binta", "email", email, "motDePasse", Monde.MOT_DE_PASSE,
+                "profil", "ETUDIANT");
     }
 
     @Test
@@ -38,6 +39,64 @@ class AuthentificationTest extends IntegrationTest {
     }
 
     @Test
+    void sInscrireEnregistreLeProfilEtudiantOuProfesseur() {
+        String email = "profil-" + System.nanoTime() + "@test.sn";
+
+        Reponse reponse = api.post(null, "/api/auth/register", Map.of(
+                "nom", "Fall", "prenom", "Binta", "email", email, "motDePasse", Monde.MOT_DE_PASSE,
+                "profil", "PROFESSEUR"));
+
+        assertThat(reponse.statut()).isEqualTo(201);
+        assertThat(reponse.<String>lire("$.utilisateur.profil")).isEqualTo("PROFESSEUR");
+        assertThat(utilisateurRepository.findByEmailIgnoreCase(email).orElseThrow().getProfil())
+                .isEqualTo(com.saes.backend.domain.ProfilClient.PROFESSEUR);
+    }
+
+    @Test
+    void sInscrireExigeLeProfilEtRefuseUneValeurInconnue() {
+        String email = "sans-profil-" + System.nanoTime() + "@test.sn";
+
+        Reponse sans = api.post(null, "/api/auth/register", Map.of(
+                "nom", "Fall", "prenom", "Binta", "email", email, "motDePasse", Monde.MOT_DE_PASSE));
+        Reponse inconnu = api.post(null, "/api/auth/register", Map.of(
+                "nom", "Fall", "prenom", "Binta", "email", email, "motDePasse", Monde.MOT_DE_PASSE,
+                "profil", "ADMINISTRATEUR"));
+
+        assertThat(sans.statut()).isEqualTo(400);
+        assertThat(inconnu.statut()).isEqualTo(400);
+        assertThat(utilisateurRepository.findByEmailIgnoreCase(email)).isEmpty();
+    }
+
+    @Test
+    void leProfilNeDonneAucunRole() {
+        String email = "profil-role-" + System.nanoTime() + "@test.sn";
+
+        Reponse reponse = api.post(null, "/api/auth/register", Map.of(
+                "nom", "Fall", "prenom", "Binta", "email", email, "motDePasse", Monde.MOT_DE_PASSE,
+                "profil", "PROFESSEUR"));
+
+        // Professeur est un profil, pas un role : aucun droit en plus d'un client.
+        assertThat(reponse.liste("$.utilisateur.roles")).containsExactly("CLIENT");
+    }
+
+    @Test
+    void unClientChangeSonProfilDansMonCompteEtLeGardeSiOnNeLEnvoiePas() {
+        String email = "compte-profil-" + System.nanoTime() + "@test.sn";
+        String jeton = api.post(null, "/api/auth/register", inscription(email)).lire("$.token");
+
+        Reponse change = api.put(jeton, "/api/me", Map.of(
+                "nom", "Fall", "prenom", "Binta", "email", email, "profil", "PROFESSEUR"));
+        assertThat(change.statut()).as(change.toString()).isEqualTo(200);
+        assertThat(change.<String>lire("$.profil")).isEqualTo("PROFESSEUR");
+
+        // Sans profil dans la requete, il reste ce qu'il etait.
+        Reponse garde = api.put(jeton, "/api/me", Map.of(
+                "nom", "Fall", "prenom", "Binta", "email", email));
+        assertThat(garde.statut()).as(garde.toString()).isEqualTo(200);
+        assertThat(garde.<String>lire("$.profil")).isEqualTo("PROFESSEUR");
+    }
+
+    @Test
     void sInscrireEstRefuseSiLAdresseEstDejaUtilisee() {
         String email = "doublon-" + System.nanoTime() + "@test.sn";
         assertThat(api.post(null, "/api/auth/register", inscription(email)).statut()).isEqualTo(201);
@@ -51,7 +110,7 @@ class AuthentificationTest extends IntegrationTest {
     void sInscrireRefuseUnMotDePasseTropCourt() {
         Reponse reponse = api.post(null, "/api/auth/register", Map.of(
                 "nom", "Fall", "prenom", "Binta", "email", "court-" + System.nanoTime() + "@test.sn",
-                "motDePasse", "1234567"));
+                "motDePasse", "1234567", "profil", "ETUDIANT"));
 
         assertThat(reponse.statut()).isEqualTo(400);
     }

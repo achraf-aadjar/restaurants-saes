@@ -1,0 +1,68 @@
+:host {
+  display: block;
+}
+
+.retour {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.retour:hover {
+  text-decoration: underline;
+}
+
+.fleche {
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+.entete-restaurant {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+}
+
+.entete-restaurant h1 {
+  margin-bottom: 0.25rem;
+}
+
+/* Les onglets defilent a l'horizontale sur telephone plutot que de passer a la ligne. */
+.onglets {
+  display: flex;
+  gap: 0.25rem;
+  margin: 0.5rem 0 1rem;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--saes-bordure);
+  scrollbar-width: thin;
+}
+
+.onglets a {
+  flex: none;
+  padding: 0.7rem 1rem;
+  border-bottom: 3px solid transparent;
+  color: var(--saes-vert-attenue);
+  font-weight: 650;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.onglets a:hover {
+  color: var(--saes-vert);
+}
+
+.onglets a.actif {
+  border-bottom-color: var(--saes-jaune);
+  color: var(--saes-vert);
+}
+
+.lecture-seule {
+  margin: 0 0 1.25rem;
+  color: var(--saes-vert-attenue);
+  font-size: 0.88rem;
+}

@@ -145,6 +145,7 @@
           <th>E-mail</th>
           <th>Restaurant</th>
           <th>Rôles</th>
+          <th>Profil</th>
           <th>Statut</th>
           <th></th>
         </tr>
@@ -159,6 +160,9 @@
               @for (role of u.roles; track role) {
                 {{ libellesRoles[role] }}{{ $last ? '' : ', ' }}
               }
+            </td>
+            <td data-label="Profil">
+              {{ u.profil ? libellesProfils[u.profil] : '—' }}
             </td>
             <td data-label="Statut">
               <span

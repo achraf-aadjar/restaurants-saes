@@ -63,6 +63,7 @@ public class AuthService {
         utilisateur.setEmail(request.email());
         utilisateur.setMotDePasse(passwordEncoder.encode(request.motDePasse()));
         utilisateur.setTelephone(request.telephone());
+        utilisateur.setProfil(request.profil());
         utilisateur.setRoles(EnumSet.of(Role.CLIENT));
         utilisateur.setEstActif(true);
 
@@ -106,6 +107,7 @@ public class AuthService {
             nouveau.setPrenom(chaine(payload.get("given_name"), email));
             nouveau.setEmail(email);
             nouveau.setMotDePasse(passwordEncoder.encode(UUID.randomUUID().toString()));
+            nouveau.setProfil(request.profil());
             nouveau.setRoles(EnumSet.of(Role.CLIENT));
             nouveau.setEstActif(true);
             return utilisateurRepository.save(nouveau);

@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
 import { AdminRestaurantService } from '../../../core/admin-restaurant.service';
 import { motifErreur } from '../../../core/erreur.util';
@@ -50,6 +51,11 @@ export class RestaurantsList {
 
   constructor() {
     this.charger();
+    // Le carre « + Ajouter un restaurant » du choix de restaurant ouvre le
+    // formulaire de creation des l'arrivee.
+    if (inject(ActivatedRoute).snapshot.queryParamMap.get('creer') === '1') {
+      queueMicrotask(() => this.ouvrirCreation());
+    }
   }
 
   private charger(): void {

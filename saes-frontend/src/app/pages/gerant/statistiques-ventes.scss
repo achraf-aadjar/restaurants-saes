@@ -33,16 +33,30 @@
 
 .colonnes {
   grid-template-columns: minmax(0, 1fr);
-  align-items: start;
+  align-items: stretch;
 }
 
-/* Côte à côte dès 1240 px : le tableau des plats s'adapte à la largeur de sa
-   carte (texte et marges), et reste sur quatre colonnes. En dessous, l'une sous
-   l'autre, en pleine largeur. */
+/* Côte à côte dès 1240 px. En dessous, l'une sous l'autre, en pleine largeur. */
 @media (min-width: 77.5rem) {
   .colonnes {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+
+/* Un graphique garde de l'air entre son titre et le tableau qui le reprend. */
+app-graphique {
+  margin-bottom: 1rem;
+}
+
+/* Pastille de couleur devant une catégorie : le lien avec sa part du graphique.
+   La couleur n'est jamais seule, le nom est écrit juste à côté. */
+.puce {
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  margin-right: 0.5em;
+  border-radius: 50%;
+  vertical-align: 0.02em;
 }
 
 .bloc {
@@ -122,20 +136,6 @@
     text-align: right;
     font-weight: 600;
     white-space: nowrap;
-  }
-}
-
-.barre {
-  height: clamp(0.8rem, 1.2vw, 1.1rem);
-  margin-top: 0.5rem;
-  border-radius: 999px;
-  background: var(--saes-fond-doux);
-
-  span {
-    display: block;
-    height: 100%;
-    border-radius: inherit;
-    background: var(--saes-vert);
   }
 }
 

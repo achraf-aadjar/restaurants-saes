@@ -1,0 +1,183 @@
+<!-- Ouverture : la photo du restaurant en arriere-plan, le texte au centre. La
+     photo est une version agrandie et affinee (salle-hero-*.webp) : voir la regle
+     de nettete dans core/photos-site.ts. -->
+<section class="ouverture">
+  <img
+    class="fond"
+    src="assets/site/salle-hero-1280.webp"
+    srcset="assets/site/salle-hero-1280.webp 1280w, assets/site/salle-hero-2560.webp 2560w"
+    sizes="100vw"
+    width="2560"
+    height="1920"
+    alt=""
+    fetchpriority="high"
+  />
+  <div class="voile" aria-hidden="true"></div>
+
+  <div class="ouverture-texte">
+    <p class="enseigne">Restaurants du SAES · Thiès</p>
+    <h1>
+      Les saveurs du Sénégal.<br />
+      <em>Une expérience réinventée.</em>
+    </h1>
+    <p class="promesse">
+      Consultez le menu du jour, commandez à emporter et réservez votre table au restaurant du SAES,
+      à l'École polytechnique de Thiès.
+    </p>
+    <div class="ouverture-actions">
+      <a routerLink="/menus" class="btn btn-accent btn-large">
+        Voir le menu du jour
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+      </a>
+      <a routerLink="/mes-reservations" class="btn btn-contour btn-large">Réserver une table</a>
+    </div>
+    @if (restaurantVedette(); as r) {
+      <p class="pastille-ouverture" [class.ferme]="!r.ouvert">
+        <span class="point" aria-hidden="true"></span>
+        {{ r.ouvert ? 'Ouvert' : 'Fermé' }} · {{ horaires(r) }}
+      </p>
+    }
+  </div>
+</section>
+
+@if (erreur(); as e) {
+  <p class="message-refus bloc-vitrine">{{ e }}</p>
+}
+
+<!-- 1. Le menu : les plats réellement proposés aujourd'hui. -->
+<section class="bloc-vitrine" id="menu" aria-labelledby="titre-menu">
+  <div class="entete-section">
+    <div>
+      <span class="sur-titre">Menu en vigueur</span>
+      <h2 id="titre-menu" class="titre-section">Le menu</h2>
+    </div>
+    <a routerLink="/menus" class="lien-section">
+      Tout le menu
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+    </a>
+  </div>
+
+  @if (chargement()) {
+    <p class="etat-page" role="status">Chargement du menu…</p>
+  } @else if (suggestions().length === 0) {
+    <p class="etat-page">Aucun menu en vigueur pour le moment.</p>
+  } @else {
+    @if (categories().length > 0) {
+      <ul class="puces-categories">
+        @for (c of categories(); track c.categorie) {
+          <li>
+            <app-icone-categorie [categorie]="c.categorie" />
+            {{ c.libelle }}
+            <span class="compte-categorie">{{ c.nombre }}</span>
+          </li>
+        }
+      </ul>
+    }
+
+    <div class="grille-suggestions">
+      @for (plat of suggestions(); track plat.id) {
+        <article class="carte-suggestion">
+          <app-photo-plat
+            [nom]="plat.nom"
+            [categorie]="plat.categorie"
+            taille="(min-width: 60rem) 22rem, 90vw"
+          />
+          <div class="corps-suggestion">
+            <h3>{{ plat.nom }}</h3>
+            @if (plat.description) {
+              <p class="description">{{ plat.description }}</p>
+            }
+            <div class="pied-suggestion">
+              <span class="prix montant">{{ plat.prix | montant }}</span>
+              <button type="button" class="btn btn-primaire btn-petit" (click)="ajouter(plat)">
+                Ajouter
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>
+
+<!-- 2. Traiteur : une presentation, pas une fonction. Les demandes passent par
+     le telephone du restaurant. -->
+<section class="bloc-vitrine sur-sombre traiteur-apercu" aria-labelledby="titre-traiteur">
+  <div class="traiteur-interieur">
+    <div>
+      <span class="sur-titre">Hors les murs</span>
+      <h2 id="titre-traiteur" class="titre-section">Traiteur</h2>
+      <p class="traiteur-texte">
+        Soutenances, séminaires, remises de diplômes, réceptions de laboratoire : la cuisine du
+        restaurant se déplace sur le campus et à Thiès, avec les mêmes plats que ceux de la carte.
+      </p>
+      <a routerLink="/traiteur" class="btn btn-accent">
+        Découvrir le traiteur
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+      </a>
+    </div>
+    <ul class="traiteur-points">
+      <li>Séminaires, soutenances, remises de diplômes</li>
+      <li>Les plats de la carte, en format buffet</li>
+      <li>Sur demande, par téléphone</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 3. Le restaurant : ses informations, telles que le backend les donne. -->
+@if (restaurantVedette(); as r) {
+  <section class="bloc-vitrine" id="restaurant" aria-labelledby="titre-restaurant">
+    <span class="sur-titre">Où nous trouver</span>
+    <h2 id="titre-restaurant" class="titre-section">Le restaurant</h2>
+    <div class="carte carte-restaurant">
+      <div class="entete-restaurant">
+        <h3>{{ r.nom }}</h3>
+        <span class="badge" [class.badge-actif]="r.ouvert" [class.badge-neutre]="!r.ouvert">
+          {{ r.ouvert ? 'Ouvert' : 'Fermé' }}
+        </span>
+      </div>
+      <dl class="infos-restaurant">
+        <div>
+          <dt>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"
+              />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            <span class="hors-ecran">Adresse</span>
+          </dt>
+          <dd>{{ r.adresse }}</dd>
+        </div>
+        <div>
+          <dt>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 6v6l4 2" />
+            </svg>
+            <span class="hors-ecran">Horaires du jour</span>
+          </dt>
+          <dd>{{ horaires(r) }}</dd>
+        </div>
+        <div>
+          <dt>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92"
+              />
+            </svg>
+            <span class="hors-ecran">Téléphone</span>
+          </dt>
+          <dd>
+            <a [href]="'tel:' + r.telephone">{{ r.telephone }}</a>
+          </dd>
+        </div>
+      </dl>
+      <div class="actions-restaurant">
+        <a routerLink="/menus" class="btn btn-primaire">Voir le menu</a>
+        <a routerLink="/mes-reservations" class="btn btn-secondaire">Réserver une table</a>
+      </div>
+    </div>
+  </section>
+}

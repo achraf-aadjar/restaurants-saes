@@ -60,6 +60,8 @@ const ICONES = {
   restaurants:
     'm2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4M2 7h20M22 7v3a2 2 0 0 1-2 2 2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7',
   historique: 'M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5M12 7v5l4 2',
+  choix:
+    cadre(3, 3, 7, 9, 1) + cadre(14, 3, 7, 5, 1) + cadre(14, 12, 7, 9, 1) + cadre(3, 16, 7, 5, 1),
 };
 
 export interface Section {
@@ -161,8 +163,9 @@ export const SECTIONS: Section[] = [
   {
     role: 'ADMINISTRATEUR',
     intitule: 'Administration',
-    accueil: '/admin/utilisateurs',
+    accueil: '/admin/choix',
     fonctions: [
+      { libelle: 'Choisir un restaurant', lien: '/admin/choix', icone: ICONES.choix },
       {
         libelle: 'Gérer les comptes utilisateurs',
         lien: '/admin/utilisateurs',

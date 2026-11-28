@@ -35,7 +35,11 @@ public class RecommandationService {
     private final PersonnelRestaurantResolver personnelRestaurantResolver;
 
     public List<RecommandationDto> lister(Long gerantId) {
-        Restaurant restaurant = personnelRestaurantResolver.restaurantDe(gerantId);
+        return listerPourRestaurant(personnelRestaurantResolver.restaurantDe(gerantId));
+    }
+
+    /** Les recommandations d'un restaurant donne, en lecture seule, pour l'administrateur. */
+    public List<RecommandationDto> listerPourRestaurant(Restaurant restaurant) {
         Instant depuis = Instant.now().minus(JOURS_HISTORIQUE, ChronoUnit.DAYS);
 
         return ingredientRepository.findByRestaurantId(restaurant.getId()).stream()

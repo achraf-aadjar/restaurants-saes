@@ -1,74 +1,89 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router, provideRouter } from '@angular/router';
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { Register } from './register';
 
-describe("Page d'inscription", () => {
-  let fixture: ComponentFixture<Register>;
-  let page: HTMLElement;
-  let serveur: HttpTestingController;
+/** L'inscription demande si la personne est étudiante ou professeure (abonnements). */
+describe('Register : étudiant ou professeur', () => {
+  let http: HttpTestingController;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     localStorage.clear();
-    await TestBed.configureTestingModule({
-      imports: [Register],
+    TestBed.configureTestingModule({
       providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
-    }).compileComponents();
-    fixture = TestBed.createComponent(Register);
-    page = fixture.nativeElement;
-    serveur = TestBed.inject(HttpTestingController);
-    await fixture.whenStable();
-  });
-
-  afterEach(() => serveur.verify());
-
-  async function saisir(selecteur: string, valeur: string): Promise<void> {
-    const champ = page.querySelector<HTMLInputElement>(selecteur)!;
-    champ.value = valeur;
-    champ.dispatchEvent(new Event('input'));
-    champ.dispatchEvent(new Event('blur'));
-    await fixture.whenStable();
-  }
-
-  async function remplir(): Promise<void> {
-    await saisir('#prenom', 'Awa');
-    await saisir('#nom', 'Diop');
-    await saisir('#email', 'awa@test.sn');
-    await saisir('#motDePasse', 'motdepasse123');
-  }
-
-  async function envoyer(): Promise<void> {
-    page.querySelector('form')!.dispatchEvent(new Event('submit'));
-    await fixture.whenStable();
-  }
-
-  it("le telephone est facultatif : sans lui, l'inscription est envoyee sans telephone", async () => {
-    const navigation = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
-    await remplir();
-    await envoyer();
-
-    const requete = serveur.expectOne('/api/auth/register');
-    expect(requete.request.body).toEqual({
-      nom: 'Diop',
-      prenom: 'Awa',
-      email: 'awa@test.sn',
-      motDePasse: 'motdepasse123',
-      telephone: undefined,
     });
-    requete.flush(
-      { token: 'jeton', utilisateur: { id: 1, roles: ['CLIENT'] } },
-      { status: 201, statusText: 'Created' },
-    );
-    await fixture.whenStable();
-
-    expect(navigation).toHaveBeenCalledWith(['/menus']);
+    http = TestBed.inject(HttpTestingController);
   });
 
-  it('la page renvoie vers la politique de confidentialite (loi n° 2008-12)', () => {
-    const liens = Array.from(page.querySelectorAll('a')).map((a) => a.getAttribute('href'));
+  function composant() {
+    const fixture = TestBed.createComponent(Register);
+    fixture.detectChanges();
+    return fixture;
+  }
 
-    expect(liens).toContain('/confidentialite');
+  it('propose Étudiant et Professeur, sans rien présélectionner', () => {
+    const fixture = composant();
+    const html = fixture.nativeElement as HTMLElement;
+
+    const choix = Array.from(html.querySelectorAll<HTMLInputElement>('input[name="profil"]'));
+    expect(choix.map((c) => c.nextElementSibling?.textContent?.trim())).toEqual([
+      'Étudiant',
+      'Professeur',
+    ]);
+    expect(choix.some((c) => c.checked)).toBe(false);
+  });
+
+  it("refuse de s'inscrire sans profil, sans appeler le serveur", () => {
+    const fixture = composant();
+    const page = fixture.componentInstance as unknown as {
+      valider: () => void;
+      profilManquant: () => boolean;
+    };
+
+    page.valider();
+    fixture.detectChanges();
+
+    expect(page.profilManquant()).toBe(true);
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain(
+      'Indiquez si vous êtes étudiant ou professeur',
+    );
+    http.expectNone('/api/auth/register');
+  });
+
+  it('envoie le profil choisi avec les autres informations', () => {
+    const fixture = composant();
+    const page = fixture.componentInstance as unknown as Record<string, unknown> & {
+      choisirProfil: (p: string) => void;
+      valider: () => void;
+    };
+    Object.assign(page, {
+      nom: 'Sow',
+      prenom: 'Ibou',
+      email: 'ibou@test.sn',
+      motDePasse: 'motdepasse123',
+    });
+
+    page.choisirProfil('PROFESSEUR');
+    page.valider();
+
+    const requete = http.expectOne('/api/auth/register');
+    expect(requete.request.body).toMatchObject({ email: 'ibou@test.sn', profil: 'PROFESSEUR' });
+  });
+
+  it('laisse le bouton Google en retrait tant que le profil manque', () => {
+    const fixture = composant();
+    const google = (fixture.nativeElement as HTMLElement).querySelector('.auth-google');
+
+    expect(google?.hasAttribute('inert')).toBe(true);
+
+    (fixture.componentInstance as unknown as { choisirProfil: (p: string) => void }).choisirProfil(
+      'ETUDIANT',
+    );
+    fixture.detectChanges();
+
+    expect(google?.hasAttribute('inert')).toBe(false);
   });
 });

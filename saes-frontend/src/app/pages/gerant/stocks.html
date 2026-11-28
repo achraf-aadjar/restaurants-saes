@@ -1,15 +1,46 @@
 <div class="titre-page">
   <h1>Stocks</h1>
-  <button type="button" class="btn btn-primaire" (click)="ouvrirCreation()">
-    + Nouvel ingrédient
-  </button>
+  @if (!supervise) {
+    <button type="button" class="btn btn-primaire" (click)="ouvrirCreation()">
+      + Nouvel ingrédient
+    </button>
+  }
 </div>
+@if (supervise) {
+  <p class="commande-meta">
+    Supervision en lecture seule : seul le gérant du restaurant modifie ses stocks.
+  </p>
+}
 
 @if (erreur(); as e) {
   <p class="message-refus">{{ e }}</p>
 }
 
-@if (formulaireOuvert()) {
+<!-- Signalement des ingredients sous leur seuil d'alerte (cahier §4.6). -->
+@if (!chargement() && enAlerte().length > 0) {
+  <section class="carte alerte-stock" aria-labelledby="titre-alerte">
+    <span class="icone-alerte" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
+        <path d="M12 9v4M12 17h.01" />
+      </svg>
+    </span>
+    <div>
+      <h2 id="titre-alerte">
+        {{ enAlerte().length }}
+        {{ enAlerte().length > 1 ? 'ingrédients sont' : 'ingrédient est' }} sous
+        {{ enAlerte().length > 1 ? 'leur seuil' : 'son seuil' }} d'alerte
+      </h2>
+      <ul class="puces-alerte">
+        @for (i of enAlerte(); track i.id) {
+          <li>{{ i.nom }} · {{ i.stock | quantite: i.unite }}</li>
+        }
+      </ul>
+    </div>
+  </section>
+}
+
+@if (formulaireOuvert() && !supervise) {
   <section class="carte formulaire-ingredient">
     <form (ngSubmit)="enregistrer()" #f="ngForm" class="formulaire-creation">
       <h2>{{ idEnEdition ? "Modifier l'ingrédient" : 'Nouvel ingrédient' }}</h2>
@@ -79,6 +110,7 @@
           <th scope="col">Nom</th>
           <th scope="col">Unité</th>
           <th scope="col">Stock</th>
+          <th scope="col">Niveau</th>
           <th scope="col">Seuil d'alerte</th>
           <th scope="col">Niveau cible</th>
           <th scope="col"><span class="cache-visuel">Actions</span></th>
@@ -95,29 +127,49 @@
             </td>
             <td class="unite" data-label="Unité">{{ libellesUnites[i.unite] }}</td>
             <td class="stock" data-label="Stock">{{ i.stock | quantite: i.unite }}</td>
+            <td class="niveau" data-label="Niveau">
+              <!-- Jauge : le stock rapporte au niveau cible, avec un repere au
+                   seuil d'alerte. L'etat est aussi ecrit dans les colonnes. -->
+              <span class="jauge" [class.jauge-alerte]="i.alerte">
+                <span
+                  class="remplissage"
+                  [style.width.%]="remplissage(i.stock, i.niveauCible)"
+                ></span>
+                <span
+                  class="repere-seuil"
+                  [style.left.%]="remplissage(i.seuilAlerte, i.niveauCible)"
+                ></span>
+              </span>
+            </td>
             <td class="seuil" data-label="Seuil d'alerte">
               {{ i.seuilAlerte | quantite: i.unite }}
             </td>
             <td class="cible" data-label="Niveau cible">{{ i.niveauCible | quantite: i.unite }}</td>
             <td class="actions-colonne">
-              <button type="button" class="btn btn-secondaire btn-petit" (click)="ouvrirEdition(i)">
-                Modifier
-              </button>
-              <button
-                type="button"
-                class="btn btn-secondaire btn-petit"
-                [attr.aria-expanded]="mouvementIngredientId() === i.id"
-                (click)="ouvrirMouvement(i)"
-              >
-                Mouvement
-              </button>
+              @if (!supervise) {
+                <button
+                  type="button"
+                  class="btn btn-secondaire btn-petit"
+                  (click)="ouvrirEdition(i)"
+                >
+                  Modifier
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondaire btn-petit"
+                  [attr.aria-expanded]="mouvementIngredientId() === i.id"
+                  (click)="ouvrirMouvement(i)"
+                >
+                  Mouvement
+                </button>
+              }
             </td>
           </tr>
           <!-- Entrée ou sortie : sur sa propre ligne, sous l'ingrédient, pour ne pas
                élargir le tableau. -->
-          @if (mouvementIngredientId() === i.id) {
+          @if (!supervise && mouvementIngredientId() === i.id) {
             <tr class="ligne-mouvement">
-              <td colspan="6">
+              <td colspan="7">
                 <form
                   (ngSubmit)="enregistrerMouvement()"
                   class="ligne-dynamique"
